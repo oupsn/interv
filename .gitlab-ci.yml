@@ -8,6 +8,9 @@ frontend_lint:
     - cd frontend
     - npm install
     - npm run lint
+  artifacts:
+    paths:
+      - frontend/build/
 
 backend_build:
   stage: build
@@ -15,14 +18,12 @@ backend_build:
     - cd backend
     - go mod download
     - go build -o go-fiber-app .
+  artifacts:
+    paths:
+      - backend/go-fiber-app
 
 frontend_build:
   stage: build
   script:
     - cd frontend
     - npm run build
-
-artifacts:
-  paths:
-    - frontend/build/
-    - backend/go-fiber-app
