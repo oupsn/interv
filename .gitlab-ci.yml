@@ -3,6 +3,7 @@ stages:
   - build
 
 frontend_lint:
+  image: node:20-alpine
   stage: lint
   script:
     - cd frontend
