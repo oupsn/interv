@@ -26,4 +26,4 @@ frontend_build:
   stage: build
   script:
     - cd frontend
-    - npm run build
+    - npx tsc && vite build
