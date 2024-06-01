@@ -3,7 +3,6 @@ stages:
   - build
 
 frontend_lint:
-  image: node:20-alpine
   stage: lint
   script:
     - cd frontend
@@ -27,5 +26,5 @@ frontend_build:
   stage: build
   script:
     - cd frontend
-    - npx tsc --noEmit
-    - npx vite build
+    - npm install
+    - npx tsc && vite build
