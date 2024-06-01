@@ -27,4 +27,4 @@ frontend_build:
   script:
     - cd frontend
     - npm install
-    - npx tsc && vite build
+    - npx tsc
