@@ -4,6 +4,8 @@ stages:
 
 frontend_lint:
   stage: lint
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   script:
     - cd frontend
     - npm install
