@@ -14,6 +14,11 @@ frontend_lint:
 
 backend_build:
   stage: build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      allow_failure: false
+      changes:
+        - backend/**/*
   script:
     - cd backend
     - go mod download
@@ -24,6 +29,11 @@ backend_build:
 
 frontend_build:
   stage: build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      allow_failure: false
+      changes:
+        - frontend/**/*
   script:
     - cd frontend
     - npm install
