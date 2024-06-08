@@ -1,9 +1,14 @@
 package handlers
 
 import (
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/spf13/viper"
 	"time"
 )
+
+var validate = validator.New()
 
 type Response[T any] struct {
 	Code      int       `json:"code"`
@@ -64,4 +69,35 @@ func Created[T any](ctx *fiber.Ctx, data T, meta ...any) error {
 		Data:      data,
 		Timestamp: time.Now(),
 	})
+}
+
+func GetCurrentUser(ctx *fiber.Ctx) (userId *uint, err error) {
+	token := ctx.Get("Authorization")
+
+	if token == "" {
+		token = ctx.Cookies("token")
+	}
+
+	if token == "" {
+		return nil, fiber.ErrUnauthorized
+	}
+
+	parser, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		return []byte(viper.GetString("jwt.secret")), nil
+	})
+
+	if err != nil {
+		print("Error ", err.Error(), "\n")
+		return nil, fiber.ErrUnauthorized
+	}
+
+	if claims, ok := parser.Claims.(jwt.MapClaims); ok {
+		userIdAsFloat := claims["id"].(float64)
+
+		userId := uint(userIdAsFloat)
+
+		return &userId, nil
+	}
+
+	return nil, err
 }
