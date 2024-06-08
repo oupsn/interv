@@ -3,7 +3,7 @@ package services
 import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
-	v "csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils"
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/v"
 	"strings"
 )
 
