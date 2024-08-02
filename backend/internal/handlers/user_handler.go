@@ -6,12 +6,12 @@ import (
 )
 
 type UserHandler struct {
-	userSvc services.UserService
+	userService services.IUserService
 }
 
-func NewUserHandler(userSvc services.UserService) UserHandler {
+func NewUserHandler(userService services.IUserService) UserHandler {
 	return UserHandler{
-		userSvc: userSvc,
+		userService: userService,
 	}
 }
 
@@ -37,19 +37,18 @@ func (u UserHandler) CreateUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := u.userSvc.Create(*form.Username, *form.Password, *form.Role, *form.Department)
+	response, err := u.userService.Create(*form.Username, *form.Password, *form.Role)
 
 	if err != nil {
 		return err
 	}
 
 	return Created(c, UserData{
-		ID:         response.ID,
-		Username:   response.Username,
-		Department: response.Department,
-		Role:       response.Role,
-		CreatedAt:  response.CreatedAt,
-		UpdatedAt:  response.UpdatedAt,
+		ID:        response.ID,
+		Username:  response.Username,
+		Role:      response.Role,
+		CreatedAt: response.CreatedAt,
+		UpdatedAt: response.UpdatedAt,
 	})
 }
 
@@ -77,13 +76,13 @@ func (u UserHandler) DeleteUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	if *form.ID == *userId {
+	if *form.Id == *userId {
 		return fiber.NewError(fiber.StatusBadRequest, "cannot delete yourself")
 	}
 
-	if err := u.userSvc.Delete(*form.ID); err != nil {
+	if err := u.userService.Delete(*form.Id); err != nil {
 		return err
 	}
 
-	return Ok(c, form.ID)
+	return Ok(c, form.Id)
 }

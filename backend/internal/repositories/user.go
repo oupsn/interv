@@ -10,7 +10,7 @@ type userRepository struct {
 	DB gorm.DB
 }
 
-func NewUserRepository(db gorm.DB) UserRepository {
+func NewUserRepository(db gorm.DB) IUserRepository {
 	return &userRepository{
 		DB: db,
 	}

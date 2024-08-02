@@ -22,6 +22,7 @@ type ConfigEnv struct {
 	DBTimezone      string `json:"DB_TIMEZONE" mapstructure:"DB_TIMEZONE"`
 	DBUrl           string `json:"DB_URL" mapstructure:"DB_URL"`
 	DBUsername      string `json:"DB_USERNAME" mapstructure:"DB_USERNAME"`
+	JwtSecret       string `json:"JWT_SECRET" mapstructure:"JWT_SECRET"`
 }
 
 var Env *ConfigEnv

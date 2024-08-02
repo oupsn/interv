@@ -4,7 +4,7 @@ import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 )
 
-type UserRepository interface {
+type IUserRepository interface {
 	Create(user domains.User) (newUser *domains.User, err error)
 	FindByUsernameAndPassword(username string, password string) (user *domains.User, err error)
 	FindByUsername(username string) (user *domains.User, err error)

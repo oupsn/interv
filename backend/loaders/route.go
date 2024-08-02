@@ -1,33 +1,32 @@
 package loaders
 
 import (
+	"errors"
+	"fmt"
+	"time"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/handlers"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
-	"embed"
-	"errors"
-	"fmt"
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
-	"io/fs"
-	"net/http"
-	"time"
 )
 
-func SetupRoutes(dist embed.FS) {
+func SetupRoutes() {
 
 	serverAddr := fmt.Sprintf("%s:%d", Env.ServerHost, Env.ServerPort)
 
 	// Repositories
-	var userRepo = repositories.NewUserRepository(*DB)
+	var userRepositories = repositories.NewUserRepository(*DB)
 
 	// Services
-	var userService = services.NewUserService(userRepo)
+	var userServices = services.NewUserService(userRepositories)
+	var authServices = services.NewAuthService(userRepositories)
 
 	// Handlers
-	var userHandlers = handlers.NewUserHandler(userService)
+	var userHandlers = handlers.NewUserHandler(userServices)
+	var authHandlers = handlers.NewAuthHandler(authServices)
 
 	// Fiber App
 	app := NewFiberApp()
@@ -37,33 +36,34 @@ func SetupRoutes(dist embed.FS) {
 		AllowCredentials: true,
 	}))
 
-	f, err := fs.Sub(dist, "web/dist")
-
-	if err != nil {
-		panic(err)
-	}
-
 	// Routes
-	v1 := app.Group("/api/v1")
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, Interv!")
+	})
 
+	v1 := app.Group("/api/v1")
+	v1.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, Interv 🕊️")
+	})
+
+	// User
 	v1.Post("user.createUser", userHandlers.CreateUser)
 	v1.Post("user.deleteUser", userHandlers.DeleteUser)
 
+	// Auth
+	v1.Get("auth.me", authHandlers.Me)
+	v1.Post("auth.login", authHandlers.Login)
+	v1.Post("auth.logout", authHandlers.Logout)
+
 	app.Get("healthcheck", handlers.HealthCheck)
 	app.Get("swagger/*", swagger.HandlerDefault)
-
-	app.Use("*", filesystem.New(filesystem.Config{
-		Root:         http.FS(f),
-		Index:        "index.html",
-		Browse:       true,
-		NotFoundFile: "index.html",
-	}))
 
 	ListenAndServe(app, serverAddr)
 }
 
 func NewFiberApp() *fiber.App {
 	fiberConfig := fiber.Config{
+		AppName: "🕊️",
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
 			// Status code defaults to 500
 			code := fiber.StatusInternalServerError
