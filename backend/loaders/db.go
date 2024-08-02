@@ -1,9 +1,10 @@
 package loaders
 
 import (
+	"fmt"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/db"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -12,7 +13,6 @@ var DB *gorm.DB
 func SetupDatabases() {
 	CheckAndConnectDatabase()
 	CheckAutoMigrate()
-	CreateDefaultAdminUser()
 }
 
 func CheckAndConnectDatabase() {
@@ -30,21 +30,6 @@ func CheckAndConnectDatabase() {
 	if err != nil {
 		panic(fmt.Errorf("fatal connecting to database: %w", err))
 	}
-}
-
-func CreateDefaultAdminUser() *domains.User {
-	// Create default general user
-	var user domains.User
-	DB.Where(domains.User{
-		Username: &Env.AdminUsername,
-	}).Attrs(domains.User{
-		Password:   &Env.AdminPassword,
-		Role:       &domains.UserRoleAdmin,
-		Department: &Env.AdminDepartment,
-	}).FirstOrCreate(&user)
-	// Create default general user
-	fmt.Println(fmt.Sprintf("[DB] Creating default admin user \"%s\"", *user.Username))
-	return &user
 }
 
 func CheckAutoMigrate() {

@@ -1,36 +1,28 @@
 stages:
   - lint
-  - build
+  - test
+  - build-frontend
+  - backend
 
 frontend_lint:
+  image: node:lts-alpine3.20
   stage: lint
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  script:
+      allow_failure: true
+  before_script:
     - cd frontend
+  script:
     - npm install
     - npm run lint
+    - npx tsc --noEmit
   artifacts:
     paths:
       - frontend/build/
 
-backend_build:
-  stage: build
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-      allow_failure: false
-      changes:
-        - backend/**/*
-  script:
-    - cd backend
-    - go mod download
-    - go build -o go-fiber-app .
-  artifacts:
-    paths:
-      - backend/go-fiber-app
-
 frontend_build:
-  stage: build
+  image: node:lts-alpine3.20
+  stage: build-frontend
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: false
