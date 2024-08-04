@@ -4,6 +4,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/spf13/viper"
 	"time"
 )
 
@@ -73,7 +74,7 @@ func Created[T any](ctx *fiber.Ctx, data T, meta ...any) error {
 func GetCurrentUser(ctx *fiber.Ctx) (userId *uint, err error) {
 	token := ctx.Cookies("token", "")
 	parser, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return []byte("korHaiProjectNeePanPaiDaiDeeee"), nil
+		return []byte(viper.GetString("JWT_SECRET")), nil
 	})
 
 	if err != nil {

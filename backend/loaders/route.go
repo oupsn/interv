@@ -3,6 +3,7 @@ package loaders
 import (
 	"errors"
 	"fmt"
+	"github.com/spf13/viper"
 	"time"
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/handlers"
@@ -15,7 +16,7 @@ import (
 
 func SetupRoutes() {
 
-	serverAddr := fmt.Sprintf("%s:%d", Env.ServerHost, Env.ServerPort)
+	serverAddr := fmt.Sprintf("%s:%d", viper.GetString(EnvServerHost), viper.GetInt(EnvServerPort))
 
 	// Repositories
 	var userRepositories = repositories.NewUserRepository(*DB)
@@ -32,7 +33,7 @@ func SetupRoutes() {
 	app := NewFiberApp()
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     Env.ServerOrigins,
+		AllowOrigins:     viper.GetString(EnvServerOrigins),
 		AllowCredentials: true,
 	}))
 

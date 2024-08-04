@@ -4,6 +4,7 @@ import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"time"
@@ -35,7 +36,7 @@ func (a *authService) Login(username string, password string) (userId *uint, acc
 }
 
 func (a *authService) GenerateJwtToken(userId uint, username string, expiration time.Time) (string, error) {
-	privateKey := []byte("korHaiProjectNeePanPaiDaiDeeee")
+	privateKey := []byte(viper.GetString("JWT_SECRET"))
 	claims := jwt.MapClaims{
 		"id":       userId,
 		"username": username,
