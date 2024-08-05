@@ -10,12 +10,12 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /interv-core
 
-FROM debian:buster-slim AS build-release-stage
+FROM alpine:latest AS build-release-stage
 
 WORKDIR /
 
 COPY --from=build-stage /interv-core /interv-core
 
-EXPOSE 5000
+ENTRYPOINT ["/interv-core"]
 
-CMD ["/interv-core"]
+EXPOSE 5000

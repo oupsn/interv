@@ -9,84 +9,84 @@
  * ---------------------------------------------------------------
  */
 
-export type CreateUserData = HandlersResponseUser;
+export type CreateUserData = HandlersResponseUser
 
-export type CreateUserError = HandlersErrResponse;
+export type CreateUserError = HandlersErrResponse
 
 export interface CurrentUser {
-  created_at: string;
-  id: number;
-  role: string;
-  updated_at: string;
-  username: string;
+  created_at: string
+  id: number
+  role: string
+  updated_at: string
+  username: string
 }
 
-export type DeleteUserData = HandlersResponseString;
+export type DeleteUserData = HandlersResponseString
 
-export type DeleteUserError = HandlersErrResponse;
+export type DeleteUserError = HandlersErrResponse
 
 export interface HandlersErrResponse {
-  code?: number;
-  message?: string;
-  timestamp?: string;
+  code?: number
+  message?: string
+  timestamp?: string
 }
 
 export interface HandlersOkResponse {
-  code?: number;
-  message?: string;
-  timestamp?: string;
+  code?: number
+  message?: string
+  timestamp?: string
 }
 
 export interface HandlersResponseCurrentUser {
-  code?: number;
-  data?: CurrentUser;
-  message?: string;
-  timestamp?: string;
+  code?: number
+  data?: CurrentUser
+  message?: string
+  timestamp?: string
 }
 
 export interface HandlersResponseString {
-  code?: number;
-  data?: string;
-  message?: string;
-  timestamp?: string;
+  code?: number
+  data?: string
+  message?: string
+  timestamp?: string
 }
 
 export interface HandlersResponseUser {
-  code?: number;
-  data?: User;
-  message?: string;
-  timestamp?: string;
+  code?: number
+  data?: User
+  message?: string
+  timestamp?: string
 }
 
 export interface LoginBody {
-  password: string;
-  username: string;
+  password: string
+  username: string
 }
 
-export type LoginData = HandlersResponseString;
+export type LoginData = HandlersResponseString
 
-export type LoginError = HandlersErrResponse;
+export type LoginError = HandlersErrResponse
 
-export type LogoutData = HandlersOkResponse;
+export type LogoutData = HandlersOkResponse
 
-export type MeData = HandlersResponseCurrentUser;
+export type MeData = HandlersResponseCurrentUser
 
 export interface User {
-  created_at?: string;
-  id?: number;
-  role?: string;
-  updated_at?: string;
-  username?: string;
+  created_at?: string
+  id?: number
+  role?: string
+  updated_at?: string
+  username?: string
 }
 
 export interface UserCreateBody {
-  password: string;
-  role: string;
-  username: string;
+  password: string
+  role: string
+  username: string
 }
 
 export interface UserDeleteBody {
-  id: number;
+  id: number
 }
 
 export namespace Authentication {
@@ -101,11 +101,11 @@ export namespace Authentication {
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
   export namespace Login {
-    export type RequestParams = {};
-    export type RequestQuery = {};
-    export type RequestBody = LoginBody;
-    export type RequestHeaders = {};
-    export type ResponseBody = LoginData;
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = LoginBody
+    export type RequestHeaders = {}
+    export type ResponseBody = LoginData
   }
 
   /**
@@ -117,11 +117,11 @@ export namespace Authentication {
    * @response `200` `LogoutData` OK
    */
   export namespace Logout {
-    export type RequestParams = {};
-    export type RequestQuery = {};
-    export type RequestBody = never;
-    export type RequestHeaders = {};
-    export type ResponseBody = LogoutData;
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = LogoutData
   }
 
   /**
@@ -133,11 +133,11 @@ export namespace Authentication {
    * @response `200` `MeData` OK
    */
   export namespace Me {
-    export type RequestParams = {};
-    export type RequestQuery = {};
-    export type RequestBody = never;
-    export type RequestHeaders = {};
-    export type ResponseBody = MeData;
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = MeData
   }
 }
 
@@ -153,11 +153,11 @@ export namespace User {
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
   export namespace CreateUser {
-    export type RequestParams = {};
-    export type RequestQuery = {};
-    export type RequestBody = UserCreateBody;
-    export type RequestHeaders = {};
-    export type ResponseBody = CreateUserData;
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = UserCreateBody
+    export type RequestHeaders = {}
+    export type ResponseBody = CreateUserData
   }
 
   /**
@@ -171,42 +171,42 @@ export namespace User {
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
   export namespace DeleteUser {
-    export type RequestParams = {};
-    export type RequestQuery = {};
-    export type RequestBody = UserDeleteBody;
-    export type RequestHeaders = {};
-    export type ResponseBody = DeleteUserData;
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = UserDeleteBody
+    export type RequestHeaders = {}
+    export type ResponseBody = DeleteUserData
   }
 }
 
-import type { AxiosInstance, AxiosRequestConfig, HeadersDefaults, ResponseType } from "axios";
-import axios from "axios";
+import type { AxiosInstance, AxiosRequestConfig, HeadersDefaults, ResponseType } from "axios"
+import axios from "axios"
 
-export type QueryParamsType = Record<string | number, any>;
+export type QueryParamsType = Record<string | number, any>
 
 export interface FullRequestParams extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
   /** set parameter to `true` for call `securityWorker` for this request */
-  secure?: boolean;
+  secure?: boolean
   /** request path */
-  path: string;
+  path: string
   /** content type of request body */
-  type?: ContentType;
+  type?: ContentType
   /** query params */
-  query?: QueryParamsType;
+  query?: QueryParamsType
   /** format of response (i.e. response.json() -> format: "json") */
-  format?: ResponseType;
+  format?: ResponseType
   /** request body */
-  body?: unknown;
+  body?: unknown
 }
 
-export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
+export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">
 
 export interface ApiConfig<SecurityDataType = unknown> extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
   securityWorker?: (
     securityData: SecurityDataType | null,
-  ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
-  secure?: boolean;
-  format?: ResponseType;
+  ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void
+  secure?: boolean
+  format?: ResponseType
 }
 
 export enum ContentType {
@@ -217,25 +217,25 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public instance: AxiosInstance;
-  private securityData: SecurityDataType | null = null;
-  private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
-  private secure?: boolean;
-  private format?: ResponseType;
+  public instance: AxiosInstance
+  private securityData: SecurityDataType | null = null
+  private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"]
+  private secure?: boolean
+  private format?: ResponseType
 
   constructor({ securityWorker, secure, format, ...axiosConfig }: ApiConfig<SecurityDataType> = {}) {
-    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "" });
-    this.secure = secure;
-    this.format = format;
-    this.securityWorker = securityWorker;
+    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "/api" })
+    this.secure = secure
+    this.format = format
+    this.securityWorker = securityWorker
   }
 
   public setSecurityData = (data: SecurityDataType | null) => {
-    this.securityData = data;
-  };
+    this.securityData = data
+  }
 
   protected mergeRequestParams(params1: AxiosRequestConfig, params2?: AxiosRequestConfig): AxiosRequestConfig {
-    const method = params1.method || (params2 && params2.method);
+    const method = params1.method || (params2 && params2.method)
 
     return {
       ...this.instance.defaults,
@@ -246,32 +246,32 @@ export class HttpClient<SecurityDataType = unknown> {
         ...(params1.headers || {}),
         ...((params2 && params2.headers) || {}),
       },
-    };
+    }
   }
 
   protected stringifyFormItem(formItem: unknown) {
     if (typeof formItem === "object" && formItem !== null) {
-      return JSON.stringify(formItem);
+      return JSON.stringify(formItem)
     } else {
-      return `${formItem}`;
+      return `${formItem}`
     }
   }
 
   protected createFormData(input: Record<string, unknown>): FormData {
     if (input instanceof FormData) {
-      return input;
+      return input
     }
     return Object.keys(input || {}).reduce((formData, key) => {
-      const property = input[key];
-      const propertyContent: any[] = property instanceof Array ? property : [property];
+      const property = input[key]
+      const propertyContent: any[] = property instanceof Array ? property : [property]
 
       for (const formItem of propertyContent) {
-        const isFileType = formItem instanceof Blob || formItem instanceof File;
-        formData.append(key, isFileType ? formItem : this.stringifyFormItem(formItem));
+        const isFileType = formItem instanceof Blob || formItem instanceof File
+        formData.append(key, isFileType ? formItem : this.stringifyFormItem(formItem))
       }
 
-      return formData;
-    }, new FormData());
+      return formData
+    }, new FormData())
   }
 
   public request = async <T = any, _E = any>({
@@ -287,16 +287,16 @@ export class HttpClient<SecurityDataType = unknown> {
       ((typeof secure === "boolean" ? secure : this.secure) &&
         this.securityWorker &&
         (await this.securityWorker(this.securityData))) ||
-      {};
-    const requestParams = this.mergeRequestParams(params, secureParams);
-    const responseFormat = format || this.format || undefined;
+      {}
+    const requestParams = this.mergeRequestParams(params, secureParams)
+    const responseFormat = format || this.format || undefined
 
     if (type === ContentType.FormData && body && body !== null && typeof body === "object") {
-      body = this.createFormData(body as Record<string, unknown>);
+      body = this.createFormData(body as Record<string, unknown>)
     }
 
     if (type === ContentType.Text && body && body !== null && typeof body !== "string") {
-      body = JSON.stringify(body);
+      body = JSON.stringify(body)
     }
 
     return this.instance
@@ -304,19 +304,20 @@ export class HttpClient<SecurityDataType = unknown> {
         ...requestParams,
         headers: {
           ...(requestParams.headers || {}),
-          ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
+          ...(type ? { "Content-Type": type } : {}),
         },
         params: query,
         responseType: responseFormat,
         data: body,
         url: path,
       })
-      .then((response) => response.data);
-  };
+      .then((response) => response.data)
+  }
 }
 
 /**
  * @title No title
+ * @baseUrl /api
  * @contact
  */
 export class Server<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
@@ -338,6 +339,7 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         method: "POST",
         body: payload,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 
@@ -355,6 +357,7 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         path: `/auth.logout`,
         method: "POST",
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 
@@ -372,9 +375,10 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         path: `/auth.me`,
         method: "GET",
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
-  };
+  }
   user = {
     /**
      * No description
@@ -393,6 +397,7 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         method: "POST",
         body: payload,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 
@@ -413,7 +418,8 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         method: "POST",
         body: payload,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
-  };
+  }
 }

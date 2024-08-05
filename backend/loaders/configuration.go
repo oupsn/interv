@@ -18,6 +18,7 @@ const (
 	EnvDBUrl         = "DB_URL"
 	EnvDBUsername    = "DB_USERNAME"
 	EnvJwtSecret     = "JWT_SECRET"
+	EnvMode          = "ENV"
 )
 
 func init() {
