@@ -3,13 +3,14 @@ package loaders
 import (
 	"errors"
 	"fmt"
+	swagger "github.com/arsmn/fiber-swagger/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/spf13/viper"
 	"time"
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/handlers"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
-	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
@@ -31,33 +32,42 @@ func SetupRoutes() {
 
 	// Fiber App
 	app := NewFiberApp()
-
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     viper.GetString(EnvServerOrigins),
 		AllowCredentials: true,
 	}))
 
-	// Routes
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, Interv!")
-	})
-
-	v1 := app.Group("/api/v1")
-	v1.Get("/", func(c *fiber.Ctx) error {
+	// Public Routes
+	app.Post("api/user.createUser", userHandlers.CreateUser)
+	app.Post("api/auth.login", authHandlers.Login)
+	app.Post("api/auth.logout", authHandlers.Logout)
+	app.Get("api/healthcheck", handlers.HealthCheck)
+	app.Get("api/swagger/*", swagger.HandlerDefault)
+	app.Get("api/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, Interv 🕊️")
 	})
 
+	// Private Routes
+	api := app.Group("/api")
+	api.Use(func(c *fiber.Ctx) error {
+		token := c.Cookies("token", "")
+		_, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+			return []byte(viper.GetString("JWT_SECRET")), nil
+		})
+
+		if err != nil {
+			print("Error ", err.Error(), "\n")
+			return fiber.ErrUnauthorized
+		}
+
+		return c.Next()
+	})
+
 	// User
-	v1.Post("user.createUser", userHandlers.CreateUser)
-	v1.Post("user.deleteUser", userHandlers.DeleteUser)
+	api.Post("user.deleteUser", userHandlers.DeleteUser)
 
 	// Auth
-	v1.Get("auth.me", authHandlers.Me)
-	v1.Post("auth.login", authHandlers.Login)
-	v1.Post("auth.logout", authHandlers.Logout)
-
-	app.Get("healthcheck", handlers.HealthCheck)
-	app.Get("swagger/*", swagger.HandlerDefault)
+	api.Get("auth.me", authHandlers.Me)
 
 	ListenAndServe(app, serverAddr)
 }

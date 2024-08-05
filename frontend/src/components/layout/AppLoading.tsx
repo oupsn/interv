@@ -17,7 +17,7 @@ const AppLoading: React.FC<PropsWithChildren> = ({ children }) => {
     }
 
     if (isLoggedIn) {
-      navigate("/lobby")
+      navigate("/dashboard")
       const timeout = setTimeout(() => {
         setIsLoaded(true)
       }, 500)

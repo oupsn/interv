@@ -4,12 +4,12 @@ import { Server } from "../api/server.ts"
 
 const SERVER_PROTOCOL = location.protocol
 const SERVER_HOST = import.meta.env.VITE_SERVER_HOST || location.host
-const SERVER_URL = `${SERVER_PROTOCOL}//${SERVER_HOST}/api/v1`
+const SERVER_URL = `${SERVER_PROTOCOL}//${SERVER_HOST}/api`
 
 console.log("[SERVER] ", SERVER_URL)
 
 export const server = new Server({
-  baseURL: "/api/v1",
+  //baseURL: "/api", // already set in swagger codegen
   withCredentials: true,
 })
 

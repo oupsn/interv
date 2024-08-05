@@ -11,8 +11,8 @@ export default defineConfig({
   },
   preview: {
     proxy: {
-      "/api/v1": {
-        target: "http://something:3000",
+      "/api": {
+        target: "http://localhost:5000",
         changeOrigin: true,
         secure: true,
       },
@@ -20,8 +20,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api/v1": {
-        target: "http://localhost:3000",
+      "/api": {
+        target: "http://localhost:5000",
         changeOrigin: true,
         secure: true,
       },

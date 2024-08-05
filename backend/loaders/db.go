@@ -1,13 +1,10 @@
 package loaders
 
 import (
-	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/t"
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"fmt"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
-	"time"
-
-	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"gorm.io/gorm"
 )
 
@@ -58,9 +55,5 @@ func NewDatabase(config DatabaseConfig) (*gorm.DB, error) {
 	fmt.Println(fmt.Sprintf("[DB] Connecting to %s", config.Host))
 	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=Asia/Bangkok", config.Host, config.Username, config.Password, config.Name, config.Port)
 
-	return gorm.Open(postgres.Open(dsn), &gorm.Config{
-		NowFunc: func() time.Time {
-			return time.Now().In(t.BangkokTime)
-		},
-	})
+	return gorm.Open(postgres.Open(dsn))
 }

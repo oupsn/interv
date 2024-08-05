@@ -17,15 +17,15 @@ services:
       - 6379:6379
     volumes:
       - redis_data:/data
-  core:
-    build: ./backend
-    restart: always
-    ports:
-      - 5000:5000
-    env_file: backend/config.env
-    depends_on:
-      - db
-      - redis
+  #core:
+    #build: ./backend
+    #restart: always
+    #ports:
+    #  - 5000:5000
+    #env_file: backend/config.env
+    #depends_on:
+    #  - db
+    #  - redis
 
 volumes:
   postgres_data:
