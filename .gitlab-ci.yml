@@ -54,8 +54,6 @@ frontend_release-image:
   services:
     - docker:20.10.16-dind
   stage: release
-  needs:
-    - frontend_build
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
   only:
@@ -71,8 +69,6 @@ backend_release-image:
   services:
     - docker:20.10.16-dind
   stage: release
-  needs:
-    - backend_build
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
   only:
