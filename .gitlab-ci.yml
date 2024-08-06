@@ -54,14 +54,17 @@ frontend_release-image:
     - docker:20.10.16-dind
   stage: release
   before_script:
+    - echo "Logging into Docker hub..."
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
   only:
     - staging
   script:
     - cd frontend
+    - echo "Building Docker image..."
     - docker build --pull -t $CONTAINER_TEST_IMAGE_CLIENTSIDE .
     - docker push $CONTAINER_TEST_IMAGE_CLIENTSIDE
     - docker tag $CONTAINER_TEST_IMAGE_CLIENTSIDE $CONTAINER_RELEASE_IMAGE_CLIENTSIDE
+    - echo "Pushing Docker image to Docker hub......"
     - docker push $CONTAINER_RELEASE_IMAGE_CLIENTSIDE
 
 backend_release-image:
@@ -70,14 +73,17 @@ backend_release-image:
     - docker:20.10.16-dind
   stage: release
   before_script:
+    - echo "Logging into Docker hub..."
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
   only:
     - staging
   script:
     - cd backend
+    - echo "Building Docker image..."
     - docker build --pull -t $CONTAINER_TEST_IMAGE_CORE .
     - docker push $CONTAINER_TEST_IMAGE_CORE
     - docker tag $CONTAINER_TEST_IMAGE_CORE $CONTAINER_RELEASE_IMAGE_CORE
+    - echo "Pushing Docker image to Docker hub......"
     - docker push $CONTAINER_RELEASE_IMAGE_CORE
 
 deploy-qa:
@@ -100,6 +106,7 @@ deploy-prod:
   stage: deploy
   only:
     - main
+  when: manual
   script:
     - echo "Deploying to prod ..."
     - mkdir -p ~/.ssh
