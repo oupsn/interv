@@ -27,7 +27,7 @@ func init() {
 
 func BootConfiguration() {
 	viper.SetConfigName("config")
-	viper.SetConfigType("env")
+	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Println("[CONFIG] config.yaml not found in the current path, will use ENVs instead.")
