@@ -94,6 +94,9 @@ deploy-qa:
   needs:
     - frontend_release-image
     - backend_release-image
+  before_script:
+    - apk update
+    - apk add --no-cache openssh
   script:
     - echo "Deploying to qa ..."
     - mkdir -p ~/.ssh
@@ -107,6 +110,9 @@ deploy-prod:
   only:
     - main
   when: manual
+  before_script:
+    - apk update
+    - apk add --no-cache openssh
   script:
     - echo "Deploying to prod ..."
     - mkdir -p ~/.ssh
