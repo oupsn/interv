@@ -1,15 +1,22 @@
 stages:
   - lint
   - test
-  - build-frontend
-  - backend
+  - build
+  - release
+  - deploy
+
+variables:
+  CONTAINER_TEST_IMAGE_CORE: $CI_REGISTRY_IMAGE_CORE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE_CORE: $CI_REGISTRY_IMAGE_CORE:latest
+  CONTAINER_TEST_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:latest
 
 frontend_lint:
   image: node:lts-alpine3.20
   stage: lint
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-      allow_failure: true
+      allow_failure: false
   before_script:
     - cd frontend
   script:
@@ -22,13 +29,83 @@ frontend_lint:
 
 frontend_build:
   image: node:lts-alpine3.20
-  stage: build-frontend
+  stage: build
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: false
-      changes:
-        - frontend/**/*
   script:
     - cd frontend
     - npm install
     - npx tsc
+
+backend_build:
+  image: golang:latest
+  stage: build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      allow_failure: false
+  script:
+    - cd backend
+    - go mod download
+    - go build -o app
+
+frontend_release-image:
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  stage: release
+  needs:
+    - frontend_build
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+  only:
+    - staging
+  script:
+    - docker build --pull -t $CONTAINER_TEST_IMAGE_CLIENTSIDE .
+    - docker push $CONTAINER_TEST_IMAGE_CLIENTSIDE
+    - docker tag $CONTAINER_TEST_IMAGE_CLIENTSIDE $CONTAINER_RELEASE_IMAGE_CLIENTSIDE
+    - docker push $CONTAINER_RELEASE_IMAGE_CLIENTSIDE
+
+backend_release-image:
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  stage: release
+  needs:
+    - backend_build
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+  only:
+    - staging
+  script:
+    - docker build --pull -t $CONTAINER_TEST_IMAGE_CORE .
+    - docker push $CONTAINER_TEST_IMAGE_CORE
+    - docker tag $CONTAINER_TEST_IMAGE_CORE $CONTAINER_RELEASE_IMAGE_CORE
+    - docker push $CONTAINER_RELEASE_IMAGE_CORE
+
+deploy-qa:
+  image: alpine
+  stage: deploy
+  only:
+    - staging
+  needs:
+    - frontend_release-image
+    - backend_release-image
+  script:
+    - echo "Deploying to qa ..."
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "cd ./deploy-qa.sh"
+
+deploy-prod:
+  image: alpine
+  stage: deploy
+  only:
+    - main
+  script:
+    - echo "Deploying to prod ..."
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "cd ./deploy-prod.sh"
