@@ -56,7 +56,7 @@ frontend_release-image:
     - docker:20.10.16-dind
   stage: release
   before_script:
-    - docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY_PASSWORD
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
   only:
     - staging
   script:
@@ -72,7 +72,7 @@ backend_release-image:
     - docker:20.10.16-dind
   stage: release
   before_script:
-    - docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY_PASSWORD
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
   only:
     - staging
   script:
