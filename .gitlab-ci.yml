@@ -9,6 +9,8 @@ variables:
   CONTAINER_RELEASE_IMAGE_CORE: $CI_REGISTRY_IMAGE_CORE:latest
   CONTAINER_TEST_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:latest
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_CERTDIR: "/certs"
 
 frontend_lint:
   image: node:lts-alpine3.20
@@ -118,4 +120,4 @@ deploy-prod:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "cd ./deploy-prod.sh"
+    - ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "./deploy-prod.sh"
