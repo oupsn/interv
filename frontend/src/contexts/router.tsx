@@ -5,7 +5,6 @@ import LoginPage from "@/pages/login/Login.tsx"
 import LobbyPage from "@/pages/lobby/Lobby.tsx"
 import { Playground } from "@/pages/playground/Playground.tsx"
 import Dashboard from "@/pages/dashboard/Dashboard.tsx"
-import LobbyLayout from "@/components/layout/LobbyLayout.tsx"
 import CodingInterviewPage from "@/pages/lobby/codingInterview/CodingInterview.tsx"
 import VideoInterviewPage from "@/pages/lobby/videoInterview/VideoInterview.tsx"
 
