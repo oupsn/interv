@@ -11,9 +11,9 @@ variables:
   CONTAINER_TEST_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:$TIMESTAMP
   CONTAINER_RELEASE_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:latest
 
-before_script:
-- export TIMESTAMP=$(echo $CI_JOB_STARTED_AT | sed 's/:/-/g')
-- echo $CONTAINER_TEST_IMAGE_CORE
+default:
+  before_script:
+    - export TIMESTAMP=$(sed "s/:/-/g" <<< $CI_COMMIT_TIMESTAMP)
 
 frontend_lint:
   image: node:lts-alpine3.20
