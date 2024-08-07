@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
-import SideBar from "@/pages/lobby/components/SideBar.tsx"
-import SideBarItem from "@/pages/lobby/components/SideBarItem.tsx"
+import SideBar from "@/components/layout/SideBar.tsx"
+import SideBarItem from "@/components/layout/SideBarItem.tsx"
 import VideoInterviewContentLayout from "@/pages/lobby/videoInterview/components/VideoInterviewContentLayout.tsx"
 import { ReactMediaRecorder, StatusMessages } from "react-media-recorder-2"
 import {
