@@ -60,7 +60,7 @@ frontend_release-image:
   only:
     - staging
   script:
-    - IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g')
+    - IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - cd frontend
     - echo "Building Docker image..."
     #- docker build --pull -t $CONTAINER_TEST_IMAGE_CLIENTSIDE .
