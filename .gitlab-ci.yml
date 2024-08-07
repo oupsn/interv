@@ -64,7 +64,7 @@ frontend_release-image:
     - cd frontend
     - echo "Building Docker image..."
     #- docker build --pull -t $CONTAINER_TEST_IMAGE_CLIENTSIDE .
-    - docker build --pull -t $CI_REGISTRY_IMAGE_CLIENTSIDE:$IMAGE_TAG .
+    - docker build --pull -t "$CI_REGISTRY_IMAGE_CLIENTSIDE:$IMAGE_TAG" .
     - docker push $CONTAINER_TEST_IMAGE_CLIENTSIDE
     - docker tag $CONTAINER_TEST_IMAGE_CLIENTSIDE $CONTAINER_RELEASE_IMAGE_CLIENTSIDE
     - echo "Pushing Docker image to Docker hub......"
@@ -81,7 +81,6 @@ backend_release-image:
   only:
     - staging
   script:
-    - export TIMESTAMP=$(sed "s/:/-/g" <<< $CI_COMMIT_TIMESTAMP)
     - cd backend
     - echo "Building Docker image..."
     - docker build --pull -t $CONTAINER_TEST_IMAGE_CORE .
