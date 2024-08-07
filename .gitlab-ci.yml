@@ -13,6 +13,7 @@ variables:
 
 before_script:
 - export TIMESTAMP=$(echo $CI_JOB_STARTED_AT | sed 's/:/-/g')
+- echo $CONTAINER_TEST_IMAGE_CORE
 
 frontend_lint:
   image: node:lts-alpine3.20
