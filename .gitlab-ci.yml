@@ -1,9 +1,3 @@
-default:
-  before_script:
-    - export TIMESTAMP=$(sed "s/:/-/g" <<< $CI_COMMIT_TIMESTAMP)
-    - echo "Current tag:"
-    - echo $TIMESTAMP
-    
 stages:
   - lint
   - build
@@ -11,12 +5,10 @@ stages:
   - deploy
 
 variables:
-  TIMESTAMP: ""
   CONTAINER_TEST_IMAGE_CORE: $CI_REGISTRY_IMAGE_CORE:$TIMESTAMP
   CONTAINER_RELEASE_IMAGE_CORE: $CI_REGISTRY_IMAGE_CORE:latest
   CONTAINER_TEST_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:$TIMESTAMP
   CONTAINER_RELEASE_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:latest
-
 
 
 frontend_lint:
@@ -68,6 +60,7 @@ frontend_release-image:
   only:
     - staging
   script:
+    - export TIMESTAMP=$(sed "s/:/-/g" <<< $CI_COMMIT_TIMESTAMP)
     - cd frontend
     - echo "Building Docker image..."
     - docker build --pull -t $CONTAINER_TEST_IMAGE_CLIENTSIDE .
@@ -87,6 +80,7 @@ backend_release-image:
   only:
     - staging
   script:
+    - export TIMESTAMP=$(sed "s/:/-/g" <<< $CI_COMMIT_TIMESTAMP)
     - cd backend
     - echo "Building Docker image..."
     - docker build --pull -t $CONTAINER_TEST_IMAGE_CORE .
