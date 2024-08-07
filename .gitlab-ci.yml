@@ -1,3 +1,9 @@
+default:
+  before_script:
+    - export TIMESTAMP=$(sed "s/:/-/g" <<< $CI_COMMIT_TIMESTAMP)
+    - echo "Current tag:"
+    - echo $TIMESTAMP
+    
 stages:
   - lint
   - build
@@ -11,9 +17,7 @@ variables:
   CONTAINER_TEST_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:$TIMESTAMP
   CONTAINER_RELEASE_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:latest
 
-default:
-  before_script:
-    - export TIMESTAMP=$(sed "s/:/-/g" <<< $CI_COMMIT_TIMESTAMP)
+
 
 frontend_lint:
   image: node:lts-alpine3.20
