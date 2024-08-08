@@ -17,9 +17,9 @@ const CodingInterviewInstruction: React.FC<CodingInterviewInstructionProps> = ({
   React.useEffect(() => {
     setLoading(true)
     setTimeout(() => {
-      setLoading(false)
+      return setLoading(false)
     }, 1000)
-    return () => setLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
     <>
