@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button.tsx"
 import { useNavigate } from "react-router-dom"
-import SideBarItem from "@/pages/lobby/components/SideBarItem.tsx"
-import SideBar from "@/pages/lobby/components/SideBar.tsx"
+import SideBarItem from "@/components/layout/SideBarItem.tsx"
+import SideBar from "@/components/layout/SideBar.tsx"
 
 const NAV_ITEMS = [
   { name: "Help", isActive: false, onCLick: () => console.log("Helppppppp") },

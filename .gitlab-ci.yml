@@ -5,10 +5,9 @@ stages:
   - deploy
 
 variables:
-  CONTAINER_TEST_IMAGE_CORE: $CI_REGISTRY_IMAGE_CORE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE_CORE: $CI_REGISTRY_IMAGE_CORE:latest
-  CONTAINER_TEST_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:latest
+
 
 frontend_lint:
   image: node:lts-alpine3.20
@@ -59,9 +58,11 @@ frontend_release-image:
   only:
     - staging
   script:
+    - IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
+    - CONTAINER_TEST_IMAGE_CLIENTSIDE="$CI_REGISTRY_IMAGE_CLIENTSIDE:$IMAGE_TAG"
     - cd frontend
     - echo "Building Docker image..."
-    - docker build --pull -t $CONTAINER_TEST_IMAGE_CLIENTSIDE .
+    - docker build --pull -t "$CONTAINER_TEST_IMAGE_CLIENTSIDE" .
     - docker push $CONTAINER_TEST_IMAGE_CLIENTSIDE
     - docker tag $CONTAINER_TEST_IMAGE_CLIENTSIDE $CONTAINER_RELEASE_IMAGE_CLIENTSIDE
     - echo "Pushing Docker image to Docker hub......"
@@ -78,6 +79,8 @@ backend_release-image:
   only:
     - staging
   script:
+    - IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
+    - CONTAINER_TEST_IMAGE_CORE="$CI_REGISTRY_IMAGE_CORE:$IMAGE_TAG"
     - cd backend
     - echo "Building Docker image..."
     - docker build --pull -t $CONTAINER_TEST_IMAGE_CORE .
