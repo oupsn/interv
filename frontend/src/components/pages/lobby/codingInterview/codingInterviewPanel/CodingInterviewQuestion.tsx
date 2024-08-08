@@ -17,21 +17,23 @@ export interface CodingInterviewQuestionProps {
   id: number
   title: string
   description: string
-  inputList: string[]
-  outputList: string[]
+  exampleInputList: string[]
+  exampleOutputList: string[]
+  testcaseList: { input: string; output: string }[]
 }
 
 const CodingInterviewQuestion: React.FC<CodingInterviewQuestionProps> = ({
   id,
   title,
   description,
-  inputList,
-  outputList,
+  exampleInputList,
+  exampleOutputList,
+  testcaseList,
 }) => {
   return (
-    <Card className="w-full mx-auto min-h-full">
+    <Card className="h-full">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">
+        <CardTitle>
           Question {id}: {title}
         </CardTitle>
         <CardDescription>{description}</CardDescription>
@@ -39,31 +41,79 @@ const CodingInterviewQuestion: React.FC<CodingInterviewQuestionProps> = ({
       <CardContent>
         <Accordion
           type="multiple"
-          defaultValue={["input", "output"]}
-          className="w-full"
+          defaultValue={["input-examples", "output-examples", "test-cases"]}
         >
-          <AccordionItem value="input">
+          <AccordionItem value="input-examples">
             <AccordionTrigger>Input Examples</AccordionTrigger>
             <AccordionContent>
-              <ul className="list-disc pl-6">
-                {inputList.map((input, index) => (
-                  <li key={index} className="my-2">
-                    <code className="bg-gray-100 p-1 rounded">{input}</code>
-                  </li>
+              <ul>
+                {exampleInputList.map((input, index) => (
+                  <li key={index}>{input}</li>
                 ))}
               </ul>
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="output">
+
+          <AccordionItem value="output-examples">
             <AccordionTrigger>Expected Output</AccordionTrigger>
             <AccordionContent>
-              <ul className="list-disc pl-6">
-                {outputList.map((output, index) => (
-                  <li key={index} className="my-2">
-                    <code className="bg-gray-100 p-1 rounded">{output}</code>
-                  </li>
+              <ul>
+                {exampleOutputList.map((output, index) => (
+                  <li key={index}>{output}</li>
                 ))}
               </ul>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="test-cases">
+            <AccordionTrigger>Test Cases</AccordionTrigger>
+            <AccordionContent>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr>
+                    <th
+                      style={{
+                        textAlign: "left",
+                        padding: "8px",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
+                      Input
+                    </th>
+                    <th
+                      style={{
+                        textAlign: "left",
+                        padding: "8px",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
+                      Output
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {testcaseList.map((testcase, index) => (
+                    <tr key={index}>
+                      <td
+                        style={{
+                          padding: "8px",
+                          borderBottom: "1px solid #ddd",
+                        }}
+                      >
+                        {testcase.input}
+                      </td>
+                      <td
+                        style={{
+                          padding: "8px",
+                          borderBottom: "1px solid #ddd",
+                        }}
+                      >
+                        {testcase.output}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </AccordionContent>
           </AccordionItem>
         </Accordion>

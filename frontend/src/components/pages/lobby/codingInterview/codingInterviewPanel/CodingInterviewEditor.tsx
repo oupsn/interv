@@ -69,7 +69,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   }, [language, content, onChange])
 
   return (
-    <div className="p-6 w-full h-full mx-auto rounded-lg border shadow-lg bg-white">
+    <div className="p-6 w-full min-h-full mx-auto rounded-lg border shadow-lg bg-white">
       <div className="mb-4 flex justify-between items-center">
         <Select onValueChange={handleLanguageChange} value={language}>
           <SelectTrigger className="w-[180px]">
@@ -95,7 +95,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         />
       </div>
       <div className="w-full">
-        <div className="bg-gray-100 p-4 h-[200px] overflow-auto rounded-md border border-gray-300">
+        <div className="bg-gray-100 p-4 h-full overflow-auto rounded-md border border-gray-300">
           <h3 className="text-lg font-semibold mb-2">Output:</h3>
           <pre className="whitespace-pre-wrap">{output}</pre>
         </div>

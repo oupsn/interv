@@ -121,8 +121,9 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
             id={currentQuestion.id}
             title={currentQuestion.title}
             description={currentQuestion.description}
-            inputList={currentQuestion.inputList}
-            outputList={currentQuestion.outputList}
+            exampleInputList={currentQuestion.exampleInputList}
+            exampleOutputList={currentQuestion.exampleOutputList}
+            testcaseList={currentQuestion.testcaseList}
           />
         </div>
         <div

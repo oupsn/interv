@@ -60,24 +60,54 @@ const mockData = {
         title: "Two Sum",
         description:
           "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-        inputList: ["nums = [2,7,11,15]", "target = 9"],
-        outputList: ["[0,1]"],
+        exampleInputList: ["nums = [2,7,11,15]", "target = 9"],
+        exampleOutputList: ["[0,1]"],
+        testcaseList: [
+          {
+            input: "[2,7,11,15], 9",
+            output: "[0,1]",
+          },
+          {
+            input: "[3,2,4], 6",
+            output: "[1,2]",
+          },
+        ],
       },
       {
         id: 2,
         title: "Add Two Numbers",
         description:
           "You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.",
-        inputList: ["l1 = [2,4,3]", "l2 = [5,6,4]"],
-        outputList: ["[7,0,8]"],
+        exampleInputList: ["l1 = [2,4,3]", "l2 = [5,6,4]"],
+        exampleOutputList: ["[7,0,8]"],
+        testcaseList: [
+          {
+            input: "[2,4,3], [5,6,4]",
+            output: "[7,0,8]",
+          },
+          {
+            input: "[0], [0]",
+            output: "[0]",
+          },
+        ],
       },
       {
         id: 3,
         title: "Longest Substring Without Repeating Characters",
         description:
           "Given a string s, find the length of the longest substring without repeating characters.",
-        inputList: ["s = 'abcabcbb'"],
-        outputList: ["3"],
+        exampleInputList: ["s = 'abcabcbb'"],
+        exampleOutputList: ["3"],
+        testcaseList: [
+          {
+            input: "'abcabcbb'",
+            output: "3",
+          },
+          {
+            input: "'bbbbb'",
+            output: "1",
+          },
+        ],
       },
     ],
   },
