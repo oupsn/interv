@@ -1,5 +1,5 @@
-import CodingInterviewInstruction from "@/components/pages/lobby/codingInterview/CodingInterviewInstruction"
-import CodingInterviewPanel from "@/components/pages/lobby/codingInterview/CodingInterviewPanel"
+import CodingInterviewInstruction from "./components/CodingInterviewInstruction"
+import CodingInterviewPanel from "./components/CodingInterviewPanel"
 import { useState } from "react"
 
 const CodingInterviewPage = () => {
