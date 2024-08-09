@@ -115,10 +115,10 @@ func (a AuthenticationHandler) Me(c *fiber.Ctx) error {
 	}
 
 	return Ok(c, CurrentUserResponse{
-		ID:        user.ID,
-		Username:  user.Username,
-		Role:      user.Role,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+		ID:        &user.ID,
+		Username:  &user.Username,
+		Role:      (*string)(&user.Role),
+		CreatedAt: &user.CreatedAt,
+		UpdatedAt: &user.UpdatedAt,
 	})
 }

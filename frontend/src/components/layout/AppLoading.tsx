@@ -2,8 +2,10 @@ import { clx } from "@/utils/clx.ts"
 import React, { PropsWithChildren, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import useCurrentUser from "@/hooks/UseCurrentUser.ts"
-import IntervLogo from "@/assets/intervLOGGOG.png"
+import IntervLogo from "@/assets/interv-logo.png"
 import { Toaster } from "sonner"
+import { isMobile } from "react-device-detect"
+import NotAllowMobile from "@/components/layout/NotAllowMobile.tsx"
 
 const AppLoading: React.FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
@@ -47,16 +49,16 @@ const AppLoading: React.FC<PropsWithChildren> = ({ children }) => {
       <div
         id="app-loading"
         className={clx(
-          "flex z-[9999] transition-all duration-1000 items-center justify-center bg-bgblackwelcome absolute inset-0 pointer-events-none bg-white",
+          "flex z-[9999] transition-all duration-700 items-center justify-center bg-bgblackwelcome absolute inset-0 pointer-events-none bg-white",
           {
             "opacity-0": isLoaded,
             "opacity-100": !isLoaded,
           },
         )}
       >
-        <img src={IntervLogo} alt="Interv" className={clx("w-96 h-96")} />
+        <img src={IntervLogo} alt="Interv" className={clx("w-96")} />
       </div>
-      {isLoaded ? children : null}
+      {isLoaded ? !isMobile ? children : <NotAllowMobile /> : null}
     </>
   )
 }

@@ -44,11 +44,11 @@ func (u UserHandler) CreateUser(c *fiber.Ctx) error {
 	}
 
 	return Created(c, UserData{
-		ID:        response.ID,
-		Username:  response.Username,
-		Role:      response.Role,
-		CreatedAt: response.CreatedAt,
-		UpdatedAt: response.UpdatedAt,
+		ID:        &response.ID,
+		Username:  &response.Username,
+		Role:      (*string)(&response.Role),
+		CreatedAt: &response.CreatedAt,
+		UpdatedAt: &response.UpdatedAt,
 	})
 }
 
