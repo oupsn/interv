@@ -35,6 +35,7 @@ frontend_build:
     - cd frontend
     - npm install
     - npx tsc
+  needs: ["lint"]
 
 backend_build:
   image: golang:latest
@@ -46,6 +47,7 @@ backend_build:
     - cd backend
     - go mod download
     - go build -o app
+  needs: ["lint"]
 
 frontend_release-image:
   image: docker:20.10.16
