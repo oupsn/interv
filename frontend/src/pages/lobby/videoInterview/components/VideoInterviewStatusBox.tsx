@@ -1,4 +1,4 @@
-import React from "react"
+import { FC } from "react"
 import { CheckIcon, Cross2Icon } from "@radix-ui/react-icons"
 import { StatusMessages } from "react-media-recorder-2"
 
@@ -7,7 +7,7 @@ interface VideoInterviewStatusBoxProps {
   status: StatusMessages
   error: string
 }
-const videoInterviewStatusBox: React.FC<VideoInterviewStatusBoxProps> = ({
+const videoInterviewStatusBox: FC<VideoInterviewStatusBoxProps> = ({
   title,
   status,
   error,

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import SideBar from "@/components/layout/SideBar.tsx"
 import SideBarItem from "@/components/layout/SideBarItem.tsx"
-import VideoInterviewContentLayout from "@/pages/lobby/videoInterview/components/VideoInterviewContentLayout.tsx"
 import { ReactMediaRecorder, StatusMessages } from "react-media-recorder-2"
 import {
   Select,
@@ -13,6 +12,7 @@ import {
 import VideoInterviewStatusBox from "@/pages/lobby/videoInterview/components/VideoInterviewStatusBox.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { Label } from "@/components/ui/label.tsx"
+import MainPanel from "@/components/layout/MainPanel.tsx"
 
 const NAV_ITEMS = [
   { name: "Question 1" },
@@ -97,95 +97,91 @@ const VideoInterviewPage = () => {
           />
         ))}
       </SideBar>
-      <VideoInterviewContentLayout>
-        <div className={"flex flex-col items-center gap-8"}>
-          <p className={"text-2xl font-semibold"}>Video Interview</p>
-          <ReactMediaRecorder
-            key={selectedDevice.videoId}
-            video={{ deviceId: selectedDevice.videoId }}
-            askPermissionOnMount
-            render={({ previewStream, error, status }) => {
-              setMediaError(error)
-              setMediaStatus(status)
-              return (
-                <>
-                  <VideoPreview stream={previewStream} />
-                </>
-              )
-            }}
-          />
-          <div className={"flex gap-20"}>
-            <div>
-              <Label>Camera options</Label>
-              <Select
+      <MainPanel className={"flex flex-col justify-center items-center gap-8"}>
+        <p className={"text-2xl font-semibold"}>Video Interview</p>
+        <ReactMediaRecorder
+          key={selectedDevice.videoId}
+          video={{ deviceId: selectedDevice.videoId }}
+          askPermissionOnMount
+          render={({ previewStream, error, status }) => {
+            setMediaError(error)
+            setMediaStatus(status)
+            return (
+              <>
+                <VideoPreview stream={previewStream} />
+              </>
+            )
+          }}
+        />
+        <div className={"flex gap-20"}>
+          <div>
+            <Label>Camera options</Label>
+            <Select
+              value={selectedDevice.videoId}
+              onValueChange={(value) => {
+                setSelectedDevice({
+                  ...selectedDevice,
+                  videoId: value,
+                })
+              }}
+            >
+              <SelectTrigger
+                className="w-[180px]"
                 value={selectedDevice.videoId}
-                onValueChange={(value) => {
-                  setSelectedDevice({
-                    ...selectedDevice,
-                    videoId: value,
-                  })
-                }}
               >
-                <SelectTrigger
-                  className="w-[180px]"
-                  value={selectedDevice.videoId}
-                >
-                  <SelectValue placeholder="Camera" />
-                </SelectTrigger>
-                <SelectContent>
-                  {videoDevices[0]?.deviceId
-                    ? videoDevices.map((device, index) => (
-                        <SelectItem value={device.deviceId} key={index}>
-                          {device.label}
-                        </SelectItem>
-                      ))
-                    : null}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Microphone options</Label>
-              <Select
-                value={selectedDevice.audioId}
-                onValueChange={(value) => {
-                  setSelectedDevice({
-                    ...selectedDevice,
-                    audioId: value,
-                  })
-                }}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Microphone" />
-                </SelectTrigger>
-                <SelectContent>
-                  {audioDevices[0]?.deviceId
-                    ? audioDevices.map((device, index) => (
-                        <SelectItem value={device.deviceId} key={index}>
-                          {device.label}
-                        </SelectItem>
-                      ))
-                    : null}
-                </SelectContent>
-              </Select>
-            </div>
+                <SelectValue placeholder="Camera" />
+              </SelectTrigger>
+              <SelectContent>
+                {videoDevices[0]?.deviceId
+                  ? videoDevices.map((device, index) => (
+                      <SelectItem value={device.deviceId} key={index}>
+                        {device.label}
+                      </SelectItem>
+                    ))
+                  : null}
+              </SelectContent>
+            </Select>
           </div>
-          <div className={"space-y-4"}>
-            <VideoInterviewStatusBox
-              title={"Camera"}
-              error={mediaError}
-              status={mediaStatus}
-            />
-            <VideoInterviewStatusBox
-              title={"Microphone"}
-              error={mediaError}
-              status={mediaStatus}
-            />
+          <div>
+            <Label>Microphone options</Label>
+            <Select
+              value={selectedDevice.audioId}
+              onValueChange={(value) => {
+                setSelectedDevice({
+                  ...selectedDevice,
+                  audioId: value,
+                })
+              }}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Microphone" />
+              </SelectTrigger>
+              <SelectContent>
+                {audioDevices[0]?.deviceId
+                  ? audioDevices.map((device, index) => (
+                      <SelectItem value={device.deviceId} key={index}>
+                        {device.label}
+                      </SelectItem>
+                    ))
+                  : null}
+              </SelectContent>
+            </Select>
           </div>
-          <Button disabled={!!mediaError || mediaStatus != "idle"}>
-            Start
-          </Button>
         </div>
-      </VideoInterviewContentLayout>
+        <div className={"space-y-4"}>
+          <VideoInterviewStatusBox
+            title={"Camera"}
+            error={mediaError}
+            status={mediaStatus}
+          />
+          <VideoInterviewStatusBox
+            title={"Microphone"}
+            error={mediaError}
+            status={mediaStatus}
+          />
+        </div>
+        <Button disabled={!!mediaError || mediaStatus != "idle"}>Start</Button>
+      </MainPanel>
     </>
   )
 }
