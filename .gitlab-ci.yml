@@ -28,6 +28,7 @@ frontend_lint:
 frontend_build:
   image: node:lts-alpine3.20
   stage: build
+  needs: []
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: false
@@ -39,6 +40,7 @@ frontend_build:
 backend_build:
   image: golang:latest
   stage: build
+  needs: []
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: false

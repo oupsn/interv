@@ -3,7 +3,6 @@ package services
 import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
-	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/v"
 	"golang.org/x/crypto/bcrypt"
 	"strings"
 )
@@ -27,9 +26,9 @@ func (u *userService) Create(username string, password string, role string) (use
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	return u.userRepository.Create(domains.User{
-		Username: v.Ptr(strings.TrimSpace(username)),
-		Password: v.Ptr(strings.TrimSpace(string(bytes))),
-		Role:     v.Ptr(strings.ToLower(strings.TrimSpace(role))),
+		Username: strings.TrimSpace(username),
+		Password: strings.TrimSpace(string(bytes)),
+		Role:     domains.UserType(strings.ToLower(strings.TrimSpace(role))),
 	})
 }
 

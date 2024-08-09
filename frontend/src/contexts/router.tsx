@@ -19,7 +19,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/",
-        element: <MainLayout />, // maybe can use <LobbyLayout /> ?
+        element: <MainLayout />,
         children: [
           {
             path: "dashboard",
