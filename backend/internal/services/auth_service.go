@@ -30,7 +30,7 @@ func (a *authService) Login(username string, password string) (userId *uint, acc
 		return nil, nil, err
 	}
 
-	token, err := a.GenerateJwtToken(user.ID, user.Username, time.Now().Add(time.Hour*24))
+	token, err := a.GenerateJwtToken(user.ID, user.Username, time.Now().Add(time.Hour*72))
 
 	return &user.ID, &token, nil
 }

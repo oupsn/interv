@@ -1,5 +1,5 @@
 import { clx } from "@/utils/clx.ts"
-import React, { PropsWithChildren, useEffect } from "react"
+import { FC, PropsWithChildren, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import useCurrentUser from "@/hooks/UseCurrentUser.ts"
 import IntervLogo from "@/assets/interv-logo.png"
@@ -7,11 +7,11 @@ import { Toaster } from "sonner"
 import { isMobile } from "react-device-detect"
 import NotAllowMobile from "@/components/layout/NotAllowMobile.tsx"
 
-const AppLoading: React.FC<PropsWithChildren> = ({ children }) => {
+const AppLoading: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
   const { currentUser, isLoading } = useCurrentUser()
   const isLoggedIn = currentUser != null
-  const [isLoaded, setIsLoaded] = React.useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
     if (isLoading) {
