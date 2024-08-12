@@ -67,15 +67,6 @@ const VideoInterviewQuestionPanel: FC<VideoInterviewQuestionPanelProps> = ({
       />
     )
   }
-
-  /*  return (
-    <>
-      {JSON.stringify(mediaBlob)}
-      {questionIndex}
-      {retryLeft}
-      {renderByRecordState()}
-    </>
-  )*/
 }
 
 export default VideoInterviewQuestionPanel
