@@ -40,10 +40,6 @@ func SetupRoutes() {
 
 	// Public Routes
 	public := app.Group("/api")
-	public.Post("user.createUser", userHandlers.CreateUser)
-	public.Post("auth.login", authHandlers.Login)
-	public.Post("auth.logout", authHandlers.Logout)
-	public.Get("auth.me", authHandlers.Me)
 	public.Get("healthcheck", handlers.HealthCheck)
 	public.Get("swagger/*", swagger.HandlerDefault)
 	public.Get("/", func(c *fiber.Ctx) error {
@@ -67,13 +63,17 @@ func SetupRoutes() {
 	})
 
 	// User
+	public.Post("user.createUser", userHandlers.CreateUser)
 	private.Post("user.deleteUser", userHandlers.DeleteUser)
 
 	// Auth
+	public.Post("auth.login", authHandlers.Login)
+	public.Post("auth.logout", authHandlers.Logout)
+	public.Get("auth.me", authHandlers.Me)
 
 	// videoInterview
-	private.Get("videoInterview.getVideoInterviewContext", videoInterviewHandlers.GetVideoInterviewContext)
-	private.Get("videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
+	public.Get("videoInterview.getVideoInterviewContext", videoInterviewHandlers.GetVideoInterviewContext)
+	public.Get("videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
 
 	// portal
 
