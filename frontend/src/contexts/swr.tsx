@@ -18,9 +18,9 @@ export const server = new Server({
 const SWRProvider: FC<PropsWithChildren> = ({ children }) => {
   return (
     <SWRConfig
-      value={{
+    /*value={{
         fetcher: (url) => server.instance.get(url).then((res) => res.data),
-      }}
+      }}*/
     >
       {children}
     </SWRConfig>

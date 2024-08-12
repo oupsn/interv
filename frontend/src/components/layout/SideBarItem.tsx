@@ -17,7 +17,7 @@ const SideBarItem: FC<SideBarItemProps> = ({
     <Button
       className={cn(
         "w-full h-16 text-center font-semibold text-xl rounded-xl disabled:opacity-100",
-        !isActive ? "bg-white text-black" : "",
+        !isActive ? "bg-white text-black hover:bg-iWhiteHover" : "",
         className as ClassValue,
       )}
       onClick={onClick}

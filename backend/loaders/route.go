@@ -29,6 +29,7 @@ func SetupRoutes() {
 	// Handlers
 	var userHandlers = handlers.NewUserHandler(userServices)
 	var authHandlers = handlers.NewAuthHandler(authServices)
+	var videoInterviewHandlers = handlers.NewVideoInterviewHandler()
 
 	// Fiber App
 	app := NewFiberApp()
@@ -70,9 +71,11 @@ func SetupRoutes() {
 
 	// Auth
 
-	// interview
+	// videoInterview
+	private.Get("videoInterview.getVideoInterviewContext", videoInterviewHandlers.GetVideoInterviewContext)
+	private.Get("videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
 
-	//portal
+	// portal
 
 	// ^^Can change above na
 

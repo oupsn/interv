@@ -101,7 +101,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.Response-CurrentUser"
+                            "$ref": "#/definitions/handlers.Response-CurrentUserResponse"
                         }
                     }
                 }
@@ -198,10 +198,102 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/videoInterview.getVideoInterviewContext": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "videoInterview"
+                ],
+                "summary": "Get video interview context",
+                "operationId": "getVideoInterviewContext",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "lobbyId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-VideoInterviewContextResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/videoInterview.getVideoInterviewQuestion": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "videoInterview"
+                ],
+                "summary": "Get video interview question",
+                "operationId": "getVideoInterviewQuestion",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "lobbyId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "questionIndex",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-VideoInterviewQuestionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "CurrentUser": {
+        "CurrentUserResponse": {
             "type": "object",
             "required": [
                 "created_at",
@@ -293,6 +385,66 @@ const docTemplate = `{
                 }
             }
         },
+        "VideoInterviewContextResponse": {
+            "type": "object",
+            "required": [
+                "questionSetting",
+                "totalQuestions"
+            ],
+            "properties": {
+                "questionSetting": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/VideoInterviewQuestionSetting"
+                    }
+                },
+                "totalQuestions": {
+                    "type": "integer"
+                }
+            }
+        },
+        "VideoInterviewQuestionResponse": {
+            "type": "object",
+            "required": [
+                "question",
+                "questionIndex"
+            ],
+            "properties": {
+                "question": {
+                    "type": "string"
+                },
+                "questionIndex": {
+                    "type": "integer"
+                }
+            }
+        },
+        "VideoInterviewQuestionSetting": {
+            "type": "object",
+            "required": [
+                "isLast",
+                "questionIndex",
+                "retry",
+                "timeToAnswer",
+                "timeToPrepare"
+            ],
+            "properties": {
+                "isLast": {
+                    "type": "boolean"
+                },
+                "questionIndex": {
+                    "type": "integer"
+                },
+                "retry": {
+                    "type": "integer"
+                },
+                "timeToAnswer": {
+                    "type": "integer"
+                },
+                "timeToPrepare": {
+                    "type": "integer"
+                }
+            }
+        },
         "handlers.ErrResponse": {
             "type": "object",
             "properties": {
@@ -321,14 +473,14 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.Response-CurrentUser": {
+        "handlers.Response-CurrentUserResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/CurrentUser"
+                    "$ref": "#/definitions/CurrentUserResponse"
                 },
                 "message": {
                     "type": "string"
@@ -346,6 +498,40 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/User"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-VideoInterviewContextResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/VideoInterviewContextResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-VideoInterviewQuestionResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/VideoInterviewQuestionResponse"
                 },
                 "message": {
                     "type": "string"

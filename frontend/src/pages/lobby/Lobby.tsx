@@ -32,7 +32,7 @@ const LobbyPage = () => {
         <div className={"flex gap-12"}>
           <div
             className={
-              "shadow-xl text-center rounded-xl p-8 space-y-4 w-[300px]"
+              "shadow-xl text-center rounded-xl p-8 space-y-4 w-[340px]"
             }
           >
             <p className={"text-2xl font-semibold"}>Video interview</p>
@@ -41,7 +41,7 @@ const LobbyPage = () => {
           </div>
           <div
             className={
-              "shadow-xl text-center rounded-xl p-8 space-y-4 w-[300px]"
+              "shadow-xl text-center rounded-xl p-8 space-y-4 w-[340px]"
             }
           >
             <p className={"text-2xl font-semibold"}>Coding interview</p>
