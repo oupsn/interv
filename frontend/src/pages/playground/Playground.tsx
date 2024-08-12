@@ -1,72 +1,45 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { useContext, useEffect, useRef } from "react"
+import { DeviceContext } from "@/contexts/device.tsx"
+import { ReactMediaRecorder } from "react-media-recorder-2"
 
-import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+const Playground = () => {
+  const { fetchDevice, videoDevices } = useContext(DeviceContext)
+  useEffect(() => {
+    fetchDevice()
+  }, [fetchDevice])
+  const VideoPreview = ({ stream }: { stream: MediaStream | null }) => {
+    const videoRef = useRef<HTMLVideoElement>(
+      null as unknown as HTMLVideoElement,
+    )
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
-})
-
-export function Playground() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-    },
-  })
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+    useEffect(() => {
+      if (videoRef.current && stream) {
+        videoRef.current.srcObject = stream
+      }
+    }, [stream])
+    if (!stream) {
+      return null
+    }
+    return <video ref={videoRef} className={"h-96 rounded-xl"} autoPlay />
   }
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="Email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="Password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type={"submit"}>Submit</Button>
-      </form>
-    </Form>
+    <>
+      {JSON.stringify(videoDevices)}
+      <ReactMediaRecorder
+        key={videoDevices[0].deviceId}
+        video={{ deviceId: videoDevices[0].deviceId }}
+        render={({ previewStream }) => {
+          console.log(videoDevices[0].deviceId)
+          console.log(previewStream)
+          return (
+            <>
+              <VideoPreview stream={previewStream} />
+            </>
+          )
+        }}
+      />
+    </>
   )
 }
+
+export default Playground

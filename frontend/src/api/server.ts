@@ -13,7 +13,7 @@ export type CreateUserData = HandlersResponseUser
 
 export type CreateUserError = HandlersErrResponse
 
-export interface CurrentUser {
+export interface CurrentUserResponse {
   created_at: string
   id: number
   role: string
@@ -24,6 +24,23 @@ export interface CurrentUser {
 export type DeleteUserData = HandlersResponseString
 
 export type DeleteUserError = HandlersErrResponse
+
+export type GetVideoInterviewContextData = HandlersResponseVideoInterviewContextResponse
+
+export type GetVideoInterviewContextError = HandlersErrResponse
+
+export interface GetVideoInterviewContextParams {
+  lobbyId: string
+}
+
+export type GetVideoInterviewQuestionData = HandlersResponseVideoInterviewQuestionResponse
+
+export type GetVideoInterviewQuestionError = HandlersErrResponse
+
+export interface GetVideoInterviewQuestionParams {
+  lobbyId: string
+  questionIndex: number
+}
 
 export interface HandlersErrResponse {
   code?: number
@@ -37,9 +54,9 @@ export interface HandlersOkResponse {
   timestamp?: string
 }
 
-export interface HandlersResponseCurrentUser {
+export interface HandlersResponseCurrentUserResponse {
   code?: number
-  data?: CurrentUser
+  data?: CurrentUserResponse
   message?: string
   timestamp?: string
 }
@@ -58,6 +75,20 @@ export interface HandlersResponseUser {
   timestamp?: string
 }
 
+export interface HandlersResponseVideoInterviewContextResponse {
+  code?: number
+  data?: VideoInterviewContextResponse
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseVideoInterviewQuestionResponse {
+  code?: number
+  data?: VideoInterviewQuestionResponse
+  message?: string
+  timestamp?: string
+}
+
 export interface LoginBody {
   password: string
   username: string
@@ -69,7 +100,7 @@ export type LoginError = HandlersErrResponse
 
 export type LogoutData = HandlersOkResponse
 
-export type MeData = HandlersResponseCurrentUser
+export type MeData = HandlersResponseCurrentUserResponse
 
 export interface User {
   created_at?: string
@@ -87,6 +118,24 @@ export interface UserCreateBody {
 
 export interface UserDeleteBody {
   id: number
+}
+
+export interface VideoInterviewContextResponse {
+  questionSetting: VideoInterviewQuestionSetting[]
+  totalQuestions: number
+}
+
+export interface VideoInterviewQuestionResponse {
+  question: string
+  questionIndex: number
+}
+
+export interface VideoInterviewQuestionSetting {
+  isLast: boolean
+  questionIndex: number
+  retry: number
+  timeToAnswer: number
+  timeToPrepare: number
 }
 
 export namespace Authentication {
@@ -176,6 +225,49 @@ export namespace User {
     export type RequestBody = UserDeleteBody
     export type RequestHeaders = {}
     export type ResponseBody = DeleteUserData
+  }
+}
+
+export namespace VideoInterview {
+  /**
+   * No description
+   * @tags videoInterview
+   * @name GetVideoInterviewContext
+   * @summary Get video interview context
+   * @request GET:/videoInterview.getVideoInterviewContext
+   * @response `200` `GetVideoInterviewContextData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetVideoInterviewContext {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      lobbyId: string
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetVideoInterviewContextData
+  }
+
+  /**
+   * No description
+   * @tags videoInterview
+   * @name GetVideoInterviewQuestion
+   * @summary Get video interview question
+   * @request GET:/videoInterview.getVideoInterviewQuestion
+   * @response `200` `GetVideoInterviewQuestionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetVideoInterviewQuestion {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      lobbyId: string
+      questionIndex: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetVideoInterviewQuestionData
   }
 }
 
@@ -316,7 +408,8 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title No title
+ * @title Interv API
+ * @version 1.0
  * @baseUrl /api
  * @contact
  */
@@ -417,6 +510,49 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         path: `/user.deleteUser`,
         method: "POST",
         body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  }
+  videoInterview = {
+    /**
+     * No description
+     *
+     * @tags videoInterview
+     * @name GetVideoInterviewContext
+     * @summary Get video interview context
+     * @request GET:/videoInterview.getVideoInterviewContext
+     * @response `200` `GetVideoInterviewContextData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getVideoInterviewContext: (query: GetVideoInterviewContextParams, params: RequestParams = {}) =>
+      this.request<GetVideoInterviewContextData, GetVideoInterviewContextError>({
+        path: `/videoInterview.getVideoInterviewContext`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags videoInterview
+     * @name GetVideoInterviewQuestion
+     * @summary Get video interview question
+     * @request GET:/videoInterview.getVideoInterviewQuestion
+     * @response `200` `GetVideoInterviewQuestionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getVideoInterviewQuestion: (query: GetVideoInterviewQuestionParams, params: RequestParams = {}) =>
+      this.request<GetVideoInterviewQuestionData, GetVideoInterviewQuestionError>({
+        path: `/videoInterview.getVideoInterviewQuestion`,
+        method: "GET",
+        query: query,
         type: ContentType.Json,
         format: "json",
         ...params,

@@ -1,6 +1,6 @@
 basePath: /api
 definitions:
-  CurrentUser:
+  CurrentUserResponse:
     properties:
       created_at:
         type: string
@@ -62,6 +62,47 @@ definitions:
     required:
     - id
     type: object
+  VideoInterviewContextResponse:
+    properties:
+      questionSetting:
+        items:
+          $ref: '#/definitions/VideoInterviewQuestionSetting'
+        type: array
+      totalQuestions:
+        type: integer
+    required:
+    - questionSetting
+    - totalQuestions
+    type: object
+  VideoInterviewQuestionResponse:
+    properties:
+      question:
+        type: string
+      questionIndex:
+        type: integer
+    required:
+    - question
+    - questionIndex
+    type: object
+  VideoInterviewQuestionSetting:
+    properties:
+      isLast:
+        type: boolean
+      questionIndex:
+        type: integer
+      retry:
+        type: integer
+      timeToAnswer:
+        type: integer
+      timeToPrepare:
+        type: integer
+    required:
+    - isLast
+    - questionIndex
+    - retry
+    - timeToAnswer
+    - timeToPrepare
+    type: object
   handlers.ErrResponse:
     properties:
       code:
@@ -80,12 +121,12 @@ definitions:
       timestamp:
         type: string
     type: object
-  handlers.Response-CurrentUser:
+  handlers.Response-CurrentUserResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/CurrentUser'
+        $ref: '#/definitions/CurrentUserResponse'
       message:
         type: string
       timestamp:
@@ -97,6 +138,28 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/User'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-VideoInterviewContextResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/VideoInterviewContextResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-VideoInterviewQuestionResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/VideoInterviewQuestionResponse'
       message:
         type: string
       timestamp:
@@ -174,7 +237,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.Response-CurrentUser'
+            $ref: '#/definitions/handlers.Response-CurrentUserResponse'
       summary: Get current user in the system
       tags:
       - authentication
@@ -238,4 +301,64 @@ paths:
       summary: Delete user
       tags:
       - user
+  /videoInterview.getVideoInterviewContext:
+    get:
+      consumes:
+      - application/json
+      operationId: getVideoInterviewContext
+      parameters:
+      - in: query
+        name: lobbyId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-VideoInterviewContextResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get video interview context
+      tags:
+      - videoInterview
+  /videoInterview.getVideoInterviewQuestion:
+    get:
+      consumes:
+      - application/json
+      operationId: getVideoInterviewQuestion
+      parameters:
+      - in: query
+        name: lobbyId
+        required: true
+        type: string
+      - in: query
+        name: questionIndex
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-VideoInterviewQuestionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get video interview question
+      tags:
+      - videoInterview
 swagger: "2.0"
