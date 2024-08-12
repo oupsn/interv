@@ -46,6 +46,18 @@ func SetupRoutes() {
 		return c.SendString("Hello, Interv 🕊️")
 	})
 
+	// user
+	public.Post("user.createUser", userHandlers.CreateUser)
+
+	// auth
+	public.Post("auth.login", authHandlers.Login)
+	public.Post("auth.logout", authHandlers.Logout)
+	public.Get("auth.me", authHandlers.Me)
+
+	// videoInterview
+	public.Get("videoInterview.getVideoInterviewContext", videoInterviewHandlers.GetVideoInterviewContext)
+	public.Get("videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
+
 	// Private Routes
 	private := app.Group("/api")
 	private.Use(func(c *fiber.Ctx) error {
@@ -63,17 +75,9 @@ func SetupRoutes() {
 	})
 
 	// User
-	public.Post("user.createUser", userHandlers.CreateUser)
 	private.Post("user.deleteUser", userHandlers.DeleteUser)
 
 	// Auth
-	public.Post("auth.login", authHandlers.Login)
-	public.Post("auth.logout", authHandlers.Logout)
-	public.Get("auth.me", authHandlers.Me)
-
-	// videoInterview
-	public.Get("videoInterview.getVideoInterviewContext", videoInterviewHandlers.GetVideoInterviewContext)
-	public.Get("videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
 
 	// portal
 
