@@ -1,27 +1,30 @@
-import React from "react"
+import { ButtonHTMLAttributes, FC } from "react"
 import { cn } from "@/lib/utils.ts"
+import { ClassValue } from "clsx"
+import { Button } from "@/components/ui/button.tsx"
 
-type SideBarItemProps = {
+interface SideBarItemProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   title: string
   isActive?: boolean
-  onClick?: () => void
 }
-const SideBarItem: React.FC<SideBarItemProps> = ({
+const SideBarItem: FC<SideBarItemProps> = ({
   title,
   isActive = false,
   onClick,
+  className,
 }) => {
   return (
-    <div
+    <Button
       className={cn(
-        "w-full p-4 text-center font-semibold text-xl rounded-xl bg",
-        isActive ? "bg-iGreen text-white" : "",
-        onClick ? "hover:bg-iWhiteHover cursor-pointer" : "",
+        "w-full h-16 text-center font-semibold text-xl rounded-xl disabled:opacity-100",
+        !isActive ? "bg-white text-black hover:bg-iWhiteHover" : "",
+        className as ClassValue,
       )}
       onClick={onClick}
+      disabled={!onClick}
     >
       {title}
-    </div>
+    </Button>
   )
 }
 

@@ -78,8 +78,8 @@ func GetCurrentUser(ctx *fiber.Ctx) (userId *uint, err error) {
 	})
 
 	if err != nil {
-		print("Error ", err.Error(), "\n")
-		return nil, fiber.ErrUnauthorized
+		println("Error: ", err.Error())
+		return nil, fiber.NewError(fiber.StatusUnauthorized, err.Error())
 	}
 
 	if claims, ok := parser.Claims.(jwt.MapClaims); ok {

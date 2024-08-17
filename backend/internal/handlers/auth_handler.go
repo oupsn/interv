@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
-	"errors"
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"strconv"
 	"time"
@@ -33,21 +31,19 @@ func NewAuthHandler(authService services.IAuthService) AuthenticationHandler {
 func (a AuthenticationHandler) Login(c *fiber.Ctx) error {
 
 	// Retrieve form
-	form := new(LoginBody)
+	body := LoginBody{}
 
 	// Parse and store form into a struct
-	if err := c.BodyParser(form); err != nil {
+	if err := c.BodyParser(&body); err != nil {
 		return err
 	}
 
 	// Validate form
-	if err := validate.Struct(form); err != nil {
-		var validationErrors validator.ValidationErrors
-		errors.As(err, &validationErrors)
-		return validationErrors
+	if err := validate.Struct(body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	userId, token, err := a.authService.Login(*form.Username, *form.Password)
+	userId, token, err := a.authService.Login(body.Username, body.Password)
 	if err != nil {
 		return err
 	}
@@ -117,7 +113,7 @@ func (a AuthenticationHandler) Me(c *fiber.Ctx) error {
 	return Ok(c, CurrentUserResponse{
 		ID:        user.ID,
 		Username:  user.Username,
-		Role:      user.Role,
+		Role:      (string)(user.Role),
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	})

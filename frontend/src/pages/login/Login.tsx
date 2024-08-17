@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form.tsx"
 import { server } from "@/contexts/swr.tsx"
+import IntervLogo from "@/assets/interv-logo.png"
 
 const formSchema = z.object({
   username: z.string().min(1, { message: "Required" }).email({
@@ -57,7 +58,12 @@ const LoginPage = () => {
           "w-[480px] flex flex-col shadow-xl h-fit rounded-xl p-8 space-y-4"
         }
       >
-        <p className={"text-2xl font-semibold"}>Sign in</p>
+        <img
+          src={IntervLogo}
+          alt="Interv"
+          className={"w-60 place-self-center"}
+        />
+        {/*<p className={"text-2xl font-semibold"}>Sign in</p>*/}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -91,7 +97,10 @@ const LoginPage = () => {
             </Button>
           </form>
         </Form>
-        <Button variant={"link"} className={"w-fit h-fit p-0 right-0"}>
+        <Button
+          variant={"link"}
+          className={"w-fit h-fit p-0 place-self-center"}
+        >
           Forgot password?
         </Button>
       </div>

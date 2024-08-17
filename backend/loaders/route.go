@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	swagger "github.com/arsmn/fiber-swagger/v2"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/spf13/viper"
 	"time"
 
@@ -21,14 +20,19 @@ func SetupRoutes() {
 
 	// Repositories
 	var userRepositories = repositories.NewUserRepository(*DB)
+	var objectRepositories = repositories.NewObjectRepository(*MINIO)
 
 	// Services
 	var userServices = services.NewUserService(userRepositories)
 	var authServices = services.NewAuthService(userRepositories)
+	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories)
+	var objectServices = services.NewObjectService(objectRepositories)
 
 	// Handlers
 	var userHandlers = handlers.NewUserHandler(userServices)
 	var authHandlers = handlers.NewAuthHandler(authServices)
+	var videoInterviewHandlers = handlers.NewVideoInterviewHandler(videoInterviewServices)
+	var objectHandlers = handlers.NewObjectHandler(objectServices)
 
 	// Fiber App
 	app := NewFiberApp()
@@ -38,36 +42,40 @@ func SetupRoutes() {
 	}))
 
 	// Public Routes
-	app.Post("api/user.createUser", userHandlers.CreateUser)
-	app.Post("api/auth.login", authHandlers.Login)
-	app.Post("api/auth.logout", authHandlers.Logout)
-	app.Get("api/healthcheck", handlers.HealthCheck)
-	app.Get("api/swagger/*", swagger.HandlerDefault)
-	app.Get("api/", func(c *fiber.Ctx) error {
+	public := app.Group("/api")
+	public.Get("healthcheck", handlers.HealthCheck)
+	public.Get("swagger/*", swagger.HandlerDefault)
+	public.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, Interv 🕊️")
 	})
 
+	// user
+	public.Post("user.createUser", userHandlers.CreateUser)
+
+	// auth
+	public.Post("auth.login", authHandlers.Login)
+	public.Post("auth.logout", authHandlers.Logout)
+	public.Get("auth.me", authHandlers.Me)
+
+	// videoInterview
+	public.Get("videoInterview.getVideoInterviewContext", videoInterviewHandlers.GetVideoInterviewContext)
+	public.Get("videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
+	public.Post("videoInterview.submitVideoInterview", videoInterviewHandlers.SubmitVideoInterview)
+
 	// Private Routes
-	api := app.Group("/api")
-	api.Use(func(c *fiber.Ctx) error {
-		token := c.Cookies("token", "")
-		_, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-			return []byte(viper.GetString("JWT_SECRET")), nil
-		})
-
-		if err != nil {
-			print("Error ", err.Error(), "\n")
-			return fiber.ErrUnauthorized
-		}
-
-		return c.Next()
-	})
+	private := app.Group("/api")
+	private.Use(JwtAuthentication)
 
 	// User
-	api.Post("user.deleteUser", userHandlers.DeleteUser)
+	private.Post("user.deleteUser", userHandlers.DeleteUser)
 
 	// Auth
-	api.Get("auth.me", authHandlers.Me)
+
+	// portal
+
+	// Object
+	private.Post("object.uploadObject", objectHandlers.UploadObject)
+	private.Post("object.getObject", objectHandlers.GetObject)
 
 	ListenAndServe(app, serverAddr)
 }
@@ -99,6 +107,7 @@ func NewFiberApp() *fiber.App {
 			// Return from handler
 			return nil
 		},
+		StreamRequestBody: true,
 	}
 
 	app := fiber.New(fiberConfig)
