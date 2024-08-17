@@ -97,7 +97,10 @@ const LoginPage = () => {
             </Button>
           </form>
         </Form>
-        <Button variant={"link"} className={"w-fit h-fit p-0 right-0"}>
+        <Button
+          variant={"link"}
+          className={"w-fit h-fit p-0 place-self-center"}
+        >
           Forgot password?
         </Button>
       </div>

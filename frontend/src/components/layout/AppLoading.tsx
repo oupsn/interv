@@ -43,6 +43,10 @@ const AppLoading: FC<PropsWithChildren> = ({ children }) => {
     setIsLoaded(true)
   }, [isLoggedIn, navigate, isLoading])
 
+  if (isMobile) {
+    return <NotAllowMobile />
+  }
+
   return (
     <>
       <Toaster />
@@ -58,7 +62,7 @@ const AppLoading: FC<PropsWithChildren> = ({ children }) => {
       >
         <img src={IntervLogo} alt="Interv" className={clx("w-96")} />
       </div>
-      {isLoaded ? !isMobile ? children : <NotAllowMobile /> : null}
+      {isLoaded ? children : null}
     </>
   )
 }
