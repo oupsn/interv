@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import SideBar from "@/components/layout/SideBar.tsx"
 import SideBarItem from "@/components/layout/SideBarItem.tsx"
 import MainPanel from "@/components/layout/MainPanel.tsx"
@@ -20,6 +20,18 @@ const VideoInterviewPage = () => {
   const handleNextQuestion = () => {
     setActiveQuestion((prev) => prev + 1)
   }
+
+  useEffect(() => {
+    const handleClose = (e: { preventDefault: () => void }) => {
+      e.preventDefault()
+    }
+
+    window.addEventListener("beforeunload", handleClose)
+
+    return () => {
+      window.removeEventListener("beforeunload", handleClose)
+    }
+  }, [])
 
   const renderVideoInterviewByStage = () => {
     if (activeQuestion == 0) {
