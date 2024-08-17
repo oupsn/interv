@@ -1,14 +1,18 @@
 package handlers
 
 import (
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
 	"github.com/gofiber/fiber/v2"
 )
 
 type VideoInterviewHandler struct {
+	videoInterviewService services.IVideoInterviewService
 }
 
-func NewVideoInterviewHandler() VideoInterviewHandler {
-	return VideoInterviewHandler{}
+func NewVideoInterviewHandler(videoInterviewService services.IVideoInterviewService) VideoInterviewHandler {
+	return VideoInterviewHandler{
+		videoInterviewService: videoInterviewService,
+	}
 }
 
 // GetVideoInterviewContext
@@ -22,7 +26,7 @@ func NewVideoInterviewHandler() VideoInterviewHandler {
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
 // @Router /videoInterview.getVideoInterviewContext [get]
-func (a VideoInterviewHandler) GetVideoInterviewContext(c *fiber.Ctx) error {
+func (v VideoInterviewHandler) GetVideoInterviewContext(c *fiber.Ctx) error {
 	query := VideoInterviewContextQuery{}
 	if err := c.QueryParser(&query); err != nil {
 		return err
@@ -74,7 +78,7 @@ func (a VideoInterviewHandler) GetVideoInterviewContext(c *fiber.Ctx) error {
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
 // @Router /videoInterview.getVideoInterviewQuestion [get]
-func (a VideoInterviewHandler) GetVideoInterviewQuestion(c *fiber.Ctx) error {
+func (v VideoInterviewHandler) GetVideoInterviewQuestion(c *fiber.Ctx) error {
 	query := VideoInterviewQuestionQuery{}
 	if err := c.QueryParser(&query); err != nil {
 		return err
@@ -88,4 +92,29 @@ func (a VideoInterviewHandler) GetVideoInterviewQuestion(c *fiber.Ctx) error {
 		QuestionIndex: query.QuestionIndex,
 		Topic:         "This is topic" + query.LobbyID,
 	})
+}
+
+// SubmitVideoInterview
+// @ID submitVideoInterview
+// @Tags videoInterview
+// @Summary Submit video interview
+// @Accept multipart/form-data
+// @Produce json
+// @Param file formData file true "Video Interview File"
+// @Success 200 {object} Response[string]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /videoInterview.submitVideoInterview [post]
+func (v VideoInterviewHandler) SubmitVideoInterview(c *fiber.Ctx) error {
+	file, err := c.FormFile("file")
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Failed to read file")
+	}
+
+	err = v.videoInterviewService.SubmitVideoInterview(file)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, "Submit video interview successfully")
 }
