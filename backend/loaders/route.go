@@ -42,25 +42,24 @@ func SetupRoutes() {
 	}))
 
 	// Public Routes
-	public := app.Group("/api")
-	public.Get("healthcheck", handlers.HealthCheck)
-	public.Get("swagger/*", swagger.HandlerDefault)
-	public.Get("/", func(c *fiber.Ctx) error {
+	app.Get("api/healthcheck", handlers.HealthCheck)
+	app.Get("api/swagger/*", swagger.HandlerDefault)
+	app.Get("api/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, Interv 🕊️")
 	})
 
 	// user
-	public.Post("user.createUser", userHandlers.CreateUser)
+	app.Post("api/user.createUser", userHandlers.CreateUser)
 
 	// auth
-	public.Post("auth.login", authHandlers.Login)
-	public.Post("auth.logout", authHandlers.Logout)
-	public.Get("auth.me", authHandlers.Me)
+	app.Post("api/auth.login", authHandlers.Login)
+	app.Post("api/auth.logout", authHandlers.Logout)
+	app.Get("api/auth.me", authHandlers.Me)
 
 	// videoInterview
-	public.Get("videoInterview.getVideoInterviewContext", videoInterviewHandlers.GetVideoInterviewContext)
-	public.Get("videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
-	public.Post("videoInterview.submitVideoInterview", videoInterviewHandlers.SubmitVideoInterview)
+	app.Get("api/videoInterview.getVideoInterviewContext", videoInterviewHandlers.GetVideoInterviewContext)
+	app.Get("api/videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
+	app.Post("api/videoInterview.submitVideoInterview", videoInterviewHandlers.SubmitVideoInterview)
 
 	// Private Routes
 	private := app.Group("/api")
