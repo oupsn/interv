@@ -19,6 +19,16 @@ definitions:
     - updated_at
     - username
     type: object
+  GetObjectBody:
+    properties:
+      bucketName:
+        type: string
+      objectName:
+        type: string
+    required:
+    - bucketName
+    - objectName
+    type: object
   LoginBody:
     properties:
       password:
@@ -241,6 +251,68 @@ paths:
       summary: Get current user in the system
       tags:
       - authentication
+  /object.getObject:
+    post:
+      operationId: getObject
+      parameters:
+      - description: Get Object Body
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/GetObjectBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get object from the system
+      tags:
+      - object
+  /object.uploadObject:
+    post:
+      consumes:
+      - multipart/form-data
+      operationId: uploadObject
+      parameters:
+      - description: Video Interview File
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Bucket Name
+        in: formData
+        name: bucketName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Upload object to the system
+      tags:
+      - object
   /user.createUser:
     post:
       consumes:
@@ -359,6 +431,35 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get video interview question
+      tags:
+      - videoInterview
+  /videoInterview.submitVideoInterview:
+    post:
+      consumes:
+      - multipart/form-data
+      operationId: submitVideoInterview
+      parameters:
+      - description: Video Interview File
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Submit video interview
       tags:
       - videoInterview
 swagger: "2.0"

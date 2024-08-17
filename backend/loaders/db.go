@@ -3,12 +3,16 @@ package loaders
 import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"fmt"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
+
+var MINIO *minio.Client
 
 func SetupDatabases() {
 	CheckAndConnectDatabase()
@@ -56,4 +60,22 @@ func NewDatabase(config DatabaseConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=Asia/Bangkok", config.Host, config.Username, config.Password, config.Name, config.Port)
 
 	return gorm.Open(postgres.Open(dsn))
+}
+
+func SetupMinio() {
+	fmt.Println(fmt.Sprintf("[MINIO] Connecting to %s", viper.GetString(EnvMinioEndpoint)))
+	endpoint := viper.GetString(EnvMinioEndpoint)
+	accessKeyID := viper.GetString(EnvMinioAccessKey)
+	secretAccessKey := viper.GetString(EnvMinioSecretKey)
+	useSSL := true
+
+	minioClient, err := minio.New(endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
+		Secure: useSSL,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	MINIO = minioClient
 }
