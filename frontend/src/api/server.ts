@@ -13,7 +13,7 @@ export type CreateUserData = HandlersResponseUser
 
 export type CreateUserError = HandlersErrResponse
 
-export interface CurrentUser {
+export interface CurrentUserResponse {
   created_at: string
   id: number
   role: string
@@ -24,6 +24,32 @@ export interface CurrentUser {
 export type DeleteUserData = HandlersResponseString
 
 export type DeleteUserError = HandlersErrResponse
+
+export interface GetObjectBody {
+  bucketName: string
+  objectName: string
+}
+
+export type GetObjectData = HandlersResponseString
+
+export type GetObjectError = HandlersErrResponse
+
+export type GetVideoInterviewContextData = HandlersResponseVideoInterviewContextResponse
+
+export type GetVideoInterviewContextError = HandlersErrResponse
+
+export interface GetVideoInterviewContextParams {
+  lobbyId: string
+}
+
+export type GetVideoInterviewQuestionData = HandlersResponseVideoInterviewQuestionResponse
+
+export type GetVideoInterviewQuestionError = HandlersErrResponse
+
+export interface GetVideoInterviewQuestionParams {
+  lobbyId: string
+  questionIndex: number
+}
 
 export interface HandlersErrResponse {
   code?: number
@@ -37,9 +63,9 @@ export interface HandlersOkResponse {
   timestamp?: string
 }
 
-export interface HandlersResponseCurrentUser {
+export interface HandlersResponseCurrentUserResponse {
   code?: number
-  data?: CurrentUser
+  data?: CurrentUserResponse
   message?: string
   timestamp?: string
 }
@@ -58,6 +84,20 @@ export interface HandlersResponseUser {
   timestamp?: string
 }
 
+export interface HandlersResponseVideoInterviewContextResponse {
+  code?: number
+  data?: VideoInterviewContextResponse
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseVideoInterviewQuestionResponse {
+  code?: number
+  data?: VideoInterviewQuestionResponse
+  message?: string
+  timestamp?: string
+}
+
 export interface LoginBody {
   password: string
   username: string
@@ -69,7 +109,33 @@ export type LoginError = HandlersErrResponse
 
 export type LogoutData = HandlersOkResponse
 
-export type MeData = HandlersResponseCurrentUser
+export type MeData = HandlersResponseCurrentUserResponse
+
+export type SubmitVideoInterviewData = HandlersResponseString
+
+export type SubmitVideoInterviewError = HandlersErrResponse
+
+export interface SubmitVideoInterviewPayload {
+  /**
+   * Video Interview File
+   * @format binary
+   */
+  file: File
+}
+
+export type UploadObjectData = HandlersResponseString
+
+export type UploadObjectError = HandlersErrResponse
+
+export interface UploadObjectPayload {
+  /** Bucket Name */
+  bucketName: string
+  /**
+   * Video Interview File
+   * @format binary
+   */
+  file: File
+}
 
 export interface User {
   created_at?: string
@@ -87,6 +153,24 @@ export interface UserCreateBody {
 
 export interface UserDeleteBody {
   id: number
+}
+
+export interface VideoInterviewContextResponse {
+  questionSetting: VideoInterviewQuestionSetting[]
+  totalQuestions: number
+}
+
+export interface VideoInterviewQuestionResponse {
+  question: string
+  questionIndex: number
+}
+
+export interface VideoInterviewQuestionSetting {
+  isLast: boolean
+  questionIndex: number
+  retry: number
+  timeToAnswer: number
+  timeToPrepare: number
 }
 
 export namespace Authentication {
@@ -141,6 +225,44 @@ export namespace Authentication {
   }
 }
 
+export namespace Object {
+  /**
+   * No description
+   * @tags object
+   * @name GetObject
+   * @summary Get object from the system
+   * @request POST:/object.getObject
+   * @response `200` `GetObjectData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetObject {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = GetObjectBody
+    export type RequestHeaders = {}
+    export type ResponseBody = GetObjectData
+  }
+
+  /**
+   * No description
+   * @tags object
+   * @name UploadObject
+   * @summary Upload object to the system
+   * @request POST:/object.uploadObject
+   * @response `200` `UploadObjectData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace UploadObject {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = UploadObjectPayload
+    export type RequestHeaders = {}
+    export type ResponseBody = UploadObjectData
+  }
+}
+
 export namespace User {
   /**
    * No description
@@ -176,6 +298,67 @@ export namespace User {
     export type RequestBody = UserDeleteBody
     export type RequestHeaders = {}
     export type ResponseBody = DeleteUserData
+  }
+}
+
+export namespace VideoInterview {
+  /**
+   * No description
+   * @tags videoInterview
+   * @name GetVideoInterviewContext
+   * @summary Get video interview context
+   * @request GET:/videoInterview.getVideoInterviewContext
+   * @response `200` `GetVideoInterviewContextData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetVideoInterviewContext {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      lobbyId: string
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetVideoInterviewContextData
+  }
+
+  /**
+   * No description
+   * @tags videoInterview
+   * @name GetVideoInterviewQuestion
+   * @summary Get video interview question
+   * @request GET:/videoInterview.getVideoInterviewQuestion
+   * @response `200` `GetVideoInterviewQuestionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetVideoInterviewQuestion {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      lobbyId: string
+      questionIndex: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetVideoInterviewQuestionData
+  }
+
+  /**
+   * No description
+   * @tags videoInterview
+   * @name SubmitVideoInterview
+   * @summary Submit video interview
+   * @request POST:/videoInterview.submitVideoInterview
+   * @response `200` `SubmitVideoInterviewData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace SubmitVideoInterview {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = SubmitVideoInterviewPayload
+    export type RequestHeaders = {}
+    export type ResponseBody = SubmitVideoInterviewData
   }
 }
 
@@ -316,7 +499,8 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title No title
+ * @title Interv API
+ * @version 1.0
  * @baseUrl /api
  * @contact
  */
@@ -379,6 +563,49 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         ...params,
       }),
   }
+  object = {
+    /**
+     * No description
+     *
+     * @tags object
+     * @name GetObject
+     * @summary Get object from the system
+     * @request POST:/object.getObject
+     * @response `200` `GetObjectData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getObject: (payload: GetObjectBody, params: RequestParams = {}) =>
+      this.request<GetObjectData, GetObjectError>({
+        path: `/object.getObject`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags object
+     * @name UploadObject
+     * @summary Upload object to the system
+     * @request POST:/object.uploadObject
+     * @response `200` `UploadObjectData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    uploadObject: (data: UploadObjectPayload, params: RequestParams = {}) =>
+      this.request<UploadObjectData, UploadObjectError>({
+        path: `/object.uploadObject`,
+        method: "POST",
+        body: data,
+        type: ContentType.FormData,
+        format: "json",
+        ...params,
+      }),
+  }
   user = {
     /**
      * No description
@@ -418,6 +645,70 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         method: "POST",
         body: payload,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  }
+  videoInterview = {
+    /**
+     * No description
+     *
+     * @tags videoInterview
+     * @name GetVideoInterviewContext
+     * @summary Get video interview context
+     * @request GET:/videoInterview.getVideoInterviewContext
+     * @response `200` `GetVideoInterviewContextData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getVideoInterviewContext: (query: GetVideoInterviewContextParams, params: RequestParams = {}) =>
+      this.request<GetVideoInterviewContextData, GetVideoInterviewContextError>({
+        path: `/videoInterview.getVideoInterviewContext`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags videoInterview
+     * @name GetVideoInterviewQuestion
+     * @summary Get video interview question
+     * @request GET:/videoInterview.getVideoInterviewQuestion
+     * @response `200` `GetVideoInterviewQuestionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getVideoInterviewQuestion: (query: GetVideoInterviewQuestionParams, params: RequestParams = {}) =>
+      this.request<GetVideoInterviewQuestionData, GetVideoInterviewQuestionError>({
+        path: `/videoInterview.getVideoInterviewQuestion`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags videoInterview
+     * @name SubmitVideoInterview
+     * @summary Submit video interview
+     * @request POST:/videoInterview.submitVideoInterview
+     * @response `200` `SubmitVideoInterviewData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    submitVideoInterview: (data: SubmitVideoInterviewPayload, params: RequestParams = {}) =>
+      this.request<SubmitVideoInterviewData, SubmitVideoInterviewError>({
+        path: `/videoInterview.submitVideoInterview`,
+        method: "POST",
+        body: data,
+        type: ContentType.FormData,
         format: "json",
         ...params,
       }),

@@ -26,13 +26,13 @@ func (a *authService) Login(username string, password string) (userId *uint, acc
 		return nil, nil, ErrorInvalidCredentials
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(*user.Password), []byte(password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return nil, nil, err
 	}
 
-	token, err := a.GenerateJwtToken(*user.ID, *user.Username, time.Now().Add(time.Hour*24))
+	token, err := a.GenerateJwtToken(user.ID, user.Username, time.Now().Add(time.Hour*72))
 
-	return user.ID, &token, nil
+	return &user.ID, &token, nil
 }
 
 func (a *authService) GenerateJwtToken(userId uint, username string, expiration time.Time) (string, error) {

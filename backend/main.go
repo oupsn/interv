@@ -9,5 +9,6 @@ import (
 // @BasePath /api
 func main() {
 	loaders.SetupDatabases()
+	loaders.SetupMinio()
 	loaders.SetupRoutes()
 }

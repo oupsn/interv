@@ -6,19 +6,22 @@ import (
 )
 
 const (
-	EnvServerHost    = "SERVER_HOST"
-	EnvServerOrigins = "SERVER_ORIGINS"
-	EnvServerPort    = "SERVER_PORT"
-	EnvDBAutoMigrate = "DB_AUTOMIGRATE"
-	EnvDBHeadless    = "DB_HEADLESS"
-	EnvDBHost        = "DB_HOST"
-	EnvDBName        = "DB_NAME"
-	EnvDBPassword    = "DB_PASSWORD"
-	EnvDBPort        = "DB_PORT"
-	EnvDBUrl         = "DB_URL"
-	EnvDBUsername    = "DB_USERNAME"
-	EnvJwtSecret     = "JWT_SECRET"
-	EnvMode          = "ENV"
+	EnvServerHost     = "SERVER_HOST"
+	EnvServerOrigins  = "SERVER_ORIGINS"
+	EnvServerPort     = "SERVER_PORT"
+	EnvDBAutoMigrate  = "DB_AUTOMIGRATE"
+	EnvDBHeadless     = "DB_HEADLESS"
+	EnvDBHost         = "DB_HOST"
+	EnvDBName         = "DB_NAME"
+	EnvDBPassword     = "DB_PASSWORD"
+	EnvDBPort         = "DB_PORT"
+	EnvDBUrl          = "DB_URL"
+	EnvDBUsername     = "DB_USERNAME"
+	EnvJwtSecret      = "JWT_SECRET"
+	EnvMode           = "ENV"
+	EnvMinioEndpoint  = "MINIO_ENDPOINT"
+	EnvMinioAccessKey = "MINIO_ACCESS_KEY"
+	EnvMinioSecretKey = "MINIO_SECRET_KEY"
 )
 
 func init() {

@@ -3,7 +3,7 @@ import AppLayout from "@/components/layout/AppLayout.tsx"
 import MainLayout from "@/components/layout/MainLayout.tsx"
 import LoginPage from "@/pages/login/Login.tsx"
 import LobbyPage from "@/pages/lobby/Lobby.tsx"
-import { Playground } from "@/pages/playground/Playground.tsx"
+import Playground from "@/pages/playground/Playground.tsx"
 import Dashboard from "@/pages/dashboard/Dashboard.tsx"
 import CodingInterviewPage from "@/pages/lobby/codingInterview/CodingInterview.tsx"
 import VideoInterviewPage from "@/pages/lobby/videoInterview/VideoInterview.tsx"
@@ -19,7 +19,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/",
-        element: <MainLayout />, // maybe can use <LobbyLayout /> ?
+        element: <MainLayout />,
         children: [
           {
             path: "dashboard",
@@ -30,7 +30,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/lobby/:id",
+    path: "/lobby/:lobbyId",
     element: <MainLayout />,
     children: [
       {
