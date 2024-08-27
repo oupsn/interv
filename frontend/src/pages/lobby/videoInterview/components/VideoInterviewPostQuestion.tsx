@@ -1,5 +1,7 @@
-import { Dispatch, FC, SetStateAction } from "react"
+import { Dispatch, FC, SetStateAction, useState } from "react"
 import { Button } from "@/components/ui/button.tsx"
+import { server } from "@/contexts/swr.tsx"
+import { cn } from "@/lib/utils.ts"
 
 interface VideoInterviewPostQuestion {
   retryLeft: number
@@ -15,17 +17,56 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
   setRecordState,
   setMediaBlob,
 }) => {
+  const [selectedVideo, setSelectedVideo] = useState("")
+  const handleSubmitVideo = async () => {
+    const videoBlob = await fetch(selectedVideo).then((response) =>
+      response.blob(),
+    )
+    const videoFile = new File([videoBlob], Date.now().toString() + ".mp4", {
+      type: "video/mp4",
+      lastModified: Date.now(),
+    })
+    server.videoInterview
+      .submitVideoInterview({
+        file: videoFile,
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+      .finally(() => {
+        handleNextQuestion()
+        setMediaBlob([])
+        setRecordState("pre")
+      })
+  }
   return (
     <>
       <div className={"flex gap-10"}>
         {mediaBlob.map((blob, index) => {
           return (
-            <video
-              key={index}
-              src={blob}
-              controls
-              className={"w-[500px] rounded-xl"}
-            />
+            <div className={"flex flex-col items-center gap-4"}>
+              <video
+                key={index}
+                src={blob}
+                controls
+                className={cn(
+                  "w-[500px] rounded-xl",
+                  selectedVideo === blob
+                    ? "border-4 border-iGreen"
+                    : "opacity-40",
+                )}
+              />
+              {selectedVideo !== blob ? (
+                <Button
+                  disabled={selectedVideo === blob}
+                  onClick={() => {
+                    setSelectedVideo(blob)
+                  }}
+                >
+                  Select
+                </Button>
+              ) : null}
+            </div>
           )
         })}
       </div>
@@ -44,10 +85,9 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
           </Button>
         ) : null}
         <Button
+          disabled={selectedVideo === ""}
           onClick={() => {
-            handleNextQuestion()
-            setMediaBlob([])
-            setRecordState("pre")
+            handleSubmitVideo()
           }}
         >
           Submit
