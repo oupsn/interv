@@ -8,6 +8,9 @@ DB_NAME: "interv-dev"
 DB_USERNAME: "interv-dev"
 DB_PASSWORD: "interv-dev"
 DB_PORT: 5433
-DB_URL: "postgres://admin:admin@localhost:5432/interv?sslmode=disable"
 JWT_SECRET: "korHaiProjectNeePanPaiDaiDeeee"
 ENV: "dev"
+MINIO_ENDPOINT: minio.oupsn.com
+MINIO_ACCESS_KEY: interv
+MINIO_SECRET_KEY: interv12123
+COMPILER_ENDPOINT: "http://40.81.16.191:2358/"

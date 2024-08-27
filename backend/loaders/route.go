@@ -21,18 +21,21 @@ func SetupRoutes() {
 	// Repositories
 	var userRepositories = repositories.NewUserRepository(*DB)
 	var objectRepositories = repositories.NewObjectRepository(*MINIO)
+	var compilationRespositories = repositories.NewCodeCompilationRepository(viper.GetString(EnvCompilerEndpoint))
 
 	// Services
 	var userServices = services.NewUserService(userRepositories)
 	var authServices = services.NewAuthService(userRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
+	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories)
 
 	// Handlers
 	var userHandlers = handlers.NewUserHandler(userServices)
 	var authHandlers = handlers.NewAuthHandler(authServices)
 	var videoInterviewHandlers = handlers.NewVideoInterviewHandler(videoInterviewServices)
 	var objectHandlers = handlers.NewObjectHandler(objectServices)
+	var codingInterviewHandlers = handlers.NewCodingInterviewHandler(codingInterviewServices)
 
 	// Fiber App
 	app := NewFiberApp()
@@ -61,6 +64,9 @@ func SetupRoutes() {
 	public.Get("videoInterview.getVideoInterviewContext", videoInterviewHandlers.GetVideoInterviewContext)
 	public.Get("videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
 	public.Post("videoInterview.submitVideoInterview", videoInterviewHandlers.SubmitVideoInterview)
+
+	// codingInterview
+	public.Post("codingInterview.submitCompileCode", codingInterviewHandlers.SubmitCompileCode)
 
 	// Private Routes
 	private := app.Group("/api")
