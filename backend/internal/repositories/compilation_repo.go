@@ -49,12 +49,10 @@ func (r *codeCompilationRepository) GetCompileResult(token string) (domains.Comp
 		return domains.CompilationResultResponse{}, err
 	}
 	defer resp.Body.Close()
-	fmt.Println(resp.Body)
 	var result domains.CompilationResultResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
 
 	if err != nil {
-		fmt.Println(err)
 		return domains.CompilationResultResponse{}, err
 	}
 

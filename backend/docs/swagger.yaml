@@ -17,6 +17,13 @@ definitions:
       compileResult:
         $ref: '#/definitions/domains.CompilationResultResponse'
     type: object
+  CodingInterviewGetQuestionsResponse:
+    properties:
+      questions:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionResponse'
+        type: array
+    type: object
   CurrentUserResponse:
     properties:
       created_at:
@@ -130,6 +137,96 @@ definitions:
     - timeToAnswer
     - timeToPrepare
     type: object
+  domains.CodingQuestion:
+    properties:
+      createdAt:
+        type: string
+      createdBy:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      difficulty:
+        type: string
+      examples:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionExample'
+        type: array
+      id:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      testCases:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionTestCase'
+        type: array
+      title:
+        type: string
+      updatedAt:
+        type: string
+      updatedBy:
+        type: string
+    type: object
+  domains.CodingQuestionExample:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      input:
+        type: string
+      output:
+        type: string
+      question:
+        $ref: '#/definitions/domains.CodingQuestion'
+      questionID:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  domains.CodingQuestionResponse:
+    properties:
+      description:
+        type: string
+      example_input:
+        type: string
+      example_output:
+        type: string
+      id:
+        type: integer
+      test_case:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionTestCase'
+        type: array
+      title:
+        type: string
+    type: object
+  domains.CodingQuestionTestCase:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      expectedOutput:
+        type: string
+      id:
+        type: integer
+      input:
+        type: string
+      isHidden:
+        type: boolean
+      question:
+        $ref: '#/definitions/domains.CodingQuestion'
+      questionID:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
   domains.CompilationRequest:
     properties:
       input:
@@ -162,6 +259,14 @@ definitions:
         type: string
       token:
         type: string
+    type: object
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
     type: object
   handlers.ErrResponse:
     properties:
@@ -198,6 +303,17 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/CodingInterviewGetCompileResultResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-CodingInterviewGetQuestionsResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/CodingInterviewGetQuestionsResponse'
       message:
         type: string
       timestamp:
@@ -382,6 +498,30 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get compile result for a coding interview
+      tags:
+      - codingInterview
+  /codingInterview.getQuestions:
+    get:
+      consumes:
+      - application/json
+      description: Get coding interview questions
+      operationId: GetQuestions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the coding interview questions
+          schema:
+            $ref: '#/definitions/handlers.Response-CodingInterviewGetQuestionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get coding interview questions
       tags:
       - codingInterview
   /object.getObject:

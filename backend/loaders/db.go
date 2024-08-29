@@ -38,7 +38,7 @@ func CheckAndConnectDatabase() {
 func CheckAutoMigrate() {
 	if viper.GetBool(EnvDBAutoMigrate) {
 		fmt.Println(fmt.Sprintf("[DB] Automigrate enabled"))
-		err := DB.AutoMigrate(&domains.User{}) //TODO: Add more models here
+		err := DB.AutoMigrate(&domains.User{}, &domains.CodingQuestion{}, &domains.CodingQuestionExample{}, &domains.CodingQuestionTestCase{}) //TODO: Add more models here
 		if err != nil {
 			panic(err)
 		}

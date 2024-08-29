@@ -7,16 +7,24 @@ import (
 
 type codingInterviewService struct {
 	codeCompilationRepository repositories.ICompilationRepository
+	codingInterviewRepository repositories.ICodingInterviewRepository
 }
 
-func NewCodingInterviewService(codeCompilationRepository repositories.ICompilationRepository) ICodingInterviewService {
+func NewCodingInterviewService(codeCompilationRepository repositories.ICompilationRepository, codingInterviewRepository repositories.ICodingInterviewRepository) ICodingInterviewService {
+
 	return &codingInterviewService{
 		codeCompilationRepository: codeCompilationRepository,
+		codingInterviewRepository: codingInterviewRepository,
 	}
 }
 
-func (s *codingInterviewService) GetCodingInterviewQuestions() (string, error) {
-	return "", nil
+// TODO: Add lobbyId to filter coding question by lobby
+func (s *codingInterviewService) GetCodingInterviewQuestions() ([]domains.CodingQuestionResponse, error) {
+	questions, err := s.codingInterviewRepository.GetCodingQuestionList()
+	if err != nil {
+		return []domains.CodingQuestionResponse{}, ErrorGetCodingInterviewQuestions
+	}
+	return questions, nil
 }
 
 func (s *codingInterviewService) GenerateCompileToken(req domains.CompilationRequest) (string, error) {

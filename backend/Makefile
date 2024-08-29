@@ -1,2 +1,2 @@
 swag:
-	swag init
+	swag init --parseDependency --parseInternal

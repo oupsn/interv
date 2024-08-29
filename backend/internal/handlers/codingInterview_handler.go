@@ -66,3 +66,22 @@ func (co CodingInterviewHandler) GetCompileResult(c *fiber.Ctx) error {
 		CompileResult: res,
 	})
 }
+
+// @Summary Get coding interview questions
+// @Description Get coding interview questions
+// @Tags codingInterview
+// @ID GetQuestions
+// @Accept json
+// @Produce json
+// @Success 200 {object} Response[CodingInterviewGetQuestionsResponse] "Successful response with the coding interview questions"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.getQuestions [get]
+func (co CodingInterviewHandler) GetQuestions(c *fiber.Ctx) error {
+	questions, err := co.codingInterviewService.GetCodingInterviewQuestions()
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, questions)
+}

@@ -22,13 +22,14 @@ func SetupRoutes() {
 	var userRepositories = repositories.NewUserRepository(*DB)
 	var objectRepositories = repositories.NewObjectRepository(*MINIO)
 	var compilationRespositories = repositories.NewCodeCompilationRepository(viper.GetString(EnvCompilerEndpoint))
+	var codingInterviewRepositories = repositories.NewCodingInterviewRepository(*DB)
 
 	// Services
 	var userServices = services.NewUserService(userRepositories)
 	var authServices = services.NewAuthService(userRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
-	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories)
+	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories)
 
 	// Handlers
 	var userHandlers = handlers.NewUserHandler(userServices)
@@ -68,7 +69,7 @@ func SetupRoutes() {
 	// codingInterview
 	public.Post("codingInterview.generateCompileToken", codingInterviewHandlers.GenerateCompileToken)
 	public.Get("codingInterview.getCompileResult/:token", codingInterviewHandlers.GetCompileResult)
-
+	public.Get("codingInterview.getQuestions", codingInterviewHandlers.GetQuestions)
 	// Private Routes
 	private := app.Group("/api")
 	private.Use(JwtAuthentication)

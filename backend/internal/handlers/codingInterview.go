@@ -15,3 +15,7 @@ type CodingInterviewGenerateCompileTokenResponse struct {
 type CodingInterviewGetCompileResultResponse struct {
 	CompileResult domains.CompilationResultResponse `json:"compileResult"`
 } // @name CodingInterviewGetCompileResultResponse
+
+type CodingInterviewGetQuestionsResponse struct {
+	Questions []domains.CodingQuestionResponse `json:"questions"`
+} // @name CodingInterviewGetQuestionsResponse

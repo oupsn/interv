@@ -200,6 +200,42 @@ const docTemplate = `{
                 }
             }
         },
+        "/codingInterview.getQuestions": {
+            "get": {
+                "description": "Get coding interview questions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Get coding interview questions",
+                "operationId": "GetQuestions",
+                "responses": {
+                    "200": {
+                        "description": "Successful response with the coding interview questions",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-CodingInterviewGetQuestionsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/object.getObject": {
             "post": {
                 "produces": [
@@ -551,6 +587,17 @@ const docTemplate = `{
                 }
             }
         },
+        "CodingInterviewGetQuestionsResponse": {
+            "type": "object",
+            "properties": {
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionResponse"
+                    }
+                }
+            }
+        },
         "CurrentUserResponse": {
             "type": "object",
             "required": [
@@ -718,6 +765,143 @@ const docTemplate = `{
                 }
             }
         },
+        "domains.CodingQuestion": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "difficulty": {
+                    "type": "string"
+                },
+                "examples": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionExample"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "testCases": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionTestCase"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "string"
+                }
+            }
+        },
+        "domains.CodingQuestionExample": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "input": {
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                },
+                "question": {
+                    "$ref": "#/definitions/domains.CodingQuestion"
+                },
+                "questionID": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "domains.CodingQuestionResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "example_input": {
+                    "type": "string"
+                },
+                "example_output": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "test_case": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionTestCase"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domains.CodingQuestionTestCase": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "expectedOutput": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "input": {
+                    "type": "string"
+                },
+                "isHidden": {
+                    "type": "boolean"
+                },
+                "question": {
+                    "$ref": "#/definitions/domains.CodingQuestion"
+                },
+                "questionID": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "domains.CompilationRequest": {
             "type": "object",
             "properties": {
@@ -766,6 +950,18 @@ const docTemplate = `{
                 },
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "gorm.DeletedAt": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "valid": {
+                    "description": "Valid is true if Time is not NULL",
+                    "type": "boolean"
                 }
             }
         },
@@ -822,6 +1018,23 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/CodingInterviewGetCompileResultResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-CodingInterviewGetQuestionsResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/CodingInterviewGetQuestionsResponse"
                 },
                 "message": {
                     "type": "string"

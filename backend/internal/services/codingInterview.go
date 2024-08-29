@@ -6,12 +6,14 @@ import (
 )
 
 var (
-	ErrorGetCompileToken  = fiber.NewError(fiber.StatusInternalServerError, "can not get compile token")
-	ErrorGetCompileResult = fiber.NewError(fiber.StatusInternalServerError, "can not get compile result")
+	ErrorGetCompileToken             = fiber.NewError(fiber.StatusInternalServerError, "can not get compile token")
+	ErrorGetCompileResult            = fiber.NewError(fiber.StatusInternalServerError, "can not get compile result")
+	ErrorGetCodingInterviewQuestions = fiber.NewError(fiber.StatusInternalServerError, "can not get coding interview questions")
 )
 
 type ICodingInterviewService interface {
-	GetCodingInterviewQuestions() (string, error)
+	//TODO: add get coding question by lobby id
+	GetCodingInterviewQuestions() ([]domains.CodingQuestionResponse, error)
 	GenerateCompileToken(req domains.CompilationRequest) (string, error)
 	GetCompileResult(token string) (domains.CompilationResultResponse, error)
 	SaveCodingSnapshot(code string) (string, error)

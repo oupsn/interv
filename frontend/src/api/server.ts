@@ -21,6 +21,10 @@ export interface CodingInterviewGetCompileResultResponse {
   compileResult?: DomainsCompilationResultResponse
 }
 
+export interface CodingInterviewGetQuestionsResponse {
+  questions?: DomainsCodingQuestionResponse[]
+}
+
 export type CreateUserData = HandlersResponseUser
 
 export type CreateUserError = HandlersErrResponse
@@ -36,6 +40,48 @@ export interface CurrentUserResponse {
 export type DeleteUserData = HandlersResponseString
 
 export type DeleteUserError = HandlersErrResponse
+
+export interface DomainsCodingQuestion {
+  createdAt?: string
+  createdBy?: string
+  description?: string
+  difficulty?: string
+  examples?: DomainsCodingQuestionExample[]
+  id?: number
+  tags?: string[]
+  testCases?: DomainsCodingQuestionTestCase[]
+  title?: string
+  updatedAt?: string
+  updatedBy?: string
+}
+
+export interface DomainsCodingQuestionExample {
+  createdAt?: string
+  id?: number
+  input?: string
+  output?: string
+  question?: DomainsCodingQuestion
+  updatedAt?: string
+}
+
+export interface DomainsCodingQuestionResponse {
+  description?: string
+  example_input?: string
+  example_output?: string
+  id?: number
+  test_case?: DomainsCodingQuestionTestCase[]
+  title?: string
+}
+
+export interface DomainsCodingQuestionTestCase {
+  createdAt?: string
+  expectedOutput?: string
+  id?: number
+  input?: string
+  isHidden?: boolean
+  question?: DomainsCodingQuestion
+  updatedAt?: string
+}
 
 export interface DomainsCompilationRequest {
   input?: string
@@ -73,6 +119,10 @@ export interface GetObjectBody {
 export type GetObjectData = HandlersResponseString
 
 export type GetObjectError = HandlersErrResponse
+
+export type GetQuestionsData = HandlersResponseCodingInterviewGetQuestionsResponse
+
+export type GetQuestionsError = HandlersErrResponse
 
 export type GetVideoInterviewContextData = HandlersResponseVideoInterviewContextResponse
 
@@ -113,6 +163,13 @@ export interface HandlersResponseCodingInterviewGenerateCompileTokenResponse {
 export interface HandlersResponseCodingInterviewGetCompileResultResponse {
   code?: number
   data?: CodingInterviewGetCompileResultResponse
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseCodingInterviewGetQuestionsResponse {
+  code?: number
+  data?: CodingInterviewGetQuestionsResponse
   message?: string
   timestamp?: string
 }
@@ -317,6 +374,24 @@ export namespace CodingInterview {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetCompileResultData
+  }
+
+  /**
+   * @description Get coding interview questions
+   * @tags codingInterview
+   * @name GetQuestions
+   * @summary Get coding interview questions
+   * @request GET:/codingInterview.getQuestions
+   * @response `200` `GetQuestionsData` Successful response with the coding interview questions
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetQuestions {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetQuestionsData
   }
 }
 
@@ -694,6 +769,26 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
     getCompileResult: (token: string, params: RequestParams = {}) =>
       this.request<GetCompileResultData, GetCompileResultError>({
         path: `/codingInterview.getCompileResult/${token}`,
+        method: "GET",
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Get coding interview questions
+     *
+     * @tags codingInterview
+     * @name GetQuestions
+     * @summary Get coding interview questions
+     * @request GET:/codingInterview.getQuestions
+     * @response `200` `GetQuestionsData` Successful response with the coding interview questions
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getQuestions: (params: RequestParams = {}) =>
+      this.request<GetQuestionsData, GetQuestionsError>({
+        path: `/codingInterview.getQuestions`,
         method: "GET",
         type: ContentType.Json,
         format: "json",
