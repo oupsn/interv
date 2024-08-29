@@ -14,6 +14,7 @@ interface CodingInterviewPanelProps {
   onPreviousQuestion: () => void
   isFirstQuestion: boolean
   isLastQuestion: boolean
+  setCurrentQuestionIndex: (index: number) => void
 }
 
 interface EditorState {
@@ -30,6 +31,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   onPreviousQuestion,
   isFirstQuestion,
   isLastQuestion,
+  setCurrentQuestionIndex,
 }) => {
   const [countdown, setCountdown] = useState(timeRemain)
   const [editorStates, setEditorStates] = useState<EditorState[]>(
@@ -179,6 +181,20 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
       <p className="text-lg font-semibold">
         Time remaining: {formatTime(countdown)}
       </p>
+      <div className="flex gap-2 mb-4">
+        {questions.map((_, index) => (
+          <Button
+            key={index}
+            variant={index === currentQuestionIndex ? "default" : "outline"}
+            onClick={() => {
+              setCurrentQuestionIndex(index)
+            }}
+            className="w-10 h-10"
+          >
+            {index + 1}
+          </Button>
+        ))}
+      </div>
       <div
         className="flex flex-row w-full h-[calc(100vh-200px)] relative"
         ref={containerRef}

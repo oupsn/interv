@@ -51,6 +51,7 @@ const CodingInterviewPage = () => {
             isLastQuestion={
               currentQuestionIndex === mockData.data.questionList.length - 1
             }
+            setCurrentQuestionIndex={setCurrentQuestionIndex}
           />
         ) : (
           <CodingInterviewInstruction
