@@ -15,29 +15,54 @@ func NewCodingInterviewHandler(codingInterviewService services.ICodingInterviewS
 	}
 }
 
-// @Summary Submit and compile code for a coding interview
-// @Description Submit and compile code for a coding interview
-// @Tags Coding Interview
+// @Summary Generate compile token for a coding interview
+// @Description Generate compile token for a coding interview
+// @Tags codingInterview
+// @ID GenerateCompileToken
 // @Accept json
 // @Produce json
-// @Param body body CodingInterviewCompileQuery true "Request body containing the code to be compiled"
-// @Success 200 {object} CodingInterviewCompileResponse "Successful response with the compile result"
+// @Param body body CodingInterviewGenerateCompileTokenQuery true "Request body containing the code to be compiled"
+// @Success 200 {object} Response[CodingInterviewGenerateCompileTokenResponse] "Successful response with the compile token"
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /coding-interview/compile [post]
-func (co CodingInterviewHandler) SubmitCompileCode(c *fiber.Ctx) error {
-	var req CodingInterviewCompileQuery
+// @Router /codingInterview.generateCompileToken [post]
+func (co CodingInterviewHandler) GenerateCompileToken(c *fiber.Ctx) error {
+	var req CodingInterviewGenerateCompileTokenQuery
 	if err := c.BodyParser(&req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	res, err := co.codingInterviewService.CompileCode(req.Body)
+	res, err := co.codingInterviewService.GenerateCompileToken(req.Body)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	return Ok(c, CodingInterviewCompileResponse{
-		CompileResult: res,
+	return Ok(c, CodingInterviewGenerateCompileTokenResponse{
+		Token: res,
 	})
 
+}
+
+// @Summary Get compile result for a coding interview
+// @Description Get compile result for a coding interview
+// @Tags codingInterview
+// @ID GetCompileResult
+// @Accept json
+// @Produce json
+// @Param token path string true "Token to get the compile result"
+// @Success 200 {object} Response[CodingInterviewGetCompileResultResponse] "Successful response with the compile result"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.getCompileResult/{token} [get]
+func (co CodingInterviewHandler) GetCompileResult(c *fiber.Ctx) error {
+	token := c.Params("token")
+
+	res, err := co.codingInterviewService.GetCompileResult(token)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, CodingInterviewGetCompileResultResponse{
+		CompileResult: res,
+	})
 }

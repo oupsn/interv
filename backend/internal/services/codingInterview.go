@@ -12,6 +12,7 @@ var (
 
 type ICodingInterviewService interface {
 	GetCodingInterviewQuestions() (string, error)
-	CompileCode(req domains.CompilationRequest) (domains.CompilationResultResponse, error)
+	GenerateCompileToken(req domains.CompilationRequest) (string, error)
+	GetCompileResult(token string) (domains.CompilationResultResponse, error)
 	SaveCodingSnapshot(code string) (string, error)
 }

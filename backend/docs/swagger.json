@@ -99,6 +99,98 @@
                 }
             }
         },
+        "/codingInterview.generateCompileToken": {
+            "post": {
+                "description": "Generate compile token for a coding interview",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Generate compile token for a coding interview",
+                "operationId": "GenerateCompileToken",
+                "parameters": [
+                    {
+                        "description": "Request body containing the code to be compiled",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CodingInterviewGenerateCompileTokenQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with the compile token",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-CodingInterviewGenerateCompileTokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/codingInterview.getCompileResult/{token}": {
+            "get": {
+                "description": "Get compile result for a coding interview",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Get compile result for a coding interview",
+                "operationId": "GetCompileResult",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Token to get the compile result",
+                        "name": "token",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with the compile result",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-CodingInterviewGetCompileResultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/object.getObject": {
             "post": {
                 "produces": [
@@ -423,6 +515,33 @@
         }
     },
     "definitions": {
+        "CodingInterviewGenerateCompileTokenQuery": {
+            "type": "object",
+            "required": [
+                "body"
+            ],
+            "properties": {
+                "body": {
+                    "$ref": "#/definitions/domains.CompilationRequest"
+                }
+            }
+        },
+        "CodingInterviewGenerateCompileTokenResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "CodingInterviewGetCompileResultResponse": {
+            "type": "object",
+            "properties": {
+                "compileResult": {
+                    "$ref": "#/definitions/domains.CompilationResultResponse"
+                }
+            }
+        },
         "CurrentUserResponse": {
             "type": "object",
             "required": [
@@ -590,6 +709,57 @@
                 }
             }
         },
+        "domains.CompilationRequest": {
+            "type": "object",
+            "properties": {
+                "input": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "integer"
+                },
+                "source_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "domains.CompilationResultResponse": {
+            "type": "object",
+            "properties": {
+                "compile_output": {
+                    "type": "string"
+                },
+                "memory": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "object",
+                    "properties": {
+                        "description": {
+                            "type": "string"
+                        },
+                        "id": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "stderr": {
+                    "type": "string"
+                },
+                "stdout": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.ErrResponse": {
             "type": "object",
             "properties": {
@@ -609,6 +779,40 @@
             "properties": {
                 "code": {
                     "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-CodingInterviewGenerateCompileTokenResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/CodingInterviewGenerateCompileTokenResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-CodingInterviewGetCompileResultResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/CodingInterviewGetCompileResultResponse"
                 },
                 "message": {
                     "type": "string"

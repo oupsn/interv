@@ -2,7 +2,8 @@ package domains
 
 type CompilationRequest struct {
 	SourceCode string `json:"source_code"`
-	Language   string `json:"language"`
+	Language   uint   `json:"language"`
+	Input      string `json:"input"`
 }
 
 type CompilationTokenResponse struct {
@@ -16,9 +17,9 @@ type CompilationResultResponse struct {
 		ID          int    `json:"id"`
 		Description string `json:"description"`
 	} `json:"status"`
-	Time          float64 `json:"time"`
-	Memory        int     `json:"memory"`
-	Token         string  `json:"token"`
-	CompileOutput string  `json:"compile_output"`
-	Message       string  `json:"message"`
+	Time          string `json:"time"`
+	Memory        int    `json:"memory"`
+	Token         string `json:"token"`
+	CompileOutput string `json:"compile_output"`
+	Message       string `json:"message"`
 }

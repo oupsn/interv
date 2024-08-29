@@ -4,6 +4,7 @@ import CodingInterviewQuestion, {
 } from "./codingInterviewPanel/CodingInterviewQuestion"
 import CodeEditor from "./codingInterviewPanel/CodingInterviewEditor"
 import { Button } from "@/components/ui/button"
+import { server } from "@/contexts/swr"
 
 interface CodingInterviewPanelProps {
   timeRemain: number
@@ -18,7 +19,7 @@ interface CodingInterviewPanelProps {
 interface EditorState {
   content: string
   language: string
-  output?: string
+  output: string
 }
 
 const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
@@ -32,7 +33,11 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
 }) => {
   const [countdown, setCountdown] = useState(timeRemain)
   const [editorStates, setEditorStates] = useState<EditorState[]>(
-    new Array(questions.length).fill({ content: "", language: "javascript" }),
+    new Array(questions.length).fill({
+      content: "",
+      language: "javascript",
+      output: "",
+    }),
   )
   const [leftPanelWidth, setLeftPanelWidth] = useState(50)
   const [isDragging, setIsDragging] = useState(false)
@@ -100,9 +105,73 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
       newStates[currentQuestionIndex] = {
         ...newStates[currentQuestionIndex],
         language: newLanguage,
+        output: "",
       }
       return newStates
     })
+  }
+  const handleCompile = async (
+    language: number,
+    content: string,
+    input: string,
+  ) => {
+    const tokenResponse = await server.codingInterview.generateCompileToken({
+      body: {
+        language,
+        source_code: content,
+        input,
+      },
+    })
+    const token = tokenResponse.data?.token
+    if (!token) {
+      return
+    }
+    setEditorStates((prevStates) => {
+      const newStates = [...prevStates]
+      newStates[currentQuestionIndex] = {
+        ...newStates[currentQuestionIndex],
+        output: "Compiling...",
+      }
+      return newStates
+    })
+
+    const pollCompileResult = async () => {
+      const compileResponse =
+        await server.codingInterview.getCompileResult(token)
+      const compileStatus =
+        compileResponse.data?.compileResult?.status?.description
+
+      if (compileStatus === "Accepted") {
+        const compileResult = compileResponse.data?.compileResult
+        if (compileResult) {
+          console.log(compileResult)
+          const formattedResult =
+            compileResult.stdout +
+            "\n" +
+            compileResult.stderr +
+            "\n" +
+            "Time: " +
+            compileResult.time +
+            "ms" +
+            "\n" +
+            "Memory: " +
+            compileResult.memory +
+            "KB"
+          setEditorStates((prevStates) => {
+            const newStates = [...prevStates]
+            newStates[currentQuestionIndex] = {
+              ...newStates[currentQuestionIndex],
+              output: formattedResult,
+            }
+            return newStates
+          })
+        }
+      } else {
+        setTimeout(pollCompileResult, 1000)
+      }
+    }
+
+    pollCompileResult()
   }
 
   return (
@@ -148,6 +217,8 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
             onChange={handleEditorChange}
             language={editorStates[currentQuestionIndex].language}
             onLanguageChange={handleLanguageChange}
+            onCompile={handleCompile}
+            output={editorStates[currentQuestionIndex].output}
           />
         </div>
       </div>

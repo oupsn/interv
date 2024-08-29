@@ -1,5 +1,22 @@
 basePath: /api
 definitions:
+  CodingInterviewGenerateCompileTokenQuery:
+    properties:
+      body:
+        $ref: '#/definitions/domains.CompilationRequest'
+    required:
+    - body
+    type: object
+  CodingInterviewGenerateCompileTokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  CodingInterviewGetCompileResultResponse:
+    properties:
+      compileResult:
+        $ref: '#/definitions/domains.CompilationResultResponse'
+    type: object
   CurrentUserResponse:
     properties:
       created_at:
@@ -113,6 +130,39 @@ definitions:
     - timeToAnswer
     - timeToPrepare
     type: object
+  domains.CompilationRequest:
+    properties:
+      input:
+        type: string
+      language:
+        type: integer
+      source_code:
+        type: string
+    type: object
+  domains.CompilationResultResponse:
+    properties:
+      compile_output:
+        type: string
+      memory:
+        type: integer
+      message:
+        type: string
+      status:
+        properties:
+          description:
+            type: string
+          id:
+            type: integer
+        type: object
+      stderr:
+        type: string
+      stdout:
+        type: string
+      time:
+        type: string
+      token:
+        type: string
+    type: object
   handlers.ErrResponse:
     properties:
       code:
@@ -126,6 +176,28 @@ definitions:
     properties:
       code:
         type: integer
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-CodingInterviewGenerateCompileTokenResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/CodingInterviewGenerateCompileTokenResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-CodingInterviewGetCompileResultResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/CodingInterviewGetCompileResultResponse'
       message:
         type: string
       timestamp:
@@ -251,6 +323,67 @@ paths:
       summary: Get current user in the system
       tags:
       - authentication
+  /codingInterview.generateCompileToken:
+    post:
+      consumes:
+      - application/json
+      description: Generate compile token for a coding interview
+      operationId: GenerateCompileToken
+      parameters:
+      - description: Request body containing the code to be compiled
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/CodingInterviewGenerateCompileTokenQuery'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the compile token
+          schema:
+            $ref: '#/definitions/handlers.Response-CodingInterviewGenerateCompileTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Generate compile token for a coding interview
+      tags:
+      - codingInterview
+  /codingInterview.getCompileResult/{token}:
+    get:
+      consumes:
+      - application/json
+      description: Get compile result for a coding interview
+      operationId: GetCompileResult
+      parameters:
+      - description: Token to get the compile result
+        in: path
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the compile result
+          schema:
+            $ref: '#/definitions/handlers.Response-CodingInterviewGetCompileResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get compile result for a coding interview
+      tags:
+      - codingInterview
   /object.getObject:
     post:
       operationId: getObject

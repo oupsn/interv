@@ -1,8 +1,6 @@
 package services
 
 import (
-	"time"
-
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 )
@@ -21,24 +19,20 @@ func (s *codingInterviewService) GetCodingInterviewQuestions() (string, error) {
 	return "", nil
 }
 
-func (s *codingInterviewService) CompileCode(req domains.CompilationRequest) (domains.CompilationResultResponse, error) {
+func (s *codingInterviewService) GenerateCompileToken(req domains.CompilationRequest) (string, error) {
 	token, err := s.codeCompilationRepository.GenerateCompileToken(req)
 	if err != nil {
-		return domains.CompilationResultResponse{}, ErrorGetCompileToken
+		return "", ErrorGetCompileToken
 	}
-	res, err := s.codeCompilationRepository.GetCompileResult(token.Token)
+	return token.Token, nil
+}
+
+func (s *codingInterviewService) GetCompileResult(token string) (domains.CompilationResultResponse, error) {
+	res, err := s.codeCompilationRepository.GetCompileResult(token)
 	if err != nil {
 		return domains.CompilationResultResponse{}, ErrorGetCompileResult
 	}
-	for res.Status.Description != "Accepted" {
-		res, err = s.codeCompilationRepository.GetCompileResult(token.Token)
-		if err != nil {
-			return domains.CompilationResultResponse{}, ErrorGetCompileResult
-		}
-		time.Sleep(time.Second)
-	}
 	return res, nil
-
 }
 
 func (*codingInterviewService) SaveCodingSnapshot(code string) (string, error) {

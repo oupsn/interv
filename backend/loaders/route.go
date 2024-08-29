@@ -66,7 +66,8 @@ func SetupRoutes() {
 	public.Post("videoInterview.submitVideoInterview", videoInterviewHandlers.SubmitVideoInterview)
 
 	// codingInterview
-	public.Post("codingInterview.submitCompileCode", codingInterviewHandlers.SubmitCompileCode)
+	public.Post("codingInterview.generateCompileToken", codingInterviewHandlers.GenerateCompileToken)
+	public.Get("codingInterview.getCompileResult/:token", codingInterviewHandlers.GetCompileResult)
 
 	// Private Routes
 	private := app.Group("/api")

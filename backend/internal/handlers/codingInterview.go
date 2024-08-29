@@ -1,11 +1,17 @@
 package handlers
 
-import "csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
+import (
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
+)
 
-type CodingInterviewCompileQuery struct {
+type CodingInterviewGenerateCompileTokenQuery struct {
 	Body domains.CompilationRequest `json:"body"  validate:"required"`
-} // @name CodingInterviewCompileResoponses
+} // @name CodingInterviewGenerateCompileTokenQuery
 
-type CodingInterviewCompileResponse struct {
+type CodingInterviewGenerateCompileTokenResponse struct {
+	Token string `json:"token"`
+} // @name CodingInterviewGenerateCompileTokenResponse
+
+type CodingInterviewGetCompileResultResponse struct {
 	CompileResult domains.CompilationResultResponse `json:"compileResult"`
-} // @name CodingInterviewCompileResoponses
+} // @name CodingInterviewGetCompileResultResponse

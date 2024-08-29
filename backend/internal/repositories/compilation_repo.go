@@ -19,9 +19,10 @@ func NewCodeCompilationRepository(baseURL string) ICompilationRepository {
 }
 
 func (r *codeCompilationRepository) GenerateCompileToken(request domains.CompilationRequest) (domains.CompilationTokenResponse, error) {
-	payload, err := json.Marshal(map[string]string{
+	payload, err := json.Marshal(map[string]interface{}{
 		"source_code": request.SourceCode,
 		"language_id": request.Language,
+		"stdin":       request.Input,
 	})
 	if err != nil {
 		return domains.CompilationTokenResponse{}, err
@@ -48,10 +49,12 @@ func (r *codeCompilationRepository) GetCompileResult(token string) (domains.Comp
 		return domains.CompilationResultResponse{}, err
 	}
 	defer resp.Body.Close()
-
+	fmt.Println(resp.Body)
 	var result domains.CompilationResultResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
+
 	if err != nil {
+		fmt.Println(err)
 		return domains.CompilationResultResponse{}, err
 	}
 

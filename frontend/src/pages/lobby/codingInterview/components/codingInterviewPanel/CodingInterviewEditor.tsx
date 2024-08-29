@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect } from "react"
 import CodeMirror from "@uiw/react-codemirror"
 import { langs } from "@uiw/codemirror-extensions-langs"
 import {
@@ -15,7 +15,8 @@ interface CodeEditorProps {
   onChange: (newContent: string) => void
   language: string
   onLanguageChange: (newLanguage: string) => void
-  output?: string
+  onCompile: (language: number, content: string, input: string) => void
+  output: string
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -23,13 +24,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   onChange,
   language,
   onLanguageChange,
+  onCompile,
+  output,
 }) => {
-  const [output, setOutput] = useState<string>("")
-
   const handleLanguageChange = (value: string) => {
     onLanguageChange(value)
     onChange(getDefaultCode(value))
-    setOutput("")
   }
 
   const getDefaultCode = (lang: string) => {
@@ -37,11 +37,23 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       case "javascript":
         return '// JavaScript code here\nconsole.log("Hello, World!");'
       case "python":
-        return '# Python code here\nprint("Hello, World!")'
+        return '# Python3 code here\nprint("Hello, World!")'
       case "c":
         return '// C code here\n#include <stdio.h>\n\nint main() {\n    printf("Hello, World!");\n    return 0;\n}'
       default:
         return "// Start coding here"
+    }
+  }
+  const getLanguageNumber = (lang: string) => {
+    switch (lang) {
+      case "javascript":
+        return 63
+      case "python":
+        return 71
+      case "c":
+        return 48
+      default:
+        return 0
     }
   }
 
@@ -56,11 +68,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       default:
         return langs.javascript()
     }
-  }
-
-  const handleCompile = () => {
-    // TODO: call compile api naja
-    setOutput(`Compile laew ja!\n\nOutput:\n${"Wrongg"}`)
   }
 
   useEffect(() => {
@@ -82,7 +89,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
             <SelectItem value="c">C</SelectItem>
           </SelectContent>
         </Select>
-        <Button onClick={handleCompile} className=" text-white">
+        <Button
+          onClick={() => {
+            onCompile(getLanguageNumber(language), content, "")
+          }}
+          className=" text-white"
+        >
           Compile & Run
         </Button>
       </div>
