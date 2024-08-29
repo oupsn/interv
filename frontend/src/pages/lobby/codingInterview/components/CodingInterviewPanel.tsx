@@ -18,6 +18,7 @@ interface CodingInterviewPanelProps {
 interface EditorState {
   content: string
   language: string
+  output?: string
 }
 
 const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({

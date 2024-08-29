@@ -15,6 +15,7 @@ interface CodeEditorProps {
   onChange: (newContent: string) => void
   language: string
   onLanguageChange: (newLanguage: string) => void
+  output?: string
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({

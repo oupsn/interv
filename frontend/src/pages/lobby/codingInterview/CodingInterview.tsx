@@ -1,12 +1,24 @@
+import SideBar from "@/components/layout/SideBar"
 import CodingInterviewInstruction from "./components/CodingInterviewInstruction"
 import CodingInterviewPanel from "./components/CodingInterviewPanel"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import SideBarItem from "@/components/layout/SideBarItem"
 
 const CodingInterviewPage = () => {
   const [isStart, setIsStart] = useState(mockData.isStart)
-  const [timeRemain] = useState(mockData.timeRemain)
+  const [timeRemain, setTimeRemain] = useState(mockData.timeRemain)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 
+  useEffect(() => {
+    let timer: string | number | NodeJS.Timeout | undefined
+    if (isStart && timeRemain > 0) {
+      timer = setInterval(() => {
+        setTimeRemain((prevTime: number) => prevTime - 1)
+      }, 1000)
+    }
+
+    return () => clearInterval(timer)
+  }, [isStart])
   const handleNextQuestion = () => {
     if (currentQuestionIndex < mockData.data.questionList.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
@@ -20,30 +32,37 @@ const CodingInterviewPage = () => {
   }
 
   return (
-    // TODO: add sidebar in layout
-    <div className={"w-dvw h-dvh flex max-h-sr z-0"}>
-      {isStart ? (
-        <CodingInterviewPanel
-          timeRemain={timeRemain}
-          questions={mockData.data.questionList}
-          currentQuestionIndex={currentQuestionIndex}
-          onNextQuestion={handleNextQuestion}
-          onPreviousQuestion={handlePreviousQuestion}
-          isFirstQuestion={currentQuestionIndex === 0}
-          isLastQuestion={
-            currentQuestionIndex === mockData.data.questionList.length - 1
-          }
-        />
-      ) : (
-        <CodingInterviewInstruction
-          title={mockData.title}
-          description={mockData.instuction}
-          clickStart={() => {
-            setIsStart(true)
-          }}
-        />
-      )}
-    </div>
+    <>
+      <SideBar>
+        {!isStart && <SideBarItem title={"Instruction"} isActive={!isStart} />}
+        {isStart && (
+          <SideBarItem title={"Coding Interview"} isActive={isStart} />
+        )}
+      </SideBar>
+      <div className={"w-dvw h-dvh flex max-h-sr z-0"}>
+        {isStart ? (
+          <CodingInterviewPanel
+            timeRemain={timeRemain}
+            questions={mockData.data.questionList}
+            currentQuestionIndex={currentQuestionIndex}
+            onNextQuestion={handleNextQuestion}
+            onPreviousQuestion={handlePreviousQuestion}
+            isFirstQuestion={currentQuestionIndex === 0}
+            isLastQuestion={
+              currentQuestionIndex === mockData.data.questionList.length - 1
+            }
+          />
+        ) : (
+          <CodingInterviewInstruction
+            title={mockData.title}
+            description={mockData.instuction}
+            clickStart={() => {
+              setIsStart(true)
+            }}
+          />
+        )}
+      </div>
+    </>
   )
 }
 
