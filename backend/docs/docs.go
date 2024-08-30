@@ -107,6 +107,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/mail.sendMail": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mail"
+                ],
+                "summary": "Send mail to the user",
+                "operationId": "sendMail",
+                "parameters": [
+                    {
+                        "description": "Mail details",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/SendMailBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/object.getObject": {
             "post": {
                 "produces": [
@@ -488,6 +534,45 @@ const docTemplate = `{
                 }
             }
         },
+        "MailObject": {
+            "type": "object",
+            "required": [
+                "name",
+                "to"
+            ],
+            "properties": {
+                "dueDate": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "SendMailBody": {
+            "type": "object",
+            "required": [
+                "mailList",
+                "preset"
+            ],
+            "properties": {
+                "mailList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MailObject"
+                    }
+                },
+                "preset": {
+                    "$ref": "#/definitions/handlers.MailPreset"
+                }
+            }
+        },
         "User": {
             "type": "object",
             "properties": {
@@ -611,6 +696,17 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "handlers.MailPreset": {
+            "type": "string",
+            "enum": [
+                "invite",
+                "finish"
+            ],
+            "x-enum-varnames": [
+                "Invite",
+                "Finish"
+            ]
         },
         "handlers.OkResponse": {
             "type": "object",
