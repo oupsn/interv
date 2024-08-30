@@ -18,7 +18,7 @@ const CodingInterviewPage = () => {
     }
 
     return () => clearInterval(timer)
-  }, [isStart])
+  }, [isStart, timeRemain])
   const handleNextQuestion = () => {
     if (currentQuestionIndex < mockData.data.questionList.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
