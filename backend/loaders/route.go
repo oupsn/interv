@@ -21,18 +21,21 @@ func SetupRoutes() {
 	// Repositories
 	var userRepositories = repositories.NewUserRepository(*DB)
 	var objectRepositories = repositories.NewObjectRepository(*MINIO)
+	var mailRepositories = repositories.NewMailRepository(*MAILJET)
 
 	// Services
 	var userServices = services.NewUserService(userRepositories)
 	var authServices = services.NewAuthService(userRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
+	var mailServices = services.NewMailService(mailRepositories)
 
 	// Handlers
 	var userHandlers = handlers.NewUserHandler(userServices)
 	var authHandlers = handlers.NewAuthHandler(authServices)
 	var videoInterviewHandlers = handlers.NewVideoInterviewHandler(videoInterviewServices)
 	var objectHandlers = handlers.NewObjectHandler(objectServices)
+	var mailHandlers = handlers.NewMailHandler(mailServices)
 
 	// Fiber App
 	app := NewFiberApp()
@@ -76,6 +79,9 @@ func SetupRoutes() {
 	// Object
 	private.Post("object.uploadObject", objectHandlers.UploadObject)
 	private.Post("object.getObject", objectHandlers.GetObject)
+
+	// Mail
+	private.Post("mail.sendMail", mailHandlers.SendMail)
 
 	ListenAndServe(app, serverAddr)
 }

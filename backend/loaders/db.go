@@ -3,6 +3,7 @@ package loaders
 import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"fmt"
+	"github.com/mailjet/mailjet-apiv3-go/v4"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/spf13/viper"
@@ -13,6 +14,8 @@ import (
 var DB *gorm.DB
 
 var MINIO *minio.Client
+
+var MAILJET *mailjet.Client
 
 func SetupDatabases() {
 	CheckAndConnectDatabase()
@@ -78,4 +81,11 @@ func SetupMinio() {
 	}
 
 	MINIO = minioClient
+}
+
+func SetupMailjet() {
+	fmt.Println(fmt.Sprintf("[MAILJET] Initializing"))
+	mailjetClient := mailjet.NewMailjetClient(viper.GetString(EnvMailjetApiKey), viper.GetString(EnvMailjetPrivateKey))
+
+	MAILJET = mailjetClient
 }

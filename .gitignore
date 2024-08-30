@@ -47,4 +47,4 @@ typings/
 # Optional npm cache directory
 .npm
 
-# Optional eslint ca
+config.yaml

@@ -39,6 +39,32 @@ definitions:
     - password
     - username
     type: object
+  MailObject:
+    properties:
+      dueDate:
+        type: string
+      link:
+        type: string
+      name:
+        type: string
+      to:
+        type: string
+    required:
+    - name
+    - to
+    type: object
+  SendMailBody:
+    properties:
+      mailList:
+        items:
+          $ref: '#/definitions/MailObject'
+        type: array
+      preset:
+        $ref: '#/definitions/handlers.MailPreset'
+    required:
+    - mailList
+    - preset
+    type: object
   User:
     properties:
       created_at:
@@ -122,6 +148,14 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.MailPreset:
+    enum:
+    - invite
+    - finish
+    type: string
+    x-enum-varnames:
+    - Invite
+    - Finish
   handlers.OkResponse:
     properties:
       code:
@@ -251,6 +285,36 @@ paths:
       summary: Get current user in the system
       tags:
       - authentication
+  /mail.sendMail:
+    post:
+      consumes:
+      - application/json
+      operationId: sendMail
+      parameters:
+      - description: Mail details
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/SendMailBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Send mail to the user
+      tags:
+      - mail
   /object.getObject:
     post:
       operationId: getObject
