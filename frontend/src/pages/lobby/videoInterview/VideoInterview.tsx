@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils.ts"
 import { VideoInterviewFinish } from "@/pages/lobby/videoInterview/components/VideoInterviewFinish.tsx"
 
 const VideoInterviewPage = () => {
-  const { lobbyId } = useParams() // TODO: add swr for fetching interview data
+  const { lobbyId } = useParams()
   const [activeQuestion, setActiveQuestion] = useState(0) // 0 for setup
   const { data } = useGetVideoInterviewContext(Number(lobbyId))
   const isActive = (id: number) => {
