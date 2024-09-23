@@ -9,5 +9,7 @@ import (
 // @BasePath /api
 func main() {
 	loaders.SetupDatabases()
+	loaders.SetupMinio()
+	loaders.SetupMailjet()
 	loaders.SetupRoutes()
 }

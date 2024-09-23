@@ -3,11 +3,12 @@ import AppLayout from "@/components/layout/AppLayout.tsx"
 import MainLayout from "@/components/layout/MainLayout.tsx"
 import LoginPage from "@/pages/login/Login.tsx"
 import LobbyPage from "@/pages/lobby/Lobby.tsx"
-import { Playground } from "@/pages/playground/Playground.tsx"
-import Dashboard from "@/pages/dashboard/Dashboard.tsx"
-import LobbyLayout from "@/components/layout/LobbyLayout.tsx"
+import Playground from "@/pages/playground/Playground.tsx"
+import Portal from "@/pages/portal/Portal.tsx"
 import CodingInterviewPage from "@/pages/lobby/codingInterview/CodingInterview.tsx"
 import VideoInterviewPage from "@/pages/lobby/videoInterview/VideoInterview.tsx"
+import CreateWorkspace from "@/pages/portal/createWorkspace/CreateWorkspace"
+import WorkspaceWithId from "@/pages/portal/WorkspaceWithId"
 
 export const router = createBrowserRouter([
   {
@@ -19,20 +20,28 @@ export const router = createBrowserRouter([
         element: <LoginPage />,
       },
       {
-        path: "/",
-        element: <MainLayout />, // maybe can use <LobbyLayout /> ?
+        path: "workspace",
+        element: <MainLayout />,
         children: [
           {
-            path: "dashboard",
-            element: <Dashboard />,
+            path: "",
+            element: <Portal />,
+          },
+          {
+            path: "create",
+            element: <CreateWorkspace />,
+          },
+          {
+            path: ":workspaceId",
+            element: <WorkspaceWithId />,
           },
         ],
       },
     ],
   },
   {
-    path: "/lobby/:id",
-    element: <LobbyLayout />,
+    path: "/lobby/:lobbyId",
+    element: <MainLayout />,
     children: [
       {
         path: "",

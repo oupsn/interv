@@ -1,17 +1,21 @@
-import React from "react"
+import {
+  cloneElement,
+  createElement,
+  FC,
+  Fragment,
+  PropsWithChildren,
+  ReactElement,
+  ReactNode,
+} from "react"
 
-const nest = (children: React.ReactNode, component: React.ReactElement) =>
-  React.cloneElement(component, {}, children)
+const nest = (children: ReactNode, component: ReactElement) =>
+  cloneElement(component, {}, children)
 
-export type ProviderProps = React.PropsWithChildren<{
-  providers: React.ReactElement[]
+export type ProviderProps = PropsWithChildren<{
+  providers: ReactElement[]
 }>
 
-const Provider: React.FC<ProviderProps> = ({ children, providers }) =>
-  React.createElement(
-    React.Fragment,
-    null,
-    providers.reduceRight(nest, children),
-  )
+const Provider: FC<ProviderProps> = ({ children, providers }) =>
+  createElement(Fragment, null, providers.reduceRight(nest, children))
 
 export default Provider

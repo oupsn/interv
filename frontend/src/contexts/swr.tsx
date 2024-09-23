@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react"
+import { FC, PropsWithChildren } from "react"
 import { SWRConfig } from "swr"
 import { Server } from "../api/server.ts"
 
@@ -15,12 +15,12 @@ export const server = new Server({
 
 //window.server = server
 
-const SWRProvider: React.FC<PropsWithChildren> = ({ children }) => {
+const SWRProvider: FC<PropsWithChildren> = ({ children }) => {
   return (
     <SWRConfig
-      value={{
+    /*value={{
         fetcher: (url) => server.instance.get(url).then((res) => res.data),
-      }}
+      }}*/
     >
       {children}
     </SWRConfig>

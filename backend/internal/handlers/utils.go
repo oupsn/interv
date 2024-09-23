@@ -1,11 +1,12 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/spf13/viper"
-	"time"
 )
 
 var validate = validator.New()
@@ -78,8 +79,8 @@ func GetCurrentUser(ctx *fiber.Ctx) (userId *uint, err error) {
 	})
 
 	if err != nil {
-		print("Error ", err.Error(), "\n")
-		return nil, fiber.ErrUnauthorized
+		println("Error: ", err.Error())
+		return nil, fiber.NewError(fiber.StatusUnauthorized, err.Error())
 	}
 
 	if claims, ok := parser.Claims.(jwt.MapClaims); ok {

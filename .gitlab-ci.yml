@@ -5,12 +5,9 @@ stages:
   - deploy
 
 variables:
-  CONTAINER_TEST_IMAGE_CORE: $CI_REGISTRY_IMAGE_CORE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE_CORE: $CI_REGISTRY_IMAGE_CORE:latest
-  CONTAINER_TEST_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE_CLIENTSIDE: $CI_REGISTRY_IMAGE_CLIENTSIDE:latest
-  DOCKER_HOST: tcp://docker:2376
-  DOCKER_TLS_CERTDIR: "/certs"
+
 
 frontend_lint:
   image: node:lts-alpine3.20
@@ -31,6 +28,7 @@ frontend_lint:
 frontend_build:
   image: node:lts-alpine3.20
   stage: build
+  needs: []
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: false
@@ -42,6 +40,7 @@ frontend_build:
 backend_build:
   image: golang:latest
   stage: build
+  needs: []
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       allow_failure: false
@@ -61,9 +60,11 @@ frontend_release-image:
   only:
     - staging
   script:
+    - IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
+    - CONTAINER_TEST_IMAGE_CLIENTSIDE="$CI_REGISTRY_IMAGE_CLIENTSIDE:$IMAGE_TAG"
     - cd frontend
     - echo "Building Docker image..."
-    - docker build --pull -t $CONTAINER_TEST_IMAGE_CLIENTSIDE .
+    - docker build --pull -t "$CONTAINER_TEST_IMAGE_CLIENTSIDE" .
     - docker push $CONTAINER_TEST_IMAGE_CLIENTSIDE
     - docker tag $CONTAINER_TEST_IMAGE_CLIENTSIDE $CONTAINER_RELEASE_IMAGE_CLIENTSIDE
     - echo "Pushing Docker image to Docker hub......"
@@ -80,6 +81,8 @@ backend_release-image:
   only:
     - staging
   script:
+    - IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
+    - CONTAINER_TEST_IMAGE_CORE="$CI_REGISTRY_IMAGE_CORE:$IMAGE_TAG"
     - cd backend
     - echo "Building Docker image..."
     - docker build --pull -t $CONTAINER_TEST_IMAGE_CORE .
@@ -100,11 +103,12 @@ deploy-qa:
     - apk update
     - apk add --no-cache openssh
   script:
+    - IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - echo "Deploying to qa ..."
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "cd ./deploy-qa.sh"
+    - ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "$IMAGE_TAG ./deploy-qa.sh"
 
 deploy-prod:
   image: alpine

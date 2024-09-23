@@ -27,29 +27,22 @@ func NewUserHandler(userService services.IUserService) UserHandler {
 // @Failure 500 {object} ErrResponse
 // @Router /user.createUser [post]
 func (u UserHandler) CreateUser(c *fiber.Ctx) error {
-	form := new(CreateUserBody)
-
-	if err := c.BodyParser(form); err != nil {
+	body := CreateUserBody{}
+	if err := c.BodyParser(&body); err != nil {
 		return err
 	}
 
-	if err := validate.Struct(form); err != nil {
-		return err
+	if err := validate.Struct(body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	response, err := u.userService.Create(*form.Username, *form.Password, *form.Role)
+	err := u.userService.Create(body.ListUser, body.WorkspaceId)
 
 	if err != nil {
 		return err
 	}
 
-	return Created(c, UserData{
-		ID:        response.ID,
-		Username:  response.Username,
-		Role:      response.Role,
-		CreatedAt: response.CreatedAt,
-		UpdatedAt: response.UpdatedAt,
-	})
+	return Ok(c, body.ListUser)
 }
 
 // DeleteUser
@@ -64,9 +57,9 @@ func (u UserHandler) CreateUser(c *fiber.Ctx) error {
 // @Failure 500 {object} ErrResponse
 // @Router /user.deleteUser [post]
 func (u UserHandler) DeleteUser(c *fiber.Ctx) error {
-	form := new(DeleteUserBody)
+	body := DeleteUserBody{}
 
-	if err := c.BodyParser(form); err != nil {
+	if err := c.BodyParser(&body); err != nil {
 		return err
 	}
 
@@ -76,13 +69,13 @@ func (u UserHandler) DeleteUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	if *form.Id == *userId {
+	if body.Id == *userId {
 		return fiber.NewError(fiber.StatusBadRequest, "cannot delete yourself")
 	}
 
-	if err := u.userService.Delete(*form.Id); err != nil {
+	if err := u.userService.Delete(body.Id); err != nil {
 		return err
 	}
 
-	return Ok(c, form.Id)
+	return Ok(c, body.Id)
 }
