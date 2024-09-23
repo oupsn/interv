@@ -3,10 +3,11 @@ package loaders
 import (
 	"errors"
 	"fmt"
-	swagger "github.com/arsmn/fiber-swagger/v2"
+	"github.com/gofiber/swagger"
 	"github.com/spf13/viper"
 	"time"
 
+	_ "csgit.sit.kmutt.ac.th/interv/interv-platform/docs"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/handlers"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
@@ -21,18 +22,31 @@ func SetupRoutes() {
 	// Repositories
 	var userRepositories = repositories.NewUserRepository(*DB)
 	var objectRepositories = repositories.NewObjectRepository(*MINIO)
+	var mailRepositories = repositories.NewMailRepository(*MAILJET)
+	var videoQuestionRepositories = repositories.NewQuestionRepository(*DB)
+	var lobbyRepositories = repositories.NewLobbyRepository(*DB)
+	var workspaceRepositories = repositories.NewWorkspaceRepository(*DB)
+	var userInWorkspaceRepositories = repositories.NewUserInWorkspaceRepository(*DB)
 
 	// Services
-	var userServices = services.NewUserService(userRepositories)
+	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories)
 	var authServices = services.NewAuthService(userRepositories)
-	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories)
+	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, lobbyRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
+	var mailServices = services.NewMailService(mailRepositories)
+	var questionServices = services.NewQuestionService(videoQuestionRepositories)
+	var lobbyServices = services.NewLobbyService(lobbyRepositories)
+	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories)
 
 	// Handlers
 	var userHandlers = handlers.NewUserHandler(userServices)
 	var authHandlers = handlers.NewAuthHandler(authServices)
 	var videoInterviewHandlers = handlers.NewVideoInterviewHandler(videoInterviewServices)
 	var objectHandlers = handlers.NewObjectHandler(objectServices)
+	var mailHandlers = handlers.NewMailHandler(mailServices)
+	var questionHandlers = handlers.NewVideoQuestionHandler(questionServices)
+	var lobbyHandlers = handlers.NewLobbyHandler(lobbyServices)
+	var workspaceHandlers = handlers.NewWorkspaceHandler(workspaceService)
 
 	// Fiber App
 	app := NewFiberApp()
@@ -57,10 +71,21 @@ func SetupRoutes() {
 	public.Post("auth.logout", authHandlers.Logout)
 	public.Get("auth.me", authHandlers.Me)
 
-	// videoInterview
+	// video interview
 	public.Get("videoInterview.getVideoInterviewContext", videoInterviewHandlers.GetVideoInterviewContext)
 	public.Get("videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
 	public.Post("videoInterview.submitVideoInterview", videoInterviewHandlers.SubmitVideoInterview)
+
+	// video question
+	public.Post("videoQuestion.createVideoQuestion", questionHandlers.CreateVideoQuestion)
+	public.Get("videoQuestion.getVideoQuestion", questionHandlers.GetVideoQuestion)
+	public.Get("videoQuestion.getVideoQuestionByPortalId", questionHandlers.GetVideoQuestionByWorkspaceId)
+	public.Post("videoQuestion.updateVideoQuestion", questionHandlers.UpdateVideoQuestion)
+	public.Post("videoQuestion.deleteVideoQuestion", questionHandlers.DeleteVideoQuestion)
+
+	// lobby
+	public.Get("lobby.getLobbyContext", lobbyHandlers.GetLobbyContext)
+	public.Post("lobby.updateLobbyContext", lobbyHandlers.UpdateLobbyContext)
 
 	// Private Routes
 	private := app.Group("/api")
@@ -71,11 +96,22 @@ func SetupRoutes() {
 
 	// Auth
 
-	// portal
+	// Workspace
+	private.Get("workspace.get", workspaceHandlers.GetWorkspaceById)
+	private.Get("workspace.getAll", workspaceHandlers.GetAllWorkspace)
+	private.Post("workspace.create", workspaceHandlers.CreateWorkspace)
+	private.Delete("workspace.delete", workspaceHandlers.DeleteWorkspaceById)
+
+	//// UserInWorkspace
+	private.Get("userInWorkspace.get", workspaceHandlers.GetUserInWorkspace)
+	private.Delete("userInWorkspace.delete", workspaceHandlers.DeleteUserFromWorkspace)
 
 	// Object
 	private.Post("object.uploadObject", objectHandlers.UploadObject)
 	private.Post("object.getObject", objectHandlers.GetObject)
+
+	// Mail
+	private.Post("mail.sendMail", mailHandlers.SendMail)
 
 	ListenAndServe(app, serverAddr)
 }
@@ -86,7 +122,13 @@ func NewFiberApp() *fiber.App {
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
 			// Status code defaults to 500
 			code := fiber.StatusInternalServerError
-			Message := "Something went wrong"
+			Message := ""
+			if err != nil {
+				Message = err.Error()
+				if Message == "" {
+					Message = "Something went wrong"
+				}
+			}
 
 			// Retrieve the custom status code if it's a *fiber.Error
 			var e *fiber.Error

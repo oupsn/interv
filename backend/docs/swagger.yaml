@@ -1,5 +1,62 @@
 basePath: /api
 definitions:
+  CreateVideoQuestionBody:
+    properties:
+      retryAmount:
+        type: integer
+      timeToAnswer:
+        type: integer
+      timeToPrepare:
+        type: integer
+      title:
+        type: string
+      workspaceId:
+        type: integer
+    required:
+    - retryAmount
+    - timeToAnswer
+    - timeToPrepare
+    - title
+    - workspaceId
+    type: object
+  CreateVideoQuestionResponse:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      retryAmount:
+        type: integer
+      timeToAnswer:
+        type: integer
+      timeToPrepare:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+      workspaceId:
+        type: integer
+    type: object
+  CreateWorkspaceBody:
+    properties:
+      isCoding:
+        type: boolean
+      isVideo:
+        type: boolean
+      startDate:
+        type: string
+      stopDate:
+        type: string
+      title:
+        type: string
+    required:
+    - isCoding
+    - isVideo
+    - startDate
+    - stopDate
+    - title
+    type: object
   CurrentUserResponse:
     properties:
       created_at:
@@ -19,6 +76,54 @@ definitions:
     - updated_at
     - username
     type: object
+  DeleteUserFromWorkspaceBody:
+    properties:
+      userId:
+        type: integer
+      workspaceId:
+        type: integer
+    required:
+    - userId
+    - workspaceId
+    type: object
+  DeleteWorkspaceBody:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  GetLobbyContextResponse:
+    properties:
+      dueDate:
+        type: string
+      isCodingDone:
+        type: boolean
+      isVideoDone:
+        type: boolean
+      lobbyId:
+        type: integer
+      totalCodingQuestion:
+        type: integer
+      totalCodingTime:
+        type: integer
+      totalVideoQuestion:
+        type: integer
+      totalVideoTime:
+        type: integer
+      userId:
+        type: integer
+    required:
+    - dueDate
+    - isCodingDone
+    - isVideoDone
+    - lobbyId
+    - totalCodingQuestion
+    - totalCodingTime
+    - totalVideoQuestion
+    - totalVideoTime
+    - userId
+    type: object
   GetObjectBody:
     properties:
       bucketName:
@@ -28,6 +133,38 @@ definitions:
     required:
     - bucketName
     - objectName
+    type: object
+  GetVideoQuestionByIdResponse:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      retryAmount:
+        type: integer
+      timeToAnswer:
+        type: integer
+      timeToPrepare:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+      workspaceId:
+        type: integer
+    type: object
+  IndividualUser:
+    properties:
+      id:
+        type: integer
+      userData:
+        $ref: '#/definitions/User'
+      userInWorkspace:
+        $ref: '#/definitions/UserInWorkspace'
+    required:
+    - id
+    - userData
+    - userInWorkspace
     type: object
   LoginBody:
     properties:
@@ -39,12 +176,80 @@ definitions:
     - password
     - username
     type: object
+  MailObject:
+    properties:
+      dueDate:
+        type: string
+      link:
+        type: string
+      name:
+        type: string
+      to:
+        type: string
+    required:
+    - name
+    - to
+    type: object
+  SendMailBody:
+    properties:
+      mailList:
+        items:
+          $ref: '#/definitions/MailObject'
+        type: array
+      preset:
+        $ref: '#/definitions/handlers.MailPreset'
+    required:
+    - mailList
+    - preset
+    type: object
+  UpdateLobbyContextBody:
+    properties:
+      dueDate:
+        type: string
+      isCodingDone:
+        type: boolean
+      isVideoDone:
+        type: boolean
+      lobbyId:
+        type: integer
+      totalCodingQuestion:
+        type: integer
+      totalCodingTime:
+        type: integer
+      totalVideoQuestion:
+        type: integer
+      totalVideoTime:
+        type: integer
+      userId:
+        type: integer
+    required:
+    - lobbyId
+    type: object
+  UpdateVideoQuestionBody:
+    properties:
+      id:
+        type: integer
+      retryAmount:
+        type: integer
+      timeToAnswer:
+        type: integer
+      timeToPrepare:
+        type: integer
+      title:
+        type: string
+      workspaceId:
+        type: integer
+    required:
+    - id
+    type: object
   User:
     properties:
       created_at:
         type: string
       id:
         type: integer
+      name:
+        type: string
       role:
         type: string
       updated_at:
@@ -53,17 +258,6 @@ definitions:
         type: string
     type: object
   UserCreateBody:
-    properties:
-      password:
-        type: string
-      role:
-        type: string
-      username:
-        type: string
-    required:
-    - password
-    - role
-    - username
     type: object
   UserDeleteBody:
     properties:
@@ -71,6 +265,25 @@ definitions:
         type: integer
     required:
     - id
+    type: object
+  UserInWorkspace:
+    properties:
+      id:
+        type: integer
+      isInterest:
+        type: boolean
+      status:
+        type: string
+      userId:
+        type: integer
+      workspaceId:
+        type: integer
+    required:
+    - id
+    - isInterest
+    - status
+    - userId
+    - workspaceId
     type: object
   VideoInterviewContextResponse:
     properties:
@@ -88,16 +301,18 @@ definitions:
     properties:
       question:
         type: string
-      questionIndex:
+      questionId:
         type: integer
     required:
     - question
-    - questionIndex
+    - questionId
     type: object
   VideoInterviewQuestionSetting:
     properties:
       isLast:
         type: boolean
+      questionId:
+        type: integer
       questionIndex:
         type: integer
       retry:
@@ -108,10 +323,42 @@ definitions:
         type: integer
     required:
     - isLast
+    - questionId
     - questionIndex
     - retry
     - timeToAnswer
     - timeToPrepare
+    type: object
+  WorkspaceData:
+    properties:
+      individualUser:
+        items:
+          $ref: '#/definitions/IndividualUser'
+        type: array
+      workspaceDetail:
+        $ref: '#/definitions/WorkspaceDetail'
+    required:
+    - individualUser
+    - workspaceDetail
+    type: object
+  WorkspaceDetail:
+    properties:
+      id:
+        type: integer
+      isCoding:
+        type: boolean
+      isVideo:
+        type: boolean
+      memberNum:
+        type: integer
+      owner:
+        type: integer
+      startDate:
+        type: string
+      stopDate:
+        type: string
+      title:
+        type: string
     type: object
   handlers.ErrResponse:
     properties:
@@ -122,10 +369,29 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.MailPreset:
+    enum:
+    - invite
+    - finish
+    type: string
+    x-enum-varnames:
+    - Invite
+    - Finish
   handlers.OkResponse:
     properties:
       code:
         type: integer
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-CreateVideoQuestionResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/CreateVideoQuestionResponse'
       message:
         type: string
       timestamp:
@@ -142,12 +408,45 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.Response-GetLobbyContextResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/GetLobbyContextResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-GetVideoQuestionByIdResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/GetVideoQuestionByIdResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
   handlers.Response-User:
     properties:
       code:
         type: integer
       data:
         $ref: '#/definitions/User'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-UserInWorkspace:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/UserInWorkspace'
       message:
         type: string
       timestamp:
@@ -170,6 +469,67 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/VideoInterviewQuestionResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-WorkspaceData:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/WorkspaceData'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-WorkspaceDetail:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/WorkspaceDetail'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-array_GetVideoQuestionByIdResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/GetVideoQuestionByIdResponse'
+        type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-array_UserInWorkspace:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/UserInWorkspace'
+        type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-array_WorkspaceDetail:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/WorkspaceDetail'
+        type: array
       message:
         type: string
       timestamp:
@@ -251,6 +611,94 @@ paths:
       summary: Get current user in the system
       tags:
       - authentication
+  /lobby.getLobbyContext:
+    get:
+      consumes:
+      - application/json
+      operationId: getLobbyContext
+      parameters:
+      - in: query
+        name: lobbyId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-GetLobbyContextResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get lobby context
+      tags:
+      - lobby
+  /lobby.updateLobbyContext:
+    post:
+      consumes:
+      - application/json
+      operationId: updateLobbyContext
+      parameters:
+      - description: update lobby context
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateLobbyContextBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Update lobby context
+      tags:
+      - lobby
+  /mail.sendMail:
+    post:
+      consumes:
+      - application/json
+      operationId: sendMail
+      parameters:
+      - description: Mail details
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/SendMailBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Send mail to the user
+      tags:
+      - mail
   /object.getObject:
     post:
       operationId: getObject
@@ -373,6 +821,64 @@ paths:
       summary: Delete user
       tags:
       - user
+  /userInWorkspace.delete:
+    delete:
+      consumes:
+      - application/json
+      operationId: DeleteUserFromWorkspace
+      parameters:
+      - description: DeleteUserFromWorkspaceBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/DeleteUserFromWorkspaceBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-UserInWorkspace'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Delete User From Workspace
+      tags:
+      - userInWorkspace
+  /userInWorkspace.get:
+    get:
+      consumes:
+      - application/json
+      operationId: GetUserInWorkspace
+      parameters:
+      - in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-array_UserInWorkspace'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get user In Workspace
+      tags:
+      - userInWorkspace
   /videoInterview.getVideoInterviewContext:
     get:
       consumes:
@@ -382,7 +888,7 @@ paths:
       - in: query
         name: lobbyId
         required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:
@@ -408,11 +914,7 @@ paths:
       operationId: getVideoInterviewQuestion
       parameters:
       - in: query
-        name: lobbyId
-        required: true
-        type: string
-      - in: query
-        name: questionIndex
+        name: questionId
         required: true
         type: integer
       produces:
@@ -462,4 +964,277 @@ paths:
       summary: Submit video interview
       tags:
       - videoInterview
+  /videoQuestion.createVideoQuestion:
+    post:
+      consumes:
+      - application/json
+      operationId: createVideoQuestion
+      parameters:
+      - description: CreateVideoQuestionBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/CreateVideoQuestionBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-CreateVideoQuestionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Create new video question
+      tags:
+      - videoQuestion
+  /videoQuestion.deleteVideoQuestionById:
+    post:
+      consumes:
+      - application/json
+      operationId: deleteVideoQuestionById
+      parameters:
+      - in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Delete video question by id
+      tags:
+      - videoQuestion
+  /videoQuestion.getVideoQuestionById/{id}:
+    get:
+      consumes:
+      - application/json
+      operationId: getVideoQuestionById
+      parameters:
+      - in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-GetVideoQuestionByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get video question by id
+      tags:
+      - videoQuestion
+  /videoQuestion.getVideoQuestionWorkspaceIdId/{id}:
+    get:
+      consumes:
+      - application/json
+      operationId: getVideoQuestionByWorkspaceId
+      parameters:
+      - in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handlers.Response-array_GetVideoQuestionByIdResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get video question by workspace id
+      tags:
+      - videoQuestion
+  /videoQuestion.updateVideoQuestion:
+    post:
+      consumes:
+      - application/json
+      operationId: updateVideoQuestion
+      parameters:
+      - description: UpdateVideoQuestionBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateVideoQuestionBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-CreateVideoQuestionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Update video question
+      tags:
+      - videoQuestion
+  /workspace.create:
+    post:
+      consumes:
+      - application/json
+      operationId: CreateWorkspace
+      parameters:
+      - description: CreateWorkspaceBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/CreateWorkspaceBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-WorkspaceDetail'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Create new workspace
+      tags:
+      - workspace
+  /workspace.delete:
+    post:
+      consumes:
+      - application/json
+      operationId: DeleteWorkspaceById
+      parameters:
+      - description: DeleteWorkspaceBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/DeleteWorkspaceBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Delete workspace By Id
+      tags:
+      - workspace
+  /workspace.get:
+    get:
+      consumes:
+      - application/json
+      operationId: GetWorkspace
+      parameters:
+      - in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-WorkspaceData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get workspace
+      tags:
+      - workspace
+  /workspace.getAll:
+    get:
+      consumes:
+      - application/json
+      operationId: GetAllWorkspace
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-array_WorkspaceDetail'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get List of workspace
+      tags:
+      - workspace
 swagger: "2.0"

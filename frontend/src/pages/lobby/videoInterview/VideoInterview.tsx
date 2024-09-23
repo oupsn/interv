@@ -10,9 +10,9 @@ import { cn } from "@/lib/utils.ts"
 import { VideoInterviewFinish } from "@/pages/lobby/videoInterview/components/VideoInterviewFinish.tsx"
 
 const VideoInterviewPage = () => {
-  const { lobbyId } = useParams() // TODO: add swr for fetching interview data
+  const { lobbyId } = useParams()
   const [activeQuestion, setActiveQuestion] = useState(0) // 0 for setup
-  const { data } = useGetVideoInterviewContext(lobbyId ?? "")
+  const { data } = useGetVideoInterviewContext(Number(lobbyId))
   const isActive = (id: number) => {
     return activeQuestion == id
   }
@@ -47,14 +47,16 @@ const VideoInterviewPage = () => {
     } else {
       return (
         <VideoInterviewQuestionPanel
-          lobbyId={lobbyId ?? ""}
+          questionId={
+            data!.data!.questionSetting[activeQuestion - 1].questionId
+          }
           questionIndex={activeQuestion}
-          maxRetry={data?.data?.questionSetting[activeQuestion - 1].retry ?? 0}
+          maxRetry={data!.data!.questionSetting[activeQuestion - 1].retry}
           timeToPrepare={
-            data?.data?.questionSetting[activeQuestion - 1].timeToPrepare ?? 0
+            data!.data!.questionSetting[activeQuestion - 1].timeToPrepare
           }
           timeToAnswer={
-            data?.data?.questionSetting[activeQuestion - 1].timeToAnswer ?? 0
+            data!.data!.questionSetting[activeQuestion - 1].timeToAnswer
           }
           handleNextQuestion={handleNextQuestion}
         />

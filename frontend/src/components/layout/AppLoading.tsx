@@ -19,7 +19,7 @@ const AppLoading: FC<PropsWithChildren> = ({ children }) => {
     }
 
     if (isLoggedIn) {
-      navigate("/dashboard")
+      navigate("/workspace")
       const timeout = setTimeout(() => {
         setIsLoaded(true)
       }, 500)
