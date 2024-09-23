@@ -103,11 +103,12 @@ deploy-qa:
     - apk update
     - apk add --no-cache openssh
   script:
+    - IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - echo "Deploying to qa ..."
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "./deploy-qa.sh"
+    - ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "IMAGE_TAG=$IMAGE_TAG ./deploy-qa.sh"
 
 deploy-prod:
   image: alpine
@@ -119,8 +120,9 @@ deploy-prod:
     - apk update
     - apk add --no-cache openssh
   script:
+    - IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - echo "Deploying to prod ..."
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "./deploy-prod.sh"
+    - ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP "IMAGE_TAG=$IMAGE_TAG ./deploy-prod.sh"

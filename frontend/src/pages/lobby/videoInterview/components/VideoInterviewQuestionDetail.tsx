@@ -6,8 +6,8 @@ import { VideoPreviewStream } from "@/pages/lobby/videoInterview/components/Vide
 import { VideoInterviewQuestionTimeRemain } from "@/pages/lobby/videoInterview/components/VideoInterviewQuestionTimeRemain.tsx"
 
 interface VideoInterviewQuestionDetailProps {
-  lobbyId: string
-  index: number
+  questionId: number
+  questionIndex: number
   timeToPrepare: number
   timeToAnswer: number
   setMediaBlob: Dispatch<SetStateAction<string[]>>
@@ -15,15 +15,15 @@ interface VideoInterviewQuestionDetailProps {
   setRetryLeft: Dispatch<SetStateAction<number>>
 }
 const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
-  lobbyId,
-  index,
+  questionId,
+  questionIndex,
   timeToPrepare,
   timeToAnswer,
   setMediaBlob,
   setRecordState,
   setRetryLeft,
 }) => {
-  const { data } = useGetVideoInterviewQuestion(lobbyId, index)
+  const { data } = useGetVideoInterviewQuestion(questionId)
   const { selectedCameraId, selectedMicrophoneId } = useContext(DeviceContext)
   const [isStarted, setIsStarted] = useState<boolean>(false)
   const { startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder(
@@ -61,9 +61,7 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
         ) : null}
         <VideoPreviewStream />
       </div>
-      <p className={"text-2xl font-semibold"}>
-        Question {data?.data?.questionIndex}
-      </p>
+      <p className={"text-2xl font-semibold"}>Question {questionIndex}</p>
       <p className={"text-xl"}>{data?.data?.question}</p>
     </>
   )

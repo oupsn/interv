@@ -1,11 +1,12 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/spf13/viper"
-	"time"
 )
 
 var validate = validator.New()
