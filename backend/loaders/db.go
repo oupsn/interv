@@ -1,8 +1,9 @@
 package loaders
 
 import (
-	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"fmt"
+
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"github.com/mailjet/mailjet-apiv3-go/v4"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -41,7 +42,7 @@ func CheckAndConnectDatabase() {
 func CheckAutoMigrate() {
 	if viper.GetBool(EnvDBAutoMigrate) {
 		fmt.Println(fmt.Sprintf("[DB] Automigrate enabled"))
-		err := DB.AutoMigrate(&domains.User{}) //TODO: Add more models here
+		err := DB.AutoMigrate(&domains.User{}, &domains.Workspace{}, &domains.UserInWorkspace{}) //TODO: Add more models here
 		if err != nil {
 			panic(err)
 		}

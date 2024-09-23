@@ -339,6 +339,95 @@ const docTemplate = `{
                 }
             }
         },
+        "/userInWorkspace.delete": {
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userInWorkspace"
+                ],
+                "summary": "Delete User From Workspace",
+                "operationId": "DeleteUserFromWorkspace",
+                "parameters": [
+                    {
+                        "description": "DeleteUserFromWorkspaceBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeleteUserFromWorkspaceBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-UserInWorkspace"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/userInWorkspace.get": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userInWorkspace"
+                ],
+                "summary": "Get user In Workspace",
+                "operationId": "GetUserInWorkspace",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-array_UserInWorkspace"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/videoInterview.getVideoInterviewContext": {
             "get": {
                 "consumes": [
@@ -474,9 +563,206 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/workspace.create": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workspace"
+                ],
+                "summary": "Create new workspace",
+                "operationId": "CreateWorkspace",
+                "parameters": [
+                    {
+                        "description": "CreateWorkspaceBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateWorkspaceBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-WorkspaceDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/workspace.delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workspace"
+                ],
+                "summary": "Delete workspace By Id",
+                "operationId": "DeleteWorkspaceById",
+                "parameters": [
+                    {
+                        "description": "DeleteWorkspaceBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeleteWorkspaceBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/workspace.get": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workspace"
+                ],
+                "summary": "Get workspace",
+                "operationId": "GetWorkspace",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-WorkspaceData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/workspace.getAll": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workspace"
+                ],
+                "summary": "Get List of workspace",
+                "operationId": "GetAllWorkspace",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-array_WorkspaceDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "CreateWorkspaceBody": {
+            "type": "object",
+            "required": [
+                "isCoding",
+                "isVideo",
+                "startDate",
+                "stopDate",
+                "title"
+            ],
+            "properties": {
+                "isCoding": {
+                    "type": "boolean"
+                },
+                "isVideo": {
+                    "type": "boolean"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "stopDate": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "CurrentUserResponse": {
             "type": "object",
             "required": [
@@ -504,6 +790,32 @@ const docTemplate = `{
                 }
             }
         },
+        "DeleteUserFromWorkspaceBody": {
+            "type": "object",
+            "required": [
+                "userId",
+                "workspaceId"
+            ],
+            "properties": {
+                "userId": {
+                    "type": "integer"
+                },
+                "workspaceId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "DeleteWorkspaceBody": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
         "GetObjectBody": {
             "type": "object",
             "required": [
@@ -516,6 +828,25 @@ const docTemplate = `{
                 },
                 "objectName": {
                     "type": "string"
+                }
+            }
+        },
+        "IndividualUser": {
+            "type": "object",
+            "required": [
+                "id",
+                "userData",
+                "userInWorkspace"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "userData": {
+                    "$ref": "#/definitions/User"
+                },
+                "userInWorkspace": {
+                    "$ref": "#/definitions/UserInWorkspace"
                 }
             }
         },
@@ -582,6 +913,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "role": {
                     "type": "string"
                 },
@@ -594,23 +928,7 @@ const docTemplate = `{
             }
         },
         "UserCreateBody": {
-            "type": "object",
-            "required": [
-                "password",
-                "role",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "role": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "UserDeleteBody": {
             "type": "object",
@@ -619,6 +937,33 @@ const docTemplate = `{
             ],
             "properties": {
                 "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "UserInWorkspace": {
+            "type": "object",
+            "required": [
+                "id",
+                "isInterest",
+                "status",
+                "userId",
+                "workspaceId"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "isInterest": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "workspaceId": {
                     "type": "integer"
                 }
             }
@@ -680,6 +1025,53 @@ const docTemplate = `{
                 },
                 "timeToPrepare": {
                     "type": "integer"
+                }
+            }
+        },
+        "WorkspaceData": {
+            "type": "object",
+            "required": [
+                "individualUser",
+                "workspaceDetail"
+            ],
+            "properties": {
+                "individualUser": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/IndividualUser"
+                    }
+                },
+                "workspaceDetail": {
+                    "$ref": "#/definitions/WorkspaceDetail"
+                }
+            }
+        },
+        "WorkspaceDetail": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "isCoding": {
+                    "type": "boolean"
+                },
+                "isVideo": {
+                    "type": "boolean"
+                },
+                "memberNum": {
+                    "type": "integer"
+                },
+                "owner": {
+                    "type": "integer"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "stopDate": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },
@@ -756,6 +1148,23 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.Response-UserInWorkspace": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/UserInWorkspace"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.Response-VideoInterviewContextResponse": {
             "type": "object",
             "properties": {
@@ -781,6 +1190,80 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/VideoInterviewQuestionResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-WorkspaceData": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/WorkspaceData"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-WorkspaceDetail": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/WorkspaceDetail"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-array_UserInWorkspace": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserInWorkspace"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-array_WorkspaceDetail": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/WorkspaceDetail"
+                    }
                 },
                 "message": {
                     "type": "string"

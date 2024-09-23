@@ -3,9 +3,10 @@ package loaders
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/spf13/viper"
-	"time"
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/handlers"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
@@ -22,13 +23,16 @@ func SetupRoutes() {
 	var userRepositories = repositories.NewUserRepository(*DB)
 	var objectRepositories = repositories.NewObjectRepository(*MINIO)
 	var mailRepositories = repositories.NewMailRepository(*MAILJET)
+	var workspaceRepositories = repositories.NewWorkspaceRepository(*DB)
+	var userInWorkspaceRepositories = repositories.NewUserInWorkspaceRepository(*DB)
 
 	// Services
-	var userServices = services.NewUserService(userRepositories)
+	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories)
 	var authServices = services.NewAuthService(userRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
 	var mailServices = services.NewMailService(mailRepositories)
+	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories)
 
 	// Handlers
 	var userHandlers = handlers.NewUserHandler(userServices)
@@ -36,7 +40,7 @@ func SetupRoutes() {
 	var videoInterviewHandlers = handlers.NewVideoInterviewHandler(videoInterviewServices)
 	var objectHandlers = handlers.NewObjectHandler(objectServices)
 	var mailHandlers = handlers.NewMailHandler(mailServices)
-
+	var workspaceHandlers = handlers.NewWorkspaceHandler(workspaceService)
 	// Fiber App
 	app := NewFiberApp()
 	app.Use(cors.New(cors.Config{
@@ -74,7 +78,15 @@ func SetupRoutes() {
 
 	// Auth
 
-	// portal
+	// Workspace
+	private.Get("workspace.get", workspaceHandlers.GetWorkspaceById)
+	private.Get("workspace.getAll", workspaceHandlers.GetAllWorkspace)
+	private.Post("workspace.create", workspaceHandlers.CreateWorkspace)
+	private.Delete("workspace.delete", workspaceHandlers.DeleteWorkspaceById)
+
+	//// UserInWorkspace
+	private.Get("userInWorkspace.get", workspaceHandlers.GetUserInWorkspace)
+	private.Delete("userInWorkspace.delete", workspaceHandlers.DeleteUserFromWorkspace)
 
 	// Object
 	private.Post("object.uploadObject", objectHandlers.UploadObject)

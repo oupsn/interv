@@ -54,6 +54,16 @@ func (u *userRepository) FindById(id uint) (user *domains.User, err error) {
 	return foundUser, nil
 }
 
+func (u *userRepository) FindAllByIds(ids []uint) (user *[]domains.User, err error) {
+	foundUser := new([]domains.User)
+
+	if err := u.DB.Where("id IN ?", ids).Find(&foundUser).Error; err != nil {
+		return nil, err
+	}
+
+	return foundUser, nil
+}
+
 func (u *userRepository) DeleteById(id uint) (err error) {
 	if err := u.DB.Delete(&domains.User{}, "id = ?", id).Error; err != nil {
 		return err

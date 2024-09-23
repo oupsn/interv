@@ -28,7 +28,6 @@ func NewUserHandler(userService services.IUserService) UserHandler {
 // @Router /user.createUser [post]
 func (u UserHandler) CreateUser(c *fiber.Ctx) error {
 	body := CreateUserBody{}
-
 	if err := c.BodyParser(&body); err != nil {
 		return err
 	}
@@ -37,19 +36,13 @@ func (u UserHandler) CreateUser(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	response, err := u.userService.Create(body.Username, body.Password, body.Role)
+	err := u.userService.Create(body.ListUser, body.WorkspaceId)
 
 	if err != nil {
 		return err
 	}
 
-	return Created(c, UserData{
-		ID:        response.ID,
-		Username:  response.Username,
-		Role:      (string)(response.Role),
-		CreatedAt: response.CreatedAt,
-		UpdatedAt: response.UpdatedAt,
-	})
+	return Ok(c, body.ListUser)
 }
 
 // DeleteUser

@@ -1,5 +1,24 @@
 basePath: /api
 definitions:
+  CreateWorkspaceBody:
+    properties:
+      isCoding:
+        type: boolean
+      isVideo:
+        type: boolean
+      startDate:
+        type: string
+      stopDate:
+        type: string
+      title:
+        type: string
+    required:
+    - isCoding
+    - isVideo
+    - startDate
+    - stopDate
+    - title
+    type: object
   CurrentUserResponse:
     properties:
       created_at:
@@ -19,6 +38,23 @@ definitions:
     - updated_at
     - username
     type: object
+  DeleteUserFromWorkspaceBody:
+    properties:
+      userId:
+        type: integer
+      workspaceId:
+        type: integer
+    required:
+    - userId
+    - workspaceId
+    type: object
+  DeleteWorkspaceBody:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
   GetObjectBody:
     properties:
       bucketName:
@@ -28,6 +64,19 @@ definitions:
     required:
     - bucketName
     - objectName
+    type: object
+  IndividualUser:
+    properties:
+      id:
+        type: integer
+      userData:
+        $ref: '#/definitions/User'
+      userInWorkspace:
+        $ref: '#/definitions/UserInWorkspace'
+    required:
+    - id
+    - userData
+    - userInWorkspace
     type: object
   LoginBody:
     properties:
@@ -71,6 +120,8 @@ definitions:
         type: string
       id:
         type: integer
+      name:
+        type: string
       role:
         type: string
       updated_at:
@@ -79,17 +130,6 @@ definitions:
         type: string
     type: object
   UserCreateBody:
-    properties:
-      password:
-        type: string
-      role:
-        type: string
-      username:
-        type: string
-    required:
-    - password
-    - role
-    - username
     type: object
   UserDeleteBody:
     properties:
@@ -97,6 +137,25 @@ definitions:
         type: integer
     required:
     - id
+    type: object
+  UserInWorkspace:
+    properties:
+      id:
+        type: integer
+      isInterest:
+        type: boolean
+      status:
+        type: string
+      userId:
+        type: integer
+      workspaceId:
+        type: integer
+    required:
+    - id
+    - isInterest
+    - status
+    - userId
+    - workspaceId
     type: object
   VideoInterviewContextResponse:
     properties:
@@ -138,6 +197,37 @@ definitions:
     - retry
     - timeToAnswer
     - timeToPrepare
+    type: object
+  WorkspaceData:
+    properties:
+      individualUser:
+        items:
+          $ref: '#/definitions/IndividualUser'
+        type: array
+      workspaceDetail:
+        $ref: '#/definitions/WorkspaceDetail'
+    required:
+    - individualUser
+    - workspaceDetail
+    type: object
+  WorkspaceDetail:
+    properties:
+      id:
+        type: integer
+      isCoding:
+        type: boolean
+      isVideo:
+        type: boolean
+      memberNum:
+        type: integer
+      owner:
+        type: integer
+      startDate:
+        type: string
+      stopDate:
+        type: string
+      title:
+        type: string
     type: object
   handlers.ErrResponse:
     properties:
@@ -187,6 +277,17 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.Response-UserInWorkspace:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/UserInWorkspace'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
   handlers.Response-VideoInterviewContextResponse:
     properties:
       code:
@@ -204,6 +305,54 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/VideoInterviewQuestionResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-WorkspaceData:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/WorkspaceData'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-WorkspaceDetail:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/WorkspaceDetail'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-array_UserInWorkspace:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/UserInWorkspace'
+        type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-array_WorkspaceDetail:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/WorkspaceDetail'
+        type: array
       message:
         type: string
       timestamp:
@@ -437,6 +586,64 @@ paths:
       summary: Delete user
       tags:
       - user
+  /userInWorkspace.delete:
+    delete:
+      consumes:
+      - application/json
+      operationId: DeleteUserFromWorkspace
+      parameters:
+      - description: DeleteUserFromWorkspaceBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/DeleteUserFromWorkspaceBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-UserInWorkspace'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Delete User From Workspace
+      tags:
+      - userInWorkspace
+  /userInWorkspace.get:
+    get:
+      consumes:
+      - application/json
+      operationId: GetUserInWorkspace
+      parameters:
+      - in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-array_UserInWorkspace'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get user In Workspace
+      tags:
+      - userInWorkspace
   /videoInterview.getVideoInterviewContext:
     get:
       consumes:
@@ -526,4 +733,115 @@ paths:
       summary: Submit video interview
       tags:
       - videoInterview
+  /workspace.create:
+    post:
+      consumes:
+      - application/json
+      operationId: CreateWorkspace
+      parameters:
+      - description: CreateWorkspaceBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/CreateWorkspaceBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-WorkspaceDetail'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Create new workspace
+      tags:
+      - workspace
+  /workspace.delete:
+    post:
+      consumes:
+      - application/json
+      operationId: DeleteWorkspaceById
+      parameters:
+      - description: DeleteWorkspaceBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/DeleteWorkspaceBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Delete workspace By Id
+      tags:
+      - workspace
+  /workspace.get:
+    get:
+      consumes:
+      - application/json
+      operationId: GetWorkspace
+      parameters:
+      - in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-WorkspaceData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get workspace
+      tags:
+      - workspace
+  /workspace.getAll:
+    get:
+      consumes:
+      - application/json
+      operationId: GetAllWorkspace
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-array_WorkspaceDetail'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get List of workspace
+      tags:
+      - workspace
 swagger: "2.0"
