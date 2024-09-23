@@ -114,7 +114,7 @@ deploy-prod:
   image: alpine
   stage: deploy
   only:
-    - main
+    - staging
   when: manual
   before_script:
     - apk update
