@@ -1,8 +1,9 @@
 package services
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"mime/multipart"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 var (

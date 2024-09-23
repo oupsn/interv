@@ -9,5 +9,6 @@ type IUserRepository interface {
 	FindByUsernameAndPassword(username string, password string) (user *domains.User, err error)
 	FindByUsername(username string) (user *domains.User, err error)
 	FindById(id uint) (user *domains.User, err error)
+	FindAllByIds(ids []uint) (users *[]domains.User, err error)
 	DeleteById(id uint) (err error)
 }

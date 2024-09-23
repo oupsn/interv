@@ -39,7 +39,7 @@ const LoginPage = () => {
       loading: "Signing in...",
       success: () => {
         mutate().then(() => {
-          navigate("/dashboard", {
+          navigate("/workspace", {
             replace: true,
           })
         })

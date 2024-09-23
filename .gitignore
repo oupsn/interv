@@ -6,6 +6,7 @@
 *.dylib
 *.test
 *.out
+config.yaml
 
 # Node modules
 node_modules/

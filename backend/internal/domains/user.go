@@ -14,6 +14,7 @@ const (
 
 type User struct {
 	ID       uint   `gorm:"primaryKey"`
+	Name     string 
 	Username string `gorm:"unique"`
 	Password string
 	Role     UserType `gorm:"default:'general_user'"`
