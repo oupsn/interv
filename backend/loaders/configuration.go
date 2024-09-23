@@ -2,6 +2,8 @@ package loaders
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/spf13/viper"
 )
 
@@ -31,7 +33,11 @@ func init() {
 }
 
 func BootConfiguration() {
-	viper.SetConfigName("config")
+	if os.Getenv("MODE") == "prod" {
+		viper.SetConfigName("config")
+	} else {
+		viper.SetConfigName("config-qa")
+	}
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 	if err := viper.ReadInConfig(); err != nil {
