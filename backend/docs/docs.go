@@ -107,6 +107,95 @@ const docTemplate = `{
                 }
             }
         },
+        "/lobby.getLobbyContext": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lobby"
+                ],
+                "summary": "Get lobby context",
+                "operationId": "getLobbyContext",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "lobbyId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-GetLobbyContextResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/lobby.updateLobbyContext": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lobby"
+                ],
+                "summary": "Update lobby context",
+                "operationId": "updateLobbyContext",
+                "parameters": [
+                    {
+                        "description": "update lobby context",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateLobbyContextBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/mail.sendMail": {
             "post": {
                 "consumes": [
@@ -443,7 +532,7 @@ const docTemplate = `{
                 "operationId": "getVideoInterviewContext",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "name": "lobbyId",
                         "in": "query",
                         "required": true
@@ -486,14 +575,8 @@ const docTemplate = `{
                 "operationId": "getVideoInterviewQuestion",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "lobbyId",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
                         "type": "integer",
-                        "name": "questionIndex",
+                        "name": "questionId",
                         "in": "query",
                         "required": true
                     }
@@ -551,6 +634,254 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/videoQuestion.createVideoQuestion": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "videoQuestion"
+                ],
+                "summary": "Create new video question",
+                "operationId": "createVideoQuestion",
+                "parameters": [
+                    {
+                        "description": "CreateVideoQuestionBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateVideoQuestionBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-CreateVideoQuestionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/videoQuestion.deleteVideoQuestionById": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "videoQuestion"
+                ],
+                "summary": "Delete video question by id",
+                "operationId": "deleteVideoQuestionById",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/videoQuestion.getVideoQuestionById/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "videoQuestion"
+                ],
+                "summary": "Get video question by id",
+                "operationId": "getVideoQuestionById",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-GetVideoQuestionByIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/videoQuestion.getVideoQuestionWorkspaceIdId/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "videoQuestion"
+                ],
+                "summary": "Get video question by workspace id",
+                "operationId": "getVideoQuestionByWorkspaceId",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/handlers.Response-array_GetVideoQuestionByIdResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/videoQuestion.updateVideoQuestion": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "videoQuestion"
+                ],
+                "summary": "Update video question",
+                "operationId": "updateVideoQuestion",
+                "parameters": [
+                    {
+                        "description": "UpdateVideoQuestionBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateVideoQuestionBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-CreateVideoQuestionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrResponse"
                         }
@@ -736,6 +1067,62 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "CreateVideoQuestionBody": {
+            "type": "object",
+            "required": [
+                "retryAmount",
+                "timeToAnswer",
+                "timeToPrepare",
+                "title",
+                "workspaceId"
+            ],
+            "properties": {
+                "retryAmount": {
+                    "type": "integer"
+                },
+                "timeToAnswer": {
+                    "type": "integer"
+                },
+                "timeToPrepare": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "workspaceId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "CreateVideoQuestionResponse": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "retryAmount": {
+                    "type": "integer"
+                },
+                "timeToAnswer": {
+                    "type": "integer"
+                },
+                "timeToPrepare": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "workspaceId": {
+                    "type": "integer"
+                }
+            }
+        },
         "CreateWorkspaceBody": {
             "type": "object",
             "required": [
@@ -816,6 +1203,49 @@ const docTemplate = `{
                 }
             }
         },
+        "GetLobbyContextResponse": {
+            "type": "object",
+            "required": [
+                "dueDate",
+                "isCodingDone",
+                "isVideoDone",
+                "lobbyId",
+                "totalCodingQuestion",
+                "totalCodingTime",
+                "totalVideoQuestion",
+                "totalVideoTime",
+                "userId"
+            ],
+            "properties": {
+                "dueDate": {
+                    "type": "string"
+                },
+                "isCodingDone": {
+                    "type": "boolean"
+                },
+                "isVideoDone": {
+                    "type": "boolean"
+                },
+                "lobbyId": {
+                    "type": "integer"
+                },
+                "totalCodingQuestion": {
+                    "type": "integer"
+                },
+                "totalCodingTime": {
+                    "type": "integer"
+                },
+                "totalVideoQuestion": {
+                    "type": "integer"
+                },
+                "totalVideoTime": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
         "GetObjectBody": {
             "type": "object",
             "required": [
@@ -828,6 +1258,35 @@ const docTemplate = `{
                 },
                 "objectName": {
                     "type": "string"
+                }
+            }
+        },
+        "GetVideoQuestionByIdResponse": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "retryAmount": {
+                    "type": "integer"
+                },
+                "timeToAnswer": {
+                    "type": "integer"
+                },
+                "timeToPrepare": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "workspaceId": {
+                    "type": "integer"
                 }
             }
         },
@@ -901,6 +1360,67 @@ const docTemplate = `{
                 },
                 "preset": {
                     "$ref": "#/definitions/handlers.MailPreset"
+                }
+            }
+        },
+        "UpdateLobbyContextBody": {
+            "type": "object",
+            "required": [
+                "lobbyId"
+            ],
+            "properties": {
+                "dueDate": {
+                    "type": "string"
+                },
+                "isCodingDone": {
+                    "type": "boolean"
+                },
+                "isVideoDone": {
+                    "type": "boolean"
+                },
+                "lobbyId": {
+                    "type": "integer"
+                },
+                "totalCodingQuestion": {
+                    "type": "integer"
+                },
+                "totalCodingTime": {
+                    "type": "integer"
+                },
+                "totalVideoQuestion": {
+                    "type": "integer"
+                },
+                "totalVideoTime": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "UpdateVideoQuestionBody": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "retryAmount": {
+                    "type": "integer"
+                },
+                "timeToAnswer": {
+                    "type": "integer"
+                },
+                "timeToPrepare": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "workspaceId": {
+                    "type": "integer"
                 }
             }
         },
@@ -990,13 +1510,13 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "question",
-                "questionIndex"
+                "questionId"
             ],
             "properties": {
                 "question": {
                     "type": "string"
                 },
-                "questionIndex": {
+                "questionId": {
                     "type": "integer"
                 }
             }
@@ -1005,6 +1525,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "isLast",
+                "questionId",
                 "questionIndex",
                 "retry",
                 "timeToAnswer",
@@ -1013,6 +1534,9 @@ const docTemplate = `{
             "properties": {
                 "isLast": {
                     "type": "boolean"
+                },
+                "questionId": {
+                    "type": "integer"
                 },
                 "questionIndex": {
                     "type": "integer"
@@ -1114,6 +1638,23 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.Response-CreateVideoQuestionResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/CreateVideoQuestionResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.Response-CurrentUserResponse": {
             "type": "object",
             "properties": {
@@ -1122,6 +1663,40 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/CurrentUserResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-GetLobbyContextResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/GetLobbyContextResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-GetVideoQuestionByIdResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/GetVideoQuestionByIdResponse"
                 },
                 "message": {
                     "type": "string"
@@ -1224,6 +1799,26 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/WorkspaceDetail"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-array_GetVideoQuestionByIdResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/GetVideoQuestionByIdResponse"
+                    }
                 },
                 "message": {
                     "type": "string"

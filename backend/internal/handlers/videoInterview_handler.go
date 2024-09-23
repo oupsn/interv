@@ -21,7 +21,7 @@ func NewVideoInterviewHandler(videoInterviewService services.IVideoInterviewServ
 // @Summary Get video interview context
 // @Accept json
 // @Produce json
-// @Param payload query VideoInterviewContextQuery false "query params for video interview context"
+// @Param payload query VideoInterviewContextQuery true "query params for video interview context"
 // @Success 200 {object} Response[VideoInterviewContextResponse]
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
@@ -33,36 +33,30 @@ func (v VideoInterviewHandler) GetVideoInterviewContext(c *fiber.Ctx) error {
 	}
 
 	if err := validate.Struct(query); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return err
+	}
+
+	videoQuestion, err := v.videoInterviewService.GetVideoInterviewContext(query.LobbyID)
+	if err != nil {
+		return err
 	}
 
 	var questionSetting []VideoInterviewQuestionSetting
-	questionSetting = append(questionSetting,
-		VideoInterviewQuestionSetting{
-			QuestionIndex: 1,
-			Retry:         2,
-			TimeToPrepare: 3,
-			TimeToAnswer:  3,
-			IsLast:        false,
-		},
-		VideoInterviewQuestionSetting{
-			QuestionIndex: 2,
-			Retry:         2,
-			TimeToPrepare: 3,
-			TimeToAnswer:  3,
-			IsLast:        false,
-		},
-		VideoInterviewQuestionSetting{
-			QuestionIndex: 3,
-			Retry:         3,
-			TimeToPrepare: 3,
-			TimeToAnswer:  3,
-			IsLast:        true,
-		},
-	)
+	for i, v := range videoQuestion {
+		questionSetting = append(questionSetting,
+			VideoInterviewQuestionSetting{
+				QuestionID:    v.ID,
+				QuestionIndex: i,
+				Retry:         v.RetryAmount,
+				TimeToPrepare: v.TimeToPrepare,
+				TimeToAnswer:  v.TimeToAnswer,
+				IsLast:        i == len(videoQuestion)-1,
+			},
+		)
+	}
 
 	return Ok(c, VideoInterviewContextResponse{
-		TotalQuestion:   len(questionSetting),
+		TotalQuestion:   len(videoQuestion),
 		QuestionSetting: questionSetting,
 	})
 }
@@ -73,7 +67,7 @@ func (v VideoInterviewHandler) GetVideoInterviewContext(c *fiber.Ctx) error {
 // @Summary Get video interview question
 // @Accept json
 // @Produce json
-// @Param payload query VideoInterviewQuestionQuery false "query params for video interview question"
+// @Param payload query VideoInterviewQuestionQuery true "query params for video interview question"
 // @Success 200 {object} Response[VideoInterviewQuestionResponse]
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
@@ -85,12 +79,17 @@ func (v VideoInterviewHandler) GetVideoInterviewQuestion(c *fiber.Ctx) error {
 	}
 
 	if err := validate.Struct(query); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return err
+	}
+
+	question, err := v.videoInterviewService.GetVideoInterviewQuestion(query.QuestionID)
+	if err != nil {
+		return err
 	}
 
 	return Ok(c, VideoInterviewQuestionResponse{
-		QuestionIndex: query.QuestionIndex,
-		Topic:         "This is topic" + query.LobbyID,
+		QuestionId: question.ID,
+		Topic:      question.Title,
 	})
 }
 
@@ -113,7 +112,7 @@ func (v VideoInterviewHandler) SubmitVideoInterview(c *fiber.Ctx) error {
 
 	err = v.videoInterviewService.SubmitVideoInterview(file)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		return err
 	}
 
 	return Ok(c, "Submit video interview successfully")

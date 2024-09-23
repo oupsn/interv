@@ -3,14 +3,14 @@ module csgit.sit.kmutt.ac.th/interv/interv-platform
 go 1.21.1
 
 require (
-	github.com/arsmn/fiber-swagger/v2 v2.31.1
 	github.com/go-playground/validator/v10 v10.21.0
-	github.com/gofiber/fiber/v2 v2.52.4
+	github.com/gofiber/fiber/v2 v2.52.5
+	github.com/gofiber/swagger v1.1.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/mailjet/mailjet-apiv3-go/v4 v4.0.1
 	github.com/minio/minio-go/v7 v7.0.75
 	github.com/spf13/viper v1.19.0
-	github.com/swaggo/swag v1.8.1
+	github.com/swaggo/swag v1.16.3
 	golang.org/x/crypto v0.24.0
 	gorm.io/driver/postgres v1.5.7
 	gorm.io/gorm v1.25.10
@@ -61,7 +61,7 @@ require (
 	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
-	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2 // indirect
+	github.com/swaggo/files/v2 v2.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
