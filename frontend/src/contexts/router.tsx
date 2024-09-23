@@ -4,11 +4,11 @@ import MainLayout from "@/components/layout/MainLayout.tsx"
 import LoginPage from "@/pages/login/Login.tsx"
 import LobbyPage from "@/pages/lobby/Lobby.tsx"
 import Playground from "@/pages/playground/Playground.tsx"
-import Dashboard from "@/pages/dashboard/Dashboard.tsx"
+import Portal from "@/pages/portal/Portal.tsx"
 import CodingInterviewPage from "@/pages/lobby/codingInterview/CodingInterview.tsx"
 import VideoInterviewPage from "@/pages/lobby/videoInterview/VideoInterview.tsx"
-import CreateWorkspace from "@/pages/dashboard/createWorkspace/CreateWorkspace"
-import WorkspaceWithId from "@/pages/dashboard/WorkspaceWithId"
+import CreateWorkspace from "@/pages/portal/createWorkspace/CreateWorkspace"
+import WorkspaceWithId from "@/pages/portal/WorkspaceWithId"
 
 export const router = createBrowserRouter([
   {
@@ -25,7 +25,7 @@ export const router = createBrowserRouter([
         children: [
           {
             path: "",
-            element: <Dashboard />,
+            element: <Portal />,
           },
           {
             path: "create",

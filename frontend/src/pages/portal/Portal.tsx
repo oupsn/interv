@@ -6,7 +6,7 @@ import { useGetListWorkspace } from "@/hooks/useGetListWorkspace.ts"
 import { useNavigate } from "react-router-dom"
 import ListWorkspaceCard from "./components/ListWorkspace.tsx"
 
-const Dashboard = () => {
+const Portal = () => {
   const { data } = useGetListWorkspace()
   const navigate = useNavigate()
 
@@ -16,27 +16,23 @@ const Dashboard = () => {
         <SideBarItem title={"Workspace"} isActive={true} />
         <SideBarItem title={"Assessment"} isActive={false} onClick={() => {}} />
       </SideBar>
-      <MainPanel>
-        <div className="w-full mt-8 p-10 grid gap-10">
-          <div className="flex justify-between">
-            <p className="text-5xl font-bold text-gray-900">Candidate Group</p>
-            <Button
-              className={
-                "w-52 h-14 text-center font-semibold text-xl rounded-xl disabled:opacity-100"
-              }
-              onClick={() => {
-                navigate("workspace/create")
-              }}
-            >
-              Add new group
-            </Button>
-          </div>
-
-          <ListWorkspaceCard workspace={data?.data ?? []} />
+      <MainPanel isPaddingTop>
+        <div className="flex justify-between">
+          <p className="text-4xl font-bold">Candidate Group</p>
+          <Button
+            className={"text-center"}
+            onClick={() => {
+              navigate("workspace/create")
+            }}
+          >
+            Add new group
+          </Button>
         </div>
+
+        <ListWorkspaceCard workspace={data?.data ?? []} />
       </MainPanel>
     </>
   )
 }
 
-export default Dashboard
+export default Portal
