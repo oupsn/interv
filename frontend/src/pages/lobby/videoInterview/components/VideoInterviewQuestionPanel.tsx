@@ -4,7 +4,7 @@ import { VideoInterviewPreQuestion } from "@/pages/lobby/videoInterview/componen
 import { VideoInterviewPostQuestion } from "@/pages/lobby/videoInterview/components/VideoInterviewPostQuestion.tsx"
 
 interface VideoInterviewQuestionPanelProps {
-  lobbyId: string
+  questionId: number
   questionIndex: number
   maxRetry: number
   timeToPrepare: number
@@ -12,7 +12,7 @@ interface VideoInterviewQuestionPanelProps {
   handleNextQuestion: () => void
 }
 const VideoInterviewQuestionPanel: FC<VideoInterviewQuestionPanelProps> = ({
-  lobbyId,
+  questionId,
   questionIndex,
   maxRetry,
   timeToPrepare,
@@ -45,8 +45,8 @@ const VideoInterviewQuestionPanel: FC<VideoInterviewQuestionPanelProps> = ({
   if (recordState == "detail") {
     return (
       <VideoInterviewQuestionDetail
-        lobbyId={lobbyId}
-        index={questionIndex}
+        questionId={questionId}
+        questionIndex={questionIndex}
         timeToPrepare={timeToPrepare}
         timeToAnswer={timeToAnswer}
         setMediaBlob={setMediaBlob}

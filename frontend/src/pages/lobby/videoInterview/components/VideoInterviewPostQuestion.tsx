@@ -2,6 +2,7 @@ import { Dispatch, FC, SetStateAction, useState } from "react"
 import { Button } from "@/components/ui/button.tsx"
 import { server } from "@/contexts/swr.tsx"
 import { cn } from "@/lib/utils.ts"
+import { useParams } from "react-router-dom"
 
 interface VideoInterviewPostQuestion {
   retryLeft: number
@@ -17,6 +18,7 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
   setRecordState,
   setMediaBlob,
 }) => {
+  const { lobbyId } = useParams()
   const [selectedVideo, setSelectedVideo] = useState("")
   const handleSubmitVideo = async () => {
     const videoBlob = await fetch(selectedVideo).then((response) =>
@@ -37,6 +39,10 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
         handleNextQuestion()
         setMediaBlob([])
         setRecordState("pre")
+        server.lobby.updateLobbyContext({
+          lobbyId: Number(lobbyId),
+          isVideoDone: true,
+        })
       })
   }
   return (

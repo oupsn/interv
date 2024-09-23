@@ -13,6 +13,29 @@ export type CreateUserData = HandlersResponseUser
 
 export type CreateUserError = HandlersErrResponse
 
+export interface CreateVideoQuestionBody {
+  retryAmount: number
+  timeToAnswer: number
+  timeToPrepare: number
+  title: string
+  workspaceId: number
+}
+
+export type CreateVideoQuestionData = HandlersResponseCreateVideoQuestionResponse
+
+export type CreateVideoQuestionError = HandlersErrResponse
+
+export interface CreateVideoQuestionResponse {
+  createdAt?: string
+  id?: number
+  retryAmount?: number
+  timeToAnswer?: number
+  timeToPrepare?: number
+  title?: string
+  updatedAt?: string
+  workspaceId?: number
+}
+
 export interface CreateWorkspaceBody {
   isCoding: boolean
   isVideo: boolean
@@ -46,6 +69,14 @@ export type DeleteUserFromWorkspaceData = HandlersResponseUserInWorkspace
 
 export type DeleteUserFromWorkspaceError = HandlersErrResponse
 
+export type DeleteVideoQuestionByIdData = HandlersResponseString
+
+export type DeleteVideoQuestionByIdError = HandlersErrResponse
+
+export interface DeleteVideoQuestionByIdParams {
+  id: number
+}
+
 export interface DeleteWorkspaceBody {
   id: number
 }
@@ -57,6 +88,26 @@ export type DeleteWorkspaceByIdError = HandlersErrResponse
 export type GetAllWorkspaceData = HandlersResponseArrayWorkspaceDetail
 
 export type GetAllWorkspaceError = HandlersErrResponse
+
+export type GetLobbyContextData = HandlersResponseGetLobbyContextResponse
+
+export type GetLobbyContextError = HandlersErrResponse
+
+export interface GetLobbyContextParams {
+  lobbyId: number
+}
+
+export interface GetLobbyContextResponse {
+  dueDate: string
+  isCodingDone: boolean
+  isVideoDone: boolean
+  lobbyId: number
+  totalCodingQuestion: number
+  totalCodingTime: number
+  totalVideoQuestion: number
+  totalVideoTime: number
+  userId: number
+}
 
 export interface GetObjectBody {
   bucketName: string
@@ -80,7 +131,7 @@ export type GetVideoInterviewContextData = HandlersResponseVideoInterviewContext
 export type GetVideoInterviewContextError = HandlersErrResponse
 
 export interface GetVideoInterviewContextParams {
-  lobbyId: string
+  lobbyId: number
 }
 
 export type GetVideoInterviewQuestionData = HandlersResponseVideoInterviewQuestionResponse
@@ -88,8 +139,34 @@ export type GetVideoInterviewQuestionData = HandlersResponseVideoInterviewQuesti
 export type GetVideoInterviewQuestionError = HandlersErrResponse
 
 export interface GetVideoInterviewQuestionParams {
-  lobbyId: string
-  questionIndex: number
+  questionId: number
+}
+
+export type GetVideoQuestionByIdData = HandlersResponseGetVideoQuestionByIdResponse
+
+export type GetVideoQuestionByIdError = HandlersErrResponse
+
+export interface GetVideoQuestionByIdParams {
+  id: string
+}
+
+export interface GetVideoQuestionByIdResponse {
+  createdAt?: string
+  id?: number
+  retryAmount?: number
+  timeToAnswer?: number
+  timeToPrepare?: number
+  title?: string
+  updatedAt?: string
+  workspaceId?: number
+}
+
+export type GetVideoQuestionByWorkspaceIdData = HandlersResponseArrayGetVideoQuestionByIdResponse[]
+
+export type GetVideoQuestionByWorkspaceIdError = HandlersErrResponse
+
+export interface GetVideoQuestionByWorkspaceIdParams {
+  id: string
 }
 
 export type GetWorkspaceData = HandlersResponseWorkspaceData
@@ -117,6 +194,13 @@ export interface HandlersOkResponse {
   timestamp?: string
 }
 
+export interface HandlersResponseArrayGetVideoQuestionByIdResponse {
+  code?: number
+  data?: GetVideoQuestionByIdResponse[]
+  message?: string
+  timestamp?: string
+}
+
 export interface HandlersResponseArrayUserInWorkspace {
   code?: number
   data?: UserInWorkspace[]
@@ -131,9 +215,30 @@ export interface HandlersResponseArrayWorkspaceDetail {
   timestamp?: string
 }
 
+export interface HandlersResponseCreateVideoQuestionResponse {
+  code?: number
+  data?: CreateVideoQuestionResponse
+  message?: string
+  timestamp?: string
+}
+
 export interface HandlersResponseCurrentUserResponse {
   code?: number
   data?: CurrentUserResponse
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseGetLobbyContextResponse {
+  code?: number
+  data?: GetLobbyContextResponse
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseGetVideoQuestionByIdResponse {
+  code?: number
+  data?: GetVideoQuestionByIdResponse
   message?: string
   timestamp?: string
 }
@@ -234,6 +339,35 @@ export interface SubmitVideoInterviewPayload {
   file: File
 }
 
+export interface UpdateLobbyContextBody {
+  dueDate?: string
+  isCodingDone?: boolean
+  isVideoDone?: boolean
+  lobbyId: number
+  totalCodingQuestion?: number
+  totalCodingTime?: number
+  totalVideoQuestion?: number
+  totalVideoTime?: number
+  userId?: number
+}
+
+export type UpdateLobbyContextData = HandlersResponseString
+
+export type UpdateLobbyContextError = HandlersErrResponse
+
+export interface UpdateVideoQuestionBody {
+  id: number
+  retryAmount?: number
+  timeToAnswer?: number
+  timeToPrepare?: number
+  title?: string
+  workspaceId?: number
+}
+
+export type UpdateVideoQuestionData = HandlersResponseCreateVideoQuestionResponse
+
+export type UpdateVideoQuestionError = HandlersErrResponse
+
 export type UploadObjectData = HandlersResponseString
 
 export type UploadObjectError = HandlersErrResponse
@@ -278,11 +412,12 @@ export interface VideoInterviewContextResponse {
 
 export interface VideoInterviewQuestionResponse {
   question: string
-  questionIndex: number
+  questionId: number
 }
 
 export interface VideoInterviewQuestionSetting {
   isLast: boolean
+  questionId: number
   questionIndex: number
   retry: number
   timeToAnswer: number
@@ -354,6 +489,46 @@ export namespace Authentication {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = MeData
+  }
+}
+
+export namespace Lobby {
+  /**
+   * No description
+   * @tags lobby
+   * @name GetLobbyContext
+   * @summary Get lobby context
+   * @request GET:/lobby.getLobbyContext
+   * @response `200` `GetLobbyContextData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetLobbyContext {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      lobbyId: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetLobbyContextData
+  }
+
+  /**
+   * No description
+   * @tags lobby
+   * @name UpdateLobbyContext
+   * @summary Update lobby context
+   * @request POST:/lobby.updateLobbyContext
+   * @response `200` `UpdateLobbyContextData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace UpdateLobbyContext {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = UpdateLobbyContextBody
+    export type RequestHeaders = {}
+    export type ResponseBody = UpdateLobbyContextData
   }
 }
 
@@ -507,7 +682,7 @@ export namespace VideoInterview {
   export namespace GetVideoInterviewContext {
     export type RequestParams = {}
     export type RequestQuery = {
-      lobbyId: string
+      lobbyId: number
     }
     export type RequestBody = never
     export type RequestHeaders = {}
@@ -527,8 +702,7 @@ export namespace VideoInterview {
   export namespace GetVideoInterviewQuestion {
     export type RequestParams = {}
     export type RequestQuery = {
-      lobbyId: string
-      questionIndex: number
+      questionId: number
     }
     export type RequestBody = never
     export type RequestHeaders = {}
@@ -551,6 +725,112 @@ export namespace VideoInterview {
     export type RequestBody = SubmitVideoInterviewPayload
     export type RequestHeaders = {}
     export type ResponseBody = SubmitVideoInterviewData
+  }
+}
+
+export namespace VideoQuestion {
+  /**
+   * No description
+   * @tags videoQuestion
+   * @name CreateVideoQuestion
+   * @summary Create new video question
+   * @request POST:/videoQuestion.createVideoQuestion
+   * @response `200` `CreateVideoQuestionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CreateVideoQuestion {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = CreateVideoQuestionBody
+    export type RequestHeaders = {}
+    export type ResponseBody = CreateVideoQuestionData
+  }
+
+  /**
+   * No description
+   * @tags videoQuestion
+   * @name DeleteVideoQuestionById
+   * @summary Delete video question by id
+   * @request POST:/videoQuestion.deleteVideoQuestionById
+   * @response `200` `DeleteVideoQuestionByIdData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `404` `HandlersErrResponse` Not Found
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace DeleteVideoQuestionById {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      id: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = DeleteVideoQuestionByIdData
+  }
+
+  /**
+   * No description
+   * @tags videoQuestion
+   * @name GetVideoQuestionById
+   * @summary Get video question by id
+   * @request GET:/videoQuestion.getVideoQuestionById/{id}
+   * @response `200` `GetVideoQuestionByIdData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `404` `HandlersErrResponse` Not Found
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetVideoQuestionById {
+    export type RequestParams = {
+      id: string
+    }
+    export type RequestQuery = {
+      id: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetVideoQuestionByIdData
+  }
+
+  /**
+   * No description
+   * @tags videoQuestion
+   * @name GetVideoQuestionByWorkspaceId
+   * @summary Get video question by workspace id
+   * @request GET:/videoQuestion.getVideoQuestionWorkspaceIdId/{id}
+   * @response `200` `GetVideoQuestionByWorkspaceIdData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `404` `HandlersErrResponse` Not Found
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetVideoQuestionByWorkspaceId {
+    export type RequestParams = {
+      id: string
+    }
+    export type RequestQuery = {
+      id: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetVideoQuestionByWorkspaceIdData
+  }
+
+  /**
+   * No description
+   * @tags videoQuestion
+   * @name UpdateVideoQuestion
+   * @summary Update video question
+   * @request POST:/videoQuestion.updateVideoQuestion
+   * @response `200` `UpdateVideoQuestionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `404` `HandlersErrResponse` Not Found
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace UpdateVideoQuestion {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = UpdateVideoQuestionBody
+    export type RequestHeaders = {}
+    export type ResponseBody = UpdateVideoQuestionData
   }
 }
 
@@ -831,6 +1111,49 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         ...params,
       }),
   }
+  lobby = {
+    /**
+     * No description
+     *
+     * @tags lobby
+     * @name GetLobbyContext
+     * @summary Get lobby context
+     * @request GET:/lobby.getLobbyContext
+     * @response `200` `GetLobbyContextData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getLobbyContext: (query: GetLobbyContextParams, params: RequestParams = {}) =>
+      this.request<GetLobbyContextData, GetLobbyContextError>({
+        path: `/lobby.getLobbyContext`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags lobby
+     * @name UpdateLobbyContext
+     * @summary Update lobby context
+     * @request POST:/lobby.updateLobbyContext
+     * @response `200` `UpdateLobbyContextData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    updateLobbyContext: (payload: UpdateLobbyContextBody, params: RequestParams = {}) =>
+      this.request<UpdateLobbyContextData, UpdateLobbyContextError>({
+        path: `/lobby.updateLobbyContext`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  }
   mail = {
     /**
      * No description
@@ -1042,6 +1365,119 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         method: "POST",
         body: data,
         type: ContentType.FormData,
+        format: "json",
+        ...params,
+      }),
+  }
+  videoQuestion = {
+    /**
+     * No description
+     *
+     * @tags videoQuestion
+     * @name CreateVideoQuestion
+     * @summary Create new video question
+     * @request POST:/videoQuestion.createVideoQuestion
+     * @response `200` `CreateVideoQuestionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    createVideoQuestion: (payload: CreateVideoQuestionBody, params: RequestParams = {}) =>
+      this.request<CreateVideoQuestionData, CreateVideoQuestionError>({
+        path: `/videoQuestion.createVideoQuestion`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags videoQuestion
+     * @name DeleteVideoQuestionById
+     * @summary Delete video question by id
+     * @request POST:/videoQuestion.deleteVideoQuestionById
+     * @response `200` `DeleteVideoQuestionByIdData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `404` `HandlersErrResponse` Not Found
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    deleteVideoQuestionById: (query: DeleteVideoQuestionByIdParams, params: RequestParams = {}) =>
+      this.request<DeleteVideoQuestionByIdData, DeleteVideoQuestionByIdError>({
+        path: `/videoQuestion.deleteVideoQuestionById`,
+        method: "POST",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags videoQuestion
+     * @name GetVideoQuestionById
+     * @summary Get video question by id
+     * @request GET:/videoQuestion.getVideoQuestionById/{id}
+     * @response `200` `GetVideoQuestionByIdData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `404` `HandlersErrResponse` Not Found
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getVideoQuestionById: ({ id, ...query }: GetVideoQuestionByIdParams, params: RequestParams = {}) =>
+      this.request<GetVideoQuestionByIdData, GetVideoQuestionByIdError>({
+        path: `/videoQuestion.getVideoQuestionById/${id}`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags videoQuestion
+     * @name GetVideoQuestionByWorkspaceId
+     * @summary Get video question by workspace id
+     * @request GET:/videoQuestion.getVideoQuestionWorkspaceIdId/{id}
+     * @response `200` `GetVideoQuestionByWorkspaceIdData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `404` `HandlersErrResponse` Not Found
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getVideoQuestionByWorkspaceId: (
+      { id, ...query }: GetVideoQuestionByWorkspaceIdParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<GetVideoQuestionByWorkspaceIdData, GetVideoQuestionByWorkspaceIdError>({
+        path: `/videoQuestion.getVideoQuestionWorkspaceIdId/${id}`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags videoQuestion
+     * @name UpdateVideoQuestion
+     * @summary Update video question
+     * @request POST:/videoQuestion.updateVideoQuestion
+     * @response `200` `UpdateVideoQuestionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `404` `HandlersErrResponse` Not Found
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    updateVideoQuestion: (payload: UpdateVideoQuestionBody, params: RequestParams = {}) =>
+      this.request<UpdateVideoQuestionData, UpdateVideoQuestionError>({
+        path: `/videoQuestion.updateVideoQuestion`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),
