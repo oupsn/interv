@@ -2,6 +2,7 @@ package loaders
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
@@ -22,6 +23,7 @@ const (
 	EnvMinioEndpoint     = "MINIO_ENDPOINT"
 	EnvMinioAccessKey    = "MINIO_ACCESS_KEY"
 	EnvMinioSecretKey    = "MINIO_SECRET_KEY"
+	EnvCompilerEndpoint  = "COMPILER_ENDPOINT"
 	EnvMailjetApiKey     = "MJ_APIKEY_PUBLIC"
 	EnvMailjetPrivateKey = "MJ_APIKEY_PRIVATE"
 )

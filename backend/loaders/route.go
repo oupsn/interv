@@ -3,9 +3,10 @@ package loaders
 import (
 	"errors"
 	"fmt"
-	"github.com/gofiber/swagger"
-	"github.com/spf13/viper"
 	"time"
+
+	swagger "github.com/arsmn/fiber-swagger/v2"
+	"github.com/spf13/viper"
 
 	_ "csgit.sit.kmutt.ac.th/interv/interv-platform/docs"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/handlers"
@@ -22,6 +23,8 @@ func SetupRoutes() {
 	// Repositories
 	var userRepositories = repositories.NewUserRepository(*DB)
 	var objectRepositories = repositories.NewObjectRepository(*MINIO)
+	var compilationRespositories = repositories.NewCodeCompilationRepository(viper.GetString(EnvCompilerEndpoint))
+	var codingInterviewRepositories = repositories.NewCodingInterviewRepository(*DB)
 	var mailRepositories = repositories.NewMailRepository(*MAILJET)
 	var videoQuestionRepositories = repositories.NewQuestionRepository(*DB)
 	var lobbyRepositories = repositories.NewLobbyRepository(*DB)
@@ -33,6 +36,7 @@ func SetupRoutes() {
 	var authServices = services.NewAuthService(userRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, lobbyRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
+	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories)
 	var mailServices = services.NewMailService(mailRepositories)
 	var questionServices = services.NewQuestionService(videoQuestionRepositories)
 	var lobbyServices = services.NewLobbyService(lobbyRepositories)
@@ -43,6 +47,7 @@ func SetupRoutes() {
 	var authHandlers = handlers.NewAuthHandler(authServices)
 	var videoInterviewHandlers = handlers.NewVideoInterviewHandler(videoInterviewServices)
 	var objectHandlers = handlers.NewObjectHandler(objectServices)
+	var codingInterviewHandlers = handlers.NewCodingInterviewHandler(codingInterviewServices)
 	var mailHandlers = handlers.NewMailHandler(mailServices)
 	var questionHandlers = handlers.NewVideoQuestionHandler(questionServices)
 	var lobbyHandlers = handlers.NewLobbyHandler(lobbyServices)
@@ -76,6 +81,11 @@ func SetupRoutes() {
 	public.Get("videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
 	public.Post("videoInterview.submitVideoInterview", videoInterviewHandlers.SubmitVideoInterview)
 
+	// codingInterview
+	public.Post("codingInterview.generateCompileToken", codingInterviewHandlers.GenerateCompileToken)
+	public.Get("codingInterview.getCompileResult/:token", codingInterviewHandlers.GetCompileResult)
+	public.Get("codingInterview.getQuestions", codingInterviewHandlers.GetQuestions)
+	public.Post("codingInterview.createQuestion", codingInterviewHandlers.CreateQuestion)
 	// video question
 	public.Post("videoQuestion.createVideoQuestion", questionHandlers.CreateVideoQuestion)
 	public.Get("videoQuestion.getVideoQuestion", questionHandlers.GetVideoQuestion)

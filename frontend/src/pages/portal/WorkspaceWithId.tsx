@@ -23,7 +23,7 @@ const WorkspaceWithId = () => {
   }
 
   type ImportData = {
-    listuser: UserData[]
+    listUser: UserData[]
     workspaceId: number
   }
 
@@ -57,7 +57,7 @@ const WorkspaceWithId = () => {
 
   const handleSubmitFile = () => {
     const importData: ImportData = {
-      listuser: importUser ?? [],
+      listUser: importUser ?? [],
       workspaceId: Number(workspaceId),
     }
     console.log(workspaceId)
