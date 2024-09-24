@@ -47,7 +47,10 @@ func CheckAutoMigrate() {
 			&domains.Workspace{},
 			&domains.UserInWorkspace{},
 			&domains.VideoQuestion{},
-			&domains.Lobby{}) //TODO: Add more models here
+			&domains.CodingQuestion{},
+			&domains.CodingQuestionExample{},
+			&domains.CodingQuestionTestCase{},
+			&domains.Lobby{})
 		if err != nil {
 			panic(err)
 		}

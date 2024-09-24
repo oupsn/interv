@@ -14,7 +14,13 @@ const Portal = () => {
     <>
       <SideBar isSignOutEnabled={true}>
         <SideBarItem title={"Workspace"} isActive={true} />
-        <SideBarItem title={"Assessment"} isActive={false} onClick={() => {}} />
+        <SideBarItem
+          title={"Assessment"}
+          isActive={false}
+          onClick={() => {
+            navigate("assessment/coding")
+          }}
+        />
       </SideBar>
       <MainPanel isPaddingTop>
         <div className="flex justify-between">

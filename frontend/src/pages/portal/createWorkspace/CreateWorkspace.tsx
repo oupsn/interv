@@ -1,6 +1,7 @@
 import SideBarItem from "@/components/layout/SideBarItem.tsx"
 import SideBar from "@/components/layout/SideBar.tsx"
 import MainPanel from "@/components/layout/MainPanel.tsx"
+import { Outlet } from "react-router-dom"
 
 const CreateWorkspace = () => {
   return (
@@ -9,7 +10,9 @@ const CreateWorkspace = () => {
         <SideBarItem title={"Candidate"} isActive={true} />
         <SideBarItem title={"Assessment"} isActive={false} onClick={() => {}} />
       </SideBar>
-      <MainPanel></MainPanel>
+      <MainPanel>
+        <Outlet />
+      </MainPanel>
     </>
   )
 }
