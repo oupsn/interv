@@ -18,6 +18,7 @@ import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Trash2 } from "lucide-react"
 import { server } from "@/contexts/swr"
+import { Textarea } from "@/components/ui/textarea"
 
 function CreateCodingQuestion() {
   const formSchema = z.object({
@@ -236,74 +237,101 @@ function CreateCodingQuestion() {
                   test cases or import them from a JSON file.
                 </p>
                 <FormControl>
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     {form.watch("testCases").length === 0 ? (
                       <p>No test cases added yet. Import or add a test case.</p>
                     ) : (
                       form.watch("testCases").map((testCase, index) => (
-                        <div key={index} className="flex gap-2 items-center">
-                          <Input
-                            placeholder="Input"
-                            {...form.register(`testCases.${index}.input`)}
-                            className="w-full"
-                          />
-                          <Input
-                            placeholder="Output"
-                            {...form.register(`testCases.${index}.output`)}
-                            className="w-full"
-                          />
-                          <div className="flex items-center space-x-2 ml-2">
-                            <Checkbox
-                              id={`hidden-${index}`}
-                              checked={testCase.isHidden}
-                              onCheckedChange={(checked) => {
-                                form.setValue(
-                                  `testCases.${index}.isHidden`,
-                                  checked as boolean,
-                                )
-                              }}
-                            />
-                            <label
-                              htmlFor={`hidden-${index}`}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Hidden
-                            </label>
+                        <div key={index} className="flex flex-col gap-2">
+                          <div className="flex gap-2">
+                            <div className="flex-1">
+                              <label
+                                htmlFor={`input-${index}`}
+                                className="text-sm font-medium"
+                              >
+                                Input
+                              </label>
+                              <Textarea
+                                id={`input-${index}`}
+                                placeholder="Input"
+                                {...form.register(`testCases.${index}.input`)}
+                                className="w-full mt-1"
+                                rows={3}
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <label
+                                htmlFor={`output-${index}`}
+                                className="text-sm font-medium"
+                              >
+                                Output
+                              </label>
+                              <Textarea
+                                id={`output-${index}`}
+                                placeholder="Output"
+                                {...form.register(`testCases.${index}.output`)}
+                                className="w-full mt-1"
+                                rows={3}
+                              />
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-2 ml-2">
-                            <Checkbox
-                              id={`example-${index}`}
-                              {...form.register(`testCases.${index}.isExample`)}
-                            />
-                            <label
-                              htmlFor={`example-${index}`}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Example
-                            </label>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                              <div className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`hidden-${index}`}
+                                  checked={testCase.isHidden}
+                                  onCheckedChange={(checked) => {
+                                    form.setValue(
+                                      `testCases.${index}.isHidden`,
+                                      checked as boolean,
+                                    )
+                                  }}
+                                />
+                                <label
+                                  htmlFor={`hidden-${index}`}
+                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                  Hidden
+                                </label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`example-${index}`}
+                                  {...form.register(
+                                    `testCases.${index}.isExample`,
+                                  )}
+                                />
+                                <label
+                                  htmlFor={`example-${index}`}
+                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                  Example
+                                </label>
+                              </div>
+                            </div>
+                            {index !== 0 && (
+                              <Button
+                                type="button"
+                                onClick={() => {
+                                  const currentTestCases =
+                                    form.getValues("testCases")
+                                  form.setValue(
+                                    "testCases",
+                                    currentTestCases.filter(
+                                      (_, i) => i !== index,
+                                    ),
+                                  )
+                                }}
+                                variant="ghost"
+                                size="sm"
+                                className="h-8"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Remove
+                              </Button>
+                            )}
                           </div>
-                          {index === 0 ? (
-                            <div className="w-10" />
-                          ) : (
-                            <Button
-                              type="button"
-                              onClick={() => {
-                                const currentTestCases =
-                                  form.getValues("testCases")
-                                form.setValue(
-                                  "testCases",
-                                  currentTestCases.filter(
-                                    (_, i) => i !== index,
-                                  ),
-                                )
-                              }}
-                              variant="ghost"
-                              size="icon"
-                              className="h-10 w-10"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
                         </div>
                       ))
                     )}
