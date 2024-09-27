@@ -152,7 +152,7 @@ function CreateCodingQuestion() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <>
       <h1 className="text-3xl font-bold text-primary mb-6">
         Create Coding Assessment
       </h1>
@@ -337,7 +337,7 @@ function CreateCodingQuestion() {
           </Button>
         </form>
       </Form>
-    </div>
+    </>
   )
 }
 
