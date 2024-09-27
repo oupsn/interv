@@ -9,7 +9,9 @@ import CodingInterviewPage from "@/pages/lobby/codingInterview/CodingInterview.t
 import VideoInterviewPage from "@/pages/lobby/videoInterview/VideoInterview.tsx"
 import CreateCodingQuestion from "@/pages/portal/assessment/components/AssessmentCreateCodingQuestionForm"
 import CreateWorkspace from "@/pages/portal/createWorkspace/CreateWorkspace"
-import WorkspaceWithId from "@/pages/portal/WorkspaceWithId"
+import AssessmentCreateVideoQuestionForm from "@/pages/portal/assessment/components/AssessmentCreateVideoQuestionForm.tsx"
+import AssessmentPage from "@/pages/portal/assessment/AssessmentPage.tsx"
+import Workspace from "@/pages/portal/Workspace.tsx"
 
 export const router = createBrowserRouter([
   {
@@ -21,31 +23,34 @@ export const router = createBrowserRouter([
         element: <LoginPage />,
       },
       {
-        path: "workspace",
+        path: "portal",
         element: <MainLayout />,
         children: [
           {
-            path: "",
+            path: "workspace",
             element: <Portal />,
           },
           {
             path: "create",
             element: <CreateWorkspace />,
           },
-          /* Temporary */
+          {
+            path: ":workspaceId",
+            element: <Workspace />,
+          },
           {
             path: "assessment",
-            element: <CreateCodingQuestion />,
+            element: <AssessmentPage />,
             children: [
               {
                 path: "coding",
                 element: <CreateCodingQuestion />,
               },
+              {
+                path: "video",
+                element: <AssessmentCreateVideoQuestionForm />,
+              },
             ],
-          },
-          {
-            path: ":workspaceId",
-            element: <WorkspaceWithId />,
           },
         ],
       },

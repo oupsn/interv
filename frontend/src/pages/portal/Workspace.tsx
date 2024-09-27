@@ -5,15 +5,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input.tsx"
 import Papa from "papaparse"
 import React, { useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { server } from "@/contexts/swr"
 import { useGetWorkspace } from "@/hooks/useGetWorkspace"
 import ListUser from "./components/ListUser"
 
-const WorkspaceWithId = () => {
+const Workspace = () => {
   const [importUser, setImportUser] = useState<UserData[]>()
   const { workspaceId } = useParams()
   const { data, mutate } = useGetWorkspace(Number(workspaceId))
+  const navigate = useNavigate()
 
   type UserData = {
     name: string
@@ -72,8 +73,14 @@ const WorkspaceWithId = () => {
   return (
     <>
       <SideBar isSignOutEnabled={true}>
-        <SideBarItem title={"Candidate"} isActive={true} />
-        <SideBarItem title={"Assessment"} isActive={false} onClick={() => {}} />
+        <SideBarItem title={"Workspace"} isActive={true} />
+        <SideBarItem
+          title={"Assessment"}
+          isActive={false}
+          onClick={() => {
+            navigate("assessment")
+          }}
+        />
       </SideBar>
       <MainPanel>
         <Input
@@ -103,4 +110,4 @@ const WorkspaceWithId = () => {
   )
 }
 
-export default WorkspaceWithId
+export default Workspace
