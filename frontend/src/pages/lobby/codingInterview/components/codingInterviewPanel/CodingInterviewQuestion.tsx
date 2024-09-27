@@ -1,4 +1,6 @@
 import React from "react"
+/* import DOMPurify from "dompurify"
+ */
 import {
   Card,
   CardHeader,
@@ -30,6 +32,8 @@ const CodingInterviewQuestion: React.FC<CodingInterviewQuestionProps> = ({
   exampleOutputList,
   testcaseList,
 }) => {
+  /*   const cleanDescription = DOMPurify.sanitize(description)
+   */
   return (
     <Card className="h-full">
       <CardHeader>
