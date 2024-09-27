@@ -108,7 +108,6 @@ func (co CodingInterviewHandler) CreateQuestion(c *fiber.Ctx) error {
 		domains.CodingQuestion{
 			Title:       req.Body.Title,
 			Description: req.Body.Description,
-			Examples:    req.Body.Examples,
 			TestCases:   req.Body.TestCases,
 			Tags:        req.Body.Tags,
 		},

@@ -19,6 +19,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Trash2 } from "lucide-react"
 import { server } from "@/contexts/swr"
 import { Textarea } from "@/components/ui/textarea"
+import { DomainsCreateCodingQuestionRequest } from "@/api/server"
 
 function CreateCodingQuestion() {
   const formSchema = z.object({
@@ -46,17 +47,12 @@ function CreateCodingQuestion() {
   })
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const exampleTestCases = values.testCases.filter(
-      (testCase) => testCase.isExample,
-    )
-    const body = {
+    const body: DomainsCreateCodingQuestionRequest = {
       title: values.title || "",
       description: values.description || "",
       test_cases: values.testCases || [],
-      examples: exampleTestCases || [],
       tags: [],
     }
-    console.log(body)
 
     toast.promise(
       server.codingInterview.createQuestion({

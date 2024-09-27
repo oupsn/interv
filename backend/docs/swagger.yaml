@@ -411,10 +411,6 @@ definitions:
         $ref: '#/definitions/gorm.DeletedAt'
       description:
         type: string
-      examples:
-        items:
-          $ref: '#/definitions/domains.CodingQuestionExample'
-        type: array
       id:
         type: integer
       tags:
@@ -430,23 +426,6 @@ definitions:
       updatedAt:
         type: string
       updatedBy:
-        type: string
-    type: object
-  domains.CodingQuestionExample:
-    properties:
-      codingQuestionID:
-        type: integer
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      id:
-        type: integer
-      input:
-        type: string
-      output:
-        type: string
-      updatedAt:
         type: string
     type: object
   domains.CodingQuestionResponse:
@@ -478,6 +457,8 @@ definitions:
         type: integer
       input:
         type: string
+      isExample:
+        type: boolean
       isHidden:
         type: boolean
       output:
@@ -524,10 +505,6 @@ definitions:
         type: string
       difficulty:
         type: string
-      examples:
-        items:
-          $ref: '#/definitions/domains.CodingQuestionExample'
-        type: array
       tags:
         items:
           type: string

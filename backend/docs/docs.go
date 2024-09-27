@@ -1853,12 +1853,6 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "examples": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domains.CodingQuestionExample"
-                    }
-                },
                 "id": {
                     "type": "integer"
                 },
@@ -1881,32 +1875,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedBy": {
-                    "type": "string"
-                }
-            }
-        },
-        "domains.CodingQuestionExample": {
-            "type": "object",
-            "properties": {
-                "codingQuestionID": {
-                    "type": "integer"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "input": {
-                    "type": "string"
-                },
-                "output": {
-                    "type": "string"
-                },
-                "updatedAt": {
                     "type": "string"
                 }
             }
@@ -1954,6 +1922,9 @@ const docTemplate = `{
                 },
                 "input": {
                     "type": "string"
+                },
+                "isExample": {
+                    "type": "boolean"
                 },
                 "isHidden": {
                     "type": "boolean"
@@ -2025,12 +1996,6 @@ const docTemplate = `{
                 },
                 "difficulty": {
                     "type": "string"
-                },
-                "examples": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domains.CodingQuestionExample"
-                    }
                 },
                 "tags": {
                     "type": "array",

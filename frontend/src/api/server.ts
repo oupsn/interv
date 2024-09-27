@@ -114,23 +114,12 @@ export interface DomainsCodingQuestion {
   createdBy?: string
   deletedAt?: GormDeletedAt
   description?: string
-  examples?: DomainsCodingQuestionExample[]
   id?: number
   tags?: string[]
   testCases?: DomainsCodingQuestionTestCase[]
   title?: string
   updatedAt?: string
   updatedBy?: string
-}
-
-export interface DomainsCodingQuestionExample {
-  codingQuestionID?: number
-  createdAt?: string
-  deletedAt?: GormDeletedAt
-  id?: number
-  input?: string
-  output?: string
-  updatedAt?: string
 }
 
 export interface DomainsCodingQuestionResponse {
@@ -148,6 +137,7 @@ export interface DomainsCodingQuestionTestCase {
   deletedAt?: GormDeletedAt
   id?: number
   input?: string
+  isExample?: boolean
   isHidden?: boolean
   output?: string
   updatedAt?: string
@@ -176,7 +166,6 @@ export interface DomainsCompilationResultResponse {
 export interface DomainsCreateCodingQuestionRequest {
   description?: string
   difficulty?: string
-  examples?: DomainsCodingQuestionExample[]
   tags?: string[]
   test_cases?: DomainsCodingQuestionTestCase[]
   title?: string

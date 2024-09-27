@@ -26,12 +26,10 @@ func (c *codingInterviewRepository) GetCodingQuestionList() ([]domains.CodingQue
 	var codingQuestionResponses []domains.CodingQuestionResponse
 	for _, codingQuestion := range codingQuestions {
 		codingQuestionResponses = append(codingQuestionResponses, domains.CodingQuestionResponse{
-			Id:            codingQuestion.Id,
-			Title:         codingQuestion.Title,
-			Description:   codingQuestion.Description,
-			ExampleInput:  codingQuestion.Examples[0].Input,
-			ExampleOutput: codingQuestion.Examples[0].Output,
-			TestCase:      codingQuestion.TestCases,
+			Id:          codingQuestion.Id,
+			Title:       codingQuestion.Title,
+			Description: codingQuestion.Description,
+			TestCase:    codingQuestion.TestCases,
 		})
 	}
 
@@ -45,15 +43,6 @@ func (c *codingInterviewRepository) GetCodingQuestionByID(id int) (domains.Codin
 		return domains.CodingQuestion{}, err
 	}
 	return codingQuestion, nil
-}
-
-func (c *codingInterviewRepository) GetCodingQuestionExampleByID(questionId int) (domains.CodingQuestionExample, error) {
-	var codingQuestionExample domains.CodingQuestionExample
-
-	if err := c.DB.First(&codingQuestionExample, "question_id = ?", questionId).Error; err != nil {
-		return domains.CodingQuestionExample{}, err
-	}
-	return codingQuestionExample, nil
 }
 
 func (c *codingInterviewRepository) GetCodingQuestionTestcaseByID(questionId int) (domains.CodingQuestionTestCase, error) {
