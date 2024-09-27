@@ -51,7 +51,9 @@ const AssessmentCreateVideoQuestionForm = () => {
   }
   return (
     <>
-      <p>Create video assessment</p>
+      <h1 className="text-3xl font-bold text-primary mb-6">
+        Create Video Assessment
+      </h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField

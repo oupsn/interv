@@ -63,7 +63,6 @@ func SetupRoutes() {
 	// Public Routes
 	public := app.Group("/api")
 	public.Get("healthcheck", handlers.HealthCheck)
-	public.Get("swagger/*", swagger.HandlerDefault)
 	public.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, Interv 🕊️")
 	})
@@ -100,6 +99,9 @@ func SetupRoutes() {
 	// Private Routes
 	private := app.Group("/api")
 	private.Use(JwtAuthentication)
+
+	// Swagger
+	private.Get("swagger/*", swagger.HandlerDefault)
 
 	// User
 	private.Post("user.deleteUser", userHandlers.DeleteUser)

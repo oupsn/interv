@@ -18,8 +18,8 @@ const AppLoading: FC<PropsWithChildren> = ({ children }) => {
       return
     }
 
-    if (isLoggedIn) {
-      navigate("/workspace")
+    if (isLoggedIn && !window.location.href.includes("/portal")) {
+      navigate("/portal/workspace")
       const timeout = setTimeout(() => {
         setIsLoaded(true)
       }, 500)
