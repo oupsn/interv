@@ -9,6 +9,11 @@
  * ---------------------------------------------------------------
  */
 
+export interface AdminCreateBody {
+  portalId: number
+  user: DomainsUser
+}
+
 export interface CodingInterviewCreateQuestionQuery {
   body: DomainsCreateCodingQuestionRequest
 }
@@ -28,6 +33,18 @@ export interface CodingInterviewGetCompileResultResponse {
 export interface CodingInterviewGetQuestionsResponse {
   questions?: DomainsCodingQuestionResponse[]
 }
+
+export type CreateAdminData = HandlersResponseUser
+
+export type CreateAdminError = HandlersErrResponse
+
+export interface CreatePortalBody {
+  company_name: string
+}
+
+export type CreatePortalData = HandlersResponsePortalData
+
+export type CreatePortalError = HandlersErrResponse
 
 export type CreateQuestionData = HandlersResponseDomainsCodingQuestion
 
@@ -79,6 +96,14 @@ export interface CurrentUserResponse {
   updated_at: string
   username: string
 }
+
+export interface DeletePortalBody {
+  id: number
+}
+
+export type DeletePortalByIdData = HandlersResponseString
+
+export type DeletePortalByIdError = HandlersErrResponse
 
 export type DeleteUserData = HandlersResponseString
 
@@ -233,6 +258,14 @@ export interface GetObjectBody {
 export type GetObjectData = HandlersResponseString
 
 export type GetObjectError = HandlersErrResponse
+
+export type GetPortalByIdData = HandlersResponsePortalData
+
+export type GetPortalByIdError = HandlersErrResponse
+
+export interface GetPortalByIdParams {
+  id: number
+}
 
 export type GetQuestionsData = HandlersResponseCodingInterviewGetQuestionsResponse
 
@@ -397,6 +430,13 @@ export interface HandlersResponseGetVideoQuestionByIdResponse {
   timestamp?: string
 }
 
+export interface HandlersResponsePortalData {
+  code?: number
+  data?: PortalData
+  message?: string
+  timestamp?: string
+}
+
 export interface HandlersResponseString {
   code?: number
   data?: string
@@ -471,6 +511,11 @@ export interface MailObject {
 }
 
 export type MeData = HandlersResponseCurrentUserResponse
+
+export interface PortalData {
+  companyName?: string
+  id?: number
+}
 
 export interface SendMailBody {
   mailList: MailObject[]
@@ -591,7 +636,6 @@ export interface WorkspaceDetail {
   isCoding?: boolean
   isVideo?: boolean
   memberNum?: number
-  owner?: number
   startDate?: string
   stopDate?: string
   title?: string
@@ -824,7 +868,83 @@ export namespace Object {
   }
 }
 
+export namespace Portal {
+  /**
+   * No description
+   * @tags portal
+   * @name CreatePortal
+   * @summary Create new portal
+   * @request POST:/portal.create
+   * @response `200` `CreatePortalData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CreatePortal {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = CreatePortalBody
+    export type RequestHeaders = {}
+    export type ResponseBody = CreatePortalData
+  }
+
+  /**
+   * No description
+   * @tags portal
+   * @name DeletePortalById
+   * @summary Delete portal By Id
+   * @request POST:/portal.delete
+   * @response `200` `DeletePortalByIdData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace DeletePortalById {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = DeletePortalBody
+    export type RequestHeaders = {}
+    export type ResponseBody = DeletePortalByIdData
+  }
+
+  /**
+   * No description
+   * @tags portal
+   * @name GetPortalById
+   * @summary Get portal
+   * @request GET:/portal.get
+   * @response `200` `GetPortalByIdData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetPortalById {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      id: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetPortalByIdData
+  }
+}
+
 export namespace User {
+  /**
+   * No description
+   * @tags user
+   * @name CreateAdmin
+   * @summary Create new admin
+   * @request POST:/user.createAdmin
+   * @response `200` `CreateAdminData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CreateAdmin {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = AdminCreateBody
+    export type RequestHeaders = {}
+    export type ResponseBody = CreateAdminData
+  }
+
   /**
    * No description
    * @tags user
@@ -1536,7 +1656,92 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         ...params,
       }),
   }
+  portal = {
+    /**
+     * No description
+     *
+     * @tags portal
+     * @name CreatePortal
+     * @summary Create new portal
+     * @request POST:/portal.create
+     * @response `200` `CreatePortalData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    createPortal: (payload: CreatePortalBody, params: RequestParams = {}) =>
+      this.request<CreatePortalData, CreatePortalError>({
+        path: `/portal.create`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags portal
+     * @name DeletePortalById
+     * @summary Delete portal By Id
+     * @request POST:/portal.delete
+     * @response `200` `DeletePortalByIdData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    deletePortalById: (payload: DeletePortalBody, params: RequestParams = {}) =>
+      this.request<DeletePortalByIdData, DeletePortalByIdError>({
+        path: `/portal.delete`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags portal
+     * @name GetPortalById
+     * @summary Get portal
+     * @request GET:/portal.get
+     * @response `200` `GetPortalByIdData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getPortalById: (query: GetPortalByIdParams, params: RequestParams = {}) =>
+      this.request<GetPortalByIdData, GetPortalByIdError>({
+        path: `/portal.get`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  }
   user = {
+    /**
+     * No description
+     *
+     * @tags user
+     * @name CreateAdmin
+     * @summary Create new admin
+     * @request POST:/user.createAdmin
+     * @response `200` `CreateAdminData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    createAdmin: (payload: AdminCreateBody, params: RequestParams = {}) =>
+      this.request<CreateAdminData, CreateAdminError>({
+        path: `/user.createAdmin`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
     /**
      * No description
      *

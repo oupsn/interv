@@ -1,5 +1,15 @@
 basePath: /api
 definitions:
+  AdminCreateBody:
+    properties:
+      portalId:
+        type: integer
+      user:
+        $ref: '#/definitions/domains.User'
+    required:
+    - portalId
+    - user
+    type: object
   CodingInterviewCreateQuestionQuery:
     properties:
       body:
@@ -30,6 +40,13 @@ definitions:
         items:
           $ref: '#/definitions/domains.CodingQuestionResponse'
         type: array
+    type: object
+  CreatePortalBody:
+    properties:
+      company_name:
+        type: string
+    required:
+    - company_name
     type: object
   CreateVideoQuestionBody:
     properties:
@@ -106,6 +123,13 @@ definitions:
     - role
     - updated_at
     - username
+    type: object
+  DeletePortalBody:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
     type: object
   DeleteUserFromWorkspaceBody:
     properties:
@@ -220,6 +244,13 @@ definitions:
     required:
     - name
     - to
+    type: object
+  PortalData:
+    properties:
+      companyName:
+        type: string
+      id:
+        type: integer
     type: object
   SendMailBody:
     properties:
@@ -391,8 +422,6 @@ definitions:
       isVideo:
         type: boolean
       memberNum:
-        type: integer
-      owner:
         type: integer
       startDate:
         type: string
@@ -664,6 +693,17 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/GetVideoQuestionByIdResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-PortalData:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/PortalData'
       message:
         type: string
       timestamp:
@@ -1127,6 +1167,124 @@ paths:
       summary: Upload object to the system
       tags:
       - object
+  /portal.create:
+    post:
+      consumes:
+      - application/json
+      operationId: CreatePortal
+      parameters:
+      - description: CreatePortalBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/CreatePortalBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-PortalData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Create new portal
+      tags:
+      - portal
+  /portal.delete:
+    post:
+      consumes:
+      - application/json
+      operationId: DeletePortalById
+      parameters:
+      - description: DeletePortalBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/DeletePortalBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Delete portal By Id
+      tags:
+      - portal
+  /portal.get:
+    get:
+      consumes:
+      - application/json
+      operationId: GetPortalById
+      parameters:
+      - in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-PortalData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get portal
+      tags:
+      - portal
+  /user.createAdmin:
+    post:
+      consumes:
+      - application/json
+      operationId: createAdmin
+      parameters:
+      - description: CreateAdminBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/AdminCreateBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Create new admin
+      tags:
+      - user
   /user.createUser:
     post:
       consumes:

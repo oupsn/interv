@@ -20,6 +20,11 @@ type CreateUserBody struct {
 	WorkspaceId uint           `json:"workspaceId" validate:"required"`
 } // @name UserCreateBody
 
+type CreateAdminBody struct {
+	User     domains.User `json:"user" validate:"required"`
+	PortalId uint         `json:"portalId" validate:"required"`
+} // @name AdminCreateBody
+
 type DeleteUserBody struct {
 	Id uint `json:"id" validate:"required"`
 } // @name UserDeleteBody

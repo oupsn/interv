@@ -30,9 +30,11 @@ func SetupRoutes() {
 	var lobbyRepositories = repositories.NewLobbyRepository(*DB)
 	var workspaceRepositories = repositories.NewWorkspaceRepository(*DB)
 	var userInWorkspaceRepositories = repositories.NewUserInWorkspaceRepository(*DB)
+	var portalRepository = repositories.NewPortalRepository(*DB)
+	var userInPoratlRepository = repositories.NewUserInPortalRepository(*DB)
 
 	// Services
-	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories)
+	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, userInPoratlRepository, workspaceRepositories)
 	var authServices = services.NewAuthService(userRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, lobbyRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
@@ -40,7 +42,9 @@ func SetupRoutes() {
 	var mailServices = services.NewMailService(mailRepositories)
 	var questionServices = services.NewQuestionService(videoQuestionRepositories)
 	var lobbyServices = services.NewLobbyService(lobbyRepositories)
-	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories)
+	var portalService = services.NewPortalService(portalRepository)
+	var userInportalService = services.NewUserInPortalService(userInPoratlRepository)
+	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, userInportalService)
 
 	// Handlers
 	var userHandlers = handlers.NewUserHandler(userServices)
@@ -52,6 +56,7 @@ func SetupRoutes() {
 	var questionHandlers = handlers.NewVideoQuestionHandler(questionServices)
 	var lobbyHandlers = handlers.NewLobbyHandler(lobbyServices)
 	var workspaceHandlers = handlers.NewWorkspaceHandler(workspaceService)
+	var portalHandler = handlers.NewPortalHandler(portalService)
 
 	// Fiber App
 	app := NewFiberApp()
@@ -69,6 +74,7 @@ func SetupRoutes() {
 
 	// user
 	public.Post("user.createUser", userHandlers.CreateUser)
+	public.Post("user.createAdmin", userHandlers.CreateAdmin)
 
 	// auth
 	public.Post("auth.login", authHandlers.Login)
@@ -95,6 +101,11 @@ func SetupRoutes() {
 	// lobby
 	public.Get("lobby.getLobbyContext", lobbyHandlers.GetLobbyContext)
 	public.Post("lobby.updateLobbyContext", lobbyHandlers.UpdateLobbyContext)
+
+	// portal
+	public.Get("portal.get", portalHandler.GetPortalById)
+	public.Post("portal.create", portalHandler.CreatePortal)
+	public.Delete("portal.delete", portalHandler.DeletePortalById)
 
 	// Private Routes
 	private := app.Group("/api")

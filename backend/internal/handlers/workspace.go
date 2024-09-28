@@ -11,7 +11,6 @@ type WorkspaceDetail struct {
 	IsCoding  bool      `json:"isCoding"`
 	StartDate time.Time `json:"startDate"`
 	StopDate  time.Time `json:"stopDate"`
-	Owner     uint      `json:"owner"`
 	MemberNum uint      `json:"memberNum"`
 } // @name WorkspaceDetail
 

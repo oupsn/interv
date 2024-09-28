@@ -45,6 +45,36 @@ func (u UserHandler) CreateUser(c *fiber.Ctx) error {
 	return Ok(c, body.ListUser)
 }
 
+// CreateAdmin
+// @ID createAdmin
+// @Tags user
+// @Summary Create new admin
+// @Accept json
+// @Produce json
+// @Param payload body CreateAdminBody true "CreateAdminBody"
+// @Success 200 {object} Response[UserData]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /user.createAdmin [post]
+func (u UserHandler) CreateAdmin(c *fiber.Ctx) error {
+	body := CreateAdminBody{}
+	if err := c.BodyParser(&body); err != nil {
+		return err
+	}
+
+	if err := validate.Struct(body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err := u.userService.CreateAdmin(body.User, body.PortalId)
+
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, body.User)
+}
+
 // DeleteUser
 // @ID deleteUser
 // @Tags user

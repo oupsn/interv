@@ -66,7 +66,6 @@ func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 			IsCoding:  *workspace.IsCoding,
 			StartDate: workspace.StartDate,
 			StopDate:  workspace.StopDate,
-			Owner:     workspace.Owner,
 			MemberNum: 0,
 		},
 		IndividualUser: res,
@@ -134,7 +133,6 @@ func (w WorkspaceHandler) GetAllWorkspace(c *fiber.Ctx) error {
 			IsCoding:  *v.IsCoding,
 			StartDate: v.StartDate,
 			StopDate:  v.StopDate,
-			Owner:     v.Owner,
 			MemberNum: member[index],
 		})
 	}
@@ -181,7 +179,6 @@ func (w WorkspaceHandler) CreateWorkspace(c *fiber.Ctx) error {
 		IsCoding:  *response.IsCoding,
 		StartDate: response.StartDate,
 		StopDate:  response.StopDate,
-		Owner:     response.Owner,
 	})
 }
 
