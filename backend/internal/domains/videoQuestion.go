@@ -6,7 +6,7 @@ import (
 
 type VideoQuestion struct {
 	ID            uint `gorm:"primaryKey"`
-	WorkspaceID   uint
+	PortalID      uint
 	Title         string
 	TimeToPrepare uint
 	TimeToAnswer  uint

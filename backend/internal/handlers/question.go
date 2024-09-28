@@ -4,7 +4,7 @@ import "time"
 
 type CreateVideoQuestionBody struct {
 	Title         string `json:"title" validate:"required"`
-	WorkspaceID   uint   `json:"workspaceId" validate:"required"`
+	PortalID      uint   `json:"portalId" validate:"required"`
 	TimeToPrepare uint   `json:"timeToPrepare" validate:"required"`
 	TimeToAnswer  uint   `json:"timeToAnswer" validate:"required"`
 	RetryAmount   uint   `json:"retryAmount" validate:"required"`
@@ -16,7 +16,7 @@ type CreateVideoQuestionResponse struct {
 	TimeToPrepare uint      `json:"timeToPrepare"`
 	TimeToAnswer  uint      `json:"timeToAnswer"`
 	RetryAmount   uint      `json:"retryAmount"`
-	WorkspaceID   uint      `json:"workspaceId"`
+	PortalID      uint      `json:"portalId"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
 } // @name CreateVideoQuestionResponse
@@ -31,25 +31,25 @@ type GetVideoQuestionByIdResponse struct {
 	TimeToPrepare uint      `json:"timeToPrepare"`
 	TimeToAnswer  uint      `json:"timeToAnswer"`
 	RetryAmount   uint      `json:"retryAmount"`
-	WorkspaceID   uint      `json:"workspaceId"`
+	PortalID      uint      `json:"portalId"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
 } // @name GetVideoQuestionByIdResponse
 
-type GetVideoQuestionByWorkspaceIdParam struct {
+type GetVideoQuestionByPortalIdParam struct {
 	ID uint `json:"id" validate:"required"`
-} // @name GetVideoQuestionByWorkspaceIdParam
+} // @name GetVideoQuestionByportalIdParam
 
-type GetVideoQuestionByWorkspaceIdResponse struct {
+type GetVideoQuestionByPortalIdResponse struct {
 	ID            uint      `json:"id"`
 	Title         string    `json:"title"`
 	TimeToPrepare uint      `json:"timeToPrepare"`
 	TimeToAnswer  uint      `json:"timeToAnswer"`
 	RetryAmount   uint      `json:"retryAmount"`
-	WorkspaceID   uint      `json:"workspaceId"`
+	PortalID      uint      `json:"portalId"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
-} // @name GetVideoQuestionByWorkspaceIdResponse
+} // @name GetVideoQuestionByPortalIdResponse
 
 type UpdateVideoQuestionBody struct {
 	ID            uint   `json:"id" validate:"required"`
@@ -57,7 +57,7 @@ type UpdateVideoQuestionBody struct {
 	TimeToPrepare uint   `json:"timeToPrepare"`
 	TimeToAnswer  uint   `json:"timeToAnswer"`
 	RetryAmount   uint   `json:"retryAmount"`
-	WorkspaceID   uint   `json:"workspaceId"`
+	PortalID      uint   `json:"portalId"`
 } // @name UpdateVideoQuestionBody
 
 type UpdateVideoQuestionResponse struct {
@@ -66,7 +66,7 @@ type UpdateVideoQuestionResponse struct {
 	TimeToPrepare uint   `json:"timeToPrepare"`
 	TimeToAnswer  uint   `json:"timeToAnswer"`
 	RetryAmount   uint   `json:"retryAmount"`
-	WorkspaceID   uint   `json:"workspaceId"`
+	PortalID      uint   `json:"portalId"`
 } // @name UpdateVideoQuestionResponse
 
 type DeleteVideoQuestionByIdBody struct {

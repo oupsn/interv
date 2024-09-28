@@ -55,11 +55,11 @@ export type CreateUserData = HandlersResponseUser
 export type CreateUserError = HandlersErrResponse
 
 export interface CreateVideoQuestionBody {
+  portalId: number
   retryAmount: number
   timeToAnswer: number
   timeToPrepare: number
   title: string
-  workspaceId: number
 }
 
 export type CreateVideoQuestionData = HandlersResponseCreateVideoQuestionResponse
@@ -69,12 +69,12 @@ export type CreateVideoQuestionError = HandlersErrResponse
 export interface CreateVideoQuestionResponse {
   createdAt?: string
   id?: number
+  portalId?: number
   retryAmount?: number
   timeToAnswer?: number
   timeToPrepare?: number
   title?: string
   updatedAt?: string
-  workspaceId?: number
 }
 
 export interface CreateWorkspaceBody {
@@ -307,20 +307,20 @@ export interface GetVideoQuestionByIdParams {
 export interface GetVideoQuestionByIdResponse {
   createdAt?: string
   id?: number
+  portalId?: number
   retryAmount?: number
   timeToAnswer?: number
   timeToPrepare?: number
   title?: string
   updatedAt?: string
-  workspaceId?: number
 }
 
-export type GetVideoQuestionByWorkspaceIdData = HandlersResponseArrayGetVideoQuestionByIdResponse[]
+export type GetVideoQuestionByPortalIdData = HandlersResponseArrayGetVideoQuestionByIdResponse[]
 
-export type GetVideoQuestionByWorkspaceIdError = HandlersErrResponse
+export type GetVideoQuestionByPortalIdError = HandlersErrResponse
 
-export interface GetVideoQuestionByWorkspaceIdParams {
-  id: string
+export interface GetVideoQuestionByPortalIdParams {
+  id: number
 }
 
 export type GetWorkspaceData = HandlersResponseWorkspaceData
@@ -557,11 +557,11 @@ export type UpdateLobbyContextError = HandlersErrResponse
 
 export interface UpdateVideoQuestionBody {
   id: number
+  portalId?: number
   retryAmount?: number
   timeToAnswer?: number
   timeToPrepare?: number
   title?: string
-  workspaceId?: number
 }
 
 export type UpdateVideoQuestionData = HandlersResponseCreateVideoQuestionResponse
@@ -1150,24 +1150,22 @@ export namespace VideoQuestion {
   /**
    * No description
    * @tags videoQuestion
-   * @name GetVideoQuestionByWorkspaceId
-   * @summary Get video question by workspace id
-   * @request GET:/videoQuestion.getVideoQuestionWorkspaceIdId/{id}
-   * @response `200` `GetVideoQuestionByWorkspaceIdData` OK
+   * @name GetVideoQuestionByPortalId
+   * @summary Get video question by portal id
+   * @request GET:/videoQuestion.getVideoQuestionByPortalId
+   * @response `200` `GetVideoQuestionByPortalIdData` OK
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `404` `HandlersErrResponse` Not Found
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
-  export namespace GetVideoQuestionByWorkspaceId {
-    export type RequestParams = {
-      id: string
-    }
+  export namespace GetVideoQuestionByPortalId {
+    export type RequestParams = {}
     export type RequestQuery = {
       id: number
     }
     export type RequestBody = never
     export type RequestHeaders = {}
-    export type ResponseBody = GetVideoQuestionByWorkspaceIdData
+    export type ResponseBody = GetVideoQuestionByPortalIdData
   }
 
   /**
@@ -1963,20 +1961,17 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * No description
      *
      * @tags videoQuestion
-     * @name GetVideoQuestionByWorkspaceId
-     * @summary Get video question by workspace id
-     * @request GET:/videoQuestion.getVideoQuestionWorkspaceIdId/{id}
-     * @response `200` `GetVideoQuestionByWorkspaceIdData` OK
+     * @name GetVideoQuestionByPortalId
+     * @summary Get video question by portal id
+     * @request GET:/videoQuestion.getVideoQuestionByPortalId
+     * @response `200` `GetVideoQuestionByPortalIdData` OK
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `404` `HandlersErrResponse` Not Found
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    getVideoQuestionByWorkspaceId: (
-      { id, ...query }: GetVideoQuestionByWorkspaceIdParams,
-      params: RequestParams = {},
-    ) =>
-      this.request<GetVideoQuestionByWorkspaceIdData, GetVideoQuestionByWorkspaceIdError>({
-        path: `/videoQuestion.getVideoQuestionWorkspaceIdId/${id}`,
+    getVideoQuestionByPortalId: (query: GetVideoQuestionByPortalIdParams, params: RequestParams = {}) =>
+      this.request<GetVideoQuestionByPortalIdData, GetVideoQuestionByPortalIdError>({
+        path: `/videoQuestion.getVideoQuestionByPortalId`,
         method: "GET",
         query: query,
         type: ContentType.Json,

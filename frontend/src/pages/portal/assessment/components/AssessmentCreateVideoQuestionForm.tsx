@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { server } from "@/contexts/swr.tsx"
-import { Link, useParams } from "react-router-dom"
+import { Link } from "react-router-dom"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,9 +24,10 @@ import {
 } from "@/components/ui/breadcrumb.tsx"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
+import useCurrentUser from "@/hooks/UseCurrentUser.ts"
 
 const AssessmentCreateVideoQuestionForm = () => {
-  const { workspaceId } = useParams()
+  const { currentUser } = useCurrentUser()
   const formSchema = z.object({
     title: z.string().min(1, { message: "Required" }),
     timeToPrepare: z.coerce.number().min(1, { message: "Required" }),
@@ -46,7 +47,7 @@ const AssessmentCreateVideoQuestionForm = () => {
     toast.promise(
       server.videoQuestion.createVideoQuestion({
         ...values,
-        workspaceId: Number(workspaceId),
+        portalId: currentUser.portalId,
       }),
       {
         loading: "Creating question...",

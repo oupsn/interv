@@ -9,8 +9,10 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip"
 import { getMenuList } from "@/components/layout/menuList.ts"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { CollapseMenuButton } from "@/components/layout/CollapseMenuButton.tsx"
+import { toast } from "sonner"
+import { server } from "@/contexts/swr.tsx"
 
 interface MenuProps {
   isOpen: boolean | undefined
@@ -19,6 +21,21 @@ interface MenuProps {
 export function Menu({ isOpen }: MenuProps) {
   const location = useLocation()
   const menuList = getMenuList(location.pathname)
+  const navigate = useNavigate()
+  const handleSignOut = () => {
+    toast.promise(server.authentication.logout, {
+      loading: "Signing in...",
+      success: () => {
+        navigate("/login", {
+          replace: true,
+        })
+        return "Signed out successfully"
+      },
+      error: (err) => {
+        return err.response.data.message
+      },
+    })
+  }
 
   return (
     <ScrollArea className="[&>div>div[style]]:!block">
@@ -104,7 +121,7 @@ export function Menu({ isOpen }: MenuProps) {
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>
                   <Button
-                    onClick={() => {}}
+                    onClick={handleSignOut}
                     variant="outline"
                     className="w-full justify-center h-10 mt-5"
                   >

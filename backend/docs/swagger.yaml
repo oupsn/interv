@@ -50,6 +50,8 @@ definitions:
     type: object
   CreateVideoQuestionBody:
     properties:
+      portalId:
+        type: integer
       retryAmount:
         type: integer
       timeToAnswer:
@@ -58,20 +60,20 @@ definitions:
         type: integer
       title:
         type: string
-      workspaceId:
-        type: integer
     required:
+    - portalId
     - retryAmount
     - timeToAnswer
     - timeToPrepare
     - title
-    - workspaceId
     type: object
   CreateVideoQuestionResponse:
     properties:
       createdAt:
         type: string
       id:
+        type: integer
+      portalId:
         type: integer
       retryAmount:
         type: integer
@@ -83,8 +85,6 @@ definitions:
         type: string
       updatedAt:
         type: string
-      workspaceId:
-        type: integer
     type: object
   CreateWorkspaceBody:
     properties:
@@ -198,6 +198,8 @@ definitions:
         type: string
       id:
         type: integer
+      portalId:
+        type: integer
       retryAmount:
         type: integer
       timeToAnswer:
@@ -208,8 +210,6 @@ definitions:
         type: string
       updatedAt:
         type: string
-      workspaceId:
-        type: integer
     type: object
   IndividualUser:
     properties:
@@ -294,6 +294,8 @@ definitions:
     properties:
       id:
         type: integer
+      portalId:
+        type: integer
       retryAmount:
         type: integer
       timeToAnswer:
@@ -302,8 +304,6 @@ definitions:
         type: integer
       title:
         type: string
-      workspaceId:
-        type: integer
     required:
     - id
     type: object
@@ -1587,11 +1587,11 @@ paths:
       summary: Get video question by id
       tags:
       - videoQuestion
-  /videoQuestion.getVideoQuestionWorkspaceIdId/{id}:
+  /videoQuestion.getVideoQuestionByPortalId:
     get:
       consumes:
       - application/json
-      operationId: getVideoQuestionByWorkspaceId
+      operationId: getVideoQuestionByPortalId
       parameters:
       - in: query
         name: id
@@ -1618,7 +1618,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
-      summary: Get video question by workspace id
+      summary: Get video question by portal id
       tags:
       - videoQuestion
   /videoQuestion.updateVideoQuestion:

@@ -40,7 +40,7 @@ func (v videoInterviewService) GetVideoInterviewContext(lobbyId uint) ([]domains
 		return nil, ErrorFindLobby
 	}
 
-	videoQuestion, err := v.videoQuestionRepo.GetByWorkspaceId(lobby.WorkspaceID)
+	videoQuestion, err := v.videoQuestionRepo.GetByPortalId(lobby.WorkspaceID)
 	if err != nil {
 		return nil, ErrorFindQuestion
 	}
