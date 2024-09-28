@@ -8,7 +8,7 @@ import (
 type IUserInPortalService interface {
 	GetUserInPortalByPortalId(id uint) (userInPortal *[]domains.UserInPortal, err error)
 	GetUserInPortalByUserId(id uint) (userInPortal *domains.UserInPortal, err error)
-	GetPortalByUserId(userId uint) (portalId uint, err error)
+	GetPortalByUserId(userId *uint) (portalId *uint, err error)
 	Create(userId uint, portalId uint) (userInPortal *domains.UserInPortal, err error)
 	Delete(id uint) (err error)
 }
@@ -39,12 +39,12 @@ func (p *userInPortalService) GetUserInPortalByUserId(id uint) (userInPortal *do
 	return userInPortal, nil
 }
 
-func (p *userInPortalService) GetPortalByUserId(userId uint) (portalId uint, err error) {
-	userInPortal, err := p.userInPortalRepository.FindByUserId(userId)
+func (p *userInPortalService) GetPortalByUserId(userId *uint) (portalId *uint, err error) {
+	userInPortal, err := p.userInPortalRepository.FindByUserId(*userId)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	return userInPortal.PortalId, nil
+	return &userInPortal.PortalId, nil
 }
 
 func (p *userInPortalService) Create(userId uint, portalId uint) (portal *domains.UserInPortal, err error) {

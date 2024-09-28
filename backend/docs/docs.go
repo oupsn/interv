@@ -1386,7 +1386,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/workspace.getAll": {
+        "/workspace.getByPortal": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1398,7 +1398,7 @@ const docTemplate = `{
                     "workspace"
                 ],
                 "summary": "Get List of workspace",
-                "operationId": "GetAllWorkspace",
+                "operationId": "GetPortalWorkspace",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1586,6 +1586,7 @@ const docTemplate = `{
             "required": [
                 "created_at",
                 "id",
+                "portalId",
                 "role",
                 "updated_at",
                 "username"
@@ -1595,6 +1596,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "portalId": {
                     "type": "integer"
                 },
                 "role": {
@@ -2051,6 +2055,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "memberNum": {
+                    "type": "integer"
+                },
+                "portalId": {
                     "type": "integer"
                 },
                 "startDate": {

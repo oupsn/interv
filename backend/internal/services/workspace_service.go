@@ -48,7 +48,7 @@ func (w *workspaceService) GetUserInWorkspace(id uint) (workspace *[]domains.Use
 	return w.userInWorkspaceRepository.FindByWorkspaceId(id)
 }
 
-func (w *workspaceService) GetAllOwnWorkspace(portalId *uint) (workspace *[]domains.Workspace, err error) {
+func (w *workspaceService) GetPortalWorkspace(portalId *uint) (workspace *[]domains.Workspace, err error) {
 	return w.workspaceRepository.FindByPortalId(portalId)
 }
 
@@ -75,7 +75,10 @@ func (w *workspaceService) Create(title string, isCoding *bool, isVideo *bool, s
 	if _, err := w.workspaceRepository.FindByTitle(strings.TrimSpace(title)); err == nil {
 		return nil, ErrorWorkspaceExists
 	}
-	portalId, err := w.userInPortalService.GetPortalByUserId(*userId)
+	portalId, err := w.userInPortalService.GetPortalByUserId(userId)
+	if err != nil {
+		return nil, err
+	}
 
 	return w.workspaceRepository.Create(domains.Workspace{
 		Title:     strings.TrimSpace(title),
@@ -83,7 +86,7 @@ func (w *workspaceService) Create(title string, isCoding *bool, isVideo *bool, s
 		IsCoding:  isCoding,
 		StartDate: startDate,
 		StopDate:  stopDate,
-		PortalId:  portalId,
+		PortalId:  *portalId,
 	})
 }
 

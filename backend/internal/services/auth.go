@@ -15,6 +15,6 @@ var (
 
 type IAuthService interface {
 	Login(username string, password string) (userId *uint, accessToken *string, err error)
-	Me(userId uint) (user *domains.User, err error)
+	Me(userId uint) (user *domains.User, portalId *uint, err error)
 	GenerateJwtToken(userId uint, username string, expiration time.Time) (string, error)
 }
