@@ -37,7 +37,7 @@ func (m *mailService) SendMail(mailListPayload MailListPayload) error {
 
 		messagesInfo = append(messagesInfo, mailjet.InfoMessagesV31{
 			From: &mailjet.RecipientV31{
-				Email: "no-reply@interv.oupsn.com",
+				Email: "no-reply@interv.cc",
 				Name:  "Interv",
 			},
 			To: &mailjet.RecipientsV31{
