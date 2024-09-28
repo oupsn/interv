@@ -1139,7 +1139,7 @@
                 }
             }
         },
-        "/videoQuestion.getVideoQuestionWorkspaceIdId/{id}": {
+        "/videoQuestion.getVideoQuestionByPortalId": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1150,8 +1150,8 @@
                 "tags": [
                     "videoQuestion"
                 ],
-                "summary": "Get video question by workspace id",
-                "operationId": "getVideoQuestionByWorkspaceId",
+                "summary": "Get video question by portal id",
+                "operationId": "getVideoQuestionByPortalId",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1493,13 +1493,16 @@
         "CreateVideoQuestionBody": {
             "type": "object",
             "required": [
+                "portalId",
                 "retryAmount",
                 "timeToAnswer",
                 "timeToPrepare",
-                "title",
-                "workspaceId"
+                "title"
             ],
             "properties": {
+                "portalId": {
+                    "type": "integer"
+                },
                 "retryAmount": {
                     "type": "integer"
                 },
@@ -1511,9 +1514,6 @@
                 },
                 "title": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },
@@ -1524,6 +1524,9 @@
                     "type": "string"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "portalId": {
                     "type": "integer"
                 },
                 "retryAmount": {
@@ -1540,9 +1543,6 @@
                 },
                 "updatedAt": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },
@@ -1708,6 +1708,9 @@
                 "id": {
                     "type": "integer"
                 },
+                "portalId": {
+                    "type": "integer"
+                },
                 "retryAmount": {
                     "type": "integer"
                 },
@@ -1722,9 +1725,6 @@
                 },
                 "updatedAt": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },
@@ -1856,6 +1856,9 @@
                 "id": {
                     "type": "integer"
                 },
+                "portalId": {
+                    "type": "integer"
+                },
                 "retryAmount": {
                     "type": "integer"
                 },
@@ -1867,9 +1870,6 @@
                 },
                 "title": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },

@@ -43,7 +43,7 @@ func (q VideoQuestionHandler) CreateVideoQuestion(c *fiber.Ctx) error {
 		TimeToPrepare: body.TimeToPrepare,
 		TimeToAnswer:  body.TimeToAnswer,
 		RetryAmount:   body.RetryAmount,
-		WorkspaceID:   body.WorkspaceID,
+		PortalID:      body.PortalID,
 	})
 
 	if err != nil {
@@ -56,7 +56,7 @@ func (q VideoQuestionHandler) CreateVideoQuestion(c *fiber.Ctx) error {
 		TimeToPrepare: response.TimeToPrepare,
 		TimeToAnswer:  response.TimeToAnswer,
 		RetryAmount:   response.RetryAmount,
-		WorkspaceID:   response.WorkspaceID,
+		PortalID:      response.PortalID,
 		CreatedAt:     response.CreatedAt,
 		UpdatedAt:     response.UpdatedAt,
 	})
@@ -94,26 +94,26 @@ func (q VideoQuestionHandler) GetVideoQuestion(c *fiber.Ctx) error {
 		TimeToPrepare: response.TimeToPrepare,
 		TimeToAnswer:  response.TimeToAnswer,
 		RetryAmount:   response.RetryAmount,
-		WorkspaceID:   response.WorkspaceID,
+		PortalID:      response.PortalID,
 		CreatedAt:     response.CreatedAt,
 		UpdatedAt:     response.UpdatedAt,
 	})
 }
 
-// GetVideoQuestionByWorkspaceId
-// @ID getVideoQuestionByWorkspaceId
+// GetVideoQuestionByPortalId
+// @ID getVideoQuestionByPortalId
 // @Tags videoQuestion
-// @Summary Get video question by workspace id
+// @Summary Get video question by portal id
 // @Accept json
 // @Produce json
-// @Param payload query GetVideoQuestionByWorkspaceIdParam true "Workspace ID"
+// @Param payload query GetVideoQuestionByPortalIdParam true "Portal ID"
 // @Success 200 {array} Response[[]GetVideoQuestionByIdResponse]
 // @Failure 400 {object} ErrResponse
 // @Failure 404 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /videoQuestion.getVideoQuestionWorkspaceIdId/{id} [get]
-func (q VideoQuestionHandler) GetVideoQuestionByWorkspaceId(c *fiber.Ctx) error {
-	var param GetVideoQuestionByWorkspaceIdParam
+// @Router /videoQuestion.getVideoQuestionByPortalId [get]
+func (q VideoQuestionHandler) GetVideoQuestionByPortalId(c *fiber.Ctx) error {
+	var param GetVideoQuestionByPortalIdParam
 	if err := c.QueryParser(&param); err != nil {
 		return err
 	}
@@ -121,7 +121,7 @@ func (q VideoQuestionHandler) GetVideoQuestionByWorkspaceId(c *fiber.Ctx) error 
 		return err
 	}
 
-	response, err := q.videoQuestionService.GetQuestionByWorkspaceId(param.ID)
+	response, err := q.videoQuestionService.GetQuestionByPortalId(param.ID)
 	if err != nil {
 		return err
 	}
@@ -158,7 +158,7 @@ func (q VideoQuestionHandler) UpdateVideoQuestion(c *fiber.Ctx) error {
 		TimeToPrepare: body.TimeToPrepare,
 		TimeToAnswer:  body.TimeToAnswer,
 		RetryAmount:   body.RetryAmount,
-		WorkspaceID:   body.WorkspaceID,
+		PortalID:      body.PortalID,
 	})
 
 	if err != nil {
@@ -171,7 +171,7 @@ func (q VideoQuestionHandler) UpdateVideoQuestion(c *fiber.Ctx) error {
 		TimeToPrepare: response.TimeToPrepare,
 		TimeToAnswer:  response.TimeToAnswer,
 		RetryAmount:   response.RetryAmount,
-		WorkspaceID:   response.WorkspaceID,
+		PortalID:      response.PortalID,
 		CreatedAt:     response.CreatedAt,
 		UpdatedAt:     response.UpdatedAt,
 	})

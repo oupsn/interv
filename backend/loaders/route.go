@@ -94,7 +94,7 @@ func SetupRoutes() {
 	// video question
 	public.Post("videoQuestion.createVideoQuestion", questionHandlers.CreateVideoQuestion)
 	public.Get("videoQuestion.getVideoQuestion", questionHandlers.GetVideoQuestion)
-	public.Get("videoQuestion.getVideoQuestionByPortalId", questionHandlers.GetVideoQuestionByWorkspaceId)
+	public.Get("videoQuestion.getVideoQuestionByPortalId", questionHandlers.GetVideoQuestionByPortalId)
 	public.Post("videoQuestion.updateVideoQuestion", questionHandlers.UpdateVideoQuestion)
 	public.Post("videoQuestion.deleteVideoQuestion", questionHandlers.DeleteVideoQuestion)
 

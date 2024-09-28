@@ -8,7 +8,7 @@ import (
 type IVideoQuestionService interface {
 	CreateQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error)
 	GetQuestionById(id uint) (*domains.VideoQuestion, error)
-	GetQuestionByWorkspaceId(id uint) ([]domains.VideoQuestion, error)
+	GetQuestionByPortalId(id uint) ([]domains.VideoQuestion, error)
 	UpdateQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error)
 	DeleteQuestionById(id uint) error
 }
@@ -41,8 +41,8 @@ func (v videoQuestionService) GetQuestionById(id uint) (*domains.VideoQuestion, 
 	return question, nil
 }
 
-func (v videoQuestionService) GetQuestionByWorkspaceId(id uint) ([]domains.VideoQuestion, error) {
-	question, err := v.questionRepo.GetByWorkspaceId(id)
+func (v videoQuestionService) GetQuestionByPortalId(id uint) ([]domains.VideoQuestion, error) {
+	question, err := v.questionRepo.GetByPortalId(id)
 	if err != nil {
 		return nil, err
 	}

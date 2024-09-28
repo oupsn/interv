@@ -1147,7 +1147,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/videoQuestion.getVideoQuestionWorkspaceIdId/{id}": {
+        "/videoQuestion.getVideoQuestionByPortalId": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1158,8 +1158,8 @@ const docTemplate = `{
                 "tags": [
                     "videoQuestion"
                 ],
-                "summary": "Get video question by workspace id",
-                "operationId": "getVideoQuestionByWorkspaceId",
+                "summary": "Get video question by portal id",
+                "operationId": "getVideoQuestionByPortalId",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1501,13 +1501,16 @@ const docTemplate = `{
         "CreateVideoQuestionBody": {
             "type": "object",
             "required": [
+                "portalId",
                 "retryAmount",
                 "timeToAnswer",
                 "timeToPrepare",
-                "title",
-                "workspaceId"
+                "title"
             ],
             "properties": {
+                "portalId": {
+                    "type": "integer"
+                },
                 "retryAmount": {
                     "type": "integer"
                 },
@@ -1519,9 +1522,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },
@@ -1532,6 +1532,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "portalId": {
                     "type": "integer"
                 },
                 "retryAmount": {
@@ -1548,9 +1551,6 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },
@@ -1716,6 +1716,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "portalId": {
+                    "type": "integer"
+                },
                 "retryAmount": {
                     "type": "integer"
                 },
@@ -1730,9 +1733,6 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },
@@ -1864,6 +1864,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "portalId": {
+                    "type": "integer"
+                },
                 "retryAmount": {
                     "type": "integer"
                 },
@@ -1875,9 +1878,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },
