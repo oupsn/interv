@@ -4,14 +4,16 @@ import MainLayout from "@/components/layout/MainLayout.tsx"
 import LoginPage from "@/pages/login/Login.tsx"
 import LobbyPage from "@/pages/lobby/Lobby.tsx"
 import Playground from "@/pages/playground/Playground.tsx"
-import Portal from "@/pages/portal/Portal.tsx"
+import WorkspaceListPage from "@/pages/portal/WorkspaceListPage.tsx"
 import CodingInterviewPage from "@/pages/lobby/codingInterview/CodingInterview.tsx"
 import VideoInterviewPage from "@/pages/lobby/videoInterview/VideoInterview.tsx"
-import CreateCodingQuestion from "@/pages/portal/assessment/components/AssessmentCreateCodingQuestionForm"
 import CreateWorkspace from "@/pages/portal/createWorkspace/CreateWorkspace"
 import AssessmentCreateVideoQuestionForm from "@/pages/portal/assessment/components/AssessmentCreateVideoQuestionForm.tsx"
-import AssessmentPage from "@/pages/portal/assessment/AssessmentPage.tsx"
-import Workspace from "@/pages/portal/Workspace.tsx"
+import WorkspaceDetailPage from "@/pages/portal/WorkspaceDetailPage.tsx"
+import MainLayoutRevamp from "@/components/layout/MainLayoutRevamp.tsx"
+import AssessmentCreateCodingQuestionForm from "@/pages/portal/assessment/components/AssessmentCreateCodingQuestionForm"
+import AssessmentVideoListPage from "@/pages/portal/assessment/AssessmentVideoListPage.tsx"
+import AssessmentCodingListPage from "@/pages/portal/assessment/AssessmentCodingListPage.tsx"
 
 export const router = createBrowserRouter([
   {
@@ -24,30 +26,47 @@ export const router = createBrowserRouter([
       },
       {
         path: "portal",
-        element: <MainLayout />,
+        element: <MainLayoutRevamp />,
         children: [
           {
             path: "workspace",
-            element: <Portal />,
-          },
-          {
-            path: "create",
-            element: <CreateWorkspace />,
-          },
-          {
-            path: ":workspaceId",
-            element: <Workspace />,
-          },
-          {
-            path: "assessment",
-            element: <AssessmentPage />,
             children: [
               {
-                path: "coding",
-                element: <CreateCodingQuestion />,
+                path: "",
+                element: <WorkspaceListPage />,
               },
               {
-                path: "video",
+                path: "create",
+                element: <CreateWorkspace />,
+              },
+              {
+                path: ":workspaceId",
+                element: <WorkspaceDetailPage />,
+              },
+            ],
+          },
+          {
+            path: "assessment/coding",
+            children: [
+              {
+                path: "",
+                element: <AssessmentCodingListPage />,
+              },
+              {
+                path: "create",
+                element: <AssessmentCreateCodingQuestionForm />,
+              },
+            ],
+          },
+          {
+            path: "assessment/video",
+            children: [
+              {
+                path: "",
+                element: <AssessmentVideoListPage />,
+              },
+              {
+                path: "create",
                 element: <AssessmentCreateVideoQuestionForm />,
               },
             ],

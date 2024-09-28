@@ -18,6 +18,17 @@ import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Trash2 } from "lucide-react"
 import { server } from "@/contexts/swr"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb.tsx"
+import { Link } from "react-router-dom"
+import ContentPanel from "@/components/layout/ContentPanel.tsx"
+import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 
 function CreateCodingQuestion() {
   const formSchema = z.object({
@@ -152,192 +163,208 @@ function CreateCodingQuestion() {
   }
 
   return (
-    <>
-      <h1 className="text-3xl font-bold text-primary mb-6">
-        Create Coding Assessment
-      </h1>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-lg font-medium">
-                  Question Title <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input type="text" className="w-full" {...field} />
-                </FormControl>
-                <p className="text-sm text-gray-500 mt-1">
-                  Enter a concise title for your coding question.
-                </p>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-lg font-medium">
-                  Question Description <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <ReactQuill
-                    theme="snow"
-                    value={field.value}
-                    onChange={field.onChange}
-                    formats={editorFormats}
-                    modules={editorModules}
-                    className="bg-white rounded-md"
-                  />
-                </FormControl>
-                <p className="text-sm text-gray-500 mt-1">
-                  Provide a detailed description of the coding problem,
-                  including any constraints or special requirements.
-                </p>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="testCases"
-            render={() => (
-              <FormItem>
-                <FormLabel className="text-lg font-medium flex flex-row gap-2 justify-between">
-                  <div className="flex flex-row gap-2">
-                    <span>Test Cases</span>
-                    <span className="text-red-500">*</span>
-                  </div>
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      const currentTestCases = form.getValues("testCases")
-                      form.setValue("testCases", [
-                        ...currentTestCases,
-                        {
-                          input: "",
-                          output: "",
-                          isHidden: true,
-                          isExample: false,
-                        },
-                      ])
-                    }}
-                    variant="outline"
-                  >
-                    Add Test Case
-                  </Button>
-                </FormLabel>
-                <p className="text-sm text-gray-500 mb-2">
-                  Add test cases to validate the solution. You can manually add
-                  test cases or import them from a JSON file.
-                </p>
-                <FormControl>
-                  <div className="space-y-2">
-                    {form.watch("testCases").length === 0 ? (
-                      <p>No test cases added yet. Import or add a test case.</p>
-                    ) : (
-                      form.watch("testCases").map((testCase, index) => (
-                        <div key={index} className="flex gap-2 items-center">
-                          <Input
-                            placeholder="Input"
-                            {...form.register(`testCases.${index}.input`)}
-                            className="w-full"
-                          />
-                          <Input
-                            placeholder="Output"
-                            {...form.register(`testCases.${index}.output`)}
-                            className="w-full"
-                          />
-                          <div className="flex items-center space-x-2 ml-2">
-                            <Checkbox
-                              id={`hidden-${index}`}
-                              checked={testCase.isHidden}
-                              onCheckedChange={(checked) => {
-                                form.setValue(
-                                  `testCases.${index}.isHidden`,
-                                  checked as boolean,
-                                )
-                              }}
-                            />
-                            <label
-                              htmlFor={`hidden-${index}`}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Hidden
-                            </label>
-                          </div>
-                          <div className="flex items-center space-x-2 ml-2">
-                            <Checkbox
-                              id={`example-${index}`}
-                              {...form.register(`testCases.${index}.isExample`)}
-                            />
-                            <label
-                              htmlFor={`example-${index}`}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Example
-                            </label>
-                          </div>
-                          {index === 0 ? (
-                            <div className="w-10" />
-                          ) : (
-                            <Button
-                              type="button"
-                              onClick={() => {
-                                const currentTestCases =
-                                  form.getValues("testCases")
-                                form.setValue(
-                                  "testCases",
-                                  currentTestCases.filter(
-                                    (_, i) => i !== index,
-                                  ),
-                                )
-                              }}
-                              variant="ghost"
-                              size="icon"
-                              className="h-10 w-10"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
-                      ))
-                    )}
-                    <div className="flex gap-2">
-                      <Input
-                        type="file"
-                        accept=".json"
-                        onChange={handleFileUpload}
-                        className="w-full"
-                        placeholder="Upload"
-                      />
+    <ContentLayout title={"Create Coding Assessment"}>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/portal/assessment/coding">Coding Assessments</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Create</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <ContentPanel>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-lg font-medium">
+                    Question Title <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input type="text" className="w-full" {...field} />
+                  </FormControl>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Enter a concise title for your coding question.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-lg font-medium">
+                    Question Description <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <ReactQuill
+                      theme="snow"
+                      value={field.value}
+                      onChange={field.onChange}
+                      formats={editorFormats}
+                      modules={editorModules}
+                      className="bg-white rounded-md"
+                    />
+                  </FormControl>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Provide a detailed description of the coding problem,
+                    including any constraints or special requirements.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="testCases"
+              render={() => (
+                <FormItem>
+                  <FormLabel className="text-lg font-medium flex flex-row gap-2 justify-between">
+                    <div className="flex flex-row gap-2">
+                      <span>Test Cases</span>
+                      <span className="text-red-500">*</span>
                     </div>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        const currentTestCases = form.getValues("testCases")
+                        form.setValue("testCases", [
+                          ...currentTestCases,
+                          {
+                            input: "",
+                            output: "",
+                            isHidden: true,
+                            isExample: false,
+                          },
+                        ])
+                      }}
+                      variant="outline"
+                    >
+                      Add Test Case
+                    </Button>
+                  </FormLabel>
+                  <p className="text-sm text-gray-500 mb-2">
+                    Add test cases to validate the solution. You can manually
+                    add test cases or import them from a JSON file.
+                  </p>
+                  <FormControl>
+                    <div className="space-y-2">
+                      {form.watch("testCases").length === 0 ? (
+                        <p>
+                          No test cases added yet. Import or add a test case.
+                        </p>
+                      ) : (
+                        form.watch("testCases").map((testCase, index) => (
+                          <div key={index} className="flex gap-2 items-center">
+                            <Input
+                              placeholder="Input"
+                              {...form.register(`testCases.${index}.input`)}
+                              className="w-full"
+                            />
+                            <Input
+                              placeholder="Output"
+                              {...form.register(`testCases.${index}.output`)}
+                              className="w-full"
+                            />
+                            <div className="flex items-center space-x-2 ml-2">
+                              <Checkbox
+                                id={`hidden-${index}`}
+                                checked={testCase.isHidden}
+                                onCheckedChange={(checked) => {
+                                  form.setValue(
+                                    `testCases.${index}.isHidden`,
+                                    checked as boolean,
+                                  )
+                                }}
+                              />
+                              <label
+                                htmlFor={`hidden-${index}`}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                Hidden
+                              </label>
+                            </div>
+                            <div className="flex items-center space-x-2 ml-2">
+                              <Checkbox
+                                id={`example-${index}`}
+                                {...form.register(
+                                  `testCases.${index}.isExample`,
+                                )}
+                              />
+                              <label
+                                htmlFor={`example-${index}`}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                Example
+                              </label>
+                            </div>
+                            {index === 0 ? (
+                              <div className="w-10" />
+                            ) : (
+                              <Button
+                                type="button"
+                                onClick={() => {
+                                  const currentTestCases =
+                                    form.getValues("testCases")
+                                  form.setValue(
+                                    "testCases",
+                                    currentTestCases.filter(
+                                      (_, i) => i !== index,
+                                    ),
+                                  )
+                                }}
+                                variant="ghost"
+                                size="icon"
+                                className="h-10 w-10"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        ))
+                      )}
+                      <div className="flex gap-2">
+                        <Input
+                          type="file"
+                          accept=".json"
+                          onChange={handleFileUpload}
+                          className="w-full"
+                          placeholder="Upload"
+                        />
+                      </div>
+                    </div>
+                  </FormControl>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500 mb-1">
+                      <strong>Hidden:</strong> Test cases not visible to the
+                      user, used for final validation.
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      <strong>Example:</strong> Test cases shown to the user as
+                      examples in the problem description.
+                    </p>
                   </div>
-                </FormControl>
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500 mb-1">
-                    <strong>Hidden:</strong> Test cases not visible to the user,
-                    used for final validation.
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    <strong>Example:</strong> Test cases shown to the user as
-                    examples in the problem description.
-                  </p>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit" className="w-full">
-            Create
-          </Button>
-        </form>
-      </Form>
-    </>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full">
+              Create
+            </Button>
+          </form>
+        </Form>
+      </ContentPanel>
+    </ContentLayout>
   )
 }
 
