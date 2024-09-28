@@ -16,56 +16,29 @@ func NewCodingInterviewHandler(codingInterviewService services.ICodingInterviewS
 	}
 }
 
-// @Summary Generate compile token for a coding interview
-// @Description Generate compile token for a coding interview
-// @Tags codingInterview
-// @ID GenerateCompileToken
-// @Accept json
-// @Produce json
-// @Param body body CodingInterviewGenerateCompileTokenQuery true "Request body containing the code to be compiled"
-// @Success 200 {object} Response[CodingInterviewGenerateCompileTokenResponse] "Successful response with the compile token"
-// @Failure 400 {object} ErrResponse
-// @Failure 500 {object} ErrResponse
-// @Router /codingInterview.generateCompileToken [post]
-func (co CodingInterviewHandler) GenerateCompileToken(c *fiber.Ctx) error {
-	var req CodingInterviewGenerateCompileTokenQuery
-	if err := c.BodyParser(&req); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	res, err := co.codingInterviewService.GenerateCompileToken(req.Body)
-	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
-	}
-
-	return Ok(c, CodingInterviewGenerateCompileTokenResponse{
-		Token: res,
-	})
-
-}
-
 // @Summary Get compile result for a coding interview
 // @Description Get compile result for a coding interview
 // @Tags codingInterview
 // @ID GetCompileResult
 // @Accept json
 // @Produce json
-// @Param token path string true "Token to get the compile result"
+// @Param body body CodingInterviewGetCompileResultQuery true "Request body containing the token to get the compile result"
 // @Success 200 {object} Response[CodingInterviewGetCompileResultResponse] "Successful response with the compile result"
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /codingInterview.getCompileResult/{token} [get]
+// @Router /codingInterview.getCompileResult [post]
 func (co CodingInterviewHandler) GetCompileResult(c *fiber.Ctx) error {
-	token := c.Params("token")
+	var req CodingInterviewGetCompileResultQuery
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
 
-	res, err := co.codingInterviewService.GetCompileResult(token)
+	res, err := co.codingInterviewService.GetCompileResult(req.Body)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	return Ok(c, CodingInterviewGetCompileResultResponse{
-		CompileResult: res,
-	})
+	return Ok(c, res)
 }
 
 // @Summary Get coding interview questions
@@ -106,10 +79,12 @@ func (co CodingInterviewHandler) CreateQuestion(c *fiber.Ctx) error {
 
 	question, err := co.codingInterviewService.CreateCodingQuestion(
 		domains.CodingQuestion{
-			Title:       req.Body.Title,
-			Description: req.Body.Description,
-			TestCases:   req.Body.TestCases,
-			Tags:        req.Body.Tags,
+			Title:             req.Body.Title,
+			Description:       req.Body.Description,
+			InputDescription:  req.Body.InputDescription,
+			OutputDescription: req.Body.OutputDescription,
+			TestCases:         req.Body.TestCases,
+			Tags:              req.Body.Tags,
 		},
 	)
 	if err != nil {

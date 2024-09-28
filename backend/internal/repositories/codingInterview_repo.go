@@ -52,13 +52,12 @@ func (c *codingInterviewRepository) GetCodingQuestionByID(id int) (domains.Codin
 	return codingQuestion, nil
 }
 
-func (c *codingInterviewRepository) GetCodingQuestionTestcaseByID(questionId int) (domains.CodingQuestionTestCase, error) {
-	var codingQuestionTestCase domains.CodingQuestionTestCase
-
-	if err := c.DB.First(&codingQuestionTestCase, "question_id = ?", questionId).Error; err != nil {
-		return domains.CodingQuestionTestCase{}, err
+func (c *codingInterviewRepository) GetCodingQuestionTestcaseByQuestionID(questionID int) ([]domains.CodingQuestionTestCase, error) {
+	var testCases []domains.CodingQuestionTestCase
+	if err := c.DB.Where("coding_question_id = ?", questionID).Find(&testCases).Error; err != nil {
+		return nil, err
 	}
-	return codingQuestionTestCase, nil
+	return testCases, nil
 }
 
 func (c *codingInterviewRepository) SaveCodingQuestion(question domains.CodingQuestion) (domains.CodingQuestion, error) {

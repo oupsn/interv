@@ -8,15 +8,17 @@ import (
 
 type CodingQuestion struct {
 	gorm.Model
-	Id          uint                     `gorm:"primaryKey;autoIncrement"`
-	Title       string                   `gorm:"type:text"`
-	Description string                   `gorm:"type:text"`
-	CreatedAt   time.Time                `gorm:"autoCreateTime"`
-	CreatedBy   string                   `gorm:"type:text"`
-	UpdatedAt   time.Time                `gorm:"autoUpdateTime"`
-	UpdatedBy   string                   `gorm:"type:text"`
-	TestCases   []CodingQuestionTestCase `gorm:"foreignKey:CodingQuestionID;references:Id"`
-	Tags        []string                 `gorm:"type:text"`
+	Id                uint                     `gorm:"primaryKey;autoIncrement"`
+	Title             string                   `gorm:"type:text"`
+	Description       string                   `gorm:"type:text"`
+	InputDescription  string                   `gorm:"type:text"`
+	OutputDescription string                   `gorm:"type:text"`
+	CreatedAt         time.Time                `gorm:"autoCreateTime"`
+	CreatedBy         string                   `gorm:"type:text"`
+	UpdatedAt         time.Time                `gorm:"autoUpdateTime"`
+	UpdatedBy         string                   `gorm:"type:text"`
+	TestCases         []CodingQuestionTestCase `gorm:"foreignKey:CodingQuestionID;references:Id"`
+	Tags              []string                 `gorm:"type:text"`
 }
 
 type CodingQuestionTestCase struct {
@@ -41,11 +43,13 @@ type CodingQuestionResponse struct {
 }
 
 type CreateCodingQuestionRequest struct {
-	Title       string                   `json:"title"`
-	Description string                   `json:"description"`
-	TestCases   []CodingQuestionTestCase `json:"test_cases"`
-	Tags        []string                 `json:"tags"`
-	Difficulty  string                   `json:"difficulty"`
+	Title             string                   `json:"title"`
+	Description       string                   `json:"description"`
+	InputDescription  string                   `json:"input_description"`
+	OutputDescription string                   `json:"output_description"`
+	TestCases         []CodingQuestionTestCase `json:"test_cases"`
+	Tags              []string                 `json:"tags"`
+	Difficulty        string                   `json:"difficulty"`
 }
 
 type CreateCodingQuestionResponse struct {

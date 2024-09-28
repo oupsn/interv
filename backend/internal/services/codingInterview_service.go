@@ -1,6 +1,9 @@
 package services
 
 import (
+	"strings"
+	"time"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 )
@@ -28,19 +31,59 @@ func (s *codingInterviewService) GetCodingInterviewQuestions() ([]domains.Coding
 }
 
 func (s *codingInterviewService) GenerateCompileToken(req domains.CompilationRequest) (string, error) {
-	token, err := s.codeCompilationRepository.GenerateCompileToken(req)
+	token, err := s.codeCompilationRepository.GenerateCompileToken(req, "")
 	if err != nil {
 		return "", ErrorGetCompileToken
 	}
 	return token.Token, nil
 }
 
-func (s *codingInterviewService) GetCompileResult(token string) (domains.CompilationResultResponse, error) {
-	res, err := s.codeCompilationRepository.GetCompileResult(token)
+func (s *codingInterviewService) GetCompileResult(req domains.CompilationRequest) ([]domains.CompilationResultResponse, error) {
+	var compileResult []domains.CompilationResultResponse
+	testCases, err := s.codingInterviewRepository.GetCodingQuestionTestcaseByQuestionID(int(req.QuestionID))
 	if err != nil {
-		return domains.CompilationResultResponse{}, ErrorGetCompileResult
+		return []domains.CompilationResultResponse{}, ErrorGetCodingInterviewTestcase
 	}
-	return res, nil
+	for _, testCase := range testCases {
+		input := strings.TrimRight(testCase.Input, "\n")
+		output := testCase.Output
+		token, err := s.codeCompilationRepository.GenerateCompileToken(req, input)
+		if err != nil {
+			return []domains.CompilationResultResponse{}, ErrorGetCompileToken
+		}
+		var result domains.CompilationCompileResult
+		startTime := time.Now()
+		for time.Since(startTime) < 20*time.Second {
+			res, err := s.codeCompilationRepository.GetCompileResult(token.Token)
+			if err != nil {
+				return []domains.CompilationResultResponse{}, ErrorGetCompileResult
+			}
+
+			if res.Status.Description == "Accepted" {
+				result = res
+			}
+
+			if res.Status.Description != "Processing" && res.Status.Description != "In Queue" {
+				break
+			}
+
+			time.Sleep(500 * time.Millisecond)
+		}
+		if strings.TrimRight(result.Stdout, "\n") == strings.TrimRight(output, "\n") {
+			compileResult = append(compileResult, domains.CompilationResultResponse{
+				TestcaseId:    int(testCase.ID),
+				IsPassed:      true,
+				CompileResult: result,
+			})
+		} else {
+			compileResult = append(compileResult, domains.CompilationResultResponse{
+				TestcaseId:    int(testCase.ID),
+				IsPassed:      false,
+				CompileResult: result,
+			})
+		}
+	}
+	return compileResult, nil
 }
 
 func (s *codingInterviewService) CreateCodingQuestion(req domains.CodingQuestion) (domains.CreateCodingQuestionResponse, error) {

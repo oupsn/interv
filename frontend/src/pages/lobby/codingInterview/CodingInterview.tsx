@@ -7,6 +7,7 @@ import { useGetCodingInterviewQuestion } from "@/hooks/UseGetCodingInterviewQues
 import {
   DomainsCodingQuestionResponse,
   DomainsCodingQuestionTestCase,
+  DomainsCompilationResultResponse,
 } from "@/api/server"
 interface Question {
   index: number
@@ -14,6 +15,7 @@ interface Question {
   title: string
   description: string
   testcaseList: DomainsCodingQuestionTestCase[]
+  testcaseCompileResult: DomainsCompilationResultResponse[]
 }
 const CodingInterviewPage = () => {
   const [isStart, setIsStart] = useState(mockData.isStart)
@@ -21,6 +23,9 @@ const CodingInterviewPage = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [questionList, setQuestionList] = useState<Question[]>([])
   const { data: fetchedQuestions, mutate } = useGetCodingInterviewQuestion()
+
+  // Add a new state to track if questions are loaded
+  const [questionsLoaded, setQuestionsLoaded] = useState(false)
 
   /*   
   transform question
@@ -35,9 +40,11 @@ const CodingInterviewPage = () => {
             title: question.title ?? "",
             description: question.description ?? "",
             testcaseList: question.test_case ?? [],
+            testcaseCompileResult: [] as DomainsCompilationResultResponse[],
           }),
         ) ?? []
       setQuestionList(newQuestions)
+      setQuestionsLoaded(true) // Set to true when questions are loaded
     }
   }, [fetchedQuestions])
 
@@ -63,7 +70,7 @@ const CodingInterviewPage = () => {
   }, [isStart])
 
   const handleNextQuestion = () => {
-    if (currentQuestionIndex < mockData.data.questionList.length - 1) {
+    if (currentQuestionIndex < questionList.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
     }
   }
@@ -84,19 +91,23 @@ const CodingInterviewPage = () => {
       </SideBar>
       <div className={"w-dvw h-dvh flex max-h-sr z-0"}>
         {isStart ? (
-          <CodingInterviewPanel
-            timeRemain={timeRemain}
-            questions={questionList}
-            currentQuestion={questionList[currentQuestionIndex]}
-            currentQuestionIndex={currentQuestionIndex}
-            onNextQuestion={handleNextQuestion}
-            onPreviousQuestion={handlePreviousQuestion}
-            isFirstQuestion={currentQuestionIndex === 0}
-            isLastQuestion={
-              currentQuestionIndex === mockData.data.questionList.length - 1
-            }
-            setCurrentQuestionIndex={setCurrentQuestionIndex}
-          />
+          questionsLoaded && questionList.length > 0 ? (
+            <CodingInterviewPanel
+              timeRemain={timeRemain}
+              questions={questionList}
+              currentQuestion={questionList[currentQuestionIndex]}
+              currentQuestionIndex={currentQuestionIndex}
+              onNextQuestion={handleNextQuestion}
+              onPreviousQuestion={handlePreviousQuestion}
+              isFirstQuestion={currentQuestionIndex === 0}
+              isLastQuestion={currentQuestionIndex === questionList.length - 1}
+              setCurrentQuestionIndex={setCurrentQuestionIndex}
+            />
+          ) : (
+            <div className="flex items-center justify-center w-full h-full">
+              <p className="text-xl font-semibold">No questions available.</p>
+            </div>
+          )
         ) : (
           <CodingInterviewInstruction
             title={mockData.title}
@@ -118,57 +129,5 @@ const mockData = {
   timeRemain: 3600,
   title: "This is a coding interview instruction",
   instuction: "You have 30 minutes to solve the question",
-  data: {
-    questionList: [
-      {
-        id: 1,
-        title: "Two Sum",
-        description:
-          "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-        testcaseList: [
-          {
-            input: "[2,7,11,15], 9",
-            output: "[0,1]",
-          },
-          {
-            input: "[3,2,4], 6",
-            output: "[1,2]",
-          },
-        ],
-      },
-      {
-        id: 2,
-        title: "Add Two Numbers",
-        description:
-          "You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.",
-        testcaseList: [
-          {
-            input: "[2,4,3], [5,6,4]",
-            output: "[7,0,8]",
-          },
-          {
-            input: "[0], [0]",
-            output: "[0]",
-          },
-        ],
-      },
-      {
-        id: 3,
-        title: "Longest Substring Without Repeating Characters",
-        description:
-          "Given a string s, find the length of the longest substring without repeating characters.",
-        testcaseList: [
-          {
-            input: "'abcabcbb'",
-            output: "3",
-          },
-          {
-            input: "'bbbbb'",
-            output: "1",
-          },
-        ],
-      },
-    ],
-  },
 }
 export default CodingInterviewPage

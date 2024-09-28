@@ -14,7 +14,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { DomainsCodingQuestionTestCase } from "@/api/server"
+import {
+  DomainsCodingQuestionTestCase,
+  DomainsCompilationResultResponse,
+} from "@/api/server"
 import DOMPurify from "dompurify"
 
 export interface CodingInterviewQuestionProps {
@@ -23,6 +26,7 @@ export interface CodingInterviewQuestionProps {
   title: string
   description: string
   testcaseList: DomainsCodingQuestionTestCase[]
+  testcaseCompileResult: DomainsCompilationResultResponse[]
 }
 
 const CodingInterviewQuestion: React.FC<CodingInterviewQuestionProps> = ({
@@ -32,10 +36,20 @@ const CodingInterviewQuestion: React.FC<CodingInterviewQuestionProps> = ({
   testcaseList,
 }) => {
   const cleanDescription = DOMPurify.sanitize(description)
+
+  const formatTestCase = (text: string) => {
+    return text.split("\\n").map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        {index < text.split("\\n").length - 1 && <br />}
+      </React.Fragment>
+    ))
+  }
+
   return (
     <Card className="h-full overflow-y-auto">
       <CardHeader>
-        <CardTitle>
+        <CardTitle className="text-lg font-semibold">
           Question {index + 1}: {title}
         </CardTitle>
         <CardDescription>{parse(cleanDescription)}</CardDescription>
@@ -43,16 +57,24 @@ const CodingInterviewQuestion: React.FC<CodingInterviewQuestionProps> = ({
       <CardContent>
         <Accordion type="multiple" defaultValue={["test-cases"]}>
           <AccordionItem value="test-cases">
-            <AccordionTrigger>Test Cases</AccordionTrigger>
+            <AccordionTrigger className="text-lg font-semibold">
+              Example Test Cases
+            </AccordionTrigger>
             <AccordionContent>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  border: "1px solid #ddd",
+                }}
+              >
                 <thead>
                   <tr>
                     <th
                       style={{
                         textAlign: "left",
                         padding: "8px",
-                        borderBottom: "1px solid #ddd",
+                        border: "1px solid #ddd",
                       }}
                     >
                       Input
@@ -61,7 +83,7 @@ const CodingInterviewQuestion: React.FC<CodingInterviewQuestionProps> = ({
                       style={{
                         textAlign: "left",
                         padding: "8px",
-                        borderBottom: "1px solid #ddd",
+                        border: "1px solid #ddd",
                       }}
                     >
                       Output
@@ -74,18 +96,34 @@ const CodingInterviewQuestion: React.FC<CodingInterviewQuestionProps> = ({
                       <td
                         style={{
                           padding: "8px",
-                          borderBottom: "1px solid #ddd",
+                          border: "1px solid #ddd",
                         }}
                       >
-                        {testcase.input}
+                        <pre
+                          style={{
+                            margin: 0,
+                            whiteSpace: "pre-wrap",
+                            wordBreak: "break-word",
+                          }}
+                        >
+                          {formatTestCase(testcase.input || "")}
+                        </pre>
                       </td>
                       <td
                         style={{
                           padding: "8px",
-                          borderBottom: "1px solid #ddd",
+                          border: "1px solid #ddd",
                         }}
                       >
-                        {testcase.output}
+                        <pre
+                          style={{
+                            margin: 0,
+                            whiteSpace: "pre-wrap",
+                            wordBreak: "break-word",
+                          }}
+                        >
+                          {formatTestCase(testcase.output || "")}
+                        </pre>
                       </td>
                     </tr>
                   ))}

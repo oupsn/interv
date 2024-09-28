@@ -7,22 +7,12 @@ definitions:
     required:
     - body
     type: object
-  CodingInterviewGenerateCompileTokenQuery:
+  CodingInterviewGetCompileResultQuery:
     properties:
       body:
         $ref: '#/definitions/domains.CompilationRequest'
     required:
     - body
-    type: object
-  CodingInterviewGenerateCompileTokenResponse:
-    properties:
-      token:
-        type: string
-    type: object
-  CodingInterviewGetCompileResultResponse:
-    properties:
-      compileResult:
-        $ref: '#/definitions/domains.CompilationResultResponse'
     type: object
   CreateVideoQuestionBody:
     properties:
@@ -406,6 +396,10 @@ definitions:
         type: string
       id:
         type: integer
+      inputDescription:
+        type: string
+      outputDescription:
+        type: string
       tags:
         items:
           type: string
@@ -462,16 +456,7 @@ definitions:
       output:
         type: string
     type: object
-  domains.CompilationRequest:
-    properties:
-      input:
-        type: string
-      language:
-        type: integer
-      source_code:
-        type: string
-    type: object
-  domains.CompilationResultResponse:
+  domains.CompilationCompileResult:
     properties:
       compile_output:
         type: string
@@ -492,14 +477,34 @@ definitions:
         type: string
       time:
         type: string
-      token:
+    type: object
+  domains.CompilationRequest:
+    properties:
+      language:
+        type: integer
+      question_id:
+        type: integer
+      source_code:
         type: string
+    type: object
+  domains.CompilationResultResponse:
+    properties:
+      compile_result:
+        $ref: '#/definitions/domains.CompilationCompileResult'
+      is_passed:
+        type: boolean
+      test_case_id:
+        type: integer
     type: object
   domains.CreateCodingQuestionRequest:
     properties:
       description:
         type: string
       difficulty:
+        type: string
+      input_description:
+        type: string
+      output_description:
         type: string
       tags:
         items:
@@ -560,28 +565,6 @@ definitions:
     properties:
       code:
         type: integer
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
-  handlers.Response-CodingInterviewGenerateCompileTokenResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/CodingInterviewGenerateCompileTokenResponse'
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
-  handlers.Response-CodingInterviewGetCompileResultResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/CodingInterviewGetCompileResultResponse'
       message:
         type: string
       timestamp:
@@ -747,6 +730,19 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.Response-handlers_CodingInterviewGetCompileResultResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/domains.CompilationResultResponse'
+        type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
   handlers.Response-handlers_CodingInterviewGetQuestionsResponse:
     properties:
       code:
@@ -867,56 +863,26 @@ paths:
       summary: Create a new coding interview question
       tags:
       - codingInterview
-  /codingInterview.generateCompileToken:
+  /codingInterview.getCompileResult:
     post:
-      consumes:
-      - application/json
-      description: Generate compile token for a coding interview
-      operationId: GenerateCompileToken
-      parameters:
-      - description: Request body containing the code to be compiled
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/CodingInterviewGenerateCompileTokenQuery'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successful response with the compile token
-          schema:
-            $ref: '#/definitions/handlers.Response-CodingInterviewGenerateCompileTokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-      summary: Generate compile token for a coding interview
-      tags:
-      - codingInterview
-  /codingInterview.getCompileResult/{token}:
-    get:
       consumes:
       - application/json
       description: Get compile result for a coding interview
       operationId: GetCompileResult
       parameters:
-      - description: Token to get the compile result
-        in: path
-        name: token
+      - description: Request body containing the token to get the compile result
+        in: body
+        name: body
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/CodingInterviewGetCompileResultQuery'
       produces:
       - application/json
       responses:
         "200":
           description: Successful response with the compile result
           schema:
-            $ref: '#/definitions/handlers.Response-CodingInterviewGetCompileResultResponse'
+            $ref: '#/definitions/handlers.Response-handlers_CodingInterviewGetCompileResultResponse'
         "400":
           description: Bad Request
           schema:

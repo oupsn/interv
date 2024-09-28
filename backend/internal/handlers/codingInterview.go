@@ -4,17 +4,12 @@ import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 )
 
-type CodingInterviewGenerateCompileTokenQuery struct {
+type CodingInterviewGetCompileResultQuery struct {
 	Body domains.CompilationRequest `json:"body"  validate:"required"`
-} // @name CodingInterviewGenerateCompileTokenQuery
+} // @name CodingInterviewGetCompileResultQuery
 
-type CodingInterviewGenerateCompileTokenResponse struct {
-	Token string `json:"token"`
-} // @name CodingInterviewGenerateCompileTokenResponse
-
-type CodingInterviewGetCompileResultResponse struct {
-	CompileResult domains.CompilationResultResponse `json:"compileResult"`
-} // @name CodingInterviewGetCompileResultResponse
+// @name CodingInterviewGetCompileResultResponse
+type CodingInterviewGetCompileResultResponse []domains.CompilationResultResponse
 
 // @name CodingInterviewGetQuestionsResponse
 type CodingInterviewGetQuestionsResponse []domains.CodingQuestionResponse

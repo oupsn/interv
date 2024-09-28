@@ -154,55 +154,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/codingInterview.generateCompileToken": {
+        "/codingInterview.getCompileResult": {
             "post": {
-                "description": "Generate compile token for a coding interview",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "codingInterview"
-                ],
-                "summary": "Generate compile token for a coding interview",
-                "operationId": "GenerateCompileToken",
-                "parameters": [
-                    {
-                        "description": "Request body containing the code to be compiled",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/CodingInterviewGenerateCompileTokenQuery"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response with the compile token",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response-CodingInterviewGenerateCompileTokenResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/codingInterview.getCompileResult/{token}": {
-            "get": {
                 "description": "Get compile result for a coding interview",
                 "consumes": [
                     "application/json"
@@ -217,18 +170,20 @@ const docTemplate = `{
                 "operationId": "GetCompileResult",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Token to get the compile result",
-                        "name": "token",
-                        "in": "path",
-                        "required": true
+                        "description": "Request body containing the token to get the compile result",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CodingInterviewGetCompileResultQuery"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "Successful response with the compile result",
                         "schema": {
-                            "$ref": "#/definitions/handlers.Response-CodingInterviewGetCompileResultResponse"
+                            "$ref": "#/definitions/handlers.Response-handlers_CodingInterviewGetCompileResultResponse"
                         }
                     },
                     "400": {
@@ -1253,7 +1208,7 @@ const docTemplate = `{
                 }
             }
         },
-        "CodingInterviewGenerateCompileTokenQuery": {
+        "CodingInterviewGetCompileResultQuery": {
             "type": "object",
             "required": [
                 "body"
@@ -1261,22 +1216,6 @@ const docTemplate = `{
             "properties": {
                 "body": {
                     "$ref": "#/definitions/domains.CompilationRequest"
-                }
-            }
-        },
-        "CodingInterviewGenerateCompileTokenResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "CodingInterviewGetCompileResultResponse": {
-            "type": "object",
-            "properties": {
-                "compileResult": {
-                    "$ref": "#/definitions/domains.CompilationResultResponse"
                 }
             }
         },
@@ -1845,6 +1784,12 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "inputDescription": {
+                    "type": "string"
+                },
+                "outputDescription": {
+                    "type": "string"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
@@ -1931,21 +1876,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domains.CompilationRequest": {
-            "type": "object",
-            "properties": {
-                "input": {
-                    "type": "string"
-                },
-                "language": {
-                    "type": "integer"
-                },
-                "source_code": {
-                    "type": "string"
-                }
-            }
-        },
-        "domains.CompilationResultResponse": {
+        "domains.CompilationCompileResult": {
             "type": "object",
             "properties": {
                 "compile_output": {
@@ -1976,9 +1907,34 @@ const docTemplate = `{
                 },
                 "time": {
                     "type": "string"
+                }
+            }
+        },
+        "domains.CompilationRequest": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "integer"
                 },
-                "token": {
+                "question_id": {
+                    "type": "integer"
+                },
+                "source_code": {
                     "type": "string"
+                }
+            }
+        },
+        "domains.CompilationResultResponse": {
+            "type": "object",
+            "properties": {
+                "compile_result": {
+                    "$ref": "#/definitions/domains.CompilationCompileResult"
+                },
+                "is_passed": {
+                    "type": "boolean"
+                },
+                "test_case_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -1989,6 +1945,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "difficulty": {
+                    "type": "string"
+                },
+                "input_description": {
+                    "type": "string"
+                },
+                "output_description": {
                     "type": "string"
                 },
                 "tags": {
@@ -2079,40 +2041,6 @@ const docTemplate = `{
             "properties": {
                 "code": {
                     "type": "integer"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.Response-CodingInterviewGenerateCompileTokenResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/CodingInterviewGenerateCompileTokenResponse"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.Response-CodingInterviewGetCompileResultResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/CodingInterviewGetCompileResultResponse"
                 },
                 "message": {
                     "type": "string"
@@ -2360,6 +2288,26 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/domains.CodingQuestion"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-handlers_CodingInterviewGetCompileResultResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CompilationResultResponse"
+                    }
                 },
                 "message": {
                     "type": "string"
