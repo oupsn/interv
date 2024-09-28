@@ -8,18 +8,23 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "gen-client": "cd ../backend && make swag && cd ../frontend && swagger-typescript-api --silent --responses --unwrap-response-data --extract-request-params --extract-request-body --extract-response-body --extract-response-error --patch --clean-output --api-class-name Server --module-name-first-tag --debug --extract-enums --sort-routes --sort-types --axios --route-types  -p ../backend/docs/swagger.json -o ./src/api -n server.ts"
+    "gen-client": "cd ../backend && make swag && cd ../frontend && swagger-typescript-api --silent --responses --unwrap-response-data --extract-request-params --extract-request-body --extract-response-body --extract-response-error --patch --clean-output --api-class-name Server --module-name-first-tag --debug --extract-enums --sort-routes --sort-types --axios --route-types  -p ../backend/docs/swagger.json -o ./src/api -n server.ts",
+    "lint-fix": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-checkbox": "^1.1.1",
+    "@radix-ui/react-collapsible": "^1.1.0",
+    "@radix-ui/react-dropdown-menu": "^2.1.1",
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
+    "@radix-ui/react-tooltip": "^1.1.2",
     "@uiw/codemirror-extensions-langs": "^4.23.0",
     "@uiw/react-codemirror": "^4.23.0",
     "axios": "^1.7.2",
@@ -45,7 +50,8 @@
     "swr": "^2.2.5",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

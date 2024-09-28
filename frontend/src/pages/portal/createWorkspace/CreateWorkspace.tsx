@@ -1,19 +1,33 @@
-import SideBarItem from "@/components/layout/SideBarItem.tsx"
-import SideBar from "@/components/layout/SideBar.tsx"
-import MainPanel from "@/components/layout/MainPanel.tsx"
-import { Outlet } from "react-router-dom"
+import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb.tsx"
+import ContentPanel from "@/components/layout/ContentPanel.tsx"
+import { Link } from "react-router-dom"
 
 const CreateWorkspace = () => {
   return (
-    <>
-      <SideBar isSignOutEnabled={true}>
-        <SideBarItem title={"Candidate"} isActive={true} />
-        <SideBarItem title={"Assessment"} isActive={false} onClick={() => {}} />
-      </SideBar>
-      <MainPanel>
-        <Outlet />
-      </MainPanel>
-    </>
+    <ContentLayout title={"Create workspace"}>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/portal/workspace">Workspaces</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Create</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <ContentPanel>Create workspace</ContentPanel>
+    </ContentLayout>
   )
 }
 

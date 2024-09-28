@@ -1,20 +1,26 @@
-import SideBarItem from "@/components/layout/SideBarItem.tsx"
-import SideBar from "@/components/layout/SideBar.tsx"
-import MainPanel from "@/components/layout/MainPanel.tsx"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input.tsx"
 import Papa from "papaparse"
 import React, { useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { server } from "@/contexts/swr"
 import { useGetWorkspace } from "@/hooks/useGetWorkspace"
 import ListUser from "./components/ListUser"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb.tsx"
+import ContentPanel from "@/components/layout/ContentPanel.tsx"
+import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 
-const Workspace = () => {
+const WorkspaceDetailPage = () => {
   const [importUser, setImportUser] = useState<UserData[]>()
   const { workspaceId } = useParams()
   const { data, mutate } = useGetWorkspace(Number(workspaceId))
-  const navigate = useNavigate()
 
   type UserData = {
     name: string
@@ -71,18 +77,21 @@ const Workspace = () => {
   }
 
   return (
-    <>
-      <SideBar isSignOutEnabled={true}>
-        <SideBarItem title={"Workspace"} isActive={true} />
-        <SideBarItem
-          title={"Assessment"}
-          isActive={false}
-          onClick={() => {
-            navigate("assessment")
-          }}
-        />
-      </SideBar>
-      <MainPanel>
+    <ContentLayout title={"${Workspace name}"}>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/portal/workspace">Workspaces</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Workspace name</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <ContentPanel>
         <Input
           className="w-64"
           type="file"
@@ -105,9 +114,9 @@ const Workspace = () => {
         </Button>
 
         <ListUser listUser={data?.data?.individualUser ?? []} />
-      </MainPanel>
-    </>
+      </ContentPanel>
+    </ContentLayout>
   )
 }
 
-export default Workspace
+export default WorkspaceDetailPage
