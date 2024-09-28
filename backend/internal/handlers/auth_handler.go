@@ -113,6 +113,7 @@ func (a AuthenticationHandler) Me(c *fiber.Ctx) error {
 
 	return Ok(c, CurrentUserResponse{
 		ID:        user.ID,
+		Name:      user.Name,
 		Username:  user.Username,
 		Role:      (string)(user.Role),
 		PortalId:  *portalId,

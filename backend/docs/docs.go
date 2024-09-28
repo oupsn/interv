@@ -1586,6 +1586,7 @@ const docTemplate = `{
             "required": [
                 "created_at",
                 "id",
+                "name",
                 "portalId",
                 "role",
                 "updated_at",
@@ -1597,6 +1598,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "portalId": {
                     "type": "integer"

@@ -1,6 +1,6 @@
 import { clx } from "@/utils/clx.ts"
 import { FC, PropsWithChildren, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import useCurrentUser from "@/hooks/UseCurrentUser.ts"
 import IntervLogo from "@/assets/interv-logo.png"
 import { Toaster } from "sonner"
@@ -12,7 +12,7 @@ const AppLoading: FC<PropsWithChildren> = ({ children }) => {
   const { currentUser, isLoading } = useCurrentUser()
   const isLoggedIn = currentUser != null
   const [isLoaded, setIsLoaded] = useState(false)
-
+  const [searchParams] = useSearchParams()
   useEffect(() => {
     if (isLoading) {
       return
@@ -43,7 +43,7 @@ const AppLoading: FC<PropsWithChildren> = ({ children }) => {
     setIsLoaded(true)
   }, [isLoggedIn, navigate, isLoading])
 
-  if (isMobile) {
+  if (isMobile && searchParams.get("in") != "terv") {
     return <NotAllowMobile />
   }
 

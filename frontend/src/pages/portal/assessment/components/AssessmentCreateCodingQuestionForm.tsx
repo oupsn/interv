@@ -185,7 +185,7 @@ function CreateCodingQuestion() {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-lg font-medium">
+                  <FormLabel className="text-lg">
                     Question Title <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
@@ -203,7 +203,7 @@ function CreateCodingQuestion() {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-lg font-medium">
+                  <FormLabel className="text-lg">
                     Question Description <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
@@ -229,7 +229,7 @@ function CreateCodingQuestion() {
               name="testCases"
               render={() => (
                 <FormItem>
-                  <FormLabel className="text-lg font-medium flex flex-row gap-2 justify-between">
+                  <FormLabel className="text-lg flex flex-row gap-2 justify-between">
                     <div className="flex flex-row gap-2">
                       <span>Test Cases</span>
                       <span className="text-red-500">*</span>
@@ -289,7 +289,7 @@ function CreateCodingQuestion() {
                               />
                               <label
                                 htmlFor={`hidden-${index}`}
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                               >
                                 Hidden
                               </label>
