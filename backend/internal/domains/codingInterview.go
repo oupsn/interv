@@ -29,12 +29,10 @@ type CodingQuestionTestCase struct {
 }
 
 type CodingQuestionResponse struct {
-	Id            uint                     `json:"id"`
-	Title         string                   `json:"title"`
-	Description   string                   `json:"description"`
-	ExampleInput  string                   `json:"example_input"`
-	ExampleOutput string                   `json:"example_output"`
-	TestCase      []CodingQuestionTestCase `json:"test_case"`
+	Id          uint                     `json:"id"`
+	Title       string                   `json:"title"`
+	Description string                   `json:"description"`
+	TestCase    []CodingQuestionTestCase `json:"test_case"`
 }
 
 type CreateCodingQuestionRequest struct {

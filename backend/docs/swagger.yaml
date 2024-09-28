@@ -432,10 +432,6 @@ definitions:
     properties:
       description:
         type: string
-      example_input:
-        type: string
-      example_output:
-        type: string
       id:
         type: integer
       test_case:

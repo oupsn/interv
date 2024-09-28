@@ -3,11 +3,14 @@ import CodingInterviewInstruction from "./components/CodingInterviewInstruction"
 import CodingInterviewPanel from "./components/CodingInterviewPanel"
 import { useEffect, useState } from "react"
 import SideBarItem from "@/components/layout/SideBarItem"
+import { useGetCodingInterviewQuestion } from "@/hooks/UseGetCodingInterviewQuestion"
 
 const CodingInterviewPage = () => {
   const [isStart, setIsStart] = useState(mockData.isStart)
   const [timeRemain, setTimeRemain] = useState(mockData.timeRemain)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const { data: questionList } = useGetCodingInterviewQuestion()
+  console.log(questionList)
 
   useEffect(() => {
     let timer: string | number | NodeJS.Timeout | undefined

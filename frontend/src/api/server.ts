@@ -124,8 +124,6 @@ export interface DomainsCodingQuestion {
 
 export interface DomainsCodingQuestionResponse {
   description?: string
-  example_input?: string
-  example_output?: string
   id?: number
   test_case?: DomainsCodingQuestionTestCase[]
   title?: string

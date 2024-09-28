@@ -1885,12 +1885,6 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "example_input": {
-                    "type": "string"
-                },
-                "example_output": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
