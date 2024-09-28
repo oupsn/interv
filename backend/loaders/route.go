@@ -35,7 +35,6 @@ func SetupRoutes() {
 
 	// Services
 	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, userInPoratlRepository, workspaceRepositories)
-	var authServices = services.NewAuthService(userRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, lobbyRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
 	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories)
@@ -45,6 +44,7 @@ func SetupRoutes() {
 	var portalService = services.NewPortalService(portalRepository)
 	var userInportalService = services.NewUserInPortalService(userInPoratlRepository)
 	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, userInportalService)
+	var authServices = services.NewAuthService(userRepositories, userInportalService)
 
 	// Handlers
 	var userHandlers = handlers.NewUserHandler(userServices)
@@ -55,7 +55,7 @@ func SetupRoutes() {
 	var mailHandlers = handlers.NewMailHandler(mailServices)
 	var questionHandlers = handlers.NewVideoQuestionHandler(questionServices)
 	var lobbyHandlers = handlers.NewLobbyHandler(lobbyServices)
-	var workspaceHandlers = handlers.NewWorkspaceHandler(workspaceService)
+	var workspaceHandlers = handlers.NewWorkspaceHandler(workspaceService, userInportalService, authServices)
 	var portalHandler = handlers.NewPortalHandler(portalService)
 
 	// Fiber App
@@ -121,7 +121,7 @@ func SetupRoutes() {
 
 	// Workspace
 	private.Get("workspace.get", workspaceHandlers.GetWorkspaceById)
-	private.Get("workspace.getAll", workspaceHandlers.GetAllWorkspace)
+	private.Get("workspace.getByPortal", workspaceHandlers.GetPortalWorkspace)
 	private.Post("workspace.create", workspaceHandlers.CreateWorkspace)
 	private.Delete("workspace.delete", workspaceHandlers.DeleteWorkspaceById)
 

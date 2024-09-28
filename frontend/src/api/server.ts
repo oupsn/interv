@@ -92,6 +92,7 @@ export type CreateWorkspaceError = HandlersErrResponse
 export interface CurrentUserResponse {
   created_at: string
   id: number
+  portalId: number
   role: string
   updated_at: string
   username: string
@@ -222,10 +223,6 @@ export type GenerateCompileTokenData = HandlersResponseCodingInterviewGenerateCo
 
 export type GenerateCompileTokenError = HandlersErrResponse
 
-export type GetAllWorkspaceData = HandlersResponseArrayWorkspaceDetail
-
-export type GetAllWorkspaceError = HandlersErrResponse
-
 export type GetCompileResultData = HandlersResponseCodingInterviewGetCompileResultResponse
 
 export type GetCompileResultError = HandlersErrResponse
@@ -266,6 +263,10 @@ export type GetPortalByIdError = HandlersErrResponse
 export interface GetPortalByIdParams {
   id: number
 }
+
+export type GetPortalWorkspaceData = HandlersResponseArrayWorkspaceDetail
+
+export type GetPortalWorkspaceError = HandlersErrResponse
 
 export type GetQuestionsData = HandlersResponseCodingInterviewGetQuestionsResponse
 
@@ -636,6 +637,7 @@ export interface WorkspaceDetail {
   isCoding?: boolean
   isVideo?: boolean
   memberNum?: number
+  portalId?: number
   startDate?: string
   stopDate?: string
   title?: string
@@ -1228,19 +1230,19 @@ export namespace Workspace {
   /**
    * No description
    * @tags workspace
-   * @name GetAllWorkspace
+   * @name GetPortalWorkspace
    * @summary Get List of workspace
-   * @request GET:/workspace.getAll
-   * @response `200` `GetAllWorkspaceData` OK
+   * @request GET:/workspace.getByPortal
+   * @response `200` `GetPortalWorkspaceData` OK
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
-  export namespace GetAllWorkspace {
+  export namespace GetPortalWorkspace {
     export type RequestParams = {}
     export type RequestQuery = {}
     export type RequestBody = never
     export type RequestHeaders = {}
-    export type ResponseBody = GetAllWorkspaceData
+    export type ResponseBody = GetPortalWorkspaceData
   }
 
   /**
@@ -2051,16 +2053,16 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * No description
      *
      * @tags workspace
-     * @name GetAllWorkspace
+     * @name GetPortalWorkspace
      * @summary Get List of workspace
-     * @request GET:/workspace.getAll
-     * @response `200` `GetAllWorkspaceData` OK
+     * @request GET:/workspace.getByPortal
+     * @response `200` `GetPortalWorkspaceData` OK
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    getAllWorkspace: (params: RequestParams = {}) =>
-      this.request<GetAllWorkspaceData, GetAllWorkspaceError>({
-        path: `/workspace.getAll`,
+    getPortalWorkspace: (params: RequestParams = {}) =>
+      this.request<GetPortalWorkspaceData, GetPortalWorkspaceError>({
+        path: `/workspace.getByPortal`,
         method: "GET",
         type: ContentType.Json,
         format: "json",

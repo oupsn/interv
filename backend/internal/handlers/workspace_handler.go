@@ -6,12 +6,16 @@ import (
 )
 
 type WorkspaceHandler struct {
-	workspaceService services.IWorkspaceService
+	workspaceService    services.IWorkspaceService
+	userInPortalService services.IUserInPortalService
+	authService         services.IAuthService
 }
 
-func NewWorkspaceHandler(workspaceService services.IWorkspaceService) WorkspaceHandler {
+func NewWorkspaceHandler(workspaceService services.IWorkspaceService, userInPortalService services.IUserInPortalService, authService services.IAuthService) WorkspaceHandler {
 	return WorkspaceHandler{
-		workspaceService: workspaceService,
+		workspaceService:    workspaceService,
+		userInPortalService: userInPortalService,
+		authService:         authService,
 	}
 }
 
@@ -99,8 +103,8 @@ func (w WorkspaceHandler) GetUserInWorkspace(c *fiber.Ctx) error {
 	return Ok(c, response)
 }
 
-// GetAllWorkspace
-// @ID GetAllWorkspace
+// GetPortalWorkspace
+// @ID GetPortalWorkspace
 // @Tags workspace
 // @Summary Get List of workspace
 // @Accept json
@@ -108,18 +112,20 @@ func (w WorkspaceHandler) GetUserInWorkspace(c *fiber.Ctx) error {
 // @Success 200 {object} Response[[]WorkspaceDetail]
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /workspace.getAll [get]
-func (w WorkspaceHandler) GetAllWorkspace(c *fiber.Ctx) error {
+// @Router /workspace.getByPortal [get]
+func (w WorkspaceHandler) GetPortalWorkspace(c *fiber.Ctx) error {
 	userId, err := GetCurrentUser(c)
-	if err != nil {
-		return err
-	}
-	response, err := w.workspaceService.GetAllOwnWorkspace(userId)
+	_, portalId, err := w.authService.Me(*userId)
 	if err != nil {
 		return err
 	}
 
-	member, err := w.workspaceService.GetUserNumInWorkspace(userId)
+	response, err := w.workspaceService.GetPortalWorkspace(portalId)
+	if err != nil {
+		return err
+	}
+
+	member, err := w.workspaceService.GetUserNumInWorkspace(portalId)
 	if err != nil {
 		return err
 	}
@@ -133,6 +139,7 @@ func (w WorkspaceHandler) GetAllWorkspace(c *fiber.Ctx) error {
 			IsCoding:  *v.IsCoding,
 			StartDate: v.StartDate,
 			StopDate:  v.StopDate,
+			PortalId:  v.PortalId,
 			MemberNum: member[index],
 		})
 	}

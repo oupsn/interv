@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
-	"github.com/gofiber/fiber/v2"
 	"strconv"
 	"time"
+
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
+	"github.com/gofiber/fiber/v2"
 )
 
 type AuthenticationHandler struct {
@@ -104,7 +105,7 @@ func (a AuthenticationHandler) Me(c *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := a.authService.Me(*userId)
+	user, portalId, err := a.authService.Me(*userId)
 
 	if err != nil {
 		return err
@@ -114,6 +115,7 @@ func (a AuthenticationHandler) Me(c *fiber.Ctx) error {
 		ID:        user.ID,
 		Username:  user.Username,
 		Role:      (string)(user.Role),
+		PortalId:  *portalId,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	})
