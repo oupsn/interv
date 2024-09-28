@@ -511,6 +511,187 @@ const docTemplate = `{
                 }
             }
         },
+        "/portal.create": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "portal"
+                ],
+                "summary": "Create new portal",
+                "operationId": "CreatePortal",
+                "parameters": [
+                    {
+                        "description": "CreatePortalBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreatePortalBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-PortalData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/portal.delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "portal"
+                ],
+                "summary": "Delete portal By Id",
+                "operationId": "DeletePortalById",
+                "parameters": [
+                    {
+                        "description": "DeletePortalBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeletePortalBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/portal.get": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "portal"
+                ],
+                "summary": "Get portal",
+                "operationId": "GetPortalById",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-PortalData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user.createAdmin": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create new admin",
+                "operationId": "createAdmin",
+                "parameters": [
+                    {
+                        "description": "CreateAdminBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/AdminCreateBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/user.createUser": {
             "post": {
                 "consumes": [
@@ -1242,6 +1423,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "AdminCreateBody": {
+            "type": "object",
+            "required": [
+                "portalId",
+                "user"
+            ],
+            "properties": {
+                "portalId": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/domains.User"
+                }
+            }
+        },
         "CodingInterviewCreateQuestionQuery": {
             "type": "object",
             "required": [
@@ -1288,6 +1484,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domains.CodingQuestionResponse"
                     }
+                }
+            }
+        },
+        "CreatePortalBody": {
+            "type": "object",
+            "required": [
+                "company_name"
+            ],
+            "properties": {
+                "company_name": {
+                    "type": "string"
                 }
             }
         },
@@ -1398,6 +1605,17 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "DeletePortalBody": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         },
@@ -1566,6 +1784,17 @@ const docTemplate = `{
                 },
                 "to": {
                     "type": "string"
+                }
+            }
+        },
+        "PortalData": {
+            "type": "object",
+            "properties": {
+                "companyName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
                 }
             }
         },
@@ -1822,9 +2051,6 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "memberNum": {
-                    "type": "integer"
-                },
-                "owner": {
                     "type": "integer"
                 },
                 "startDate": {
@@ -2239,6 +2465,23 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/GetVideoQuestionByIdResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-PortalData": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/PortalData"
                 },
                 "message": {
                     "type": "string"

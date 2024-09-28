@@ -9,25 +9,27 @@ import (
 )
 
 type workspaceService struct {
-	workspaceReposity       repositories.IWorkspaceRepository
-	userInWorkspaceReposity repositories.IUserInWorkspaceRepository
-	userRepository          repositories.IUserRepository
+	workspaceRepository       repositories.IWorkspaceRepository
+	userInWorkspaceRepository repositories.IUserInWorkspaceRepository
+	userRepository            repositories.IUserRepository
+	userInPortalService       IUserInPortalService
 }
 
-func NewWorkspaceService(workspaceReposity repositories.IWorkspaceRepository, userInWorkspaceReposity repositories.IUserInWorkspaceRepository, userRepository repositories.IUserRepository) IWorkspaceService {
+func NewWorkspaceService(workspaceRepository repositories.IWorkspaceRepository, userInWorkspaceRepository repositories.IUserInWorkspaceRepository, userRepository repositories.IUserRepository, userInPortalService IUserInPortalService) IWorkspaceService {
 	return &workspaceService{
-		userInWorkspaceReposity: userInWorkspaceReposity,
-		workspaceReposity:       workspaceReposity,
-		userRepository:          userRepository,
+		userInWorkspaceRepository: userInWorkspaceRepository,
+		workspaceRepository:       workspaceRepository,
+		userRepository:            userRepository,
+		userInPortalService:       userInPortalService,
 	}
 }
 
 func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspace, userInWorkspace *[]domains.UserInWorkspace, userData *[]domains.User, err error) {
-	workspace, err = w.workspaceReposity.FindById(id)
+	workspace, err = w.workspaceRepository.FindById(id)
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	userInWorkspace, err = w.userInWorkspaceReposity.FindByWorkspaceId(id)
+	userInWorkspace, err = w.userInWorkspaceRepository.FindByWorkspaceId(id)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -43,22 +45,22 @@ func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspa
 }
 
 func (w *workspaceService) GetUserInWorkspace(id uint) (workspace *[]domains.UserInWorkspace, err error) {
-	return w.userInWorkspaceReposity.FindByWorkspaceId(id)
+	return w.userInWorkspaceRepository.FindByWorkspaceId(id)
 }
 
-func (w *workspaceService) GetAllOwnWorkspace(ownerId *uint) (workspace *[]domains.Workspace, err error) {
-	return w.workspaceReposity.FindByOwner(ownerId)
+func (w *workspaceService) GetAllOwnWorkspace(portalId *uint) (workspace *[]domains.Workspace, err error) {
+	return w.workspaceRepository.FindByPortalId(portalId)
 }
 
-func (w *workspaceService) GetUserNumInWorkspace(ownerId *uint) (workspaceId []uint, err error) {
-	listOfWorkspace, err := w.workspaceReposity.FindWorkspaceIdByOwner(ownerId)
+func (w *workspaceService) GetUserNumInWorkspace(portalId *uint) (workspaceId []uint, err error) {
+	listOfWorkspace, err := w.workspaceRepository.FindWorkspaceIdByPortalId(portalId)
 	if err != nil {
 		return nil, err
 	}
 
 	var userWorkspace []uint
 	for _, uw := range *listOfWorkspace {
-		numberOfUser, err := w.userInWorkspaceReposity.GetUserNumberInWorkspace(uw)
+		numberOfUser, err := w.userInWorkspaceRepository.GetUserNumberInWorkspace(uw)
 		if err != nil {
 			return nil, err
 		}
@@ -68,26 +70,27 @@ func (w *workspaceService) GetUserNumInWorkspace(ownerId *uint) (workspaceId []u
 	return userWorkspace, nil
 }
 
-func (w *workspaceService) Create(title string, isCoding *bool, isVideo *bool, startDate time.Time, stopDate time.Time, owner *uint) (workspace *domains.Workspace, err error) {
+func (w *workspaceService) Create(title string, isCoding *bool, isVideo *bool, startDate time.Time, stopDate time.Time, userId *uint) (workspace *domains.Workspace, err error) {
 
-	if _, err := w.workspaceReposity.FindByTitle(strings.TrimSpace(title)); err == nil {
+	if _, err := w.workspaceRepository.FindByTitle(strings.TrimSpace(title)); err == nil {
 		return nil, ErrorWorkspaceExists
 	}
+	portalId, err := w.userInPortalService.GetPortalByUserId(*userId)
 
-	return w.workspaceReposity.Create(domains.Workspace{
+	return w.workspaceRepository.Create(domains.Workspace{
 		Title:     strings.TrimSpace(title),
 		IsVideo:   isVideo,
 		IsCoding:  isCoding,
 		StartDate: startDate,
 		StopDate:  stopDate,
-		Owner:     *owner,
+		PortalId:  portalId,
 	})
 }
 
 func (w *workspaceService) Delete(id uint) (err error) {
-	return w.workspaceReposity.DeleteById(id)
+	return w.workspaceRepository.DeleteById(id)
 }
 
 func (w *workspaceService) DeleteUserInWorkspace(userId uint, workspaceId uint) (err error) {
-	return w.userInWorkspaceReposity.DeleteByUserIdAndWorkspaceId(userId, workspaceId)
+	return w.userInWorkspaceRepository.DeleteByUserIdAndWorkspaceId(userId, workspaceId)
 }

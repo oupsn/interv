@@ -5,17 +5,20 @@ import (
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type userService struct {
-	userRepository          repositories.IUserRepository
-	userInWorkspaceReposity repositories.IUserInWorkspaceRepository
+	userRepository            repositories.IUserRepository
+	userInWorkspaceRepository repositories.IUserInWorkspaceRepository
+	userInPortalRepository    repositories.IUserInPortalRepository
 }
 
-func NewUserService(userRepository repositories.IUserRepository, userInWorkspaceReposity repositories.IUserInWorkspaceRepository) IUserService {
+func NewUserService(userRepository repositories.IUserRepository, userInWorkspaceRepository repositories.IUserInWorkspaceRepository, userInPortalRepository repositories.IUserInPortalRepository, workspaceRepository repositories.IWorkspaceRepository) IUserService {
 	return &userService{
-		userRepository:          userRepository,
-		userInWorkspaceReposity: userInWorkspaceReposity,
+		userRepository:            userRepository,
+		userInWorkspaceRepository: userInWorkspaceRepository,
+		userInPortalRepository:    userInPortalRepository,
 	}
 }
 
@@ -26,8 +29,15 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 
 	for x, aImportUser := range importUser {
 		userFound, err := u.userRepository.FindByUsername(strings.TrimSpace(importUser[x].Username))
+		bytes, err := bcrypt.GenerateFromPassword([]byte(aImportUser.Password), bcrypt.DefaultCost)
 		if err != nil {
-			user, err := u.userRepository.Create(aImportUser)
+			user, err := u.userRepository.Create(domains.User{
+				ID:       aImportUser.ID,
+				Name:     aImportUser.Name,
+				Username: aImportUser.Username,
+				Password: (strings.TrimSpace(string(bytes))),
+				Role:     aImportUser.Role,
+			})
 			if err != nil {
 				return err
 			}
@@ -38,7 +48,7 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 				IsInterest:  &defaultInterest,
 			})
 		} else {
-			_, err := u.userInWorkspaceReposity.FindByUserIdAndWorkspaceId(userFound.ID, workspaceId)
+			_, err := u.userInWorkspaceRepository.FindByUserIdAndWorkspaceId(userFound.ID, workspaceId)
 			if err != nil {
 				checkedUser = append(checkedUser, &domains.UserInWorkspace{
 					UserId:      userFound.ID,
@@ -50,7 +60,7 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 		}
 	}
 
-	_, err = u.userInWorkspaceReposity.Create(checkedUser)
+	_, err = u.userInWorkspaceRepository.Create(checkedUser)
 	if err == nil {
 		return err
 	}
@@ -58,6 +68,25 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 }
 
 func (u *userService) Delete(id uint) (err error) {
-	u.userInWorkspaceReposity.DeleteByUserId(id)
+	u.userInWorkspaceRepository.DeleteByUserId(id)
 	return u.userRepository.DeleteById(id)
+}
+
+func (u *userService) CreateAdmin(user domains.User, portalId uint) (err error) {
+	_, err = u.userRepository.FindByUsername(strings.TrimSpace(user.Username))
+	if err != nil {
+		bytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		newUser, err := u.userRepository.Create(domains.User{
+			ID:       user.ID,
+			Name:     user.Name,
+			Username: user.Username,
+			Password: (strings.TrimSpace(string(bytes))),
+			Role:     user.Role,
+		})
+		if err != nil {
+			return err
+		}
+		u.userInPortalRepository.Create(domains.UserInPortal{UserId: newUser.ID, PortalId: portalId})
+	}
+	return nil
 }
