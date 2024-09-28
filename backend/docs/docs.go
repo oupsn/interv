@@ -154,8 +154,55 @@ const docTemplate = `{
                 }
             }
         },
-        "/codingInterview.getCompileResult": {
+        "/codingInterview.generateCompileToken": {
             "post": {
+                "description": "Generate compile token for a coding interview",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Generate compile token for a coding interview",
+                "operationId": "GenerateCompileToken",
+                "parameters": [
+                    {
+                        "description": "Request body containing the code to be compiled",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CodingInterviewGenerateCompileTokenQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with the compile token",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-CodingInterviewGenerateCompileTokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/codingInterview.getCompileResult/{token}": {
+            "get": {
                 "description": "Get compile result for a coding interview",
                 "consumes": [
                     "application/json"
@@ -170,20 +217,18 @@ const docTemplate = `{
                 "operationId": "GetCompileResult",
                 "parameters": [
                     {
-                        "description": "Request body containing the token to get the compile result",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/CodingInterviewGetCompileResultQuery"
-                        }
+                        "type": "string",
+                        "description": "Token to get the compile result",
+                        "name": "token",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "Successful response with the compile result",
                         "schema": {
-                            "$ref": "#/definitions/handlers.Response-handlers_CodingInterviewGetCompileResultResponse"
+                            "$ref": "#/definitions/handlers.Response-CodingInterviewGetCompileResultResponse"
                         }
                     },
                     "400": {
@@ -219,7 +264,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Successful response with the coding interview questions",
                         "schema": {
-                            "$ref": "#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionsResponse"
+                            "$ref": "#/definitions/handlers.Response-CodingInterviewGetQuestionsResponse"
                         }
                     },
                     "400": {
@@ -449,6 +494,187 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/portal.create": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "portal"
+                ],
+                "summary": "Create new portal",
+                "operationId": "CreatePortal",
+                "parameters": [
+                    {
+                        "description": "CreatePortalBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreatePortalBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-PortalData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/portal.delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "portal"
+                ],
+                "summary": "Delete portal By Id",
+                "operationId": "DeletePortalById",
+                "parameters": [
+                    {
+                        "description": "DeletePortalBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeletePortalBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/portal.get": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "portal"
+                ],
+                "summary": "Get portal",
+                "operationId": "GetPortalById",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-PortalData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user.createAdmin": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create new admin",
+                "operationId": "createAdmin",
+                "parameters": [
+                    {
+                        "description": "CreateAdminBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/AdminCreateBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-User"
                         }
                     },
                     "400": {
@@ -921,7 +1147,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/videoQuestion.getVideoQuestionWorkspaceIdId/{id}": {
+        "/videoQuestion.getVideoQuestionByPortalId": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -932,8 +1158,8 @@ const docTemplate = `{
                 "tags": [
                     "videoQuestion"
                 ],
-                "summary": "Get video question by workspace id",
-                "operationId": "getVideoQuestionByWorkspaceId",
+                "summary": "Get video question by portal id",
+                "operationId": "getVideoQuestionByPortalId",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1160,7 +1386,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/workspace.getAll": {
+        "/workspace.getByPortal": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1172,7 +1398,7 @@ const docTemplate = `{
                     "workspace"
                 ],
                 "summary": "Get List of workspace",
-                "operationId": "GetAllWorkspace",
+                "operationId": "GetPortalWorkspace",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1197,6 +1423,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "AdminCreateBody": {
+            "type": "object",
+            "required": [
+                "portalId",
+                "user"
+            ],
+            "properties": {
+                "portalId": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/domains.User"
+                }
+            }
+        },
         "CodingInterviewCreateQuestionQuery": {
             "type": "object",
             "required": [
@@ -1208,7 +1449,7 @@ const docTemplate = `{
                 }
             }
         },
-        "CodingInterviewGetCompileResultQuery": {
+        "CodingInterviewGenerateCompileTokenQuery": {
             "type": "object",
             "required": [
                 "body"
@@ -1219,16 +1460,57 @@ const docTemplate = `{
                 }
             }
         },
+        "CodingInterviewGenerateCompileTokenResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "CodingInterviewGetCompileResultResponse": {
+            "type": "object",
+            "properties": {
+                "compileResult": {
+                    "$ref": "#/definitions/domains.CompilationResultResponse"
+                }
+            }
+        },
+        "CodingInterviewGetQuestionsResponse": {
+            "type": "object",
+            "properties": {
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionResponse"
+                    }
+                }
+            }
+        },
+        "CreatePortalBody": {
+            "type": "object",
+            "required": [
+                "company_name"
+            ],
+            "properties": {
+                "company_name": {
+                    "type": "string"
+                }
+            }
+        },
         "CreateVideoQuestionBody": {
             "type": "object",
             "required": [
+                "portalId",
                 "retryAmount",
                 "timeToAnswer",
                 "timeToPrepare",
-                "title",
-                "workspaceId"
+                "title"
             ],
             "properties": {
+                "portalId": {
+                    "type": "integer"
+                },
                 "retryAmount": {
                     "type": "integer"
                 },
@@ -1240,9 +1522,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },
@@ -1253,6 +1532,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "portalId": {
                     "type": "integer"
                 },
                 "retryAmount": {
@@ -1269,9 +1551,6 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },
@@ -1307,6 +1586,7 @@ const docTemplate = `{
             "required": [
                 "created_at",
                 "id",
+                "portalId",
                 "role",
                 "updated_at",
                 "username"
@@ -1318,6 +1598,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "portalId": {
+                    "type": "integer"
+                },
                 "role": {
                     "type": "string"
                 },
@@ -1326,6 +1609,17 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "DeletePortalBody": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         },
@@ -1422,6 +1716,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "portalId": {
+                    "type": "integer"
+                },
                 "retryAmount": {
                     "type": "integer"
                 },
@@ -1436,9 +1733,6 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },
@@ -1494,6 +1788,17 @@ const docTemplate = `{
                 },
                 "to": {
                     "type": "string"
+                }
+            }
+        },
+        "PortalData": {
+            "type": "object",
+            "properties": {
+                "companyName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
                 }
             }
         },
@@ -1559,6 +1864,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "portalId": {
+                    "type": "integer"
+                },
                 "retryAmount": {
                     "type": "integer"
                 },
@@ -1570,9 +1878,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                },
-                "workspaceId": {
-                    "type": "integer"
                 }
             }
         },
@@ -1752,7 +2057,7 @@ const docTemplate = `{
                 "memberNum": {
                     "type": "integer"
                 },
-                "owner": {
+                "portalId": {
                     "type": "integer"
                 },
                 "startDate": {
@@ -1781,14 +2086,14 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "examples": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionExample"
+                    }
+                },
                 "id": {
                     "type": "integer"
-                },
-                "inputDescription": {
-                    "type": "string"
-                },
-                "outputDescription": {
-                    "type": "string"
                 },
                 "tags": {
                     "type": "array",
@@ -1813,10 +2118,42 @@ const docTemplate = `{
                 }
             }
         },
+        "domains.CodingQuestionExample": {
+            "type": "object",
+            "properties": {
+                "codingQuestionID": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "input": {
+                    "type": "string"
+                },
+                "output": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "domains.CodingQuestionResponse": {
             "type": "object",
             "properties": {
                 "description": {
+                    "type": "string"
+                },
+                "example_input": {
+                    "type": "string"
+                },
+                "example_output": {
                     "type": "string"
                 },
                 "id": {
@@ -1825,7 +2162,7 @@ const docTemplate = `{
                 "test_case": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/domains.CodingQuestionTestCaseResponse"
+                        "$ref": "#/definitions/domains.CodingQuestionTestCase"
                     }
                 },
                 "title": {
@@ -1851,9 +2188,6 @@ const docTemplate = `{
                 "input": {
                     "type": "string"
                 },
-                "isExample": {
-                    "type": "boolean"
-                },
                 "isHidden": {
                     "type": "boolean"
                 },
@@ -1865,18 +2199,21 @@ const docTemplate = `{
                 }
             }
         },
-        "domains.CodingQuestionTestCaseResponse": {
+        "domains.CompilationRequest": {
             "type": "object",
             "properties": {
                 "input": {
                     "type": "string"
                 },
-                "output": {
+                "language": {
+                    "type": "integer"
+                },
+                "source_code": {
                     "type": "string"
                 }
             }
         },
-        "domains.CompilationCompileResult": {
+        "domains.CompilationResultResponse": {
             "type": "object",
             "properties": {
                 "compile_output": {
@@ -1907,34 +2244,9 @@ const docTemplate = `{
                 },
                 "time": {
                     "type": "string"
-                }
-            }
-        },
-        "domains.CompilationRequest": {
-            "type": "object",
-            "properties": {
-                "language": {
-                    "type": "integer"
                 },
-                "question_id": {
-                    "type": "integer"
-                },
-                "source_code": {
+                "token": {
                     "type": "string"
-                }
-            }
-        },
-        "domains.CompilationResultResponse": {
-            "type": "object",
-            "properties": {
-                "compile_result": {
-                    "$ref": "#/definitions/domains.CompilationCompileResult"
-                },
-                "is_passed": {
-                    "type": "boolean"
-                },
-                "test_case_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -1947,11 +2259,11 @@ const docTemplate = `{
                 "difficulty": {
                     "type": "string"
                 },
-                "input_description": {
-                    "type": "string"
-                },
-                "output_description": {
-                    "type": "string"
+                "examples": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionExample"
+                    }
                 },
                 "tags": {
                     "type": "array",
@@ -2050,6 +2362,57 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.Response-CodingInterviewGenerateCompileTokenResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/CodingInterviewGenerateCompileTokenResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-CodingInterviewGetCompileResultResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/CodingInterviewGetCompileResultResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-CodingInterviewGetQuestionsResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/CodingInterviewGetQuestionsResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.Response-CreateVideoQuestionResponse": {
             "type": "object",
             "properties": {
@@ -2109,6 +2472,23 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/GetVideoQuestionByIdResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-PortalData": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/PortalData"
                 },
                 "message": {
                     "type": "string"
@@ -2288,46 +2668,6 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/domains.CodingQuestion"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.Response-handlers_CodingInterviewGetCompileResultResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domains.CompilationResultResponse"
-                    }
-                },
-                "message": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.Response-handlers_CodingInterviewGetQuestionsResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domains.CodingQuestionResponse"
-                    }
                 },
                 "message": {
                     "type": "string"

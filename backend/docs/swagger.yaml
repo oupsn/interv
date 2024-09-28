@@ -1,5 +1,15 @@
 basePath: /api
 definitions:
+  AdminCreateBody:
+    properties:
+      portalId:
+        type: integer
+      user:
+        $ref: '#/definitions/domains.User'
+    required:
+    - portalId
+    - user
+    type: object
   CodingInterviewCreateQuestionQuery:
     properties:
       body:
@@ -7,15 +17,41 @@ definitions:
     required:
     - body
     type: object
-  CodingInterviewGetCompileResultQuery:
+  CodingInterviewGenerateCompileTokenQuery:
     properties:
       body:
         $ref: '#/definitions/domains.CompilationRequest'
     required:
     - body
     type: object
+  CodingInterviewGenerateCompileTokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  CodingInterviewGetCompileResultResponse:
+    properties:
+      compileResult:
+        $ref: '#/definitions/domains.CompilationResultResponse'
+    type: object
+  CodingInterviewGetQuestionsResponse:
+    properties:
+      questions:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionResponse'
+        type: array
+    type: object
+  CreatePortalBody:
+    properties:
+      company_name:
+        type: string
+    required:
+    - company_name
+    type: object
   CreateVideoQuestionBody:
     properties:
+      portalId:
+        type: integer
       retryAmount:
         type: integer
       timeToAnswer:
@@ -24,20 +60,20 @@ definitions:
         type: integer
       title:
         type: string
-      workspaceId:
-        type: integer
     required:
+    - portalId
     - retryAmount
     - timeToAnswer
     - timeToPrepare
     - title
-    - workspaceId
     type: object
   CreateVideoQuestionResponse:
     properties:
       createdAt:
         type: string
       id:
+        type: integer
+      portalId:
         type: integer
       retryAmount:
         type: integer
@@ -49,8 +85,6 @@ definitions:
         type: string
       updatedAt:
         type: string
-      workspaceId:
-        type: integer
     type: object
   CreateWorkspaceBody:
     properties:
@@ -77,6 +111,8 @@ definitions:
         type: string
       id:
         type: integer
+      portalId:
+        type: integer
       role:
         type: string
       updated_at:
@@ -86,9 +122,17 @@ definitions:
     required:
     - created_at
     - id
+    - portalId
     - role
     - updated_at
     - username
+    type: object
+  DeletePortalBody:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
     type: object
   DeleteUserFromWorkspaceBody:
     properties:
@@ -154,6 +198,8 @@ definitions:
         type: string
       id:
         type: integer
+      portalId:
+        type: integer
       retryAmount:
         type: integer
       timeToAnswer:
@@ -164,8 +210,6 @@ definitions:
         type: string
       updatedAt:
         type: string
-      workspaceId:
-        type: integer
     type: object
   IndividualUser:
     properties:
@@ -203,6 +247,13 @@ definitions:
     required:
     - name
     - to
+    type: object
+  PortalData:
+    properties:
+      companyName:
+        type: string
+      id:
+        type: integer
     type: object
   SendMailBody:
     properties:
@@ -243,6 +294,8 @@ definitions:
     properties:
       id:
         type: integer
+      portalId:
+        type: integer
       retryAmount:
         type: integer
       timeToAnswer:
@@ -251,8 +304,6 @@ definitions:
         type: integer
       title:
         type: string
-      workspaceId:
-        type: integer
     required:
     - id
     type: object
@@ -375,7 +426,7 @@ definitions:
         type: boolean
       memberNum:
         type: integer
-      owner:
+      portalId:
         type: integer
       startDate:
         type: string
@@ -394,12 +445,12 @@ definitions:
         $ref: '#/definitions/gorm.DeletedAt'
       description:
         type: string
+      examples:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionExample'
+        type: array
       id:
         type: integer
-      inputDescription:
-        type: string
-      outputDescription:
-        type: string
       tags:
         items:
           type: string
@@ -415,15 +466,36 @@ definitions:
       updatedBy:
         type: string
     type: object
+  domains.CodingQuestionExample:
+    properties:
+      codingQuestionID:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      input:
+        type: string
+      output:
+        type: string
+      updatedAt:
+        type: string
+    type: object
   domains.CodingQuestionResponse:
     properties:
       description:
+        type: string
+      example_input:
+        type: string
+      example_output:
         type: string
       id:
         type: integer
       test_case:
         items:
-          $ref: '#/definitions/domains.CodingQuestionTestCaseResponse'
+          $ref: '#/definitions/domains.CodingQuestionTestCase'
         type: array
       title:
         type: string
@@ -440,8 +512,6 @@ definitions:
         type: integer
       input:
         type: string
-      isExample:
-        type: boolean
       isHidden:
         type: boolean
       output:
@@ -449,14 +519,16 @@ definitions:
       updatedAt:
         type: string
     type: object
-  domains.CodingQuestionTestCaseResponse:
+  domains.CompilationRequest:
     properties:
       input:
         type: string
-      output:
+      language:
+        type: integer
+      source_code:
         type: string
     type: object
-  domains.CompilationCompileResult:
+  domains.CompilationResultResponse:
     properties:
       compile_output:
         type: string
@@ -477,24 +549,8 @@ definitions:
         type: string
       time:
         type: string
-    type: object
-  domains.CompilationRequest:
-    properties:
-      language:
-        type: integer
-      question_id:
-        type: integer
-      source_code:
+      token:
         type: string
-    type: object
-  domains.CompilationResultResponse:
-    properties:
-      compile_result:
-        $ref: '#/definitions/domains.CompilationCompileResult'
-      is_passed:
-        type: boolean
-      test_case_id:
-        type: integer
     type: object
   domains.CreateCodingQuestionRequest:
     properties:
@@ -502,10 +558,10 @@ definitions:
         type: string
       difficulty:
         type: string
-      input_description:
-        type: string
-      output_description:
-        type: string
+      examples:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionExample'
+        type: array
       tags:
         items:
           type: string
@@ -570,6 +626,39 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.Response-CodingInterviewGenerateCompileTokenResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/CodingInterviewGenerateCompileTokenResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-CodingInterviewGetCompileResultResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/CodingInterviewGetCompileResultResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-CodingInterviewGetQuestionsResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/CodingInterviewGetQuestionsResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
   handlers.Response-CreateVideoQuestionResponse:
     properties:
       code:
@@ -609,6 +698,17 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/GetVideoQuestionByIdResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-PortalData:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/PortalData'
       message:
         type: string
       timestamp:
@@ -730,32 +830,6 @@ definitions:
       timestamp:
         type: string
     type: object
-  handlers.Response-handlers_CodingInterviewGetCompileResultResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        items:
-          $ref: '#/definitions/domains.CompilationResultResponse'
-        type: array
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
-  handlers.Response-handlers_CodingInterviewGetQuestionsResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        items:
-          $ref: '#/definitions/domains.CodingQuestionResponse'
-        type: array
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
   handlers.Response-string:
     properties:
       code:
@@ -863,26 +937,56 @@ paths:
       summary: Create a new coding interview question
       tags:
       - codingInterview
-  /codingInterview.getCompileResult:
+  /codingInterview.generateCompileToken:
     post:
+      consumes:
+      - application/json
+      description: Generate compile token for a coding interview
+      operationId: GenerateCompileToken
+      parameters:
+      - description: Request body containing the code to be compiled
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/CodingInterviewGenerateCompileTokenQuery'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the compile token
+          schema:
+            $ref: '#/definitions/handlers.Response-CodingInterviewGenerateCompileTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Generate compile token for a coding interview
+      tags:
+      - codingInterview
+  /codingInterview.getCompileResult/{token}:
+    get:
       consumes:
       - application/json
       description: Get compile result for a coding interview
       operationId: GetCompileResult
       parameters:
-      - description: Request body containing the token to get the compile result
-        in: body
-        name: body
+      - description: Token to get the compile result
+        in: path
+        name: token
         required: true
-        schema:
-          $ref: '#/definitions/CodingInterviewGetCompileResultQuery'
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: Successful response with the compile result
           schema:
-            $ref: '#/definitions/handlers.Response-handlers_CodingInterviewGetCompileResultResponse'
+            $ref: '#/definitions/handlers.Response-CodingInterviewGetCompileResultResponse'
         "400":
           description: Bad Request
           schema:
@@ -906,7 +1010,7 @@ paths:
         "200":
           description: Successful response with the coding interview questions
           schema:
-            $ref: '#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionsResponse'
+            $ref: '#/definitions/handlers.Response-CodingInterviewGetQuestionsResponse'
         "400":
           description: Bad Request
           schema:
@@ -1068,6 +1172,124 @@ paths:
       summary: Upload object to the system
       tags:
       - object
+  /portal.create:
+    post:
+      consumes:
+      - application/json
+      operationId: CreatePortal
+      parameters:
+      - description: CreatePortalBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/CreatePortalBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-PortalData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Create new portal
+      tags:
+      - portal
+  /portal.delete:
+    post:
+      consumes:
+      - application/json
+      operationId: DeletePortalById
+      parameters:
+      - description: DeletePortalBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/DeletePortalBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Delete portal By Id
+      tags:
+      - portal
+  /portal.get:
+    get:
+      consumes:
+      - application/json
+      operationId: GetPortalById
+      parameters:
+      - in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-PortalData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get portal
+      tags:
+      - portal
+  /user.createAdmin:
+    post:
+      consumes:
+      - application/json
+      operationId: createAdmin
+      parameters:
+      - description: CreateAdminBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/AdminCreateBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Create new admin
+      tags:
+      - user
   /user.createUser:
     post:
       consumes:
@@ -1365,11 +1587,11 @@ paths:
       summary: Get video question by id
       tags:
       - videoQuestion
-  /videoQuestion.getVideoQuestionWorkspaceIdId/{id}:
+  /videoQuestion.getVideoQuestionByPortalId:
     get:
       consumes:
       - application/json
-      operationId: getVideoQuestionByWorkspaceId
+      operationId: getVideoQuestionByPortalId
       parameters:
       - in: query
         name: id
@@ -1396,7 +1618,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
-      summary: Get video question by workspace id
+      summary: Get video question by portal id
       tags:
       - videoQuestion
   /videoQuestion.updateVideoQuestion:
@@ -1521,11 +1743,11 @@ paths:
       summary: Get workspace
       tags:
       - workspace
-  /workspace.getAll:
+  /workspace.getByPortal:
     get:
       consumes:
       - application/json
-      operationId: GetAllWorkspace
+      operationId: GetPortalWorkspace
       produces:
       - application/json
       responses:

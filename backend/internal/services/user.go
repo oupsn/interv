@@ -12,5 +12,6 @@ var (
 
 type IUserService interface {
 	Create(importUser []domains.User, workspaceId uint) (err error)
+	CreateAdmin(user domains.User, portalId uint)(err error)
 	Delete(id uint) (err error)
 }

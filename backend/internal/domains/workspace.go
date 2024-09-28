@@ -13,6 +13,6 @@ type Workspace struct {
 	IsCoding  *bool
 	StartDate time.Time
 	StopDate  time.Time
-	Owner     uint `gorm:"foreignKey:UserId"`
+	PortalId  uint
 	gorm.Model
 }

@@ -8,7 +8,7 @@ import (
 type IVideoQuestionRepository interface {
 	Create(question domains.VideoQuestion) (*domains.VideoQuestion, error)
 	GetById(id uint) (*domains.VideoQuestion, error)
-	GetByWorkspaceId(id uint) ([]domains.VideoQuestion, error)
+	GetByPortalId(id uint) ([]domains.VideoQuestion, error)
 	Update(question domains.VideoQuestion) error
 	DeleteById(id uint) error
 }
@@ -40,9 +40,9 @@ func (v videoQuestionRepository) GetById(id uint) (*domains.VideoQuestion, error
 	return &question, nil
 }
 
-func (v videoQuestionRepository) GetByWorkspaceId(id uint) ([]domains.VideoQuestion, error) {
+func (v videoQuestionRepository) GetByPortalId(id uint) ([]domains.VideoQuestion, error) {
 	var question []domains.VideoQuestion
-	if err := v.DB.Find(&question, "workspace_id = ?", id).Error; err != nil {
+	if err := v.DB.Find(&question, "portal_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 

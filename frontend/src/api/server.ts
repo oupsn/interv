@@ -9,13 +9,42 @@
  * ---------------------------------------------------------------
  */
 
+export interface AdminCreateBody {
+  portalId: number
+  user: DomainsUser
+}
+
 export interface CodingInterviewCreateQuestionQuery {
   body: DomainsCreateCodingQuestionRequest
 }
 
-export interface CodingInterviewGetCompileResultQuery {
+export interface CodingInterviewGenerateCompileTokenQuery {
   body: DomainsCompilationRequest
 }
+
+export interface CodingInterviewGenerateCompileTokenResponse {
+  token?: string
+}
+
+export interface CodingInterviewGetCompileResultResponse {
+  compileResult?: DomainsCompilationResultResponse
+}
+
+export interface CodingInterviewGetQuestionsResponse {
+  questions?: DomainsCodingQuestionResponse[]
+}
+
+export type CreateAdminData = HandlersResponseUser
+
+export type CreateAdminError = HandlersErrResponse
+
+export interface CreatePortalBody {
+  company_name: string
+}
+
+export type CreatePortalData = HandlersResponsePortalData
+
+export type CreatePortalError = HandlersErrResponse
 
 export type CreateQuestionData = HandlersResponseDomainsCodingQuestion
 
@@ -26,11 +55,11 @@ export type CreateUserData = HandlersResponseUser
 export type CreateUserError = HandlersErrResponse
 
 export interface CreateVideoQuestionBody {
+  portalId: number
   retryAmount: number
   timeToAnswer: number
   timeToPrepare: number
   title: string
-  workspaceId: number
 }
 
 export type CreateVideoQuestionData = HandlersResponseCreateVideoQuestionResponse
@@ -40,12 +69,12 @@ export type CreateVideoQuestionError = HandlersErrResponse
 export interface CreateVideoQuestionResponse {
   createdAt?: string
   id?: number
+  portalId?: number
   retryAmount?: number
   timeToAnswer?: number
   timeToPrepare?: number
   title?: string
   updatedAt?: string
-  workspaceId?: number
 }
 
 export interface CreateWorkspaceBody {
@@ -63,10 +92,19 @@ export type CreateWorkspaceError = HandlersErrResponse
 export interface CurrentUserResponse {
   created_at: string
   id: number
+  portalId: number
   role: string
   updated_at: string
   username: string
 }
+
+export interface DeletePortalBody {
+  id: number
+}
+
+export type DeletePortalByIdData = HandlersResponseString
+
+export type DeletePortalByIdError = HandlersErrResponse
 
 export type DeleteUserData = HandlersResponseString
 
@@ -102,9 +140,8 @@ export interface DomainsCodingQuestion {
   createdBy?: string
   deletedAt?: GormDeletedAt
   description?: string
+  examples?: DomainsCodingQuestionExample[]
   id?: number
-  inputDescription?: string
-  outputDescription?: string
   tags?: string[]
   testCases?: DomainsCodingQuestionTestCase[]
   title?: string
@@ -112,10 +149,22 @@ export interface DomainsCodingQuestion {
   updatedBy?: string
 }
 
+export interface DomainsCodingQuestionExample {
+  codingQuestionID?: number
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  id?: number
+  input?: string
+  output?: string
+  updatedAt?: string
+}
+
 export interface DomainsCodingQuestionResponse {
   description?: string
+  example_input?: string
+  example_output?: string
   id?: number
-  test_case?: DomainsCodingQuestionTestCaseResponse[]
+  test_case?: DomainsCodingQuestionTestCase[]
   title?: string
 }
 
@@ -125,18 +174,18 @@ export interface DomainsCodingQuestionTestCase {
   deletedAt?: GormDeletedAt
   id?: number
   input?: string
-  isExample?: boolean
   isHidden?: boolean
   output?: string
   updatedAt?: string
 }
 
-export interface DomainsCodingQuestionTestCaseResponse {
+export interface DomainsCompilationRequest {
   input?: string
-  output?: string
+  language?: number
+  source_code?: string
 }
 
-export interface DomainsCompilationCompileResult {
+export interface DomainsCompilationResultResponse {
   compile_output?: string
   memory?: number
   message?: string
@@ -147,25 +196,13 @@ export interface DomainsCompilationCompileResult {
   stderr?: string
   stdout?: string
   time?: string
-}
-
-export interface DomainsCompilationRequest {
-  language?: number
-  question_id?: number
-  source_code?: string
-}
-
-export interface DomainsCompilationResultResponse {
-  compile_result?: DomainsCompilationCompileResult
-  is_passed?: boolean
-  test_case_id?: number
+  token?: string
 }
 
 export interface DomainsCreateCodingQuestionRequest {
   description?: string
   difficulty?: string
-  input_description?: string
-  output_description?: string
+  examples?: DomainsCodingQuestionExample[]
   tags?: string[]
   test_cases?: DomainsCodingQuestionTestCase[]
   title?: string
@@ -182,11 +219,11 @@ export interface DomainsUser {
   username?: string
 }
 
-export type GetAllWorkspaceData = HandlersResponseArrayWorkspaceDetail
+export type GenerateCompileTokenData = HandlersResponseCodingInterviewGenerateCompileTokenResponse
 
-export type GetAllWorkspaceError = HandlersErrResponse
+export type GenerateCompileTokenError = HandlersErrResponse
 
-export type GetCompileResultData = HandlersResponseHandlersCodingInterviewGetCompileResultResponse
+export type GetCompileResultData = HandlersResponseCodingInterviewGetCompileResultResponse
 
 export type GetCompileResultError = HandlersErrResponse
 
@@ -219,7 +256,19 @@ export type GetObjectData = HandlersResponseString
 
 export type GetObjectError = HandlersErrResponse
 
-export type GetQuestionsData = HandlersResponseHandlersCodingInterviewGetQuestionsResponse
+export type GetPortalByIdData = HandlersResponsePortalData
+
+export type GetPortalByIdError = HandlersErrResponse
+
+export interface GetPortalByIdParams {
+  id: number
+}
+
+export type GetPortalWorkspaceData = HandlersResponseArrayWorkspaceDetail
+
+export type GetPortalWorkspaceError = HandlersErrResponse
+
+export type GetQuestionsData = HandlersResponseCodingInterviewGetQuestionsResponse
 
 export type GetQuestionsError = HandlersErrResponse
 
@@ -258,20 +307,20 @@ export interface GetVideoQuestionByIdParams {
 export interface GetVideoQuestionByIdResponse {
   createdAt?: string
   id?: number
+  portalId?: number
   retryAmount?: number
   timeToAnswer?: number
   timeToPrepare?: number
   title?: string
   updatedAt?: string
-  workspaceId?: number
 }
 
-export type GetVideoQuestionByWorkspaceIdData = HandlersResponseArrayGetVideoQuestionByIdResponse[]
+export type GetVideoQuestionByPortalIdData = HandlersResponseArrayGetVideoQuestionByIdResponse[]
 
-export type GetVideoQuestionByWorkspaceIdError = HandlersErrResponse
+export type GetVideoQuestionByPortalIdError = HandlersErrResponse
 
-export interface GetVideoQuestionByWorkspaceIdParams {
-  id: string
+export interface GetVideoQuestionByPortalIdParams {
+  id: number
 }
 
 export type GetWorkspaceData = HandlersResponseWorkspaceData
@@ -326,6 +375,27 @@ export interface HandlersResponseArrayWorkspaceDetail {
   timestamp?: string
 }
 
+export interface HandlersResponseCodingInterviewGenerateCompileTokenResponse {
+  code?: number
+  data?: CodingInterviewGenerateCompileTokenResponse
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseCodingInterviewGetCompileResultResponse {
+  code?: number
+  data?: CodingInterviewGetCompileResultResponse
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseCodingInterviewGetQuestionsResponse {
+  code?: number
+  data?: CodingInterviewGetQuestionsResponse
+  message?: string
+  timestamp?: string
+}
+
 export interface HandlersResponseCreateVideoQuestionResponse {
   code?: number
   data?: CreateVideoQuestionResponse
@@ -361,16 +431,9 @@ export interface HandlersResponseGetVideoQuestionByIdResponse {
   timestamp?: string
 }
 
-export interface HandlersResponseHandlersCodingInterviewGetCompileResultResponse {
+export interface HandlersResponsePortalData {
   code?: number
-  data?: DomainsCompilationResultResponse[]
-  message?: string
-  timestamp?: string
-}
-
-export interface HandlersResponseHandlersCodingInterviewGetQuestionsResponse {
-  code?: number
-  data?: DomainsCodingQuestionResponse[]
+  data?: PortalData
   message?: string
   timestamp?: string
 }
@@ -450,6 +513,11 @@ export interface MailObject {
 
 export type MeData = HandlersResponseCurrentUserResponse
 
+export interface PortalData {
+  companyName?: string
+  id?: number
+}
+
 export interface SendMailBody {
   mailList: MailObject[]
   preset: HandlersMailPreset
@@ -489,11 +557,11 @@ export type UpdateLobbyContextError = HandlersErrResponse
 
 export interface UpdateVideoQuestionBody {
   id: number
+  portalId?: number
   retryAmount?: number
   timeToAnswer?: number
   timeToPrepare?: number
   title?: string
-  workspaceId?: number
 }
 
 export type UpdateVideoQuestionData = HandlersResponseCreateVideoQuestionResponse
@@ -569,7 +637,7 @@ export interface WorkspaceDetail {
   isCoding?: boolean
   isVideo?: boolean
   memberNum?: number
-  owner?: number
+  portalId?: number
   startDate?: string
   stopDate?: string
   title?: string
@@ -647,19 +715,40 @@ export namespace CodingInterview {
   }
 
   /**
+   * @description Generate compile token for a coding interview
+   * @tags codingInterview
+   * @name GenerateCompileToken
+   * @summary Generate compile token for a coding interview
+   * @request POST:/codingInterview.generateCompileToken
+   * @response `200` `GenerateCompileTokenData` Successful response with the compile token
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GenerateCompileToken {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = CodingInterviewGenerateCompileTokenQuery
+    export type RequestHeaders = {}
+    export type ResponseBody = GenerateCompileTokenData
+  }
+
+  /**
    * @description Get compile result for a coding interview
    * @tags codingInterview
    * @name GetCompileResult
    * @summary Get compile result for a coding interview
-   * @request POST:/codingInterview.getCompileResult
+   * @request GET:/codingInterview.getCompileResult/{token}
    * @response `200` `GetCompileResultData` Successful response with the compile result
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
   export namespace GetCompileResult {
-    export type RequestParams = {}
+    export type RequestParams = {
+      /** Token to get the compile result */
+      token: string
+    }
     export type RequestQuery = {}
-    export type RequestBody = CodingInterviewGetCompileResultQuery
+    export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetCompileResultData
   }
@@ -781,7 +870,83 @@ export namespace Object {
   }
 }
 
+export namespace Portal {
+  /**
+   * No description
+   * @tags portal
+   * @name CreatePortal
+   * @summary Create new portal
+   * @request POST:/portal.create
+   * @response `200` `CreatePortalData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CreatePortal {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = CreatePortalBody
+    export type RequestHeaders = {}
+    export type ResponseBody = CreatePortalData
+  }
+
+  /**
+   * No description
+   * @tags portal
+   * @name DeletePortalById
+   * @summary Delete portal By Id
+   * @request POST:/portal.delete
+   * @response `200` `DeletePortalByIdData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace DeletePortalById {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = DeletePortalBody
+    export type RequestHeaders = {}
+    export type ResponseBody = DeletePortalByIdData
+  }
+
+  /**
+   * No description
+   * @tags portal
+   * @name GetPortalById
+   * @summary Get portal
+   * @request GET:/portal.get
+   * @response `200` `GetPortalByIdData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetPortalById {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      id: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetPortalByIdData
+  }
+}
+
 export namespace User {
+  /**
+   * No description
+   * @tags user
+   * @name CreateAdmin
+   * @summary Create new admin
+   * @request POST:/user.createAdmin
+   * @response `200` `CreateAdminData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CreateAdmin {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = AdminCreateBody
+    export type RequestHeaders = {}
+    export type ResponseBody = CreateAdminData
+  }
+
   /**
    * No description
    * @tags user
@@ -985,24 +1150,22 @@ export namespace VideoQuestion {
   /**
    * No description
    * @tags videoQuestion
-   * @name GetVideoQuestionByWorkspaceId
-   * @summary Get video question by workspace id
-   * @request GET:/videoQuestion.getVideoQuestionWorkspaceIdId/{id}
-   * @response `200` `GetVideoQuestionByWorkspaceIdData` OK
+   * @name GetVideoQuestionByPortalId
+   * @summary Get video question by portal id
+   * @request GET:/videoQuestion.getVideoQuestionByPortalId
+   * @response `200` `GetVideoQuestionByPortalIdData` OK
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `404` `HandlersErrResponse` Not Found
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
-  export namespace GetVideoQuestionByWorkspaceId {
-    export type RequestParams = {
-      id: string
-    }
+  export namespace GetVideoQuestionByPortalId {
+    export type RequestParams = {}
     export type RequestQuery = {
       id: number
     }
     export type RequestBody = never
     export type RequestHeaders = {}
-    export type ResponseBody = GetVideoQuestionByWorkspaceIdData
+    export type ResponseBody = GetVideoQuestionByPortalIdData
   }
 
   /**
@@ -1065,19 +1228,19 @@ export namespace Workspace {
   /**
    * No description
    * @tags workspace
-   * @name GetAllWorkspace
+   * @name GetPortalWorkspace
    * @summary Get List of workspace
-   * @request GET:/workspace.getAll
-   * @response `200` `GetAllWorkspaceData` OK
+   * @request GET:/workspace.getByPortal
+   * @response `200` `GetPortalWorkspaceData` OK
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
-  export namespace GetAllWorkspace {
+  export namespace GetPortalWorkspace {
     export type RequestParams = {}
     export type RequestQuery = {}
     export type RequestBody = never
     export type RequestHeaders = {}
-    export type ResponseBody = GetAllWorkspaceData
+    export type ResponseBody = GetPortalWorkspaceData
   }
 
   /**
@@ -1325,21 +1488,41 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
 
     /**
+     * @description Generate compile token for a coding interview
+     *
+     * @tags codingInterview
+     * @name GenerateCompileToken
+     * @summary Generate compile token for a coding interview
+     * @request POST:/codingInterview.generateCompileToken
+     * @response `200` `GenerateCompileTokenData` Successful response with the compile token
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    generateCompileToken: (body: CodingInterviewGenerateCompileTokenQuery, params: RequestParams = {}) =>
+      this.request<GenerateCompileTokenData, GenerateCompileTokenError>({
+        path: `/codingInterview.generateCompileToken`,
+        method: "POST",
+        body: body,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Get compile result for a coding interview
      *
      * @tags codingInterview
      * @name GetCompileResult
      * @summary Get compile result for a coding interview
-     * @request POST:/codingInterview.getCompileResult
+     * @request GET:/codingInterview.getCompileResult/{token}
      * @response `200` `GetCompileResultData` Successful response with the compile result
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    getCompileResult: (body: CodingInterviewGetCompileResultQuery, params: RequestParams = {}) =>
+    getCompileResult: (token: string, params: RequestParams = {}) =>
       this.request<GetCompileResultData, GetCompileResultError>({
-        path: `/codingInterview.getCompileResult`,
-        method: "POST",
-        body: body,
+        path: `/codingInterview.getCompileResult/${token}`,
+        method: "GET",
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -1473,7 +1656,92 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         ...params,
       }),
   }
+  portal = {
+    /**
+     * No description
+     *
+     * @tags portal
+     * @name CreatePortal
+     * @summary Create new portal
+     * @request POST:/portal.create
+     * @response `200` `CreatePortalData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    createPortal: (payload: CreatePortalBody, params: RequestParams = {}) =>
+      this.request<CreatePortalData, CreatePortalError>({
+        path: `/portal.create`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags portal
+     * @name DeletePortalById
+     * @summary Delete portal By Id
+     * @request POST:/portal.delete
+     * @response `200` `DeletePortalByIdData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    deletePortalById: (payload: DeletePortalBody, params: RequestParams = {}) =>
+      this.request<DeletePortalByIdData, DeletePortalByIdError>({
+        path: `/portal.delete`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags portal
+     * @name GetPortalById
+     * @summary Get portal
+     * @request GET:/portal.get
+     * @response `200` `GetPortalByIdData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getPortalById: (query: GetPortalByIdParams, params: RequestParams = {}) =>
+      this.request<GetPortalByIdData, GetPortalByIdError>({
+        path: `/portal.get`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  }
   user = {
+    /**
+     * No description
+     *
+     * @tags user
+     * @name CreateAdmin
+     * @summary Create new admin
+     * @request POST:/user.createAdmin
+     * @response `200` `CreateAdminData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    createAdmin: (payload: AdminCreateBody, params: RequestParams = {}) =>
+      this.request<CreateAdminData, CreateAdminError>({
+        path: `/user.createAdmin`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
     /**
      * No description
      *
@@ -1693,20 +1961,17 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * No description
      *
      * @tags videoQuestion
-     * @name GetVideoQuestionByWorkspaceId
-     * @summary Get video question by workspace id
-     * @request GET:/videoQuestion.getVideoQuestionWorkspaceIdId/{id}
-     * @response `200` `GetVideoQuestionByWorkspaceIdData` OK
+     * @name GetVideoQuestionByPortalId
+     * @summary Get video question by portal id
+     * @request GET:/videoQuestion.getVideoQuestionByPortalId
+     * @response `200` `GetVideoQuestionByPortalIdData` OK
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `404` `HandlersErrResponse` Not Found
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    getVideoQuestionByWorkspaceId: (
-      { id, ...query }: GetVideoQuestionByWorkspaceIdParams,
-      params: RequestParams = {},
-    ) =>
-      this.request<GetVideoQuestionByWorkspaceIdData, GetVideoQuestionByWorkspaceIdError>({
-        path: `/videoQuestion.getVideoQuestionWorkspaceIdId/${id}`,
+    getVideoQuestionByPortalId: (query: GetVideoQuestionByPortalIdParams, params: RequestParams = {}) =>
+      this.request<GetVideoQuestionByPortalIdData, GetVideoQuestionByPortalIdError>({
+        path: `/videoQuestion.getVideoQuestionByPortalId`,
         method: "GET",
         query: query,
         type: ContentType.Json,
@@ -1783,16 +2048,16 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * No description
      *
      * @tags workspace
-     * @name GetAllWorkspace
+     * @name GetPortalWorkspace
      * @summary Get List of workspace
-     * @request GET:/workspace.getAll
-     * @response `200` `GetAllWorkspaceData` OK
+     * @request GET:/workspace.getByPortal
+     * @response `200` `GetPortalWorkspaceData` OK
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    getAllWorkspace: (params: RequestParams = {}) =>
-      this.request<GetAllWorkspaceData, GetAllWorkspaceError>({
-        path: `/workspace.getAll`,
+    getPortalWorkspace: (params: RequestParams = {}) =>
+      this.request<GetPortalWorkspaceData, GetPortalWorkspaceError>({
+        path: `/workspace.getByPortal`,
         method: "GET",
         type: ContentType.Json,
         format: "json",
