@@ -15,7 +15,7 @@ export function SideBarRevamp() {
   return (
     <aside
       className={cn(
-        "h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300 z-20",
+        "h-full relative transition-[width] ease-in-out duration-300 z-20",
         sidebar?.isOpen === false ? "w-[90px]" : "w-80",
       )}
     >
