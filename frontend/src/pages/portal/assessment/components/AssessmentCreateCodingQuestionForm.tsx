@@ -282,6 +282,12 @@ function CreateCodingQuestion() {
                                       `testCases.${index}.isHidden`,
                                       checked as boolean,
                                     )
+                                    if (checked) {
+                                      form.setValue(
+                                        `testCases.${index}.isExample`,
+                                        false,
+                                      )
+                                    }
                                   }}
                                 />
                                 <label
@@ -294,9 +300,19 @@ function CreateCodingQuestion() {
                               <div className="flex items-center space-x-2">
                                 <Checkbox
                                   id={`example-${index}`}
-                                  {...form.register(
-                                    `testCases.${index}.isExample`,
-                                  )}
+                                  checked={testCase.isExample}
+                                  onCheckedChange={(checked) => {
+                                    form.setValue(
+                                      `testCases.${index}.isExample`,
+                                      checked as boolean,
+                                    )
+                                    if (checked) {
+                                      form.setValue(
+                                        `testCases.${index}.isHidden`,
+                                        false,
+                                      )
+                                    }
+                                  }}
                                 />
                                 <label
                                   htmlFor={`example-${index}`}

@@ -35,11 +35,26 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const getDefaultCode = (lang: string) => {
     switch (lang) {
       case "javascript":
-        return '// JavaScript code here\nconsole.log("Hello, World!");'
+        return `function solution(input) {
+  // Your code here
+  return "Hello, " + input;
+}
+`
       case "python":
-        return '# Python3 code here\nprint("Hello, World!")'
+        return `def solution(input):
+    # Your code here
+    return f"Hello, {input}"
+`
       case "c":
-        return '// C code here\n#include <stdio.h>\n\nint main() {\n    printf("Hello, World!");\n    return 0;\n}'
+        return `#include <stdio.h>
+#include <string.h>
+
+char* solution(const char* input) {
+    static char result[100];
+    sprintf(result, "Hello, %s", input);
+    return result;
+}
+`
       default:
         return "// Start coding here"
     }

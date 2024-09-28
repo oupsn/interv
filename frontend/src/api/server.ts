@@ -25,10 +25,6 @@ export interface CodingInterviewGetCompileResultResponse {
   compileResult?: DomainsCompilationResultResponse
 }
 
-export interface CodingInterviewGetQuestionsResponse {
-  questions?: DomainsCodingQuestionResponse[]
-}
-
 export type CreateQuestionData = HandlersResponseDomainsCodingQuestion
 
 export type CreateQuestionError = HandlersErrResponse
@@ -125,7 +121,7 @@ export interface DomainsCodingQuestion {
 export interface DomainsCodingQuestionResponse {
   description?: string
   id?: number
-  test_case?: DomainsCodingQuestionTestCase[]
+  test_case?: DomainsCodingQuestionTestCaseResponse[]
   title?: string
 }
 
@@ -139,6 +135,11 @@ export interface DomainsCodingQuestionTestCase {
   isHidden?: boolean
   output?: string
   updatedAt?: string
+}
+
+export interface DomainsCodingQuestionTestCaseResponse {
+  input?: string
+  output?: string
 }
 
 export interface DomainsCompilationRequest {
@@ -221,7 +222,7 @@ export type GetObjectData = HandlersResponseString
 
 export type GetObjectError = HandlersErrResponse
 
-export type GetQuestionsData = HandlersResponseCodingInterviewGetQuestionsResponse
+export type GetQuestionsData = HandlersResponseHandlersCodingInterviewGetQuestionsResponse
 
 export type GetQuestionsError = HandlersErrResponse
 
@@ -342,13 +343,6 @@ export interface HandlersResponseCodingInterviewGetCompileResultResponse {
   timestamp?: string
 }
 
-export interface HandlersResponseCodingInterviewGetQuestionsResponse {
-  code?: number
-  data?: CodingInterviewGetQuestionsResponse
-  message?: string
-  timestamp?: string
-}
-
 export interface HandlersResponseCreateVideoQuestionResponse {
   code?: number
   data?: CreateVideoQuestionResponse
@@ -380,6 +374,13 @@ export interface HandlersResponseGetLobbyContextResponse {
 export interface HandlersResponseGetVideoQuestionByIdResponse {
   code?: number
   data?: GetVideoQuestionByIdResponse
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseHandlersCodingInterviewGetQuestionsResponse {
+  code?: number
+  data?: DomainsCodingQuestionResponse[]
   message?: string
   timestamp?: string
 }

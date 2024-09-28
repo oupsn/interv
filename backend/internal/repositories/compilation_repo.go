@@ -2,10 +2,11 @@ package repositories
 
 import (
 	"bytes"
-	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 )
 
 type codeCompilationRepository struct {
@@ -51,7 +52,7 @@ func (r *codeCompilationRepository) GetCompileResult(token string) (domains.Comp
 	defer resp.Body.Close()
 	var result domains.CompilationResultResponse
 	err = json.NewDecoder(resp.Body).Decode(&result)
-
+	fmt.Println(result)
 	if err != nil {
 		return domains.CompilationResultResponse{}, err
 	}

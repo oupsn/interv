@@ -9,6 +9,7 @@ import { server } from "@/contexts/swr"
 interface CodingInterviewPanelProps {
   timeRemain: number
   questions: CodingInterviewQuestionProps[]
+  currentQuestion: CodingInterviewQuestionProps
   currentQuestionIndex: number
   onNextQuestion: () => void
   onPreviousQuestion: () => void
@@ -26,6 +27,7 @@ interface EditorState {
 const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   timeRemain,
   questions,
+  currentQuestion,
   currentQuestionIndex,
   onNextQuestion,
   onPreviousQuestion,
@@ -88,8 +90,6 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
   }
 
-  const currentQuestion = questions[currentQuestionIndex]
-
   const handleEditorChange = (newContent: string) => {
     setEditorStates((prevStates) => {
       const newStates = [...prevStates]
@@ -138,39 +138,57 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
     })
 
     const pollCompileResult = async () => {
-      const compileResponse =
-        await server.codingInterview.getCompileResult(token)
-      const compileStatus =
-        compileResponse.data?.compileResult?.status?.description
+      const startTime = Date.now()
+      const maxPollingTime = 30000 // 30 seconds in milliseconds
 
-      if (compileStatus === "Accepted") {
-        const compileResult = compileResponse.data?.compileResult
-        if (compileResult) {
-          console.log(compileResult)
-          const formattedResult =
-            compileResult.stdout +
-            "\n" +
-            compileResult.stderr +
-            "\n" +
-            "Time: " +
-            compileResult.time +
-            "ms" +
-            "\n" +
-            "Memory: " +
-            compileResult.memory +
-            "KB"
+      const poll = async () => {
+        if (Date.now() - startTime > maxPollingTime) {
           setEditorStates((prevStates) => {
             const newStates = [...prevStates]
             newStates[currentQuestionIndex] = {
               ...newStates[currentQuestionIndex],
-              output: formattedResult,
+              output: "Compilation timed out after 30 seconds.",
             }
             return newStates
           })
+          return
         }
-      } else {
-        setTimeout(pollCompileResult, 1000)
+
+        const compileResponse =
+          await server.codingInterview.getCompileResult(token)
+        const compileStatus =
+          compileResponse.data?.compileResult?.status?.description
+
+        if (compileStatus === "Accepted") {
+          const compileResult = compileResponse.data?.compileResult
+          if (compileResult) {
+            const formattedResult =
+              compileResult.stdout +
+              "\n" +
+              compileResult.stderr +
+              "\n" +
+              "Time: " +
+              compileResult.time +
+              "ms" +
+              "\n" +
+              "Memory: " +
+              compileResult.memory +
+              "KB"
+            setEditorStates((prevStates) => {
+              const newStates = [...prevStates]
+              newStates[currentQuestionIndex] = {
+                ...newStates[currentQuestionIndex],
+                output: formattedResult,
+              }
+              return newStates
+            })
+          }
+        } else {
+          setTimeout(poll, 1000)
+        }
       }
+
+      poll()
     }
 
     pollCompileResult()
@@ -205,10 +223,9 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
         >
           <CodingInterviewQuestion
             id={currentQuestion.id}
+            index={currentQuestionIndex}
             title={currentQuestion.title}
             description={currentQuestion.description}
-            exampleInputList={currentQuestion.exampleInputList}
-            exampleOutputList={currentQuestion.exampleOutputList}
             testcaseList={currentQuestion.testcaseList}
           />
         </div>

@@ -264,7 +264,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Successful response with the coding interview questions",
                         "schema": {
-                            "$ref": "#/definitions/handlers.Response-CodingInterviewGetQuestionsResponse"
+                            "$ref": "#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionsResponse"
                         }
                     },
                     "400": {
@@ -1280,17 +1280,6 @@ const docTemplate = `{
                 }
             }
         },
-        "CodingInterviewGetQuestionsResponse": {
-            "type": "object",
-            "properties": {
-                "questions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domains.CodingQuestionResponse"
-                    }
-                }
-            }
-        },
         "CreateVideoQuestionBody": {
             "type": "object",
             "required": [
@@ -1891,7 +1880,7 @@ const docTemplate = `{
                 "test_case": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/domains.CodingQuestionTestCase"
+                        "$ref": "#/definitions/domains.CodingQuestionTestCaseResponse"
                     }
                 },
                 "title": {
@@ -1927,6 +1916,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "domains.CodingQuestionTestCaseResponse": {
+            "type": "object",
+            "properties": {
+                "input": {
+                    "type": "string"
+                },
+                "output": {
                     "type": "string"
                 }
             }
@@ -2113,23 +2113,6 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/CodingInterviewGetCompileResultResponse"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.Response-CodingInterviewGetQuestionsResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/CodingInterviewGetQuestionsResponse"
                 },
                 "message": {
                     "type": "string"
@@ -2377,6 +2360,26 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/domains.CodingQuestion"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-handlers_CodingInterviewGetQuestionsResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionResponse"
+                    }
                 },
                 "message": {
                     "type": "string"

@@ -4,24 +4,64 @@ import CodingInterviewPanel from "./components/CodingInterviewPanel"
 import { useEffect, useState } from "react"
 import SideBarItem from "@/components/layout/SideBarItem"
 import { useGetCodingInterviewQuestion } from "@/hooks/UseGetCodingInterviewQuestion"
-
+import {
+  DomainsCodingQuestionResponse,
+  DomainsCodingQuestionTestCase,
+} from "@/api/server"
+interface Question {
+  index: number
+  id: number
+  title: string
+  description: string
+  testcaseList: DomainsCodingQuestionTestCase[]
+}
 const CodingInterviewPage = () => {
   const [isStart, setIsStart] = useState(mockData.isStart)
   const [timeRemain, setTimeRemain] = useState(mockData.timeRemain)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const { data: questionList } = useGetCodingInterviewQuestion()
-  console.log(questionList)
+  const [questionList, setQuestionList] = useState<Question[]>([])
+  const { data: fetchedQuestions, mutate } = useGetCodingInterviewQuestion()
 
+  /*   
+  transform question
+   */
   useEffect(() => {
-    let timer: string | number | NodeJS.Timeout | undefined
-    if (isStart && timeRemain > 0) {
+    if (fetchedQuestions) {
+      const newQuestions: Question[] =
+        fetchedQuestions?.data?.map(
+          (question: DomainsCodingQuestionResponse, index: number) => ({
+            index: index,
+            id: question.id ?? 0,
+            title: question.title ?? "",
+            description: question.description ?? "",
+            testcaseList: question.test_case ?? [],
+          }),
+        ) ?? []
+      setQuestionList(newQuestions)
+    }
+  }, [fetchedQuestions])
+
+  /*   
+  start coding interview
+   */
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined
+
+    if (isStart) {
       timer = setInterval(() => {
-        setTimeRemain((prevTime: number) => prevTime - 1)
+        setTimeRemain((prevTime) => {
+          if (prevTime > 0) {
+            return prevTime - 1
+          }
+          clearInterval(timer)
+          return 0
+        })
       }, 1000)
     }
 
     return () => clearInterval(timer)
-  }, [isStart, timeRemain])
+  }, [isStart])
+
   const handleNextQuestion = () => {
     if (currentQuestionIndex < mockData.data.questionList.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
@@ -46,7 +86,8 @@ const CodingInterviewPage = () => {
         {isStart ? (
           <CodingInterviewPanel
             timeRemain={timeRemain}
-            questions={mockData.data.questionList}
+            questions={questionList}
+            currentQuestion={questionList[currentQuestionIndex]}
             currentQuestionIndex={currentQuestionIndex}
             onNextQuestion={handleNextQuestion}
             onPreviousQuestion={handlePreviousQuestion}
@@ -62,6 +103,7 @@ const CodingInterviewPage = () => {
             description={mockData.instuction}
             clickStart={() => {
               setIsStart(true)
+              mutate()
             }}
           />
         )}
@@ -83,8 +125,6 @@ const mockData = {
         title: "Two Sum",
         description:
           "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-        exampleInputList: ["nums = [2,7,11,15]", "target = 9"],
-        exampleOutputList: ["[0,1]"],
         testcaseList: [
           {
             input: "[2,7,11,15], 9",
@@ -101,8 +141,6 @@ const mockData = {
         title: "Add Two Numbers",
         description:
           "You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.",
-        exampleInputList: ["l1 = [2,4,3]", "l2 = [5,6,4]"],
-        exampleOutputList: ["[7,0,8]"],
         testcaseList: [
           {
             input: "[2,4,3], [5,6,4]",
@@ -119,8 +157,6 @@ const mockData = {
         title: "Longest Substring Without Repeating Characters",
         description:
           "Given a string s, find the length of the longest substring without repeating characters.",
-        exampleInputList: ["s = 'abcabcbb'"],
-        exampleOutputList: ["3"],
         testcaseList: [
           {
             input: "'abcabcbb'",

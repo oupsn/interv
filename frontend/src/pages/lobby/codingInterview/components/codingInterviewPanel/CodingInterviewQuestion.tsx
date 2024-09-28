@@ -1,6 +1,6 @@
 import React from "react"
-/* import DOMPurify from "dompurify"
- */
+import parse from "html-react-parser"
+
 import {
   Card,
   CardHeader,
@@ -14,61 +14,34 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { DomainsCodingQuestionTestCase } from "@/api/server"
+import DOMPurify from "dompurify"
 
 export interface CodingInterviewQuestionProps {
   id: number
+  index: number
   title: string
   description: string
-  exampleInputList: string[]
-  exampleOutputList: string[]
-  testcaseList: { input: string; output: string }[]
+  testcaseList: DomainsCodingQuestionTestCase[]
 }
 
 const CodingInterviewQuestion: React.FC<CodingInterviewQuestionProps> = ({
-  id,
+  index,
   title,
   description,
-  exampleInputList,
-  exampleOutputList,
   testcaseList,
 }) => {
-  /*   const cleanDescription = DOMPurify.sanitize(description)
-   */
+  const cleanDescription = DOMPurify.sanitize(description)
   return (
-    <Card className="h-full">
+    <Card className="h-full overflow-y-auto">
       <CardHeader>
         <CardTitle>
-          Question {id}: {title}
+          Question {index + 1}: {title}
         </CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardDescription>{parse(cleanDescription)}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Accordion
-          type="multiple"
-          defaultValue={["input-examples", "output-examples", "test-cases"]}
-        >
-          <AccordionItem value="input-examples">
-            <AccordionTrigger>Input Examples</AccordionTrigger>
-            <AccordionContent>
-              <ul>
-                {exampleInputList.map((input, index) => (
-                  <li key={index}>{input}</li>
-                ))}
-              </ul>
-            </AccordionContent>
-          </AccordionItem>
-
-          <AccordionItem value="output-examples">
-            <AccordionTrigger>Expected Output</AccordionTrigger>
-            <AccordionContent>
-              <ul>
-                {exampleOutputList.map((output, index) => (
-                  <li key={index}>{output}</li>
-                ))}
-              </ul>
-            </AccordionContent>
-          </AccordionItem>
-
+        <Accordion type="multiple" defaultValue={["test-cases"]}>
           <AccordionItem value="test-cases">
             <AccordionTrigger>Test Cases</AccordionTrigger>
             <AccordionContent>

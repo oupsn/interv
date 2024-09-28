@@ -16,9 +16,8 @@ type CodingInterviewGetCompileResultResponse struct {
 	CompileResult domains.CompilationResultResponse `json:"compileResult"`
 } // @name CodingInterviewGetCompileResultResponse
 
-type CodingInterviewGetQuestionsResponse struct {
-	Questions []domains.CodingQuestionResponse `json:"questions"`
-} // @name CodingInterviewGetQuestionsResponse
+// @name CodingInterviewGetQuestionsResponse
+type CodingInterviewGetQuestionsResponse []domains.CodingQuestionResponse
 
 type CodingInterviewCreateQuestionQuery struct {
 	Body domains.CreateCodingQuestionRequest `json:"body"  validate:"required"`

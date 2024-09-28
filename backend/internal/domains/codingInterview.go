@@ -28,11 +28,16 @@ type CodingQuestionTestCase struct {
 	IsExample        bool   `gorm:"default:false"`
 }
 
+type CodingQuestionTestCaseResponse struct {
+	Input  string `json:"input"`
+	Output string `json:"output"`
+}
+
 type CodingQuestionResponse struct {
-	Id          uint                     `json:"id"`
-	Title       string                   `json:"title"`
-	Description string                   `json:"description"`
-	TestCase    []CodingQuestionTestCase `json:"test_case"`
+	Id          uint                             `json:"id"`
+	Title       string                           `json:"title"`
+	Description string                           `json:"description"`
+	TestCase    []CodingQuestionTestCaseResponse `json:"test_case"`
 }
 
 type CreateCodingQuestionRequest struct {

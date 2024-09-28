@@ -19,17 +19,24 @@ func NewCodingInterviewRepository(db gorm.DB) ICodingInterviewRepository {
 func (c *codingInterviewRepository) GetCodingQuestionList() ([]domains.CodingQuestionResponse, error) {
 	var codingQuestions []domains.CodingQuestion
 
-	if err := c.DB.Find(&codingQuestions).Error; err != nil {
+	if err := c.DB.Preload("TestCases", "is_example = ?", true).Find(&codingQuestions).Error; err != nil {
 		return nil, err
 	}
 
 	var codingQuestionResponses []domains.CodingQuestionResponse
 	for _, codingQuestion := range codingQuestions {
+		var testCaseResponses []domains.CodingQuestionTestCaseResponse
+		for _, testCase := range codingQuestion.TestCases {
+			testCaseResponses = append(testCaseResponses, domains.CodingQuestionTestCaseResponse{
+				Input:  testCase.Input,
+				Output: testCase.Output,
+			})
+		}
 		codingQuestionResponses = append(codingQuestionResponses, domains.CodingQuestionResponse{
 			Id:          codingQuestion.Id,
 			Title:       codingQuestion.Title,
 			Description: codingQuestion.Description,
-			TestCase:    codingQuestion.TestCases,
+			TestCase:    testCaseResponses,
 		})
 	}
 
