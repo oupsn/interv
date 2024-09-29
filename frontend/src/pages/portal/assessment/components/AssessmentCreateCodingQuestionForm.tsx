@@ -29,9 +29,16 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb.tsx"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select" // Import Select components
 
 function CreateCodingQuestion() {
   const formSchema = z.object({
@@ -49,6 +56,7 @@ function CreateCodingQuestion() {
         }),
       )
       .min(1),
+    difficulty: z.enum(["easy", "moderate", "hard"]),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -59,9 +67,10 @@ function CreateCodingQuestion() {
       inputDescription: "",
       outputDescription: "",
       testCases: [],
+      difficulty: "easy",
     },
   })
-
+  const navigate = useNavigate()
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const body: DomainsCreateCodingQuestionRequest = {
       title: values.title || "",
@@ -74,7 +83,7 @@ function CreateCodingQuestion() {
           input: testCase.input.replace(/\n/g, "\\n"),
           output: testCase.output.replace(/\n/g, "\\n"),
         })) || [],
-      tags: [],
+      difficulty: values.difficulty,
     }
 
     toast.promise(
@@ -87,7 +96,7 @@ function CreateCodingQuestion() {
         error: "Failed to create question",
       },
     )
-    // TODO: redirect to the question
+    navigate("/portal/assessment/coding")
   }
   const editorFormats = [
     "header",
@@ -135,26 +144,20 @@ function CreateCodingQuestion() {
 
         const uploadedTestCases = JSON.parse(content)
         if (Array.isArray(uploadedTestCases) && uploadedTestCases.length > 0) {
-          // Filter out any empty test cases
           const validTestCases = uploadedTestCases.filter(
             (testCase) =>
               testCase.input.trim() !== "" || testCase.output.trim() !== "",
           )
 
           if (validTestCases.length > 0) {
-            // Ensure all imported test cases are hidden by default
             const hiddenTestCases = validTestCases.map((testCase) => ({
               ...testCase,
               isHidden: true,
-              isExample: false, // Ensure isExample is set to false by default
+              isExample: false,
             }))
 
-            // Replace all current test cases with the valid uploaded ones
             form.setValue("testCases", hiddenTestCases)
-
-            // Trigger rerender
             form.trigger("testCases")
-
             toast.message(
               `${hiddenTestCases.length} test case(s) imported successfully.`,
             )
@@ -293,6 +296,34 @@ function CreateCodingQuestion() {
                       <p className="text-sm text-gray-500 mt-1">
                         Explain the format of the expected output.
                       </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="difficulty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-lg font-medium">
+                        Difficulty <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          {...field}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select difficulty" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="easy">Easy</SelectItem>
+                            <SelectItem value="moderate">Moderate</SelectItem>
+                            <SelectItem value="hard">Hard</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

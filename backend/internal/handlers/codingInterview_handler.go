@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"strconv"
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
@@ -80,7 +79,6 @@ func (co CodingInterviewHandler) GetQuestionsInPortal(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 	questions, err := co.codingInterviewService.GetCodingInterviewQuestionsInPortal(portalID)
-	fmt.Println("questions", questions)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
@@ -111,7 +109,7 @@ func (co CodingInterviewHandler) CreateQuestion(c *fiber.Ctx) error {
 			InputDescription:  req.Body.InputDescription,
 			OutputDescription: req.Body.OutputDescription,
 			TestCases:         req.Body.TestCases,
-			Tags:              req.Body.Tags,
+			Difficulty:        req.Body.Difficulty,
 		},
 	)
 	if err != nil {

@@ -177,7 +177,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           <div className="flex items-center space-x-2">
             {output
               .slice(testCasesList.length)
-              .every((item) => item.is_passed) ? ( // Check if all hidden test cases passed
+              .every((item) => item.is_passed) ? (
               <span className="text-green-600 font-semibold">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

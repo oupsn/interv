@@ -436,37 +436,39 @@ definitions:
     type: object
   domains.CodingQuestion:
     properties:
-      codingQuestionInPortal:
+      coding_question_in_portal:
         items:
           $ref: '#/definitions/domains.CodingQuestionInPortal'
         type: array
-      createdAt:
+      created_at:
         type: string
-      createdBy:
+      created_by:
+        type: string
+      createdAt:
         type: string
       deletedAt:
         $ref: '#/definitions/gorm.DeletedAt'
       description:
         type: string
+      difficulty:
+        type: string
       id:
         type: integer
-      inputDescription:
+      input_description:
         type: string
-      outputDescription:
+      output_description:
         type: string
-      tags:
-        items:
-          type: string
-        type: array
-      testCases:
+      test_cases:
         items:
           $ref: '#/definitions/domains.CodingQuestionTestCase'
         type: array
       title:
         type: string
-      updatedAt:
+      updated_at:
         type: string
-      updatedBy:
+      updated_by:
+        type: string
+      updatedAt:
         type: string
     type: object
   domains.CodingQuestionInPortal:
@@ -491,6 +493,8 @@ definitions:
   domains.CodingQuestionResponse:
     properties:
       description:
+        type: string
+      difficulty:
         type: string
       id:
         type: integer
@@ -583,10 +587,6 @@ definitions:
         type: string
       output_description:
         type: string
-      tags:
-        items:
-          type: string
-        type: array
       test_cases:
         items:
           $ref: '#/definitions/domains.CodingQuestionTestCase'

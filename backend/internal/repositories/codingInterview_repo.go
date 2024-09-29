@@ -49,7 +49,9 @@ func (c *codingInterviewRepository) GetCodingQuestionList() ([]domains.CodingQue
 
 func (c *codingInterviewRepository) GetCodingQuestionListInPortal(portalID int) ([]domains.CodingQuestion, error) {
 	var codingQuestions []domains.CodingQuestion
-	if err := c.DB.Preload("CodingQuestionInPortal.Portal", "id = ?", portalID).Find(&codingQuestions).Error; err != nil {
+	if err := c.DB.Preload("CodingQuestionInPortal.Portal", "id = ?", portalID).
+		Order("created_at DESC").
+		Find(&codingQuestions).Error; err != nil {
 		return nil, err
 	}
 	return codingQuestions, nil

@@ -3,7 +3,7 @@ import CodingInterviewInstruction from "./components/CodingInterviewInstruction"
 import CodingInterviewPanel from "./components/CodingInterviewPanel"
 import { useEffect, useState } from "react"
 import SideBarItem from "@/components/layout/SideBarItem"
-import { useGetCodingInterviewQuestion } from "@/hooks/UseGetCodingInterviewQuestion"
+import { useGetCodingInterviewQuestion } from "@/hooks/useGetCodingInterviewQuestion"
 import {
   DomainsCodingQuestionResponse,
   DomainsCodingQuestionTestCase,

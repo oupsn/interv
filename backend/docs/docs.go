@@ -2118,7 +2118,7 @@ const docTemplate = `{
         "domains.CodingQuestion": {
             "type": "object",
             "properties": {
-                "codingQuestionInPortal": {
+                "coding_question_in_portal": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domains.CodingQuestionInPortal"
@@ -2127,7 +2127,10 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "createdBy": {
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
                     "type": "string"
                 },
                 "deletedAt": {
@@ -2136,22 +2139,19 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "difficulty": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
-                "inputDescription": {
+                "input_description": {
                     "type": "string"
                 },
-                "outputDescription": {
+                "output_description": {
                     "type": "string"
                 },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "testCases": {
+                "test_cases": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domains.CodingQuestionTestCase"
@@ -2163,7 +2163,10 @@ const docTemplate = `{
                 "updatedAt": {
                     "type": "string"
                 },
-                "updatedBy": {
+                "updated_at": {
+                    "type": "string"
+                },
+                "updated_by": {
                     "type": "string"
                 }
             }
@@ -2201,6 +2204,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "description": {
+                    "type": "string"
+                },
+                "difficulty": {
                     "type": "string"
                 },
                 "id": {
@@ -2342,12 +2348,6 @@ const docTemplate = `{
                 },
                 "output_description": {
                     "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 },
                 "test_cases": {
                     "type": "array",

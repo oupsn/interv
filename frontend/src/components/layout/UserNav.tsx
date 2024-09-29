@@ -24,10 +24,11 @@ import useCurrentUser from "@/hooks/UseCurrentUser.ts"
 export function UserNav() {
   const navigate = useNavigate()
   const { currentUser } = useCurrentUser()
-  const shortName = currentUser.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
+  const shortName =
+    currentUser?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("") || ""
 
   const handleSignOut = () => {
     toast.promise(server.authentication.logout, {

@@ -8,18 +8,18 @@ import (
 
 type CodingQuestion struct {
 	gorm.Model
-	Id                     uint                     `gorm:"primaryKey;autoIncrement"`
-	Title                  string                   `gorm:"type:text"`
-	Description            string                   `gorm:"type:text"`
-	InputDescription       string                   `gorm:"type:text"`
-	OutputDescription      string                   `gorm:"type:text"`
-	CreatedAt              time.Time                `gorm:"autoCreateTime"`
-	CreatedBy              string                   `gorm:"type:text"`
-	UpdatedAt              time.Time                `gorm:"autoUpdateTime"`
-	UpdatedBy              string                   `gorm:"type:text"`
-	TestCases              []CodingQuestionTestCase `gorm:"foreignKey:CodingQuestionID;references:Id"`
-	Tags                   []string                 `gorm:"type:text"`
-	CodingQuestionInPortal []CodingQuestionInPortal `gorm:"foreignKey:CodingQuestionID;references:Id"`
+	Id                     uint                     `gorm:"primaryKey;autoIncrement" json:"id"`
+	Title                  string                   `gorm:"type:text" json:"title"`
+	Description            string                   `gorm:"type:text" json:"description"`
+	InputDescription       string                   `gorm:"type:text" json:"input_description"`
+	OutputDescription      string                   `gorm:"type:text" json:"output_description"`
+	CreatedAt              time.Time                `gorm:"autoCreateTime" json:"created_at"`
+	CreatedBy              string                   `gorm:"type:text" json:"created_by"`
+	UpdatedAt              time.Time                `gorm:"autoUpdateTime" json:"updated_at"`
+	UpdatedBy              string                   `gorm:"type:text" json:"updated_by"`
+	TestCases              []CodingQuestionTestCase `gorm:"foreignKey:CodingQuestionID;references:Id" json:"test_cases"`
+	Difficulty             string                   `gorm:"type:text" json:"difficulty"`
+	CodingQuestionInPortal []CodingQuestionInPortal `gorm:"foreignKey:CodingQuestionID;references:Id" json:"coding_question_in_portal"`
 }
 
 type CodingQuestionInPortal struct {
@@ -59,6 +59,7 @@ type CodingQuestionResponse struct {
 	InputDescription  string                           `json:"input_description"`
 	OutputDescription string                           `json:"output_description"`
 	TestCase          []CodingQuestionTestCaseResponse `json:"test_case"`
+	Difficulty        string                           `json:"difficulty"`
 }
 
 type CreateCodingQuestionRequest struct {
@@ -67,7 +68,6 @@ type CreateCodingQuestionRequest struct {
 	InputDescription  string                   `json:"input_description"`
 	OutputDescription string                   `json:"output_description"`
 	TestCases         []CodingQuestionTestCase `json:"test_cases"`
-	Tags              []string                 `json:"tags"`
 	Difficulty        string                   `json:"difficulty"`
 }
 

@@ -2109,7 +2109,7 @@
         "domains.CodingQuestion": {
             "type": "object",
             "properties": {
-                "codingQuestionInPortal": {
+                "coding_question_in_portal": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domains.CodingQuestionInPortal"
@@ -2118,7 +2118,10 @@
                 "createdAt": {
                     "type": "string"
                 },
-                "createdBy": {
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
                     "type": "string"
                 },
                 "deletedAt": {
@@ -2127,22 +2130,19 @@
                 "description": {
                     "type": "string"
                 },
+                "difficulty": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
-                "inputDescription": {
+                "input_description": {
                     "type": "string"
                 },
-                "outputDescription": {
+                "output_description": {
                     "type": "string"
                 },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "testCases": {
+                "test_cases": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domains.CodingQuestionTestCase"
@@ -2154,7 +2154,10 @@
                 "updatedAt": {
                     "type": "string"
                 },
-                "updatedBy": {
+                "updated_at": {
+                    "type": "string"
+                },
+                "updated_by": {
                     "type": "string"
                 }
             }
@@ -2192,6 +2195,9 @@
             "type": "object",
             "properties": {
                 "description": {
+                    "type": "string"
+                },
+                "difficulty": {
                     "type": "string"
                 },
                 "id": {
@@ -2333,12 +2339,6 @@
                 },
                 "output_description": {
                     "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 },
                 "test_cases": {
                     "type": "array",

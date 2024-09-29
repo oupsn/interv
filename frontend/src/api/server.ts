@@ -135,19 +135,21 @@ export type DeleteWorkspaceByIdData = HandlersResponseString
 export type DeleteWorkspaceByIdError = HandlersErrResponse
 
 export interface DomainsCodingQuestion {
-  codingQuestionInPortal?: DomainsCodingQuestionInPortal[]
+  coding_question_in_portal?: DomainsCodingQuestionInPortal[]
   createdAt?: string
-  createdBy?: string
+  created_at?: string
+  created_by?: string
   deletedAt?: GormDeletedAt
   description?: string
+  difficulty?: string
   id?: number
-  inputDescription?: string
-  outputDescription?: string
-  tags?: string[]
-  testCases?: DomainsCodingQuestionTestCase[]
+  input_description?: string
+  output_description?: string
+  test_cases?: DomainsCodingQuestionTestCase[]
   title?: string
   updatedAt?: string
-  updatedBy?: string
+  updated_at?: string
+  updated_by?: string
 }
 
 export interface DomainsCodingQuestionInPortal {
@@ -163,6 +165,7 @@ export interface DomainsCodingQuestionInPortal {
 
 export interface DomainsCodingQuestionResponse {
   description?: string
+  difficulty?: string
   id?: number
   input_description?: string
   output_description?: string
@@ -217,7 +220,6 @@ export interface DomainsCreateCodingQuestionRequest {
   difficulty?: string
   input_description?: string
   output_description?: string
-  tags?: string[]
   test_cases?: DomainsCodingQuestionTestCase[]
   title?: string
 }
