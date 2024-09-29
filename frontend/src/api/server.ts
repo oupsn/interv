@@ -90,6 +90,7 @@ export type CreateWorkspaceError = HandlersErrResponse
 export interface CurrentUserResponse {
   created_at: string
   id: number
+  name: string
   portalId: number
   role: string
   updated_at: string

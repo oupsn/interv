@@ -77,13 +77,13 @@ const AssessmentCreateVideoQuestionForm = () => {
       </Breadcrumb>
       <ContentPanel>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Question title</FormLabel>
+                  <FormLabel className="text-lg">Question Title</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -96,7 +96,9 @@ const AssessmentCreateVideoQuestionForm = () => {
               name="timeToPrepare"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Time to prepare (seconds)</FormLabel>
+                  <FormLabel className="text-lg">
+                    Time To Prepare (seconds)
+                  </FormLabel>
                   <FormControl>
                     <Input type={"number"} {...field} />
                   </FormControl>
@@ -109,7 +111,9 @@ const AssessmentCreateVideoQuestionForm = () => {
               name="timeToAnswer"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Time to answer (seconds)</FormLabel>
+                  <FormLabel className="text-lg">
+                    Time To Answer (seconds)
+                  </FormLabel>
                   <FormControl>
                     <Input type={"number"} {...field} />
                   </FormControl>
@@ -122,7 +126,7 @@ const AssessmentCreateVideoQuestionForm = () => {
               name="retryAmount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Max retry</FormLabel>
+                  <FormLabel className="text-lg">Max Retry</FormLabel>
                   <FormControl>
                     <Input type={"number"} {...field} />
                   </FormControl>

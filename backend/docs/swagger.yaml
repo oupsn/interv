@@ -107,6 +107,8 @@ definitions:
         type: string
       id:
         type: integer
+      name:
+        type: string
       portalId:
         type: integer
       role:
@@ -118,6 +120,7 @@ definitions:
     required:
     - created_at
     - id
+    - name
     - portalId
     - role
     - updated_at

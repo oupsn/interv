@@ -9,6 +9,7 @@ type LoginBody struct {
 
 type CurrentUserResponse struct {
 	ID        uint      `json:"id"  validate:"required"`
+	Name      string    `json:"name" validate:"required"`
 	Username  string    `json:"username" validate:"required"`
 	Role      string    `json:"role" validate:"required"`
 	PortalId  uint      `json:"portalId" validate:"required"`

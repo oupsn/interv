@@ -1,4 +1,4 @@
-import { Users, Settings, Bookmark, SquarePen, LucideIcon } from "lucide-react"
+import { SquarePen, LucideIcon, Layers, Code, Video } from "lucide-react"
 
 type Submenu = {
   href: string
@@ -28,14 +28,14 @@ export function getMenuList(pathname: string): Group[] {
           href: "/portal/workspace",
           label: "Workspaces",
           active: pathname.includes("/portal/workspace"),
-          icon: SquarePen,
+          icon: Layers,
           submenus: [],
         },
         {
           href: "/portal/workspace/create",
           label: "Create",
           active: pathname.includes("/portal/workspace/create"),
-          icon: Bookmark,
+          icon: SquarePen,
           submenus: [],
         },
       ],
@@ -47,7 +47,7 @@ export function getMenuList(pathname: string): Group[] {
           href: "",
           label: "Video",
           active: pathname.includes("/portal/assessment/video"),
-          icon: Users,
+          icon: Video,
           submenus: [
             {
               href: "/portal/assessment/video",
@@ -65,7 +65,7 @@ export function getMenuList(pathname: string): Group[] {
           href: "",
           label: "Coding",
           active: pathname.includes("/coding"),
-          icon: Settings,
+          icon: Code,
           submenus: [
             {
               href: "/portal/assessment/coding",
