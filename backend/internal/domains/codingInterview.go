@@ -8,17 +8,34 @@ import (
 
 type CodingQuestion struct {
 	gorm.Model
-	Id                uint                     `gorm:"primaryKey;autoIncrement"`
-	Title             string                   `gorm:"type:text"`
-	Description       string                   `gorm:"type:text"`
-	InputDescription  string                   `gorm:"type:text"`
-	OutputDescription string                   `gorm:"type:text"`
-	CreatedAt         time.Time                `gorm:"autoCreateTime"`
-	CreatedBy         string                   `gorm:"type:text"`
-	UpdatedAt         time.Time                `gorm:"autoUpdateTime"`
-	UpdatedBy         string                   `gorm:"type:text"`
-	TestCases         []CodingQuestionTestCase `gorm:"foreignKey:CodingQuestionID;references:Id"`
-	Tags              []string                 `gorm:"type:text"`
+	Id                     uint                     `gorm:"primaryKey;autoIncrement"`
+	Title                  string                   `gorm:"type:text"`
+	Description            string                   `gorm:"type:text"`
+	InputDescription       string                   `gorm:"type:text"`
+	OutputDescription      string                   `gorm:"type:text"`
+	CreatedAt              time.Time                `gorm:"autoCreateTime"`
+	CreatedBy              string                   `gorm:"type:text"`
+	UpdatedAt              time.Time                `gorm:"autoUpdateTime"`
+	UpdatedBy              string                   `gorm:"type:text"`
+	TestCases              []CodingQuestionTestCase `gorm:"foreignKey:CodingQuestionID;references:Id"`
+	Tags                   []string                 `gorm:"type:text"`
+	CodingQuestionInPortal []CodingQuestionInPortal `gorm:"foreignKey:CodingQuestionID;references:Id"`
+}
+
+type CodingQuestionInPortal struct {
+	gorm.Model
+	CodingQuestionID uint           `gorm:"index"`
+	PortalID         uint           `gorm:"index"`
+	CodingQuestion   CodingQuestion `gorm:"foreignKey:CodingQuestionID"`
+	Portal           Portal         `gorm:"foreignKey:PortalID"`
+}
+
+type CodingQuestionInWorkspace struct {
+	gorm.Model
+	CodingQuestionID uint           `gorm:"index"`
+	WorkspaceID      uint           `gorm:"index"`
+	CodingQuestion   CodingQuestion `gorm:"foreignKey:CodingQuestionID"`
+	Workspace        Workspace      `gorm:"foreignKey:WorkspaceID"`
 }
 
 type CodingQuestionTestCase struct {
@@ -36,10 +53,12 @@ type CodingQuestionTestCaseResponse struct {
 }
 
 type CodingQuestionResponse struct {
-	Id          uint                             `json:"id"`
-	Title       string                           `json:"title"`
-	Description string                           `json:"description"`
-	TestCase    []CodingQuestionTestCaseResponse `json:"test_case"`
+	Id                uint                             `json:"id"`
+	Title             string                           `json:"title"`
+	Description       string                           `json:"description"`
+	InputDescription  string                           `json:"input_description"`
+	OutputDescription string                           `json:"output_description"`
+	TestCase          []CodingQuestionTestCaseResponse `json:"test_case"`
 }
 
 type CreateCodingQuestionRequest struct {

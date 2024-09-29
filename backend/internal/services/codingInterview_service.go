@@ -30,6 +30,14 @@ func (s *codingInterviewService) GetCodingInterviewQuestions() ([]domains.Coding
 	return questions, nil
 }
 
+func (s *codingInterviewService) GetCodingInterviewQuestionsInPortal(portalID int) ([]domains.CodingQuestion, error) {
+	questions, err := s.codingInterviewRepository.GetCodingQuestionListInPortal(portalID)
+	if err != nil {
+		return []domains.CodingQuestion{}, ErrorGetCodingInterviewQuestions
+	}
+	return questions, nil
+}
+
 func (s *codingInterviewService) GenerateCompileToken(req domains.CompilationRequest) (string, error) {
 	token, err := s.codeCompilationRepository.GenerateCompileToken(req, "")
 	if err != nil {
@@ -95,6 +103,10 @@ func (s *codingInterviewService) CreateCodingQuestion(req domains.CodingQuestion
 		Status:  "success",
 		Message: "Coding question created successfully",
 	}, nil
+}
+
+func (s *codingInterviewService) AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error {
+	return s.codingInterviewRepository.AddCodingQuestion(codingQuestionID, target, targetID)
 }
 
 func (*codingInterviewService) SaveCodingSnapshot(code string) (string, error) {

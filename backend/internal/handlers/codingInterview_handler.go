@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"fmt"
+	"strconv"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
 	"github.com/gofiber/fiber/v2"
@@ -60,6 +63,30 @@ func (co CodingInterviewHandler) GetQuestions(c *fiber.Ctx) error {
 	return Ok(c, questions)
 }
 
+// @Summary Get coding interview questions in a portal
+// @Description Get coding interview questions in a portal
+// @Tags codingInterview
+// @ID GetQuestionsInPortal
+// @Accept json
+// @Produce json
+// @Param portalId path int true "Portal ID"
+// @Success 200 {object} Response[CodingInterviewGetQuestionsInPortalResponse] "Successful response with the coding interview questions in a portal"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.getQuestionsInPortal/{portalId} [get]
+func (co CodingInterviewHandler) GetQuestionsInPortal(c *fiber.Ctx) error {
+	portalID, err := strconv.Atoi(c.Params("portalId"))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	questions, err := co.codingInterviewService.GetCodingInterviewQuestionsInPortal(portalID)
+	fmt.Println("questions", questions)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+	return Ok(c, questions)
+}
+
 // @Summary Create a new coding interview question
 // @Description Create a new coding interview question
 // @Tags codingInterview
@@ -93,4 +120,29 @@ func (co CodingInterviewHandler) CreateQuestion(c *fiber.Ctx) error {
 
 	return Ok(c, question)
 
+}
+
+// @Summary Add a coding interview question to a target
+// @Description Add a coding interview question to a target
+// @Tags codingInterview
+// @ID AddQuestion
+// @Accept json
+// @Produce json
+// @Param body body CodingInterviewAddQuestionQuery true "Request body containing the coding question ID, target, and target ID"
+// @Success 200 {object} Response[string] "Successful response with a message"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.addQuestion [post]
+func (co CodingInterviewHandler) AddQuestion(c *fiber.Ctx) error {
+	var req CodingInterviewAddQuestionQuery
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err := co.codingInterviewService.AddCodingQuestion(uint(req.CodingQuestionID), req.Target, uint(req.TargetID))
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, "Coding question added to portal successfully")
 }

@@ -25,6 +25,8 @@ export interface CodingInterviewQuestionProps {
   index: number
   title: string
   description: string
+  inputDescription: string
+  outputDescription: string
   testcaseList: DomainsCodingQuestionTestCase[]
   testcaseCompileResult: DomainsCompilationResultResponse[]
 }
@@ -33,6 +35,8 @@ const CodingInterviewQuestion: React.FC<CodingInterviewQuestionProps> = ({
   index,
   title,
   description,
+  inputDescription,
+  outputDescription,
   testcaseList,
 }) => {
   const cleanDescription = DOMPurify.sanitize(description)
@@ -55,6 +59,26 @@ const CodingInterviewQuestion: React.FC<CodingInterviewQuestionProps> = ({
         <CardDescription>{parse(cleanDescription)}</CardDescription>
       </CardHeader>
       <CardContent>
+        {inputDescription && (
+          <Accordion type="multiple" defaultValue={["input-description"]}>
+            <AccordionItem value="input-description">
+              <AccordionTrigger className="text-lg font-semibold">
+                Input Description
+              </AccordionTrigger>
+              <AccordionContent>{parse(inputDescription)}</AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
+        {outputDescription && (
+          <Accordion type="multiple" defaultValue={["output-description"]}>
+            <AccordionItem value="output-description">
+              <AccordionTrigger className="text-lg font-semibold">
+                Output Description
+              </AccordionTrigger>
+              <AccordionContent>{parse(outputDescription)}</AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
         <Accordion type="multiple" defaultValue={["test-cases"]}>
           <AccordionItem value="test-cases">
             <AccordionTrigger className="text-lg font-semibold">

@@ -88,8 +88,11 @@ func SetupRoutes() {
 
 	// codingInterview
 	public.Get("codingInterview.getQuestions", codingInterviewHandlers.GetQuestions)
+	public.Get("codingInterview.getQuestionsInPortal/:portalId", codingInterviewHandlers.GetQuestionsInPortal)
 	public.Post("codingInterview.getCompileResult", codingInterviewHandlers.GetCompileResult)
 	public.Post("codingInterview.createQuestion", codingInterviewHandlers.CreateQuestion)
+	public.Post("codingInterview.addQuestion", codingInterviewHandlers.AddQuestion)
+
 	// video question
 	public.Post("videoQuestion.createVideoQuestion", questionHandlers.CreateVideoQuestion)
 	public.Get("videoQuestion.getVideoQuestion", questionHandlers.GetVideoQuestion)

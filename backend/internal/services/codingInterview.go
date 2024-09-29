@@ -16,7 +16,9 @@ var (
 type ICodingInterviewService interface {
 	//TODO: add get coding question by lobby id
 	GetCodingInterviewQuestions() ([]domains.CodingQuestionResponse, error)
+	GetCodingInterviewQuestionsInPortal(portalID int) ([]domains.CodingQuestion, error)
 	GenerateCompileToken(req domains.CompilationRequest) (string, error)
 	GetCompileResult(req domains.CompilationRequest) ([]domains.CompilationResultResponse, error)
 	CreateCodingQuestion(req domains.CodingQuestion) (domains.CreateCodingQuestionResponse, error)
+	AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error
 }

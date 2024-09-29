@@ -144,62 +144,6 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
         return newStates
       })
     }
-
-    /* const pollCompileResult = async () => {
-      const startTime = Date.now()
-      const maxPollingTime = 30000 // 30 seconds in milliseconds
-
-      const poll = async () => {
-        if (Date.now() - startTime > maxPollingTime) {
-          setEditorStates((prevStates) => {
-            const newStates = [...prevStates]
-            newStates[currentQuestionIndex] = {
-              ...newStates[currentQuestionIndex],
-              output: "Compilation timed out after 30 seconds.",
-            }
-            return newStates
-          })
-          return
-        }
-
-        const compileResponse =
-          await server.codingInterview.getCompileResult(token)
-        const compileStatus =
-          compileResponse.data?.compileResult?.status?.description
-
-        if (compileStatus === "Accepted") {
-          const compileResult = compileResponse.data?.compileResult
-          if (compileResult) {
-            const formattedResult =
-              compileResult.stdout +
-              "\n" +
-              compileResult.stderr +
-              "\n" +
-              "Time: " +
-              compileResult.time +
-              "ms" +
-              "\n" +
-              "Memory: " +
-              compileResult.memory +
-              "KB"
-            setEditorStates((prevStates) => {
-              const newStates = [...prevStates]
-              newStates[currentQuestionIndex] = {
-                ...newStates[currentQuestionIndex],
-                output: formattedResult,
-              }
-              return newStates
-            })
-          }
-        } else {
-          setTimeout(poll, 1000)
-        }
-      }
-
-      poll()
-    }
-
-    pollCompileResult() */
   }
 
   return (
@@ -221,6 +165,8 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
             index={currentQuestionIndex}
             title={currentQuestion.title}
             description={currentQuestion.description}
+            inputDescription={currentQuestion.inputDescription}
+            outputDescription={currentQuestion.outputDescription}
             testcaseList={currentQuestion.testcaseList}
             testcaseCompileResult={currentQuestion.testcaseCompileResult}
           />

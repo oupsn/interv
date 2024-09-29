@@ -175,47 +175,69 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         <div className="mt-4 p-4 bg-gray-100 rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Hidden Test Cases:</h3>
           <div className="flex items-center space-x-2">
-            <span className="text-green-600 font-semibold">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 inline-block mr-1"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              {
-                output
-                  .slice(testCasesList.length)
-                  .filter((item) => item.is_passed).length
-              }{" "}
-              has passed
-            </span>
-            <span className="text-gray-600">/</span>
-            <span className="text-red-600 font-semibold">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 inline-block mr-1"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              {output.length -
-                testCasesList.length -
-                output
-                  .slice(testCasesList.length)
-                  .filter((item) => item.is_passed).length}
-              {" has failed"}
-            </span>
+            {output
+              .slice(testCasesList.length)
+              .every((item) => item.is_passed) ? ( // Check if all hidden test cases passed
+              <span className="text-green-600 font-semibold">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 inline-block mr-1"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                You have passed all hidden test cases
+              </span>
+            ) : (
+              <>
+                <span className="text-green-600 font-semibold">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 inline-block mr-1"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {
+                    output
+                      .slice(testCasesList.length)
+                      .filter((item) => item.is_passed).length
+                  }{" "}
+                  has passed
+                </span>
+                <span className="text-gray-600">/</span>
+                <span className="text-red-600 font-semibold">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 inline-block mr-1"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {output.length -
+                    testCasesList.length -
+                    output
+                      .slice(testCasesList.length)
+                      .filter((item) => item.is_passed).length}
+                  {" has failed"}
+                </span>
+              </>
+            )}
           </div>
         </div>
       )}

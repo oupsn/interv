@@ -14,6 +14,8 @@ interface Question {
   id: number
   title: string
   description: string
+  inputDescription: string
+  outputDescription: string
   testcaseList: DomainsCodingQuestionTestCase[]
   testcaseCompileResult: DomainsCompilationResultResponse[]
 }
@@ -39,6 +41,8 @@ const CodingInterviewPage = () => {
             id: question.id ?? 0,
             title: question.title ?? "",
             description: question.description ?? "",
+            inputDescription: question.input_description ?? "",
+            outputDescription: question.output_description ?? "",
             testcaseList: question.test_case ?? [],
             testcaseCompileResult: [] as DomainsCompilationResultResponse[],
           }),

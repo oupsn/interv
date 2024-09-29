@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"fmt"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"gorm.io/gorm"
 )
@@ -33,16 +35,25 @@ func (c *codingInterviewRepository) GetCodingQuestionList() ([]domains.CodingQue
 			})
 		}
 		codingQuestionResponses = append(codingQuestionResponses, domains.CodingQuestionResponse{
-			Id:          codingQuestion.Id,
-			Title:       codingQuestion.Title,
-			Description: codingQuestion.Description,
-			TestCase:    testCaseResponses,
+			Id:                codingQuestion.Id,
+			Title:             codingQuestion.Title,
+			Description:       codingQuestion.Description,
+			InputDescription:  codingQuestion.InputDescription,
+			OutputDescription: codingQuestion.OutputDescription,
+			TestCase:          testCaseResponses,
 		})
 	}
 
 	return codingQuestionResponses, nil
 }
 
+func (c *codingInterviewRepository) GetCodingQuestionListInPortal(portalID int) ([]domains.CodingQuestion, error) {
+	var codingQuestions []domains.CodingQuestion
+	if err := c.DB.Preload("CodingQuestionInPortal.Portal", "id = ?", portalID).Find(&codingQuestions).Error; err != nil {
+		return nil, err
+	}
+	return codingQuestions, nil
+}
 func (c *codingInterviewRepository) GetCodingQuestionByID(id int) (domains.CodingQuestion, error) {
 	var codingQuestion domains.CodingQuestion
 
@@ -65,4 +76,25 @@ func (c *codingInterviewRepository) SaveCodingQuestion(question domains.CodingQu
 		return domains.CodingQuestion{}, err
 	}
 	return question, nil
+}
+
+func (c *codingInterviewRepository) AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error {
+	if target == "portal" {
+		if err := c.DB.Create(&domains.CodingQuestionInPortal{
+			CodingQuestionID: codingQuestionID,
+			PortalID:         targetID,
+		}).Error; err != nil {
+			return err
+		}
+	} else if target == "workspace" {
+		if err := c.DB.Create(&domains.CodingQuestionInWorkspace{
+			CodingQuestionID: codingQuestionID,
+			WorkspaceID:      targetID,
+		}).Error; err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("invalid target: %s", target)
+	}
+	return nil
 }
