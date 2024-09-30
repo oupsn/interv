@@ -1,6 +1,6 @@
 import { clx } from "@/utils/clx.ts"
 import { FC, PropsWithChildren, useEffect, useState } from "react"
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import useCurrentUser from "@/hooks/UseCurrentUser.ts"
 import IntervLogo from "@/assets/interv-logo.png"
 import { Toaster } from "sonner"
@@ -12,7 +12,7 @@ const AppLoading: FC<PropsWithChildren> = ({ children }) => {
   const { currentUser, isLoading } = useCurrentUser()
   const isLoggedIn = currentUser != null
   const [isLoaded, setIsLoaded] = useState(false)
-  const [searchParams] = useSearchParams()
+  const [isAllowMobile, setIsAllowMobile] = useState(false)
   useEffect(() => {
     if (isLoading) {
       return
@@ -43,17 +43,16 @@ const AppLoading: FC<PropsWithChildren> = ({ children }) => {
     setIsLoaded(true)
   }, [isLoggedIn, navigate, isLoading])
 
-  if (isMobile && searchParams.get("in") != "terv") {
-    return <NotAllowMobile />
+  if (isMobile && !isAllowMobile) {
+    return <NotAllowMobile setIsAllowMobile={setIsAllowMobile} />
   }
 
   return (
     <>
       <Toaster />
       <div
-        id="app-loading"
         className={clx(
-          "flex z-[9999] transition-all duration-700 items-center justify-center bg-bgblackwelcome absolute inset-0 pointer-events-none bg-white",
+          "flex z-[9999] transition-all duration-700 items-center justify-center absolute inset-0 pointer-events-none bg-white",
           {
             "opacity-0": isLoaded,
             "opacity-100": !isLoaded,
