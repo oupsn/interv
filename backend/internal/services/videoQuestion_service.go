@@ -6,24 +6,24 @@ import (
 )
 
 type IVideoQuestionService interface {
-	CreateQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error)
-	GetQuestionById(id uint) (*domains.VideoQuestion, error)
-	GetQuestionByPortalId(id uint) ([]domains.VideoQuestion, error)
-	UpdateQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error)
-	DeleteQuestionById(id uint) error
+	CreateVideoQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error)
+	GetVideoQuestionById(id uint) (*domains.VideoQuestion, error)
+	GetVideoQuestionByPortalId(id uint) ([]domains.VideoQuestion, error)
+	UpdateVideoQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error)
+	DeleteVideoQuestionById(id uint) error
 }
 
 type videoQuestionService struct {
 	questionRepo repositories.IVideoQuestionRepository
 }
 
-func NewQuestionService(questionRepo repositories.IVideoQuestionRepository) IVideoQuestionService {
+func NewVideoQuestionService(questionRepo repositories.IVideoQuestionRepository) IVideoQuestionService {
 	return &videoQuestionService{
 		questionRepo: questionRepo,
 	}
 }
 
-func (v videoQuestionService) CreateQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error) {
+func (v videoQuestionService) CreateVideoQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error) {
 	response, err := v.questionRepo.Create(question)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (v videoQuestionService) CreateQuestion(question domains.VideoQuestion) (*d
 	return response, nil
 }
 
-func (v videoQuestionService) GetQuestionById(id uint) (*domains.VideoQuestion, error) {
+func (v videoQuestionService) GetVideoQuestionById(id uint) (*domains.VideoQuestion, error) {
 	question, err := v.questionRepo.GetById(id)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (v videoQuestionService) GetQuestionById(id uint) (*domains.VideoQuestion, 
 	return question, nil
 }
 
-func (v videoQuestionService) GetQuestionByPortalId(id uint) ([]domains.VideoQuestion, error) {
+func (v videoQuestionService) GetVideoQuestionByPortalId(id uint) ([]domains.VideoQuestion, error) {
 	question, err := v.questionRepo.GetByPortalId(id)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (v videoQuestionService) GetQuestionByPortalId(id uint) ([]domains.VideoQue
 	return question, nil
 }
 
-func (v videoQuestionService) UpdateQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error) {
+func (v videoQuestionService) UpdateVideoQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error) {
 	err := v.questionRepo.Update(question)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (v videoQuestionService) UpdateQuestion(question domains.VideoQuestion) (*d
 	return response, nil
 }
 
-func (v videoQuestionService) DeleteQuestionById(id uint) error {
+func (v videoQuestionService) DeleteVideoQuestionById(id uint) error {
 	err := v.questionRepo.DeleteById(id)
 	if err != nil {
 		return err

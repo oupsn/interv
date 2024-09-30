@@ -16,7 +16,7 @@ const WorkspaceListPage = () => {
   const { data } = useGetListWorkspace()
   const navigate = useNavigate()
   const handleAdd = () => {
-    navigate("/portal/assessment/video/create")
+    navigate("/portal/workspace/create")
   }
 
   return (

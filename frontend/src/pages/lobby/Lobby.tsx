@@ -18,10 +18,10 @@ const LobbyPage = () => {
       </SideBar>
       <MainPanel className={"flex flex-col justify-center items-center gap-8"}>
         <div className={"p-4 space-y-4 text-center"}>
-          <p className={"text-2xl font-semibold"}>Hi {data?.data?.userId}</p>
+          <p className={"text-2xl font-semibold"}>Hi Dummy Name</p>
           <span>Please complete all the tasks before </span>
           <span className={"font-semibold"}>
-            {dayjs(data?.data?.dueDate).format("ddd, DD MMM YYYY HH:mm:ss ZZ")}
+            {dayjs(data?.data?.dueDate).format("ddd, DD MMM YYYY HH:mm:ss Z")}
           </span>
         </div>
         <div className={"flex gap-12"}>

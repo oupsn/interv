@@ -38,7 +38,7 @@ func (q VideoQuestionHandler) CreateVideoQuestion(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := q.videoQuestionService.CreateQuestion(domains.VideoQuestion{
+	response, err := q.videoQuestionService.CreateVideoQuestion(domains.VideoQuestion{
 		Title:         body.Title,
 		TimeToPrepare: body.TimeToPrepare,
 		TimeToAnswer:  body.TimeToAnswer,
@@ -83,7 +83,7 @@ func (q VideoQuestionHandler) GetVideoQuestion(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := q.videoQuestionService.GetQuestionById(param.ID)
+	response, err := q.videoQuestionService.GetVideoQuestionById(param.ID)
 	if err != nil {
 		return err
 	}
@@ -121,7 +121,7 @@ func (q VideoQuestionHandler) GetVideoQuestionByPortalId(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := q.videoQuestionService.GetQuestionByPortalId(param.ID)
+	response, err := q.videoQuestionService.GetVideoQuestionByPortalId(param.ID)
 	if err != nil {
 		return err
 	}
@@ -166,7 +166,7 @@ func (q VideoQuestionHandler) UpdateVideoQuestion(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := q.videoQuestionService.UpdateQuestion(domains.VideoQuestion{
+	response, err := q.videoQuestionService.UpdateVideoQuestion(domains.VideoQuestion{
 		ID:            body.ID,
 		Title:         body.Title,
 		TimeToPrepare: body.TimeToPrepare,
@@ -212,7 +212,7 @@ func (q VideoQuestionHandler) DeleteVideoQuestion(c *fiber.Ctx) error {
 		return err
 	}
 
-	err := q.videoQuestionService.DeleteQuestionById(body.ID)
+	err := q.videoQuestionService.DeleteVideoQuestionById(body.ID)
 	if err != nil {
 		return err
 	}
