@@ -3,14 +3,13 @@ package domains
 type CompilationRequest struct {
 	SourceCode string `json:"source_code"`
 	Language   uint   `json:"language"`
-	Input      string `json:"input"`
+	QuestionID uint   `json:"question_id"`
 }
 
 type CompilationTokenResponse struct {
 	Token string `json:"token"`
 }
-
-type CompilationResultResponse struct {
+type CompilationCompileResult struct {
 	Stdout string `json:"stdout"`
 	Stderr string `json:"stderr"`
 	Status struct {
@@ -19,7 +18,11 @@ type CompilationResultResponse struct {
 	} `json:"status"`
 	Time          string `json:"time"`
 	Memory        int    `json:"memory"`
-	Token         string `json:"token"`
 	CompileOutput string `json:"compile_output"`
 	Message       string `json:"message"`
+}
+type CompilationResultResponse struct {
+	TestcaseId    int                      `json:"test_case_id"`
+	IsPassed      bool                     `json:"is_passed"`
+	CompileResult CompilationCompileResult `json:"compile_result"`
 }

@@ -87,10 +87,14 @@ func SetupRoutes() {
 	public.Post("videoInterview.submitVideoInterview", videoInterviewHandlers.SubmitVideoInterview)
 
 	// codingInterview
-	public.Post("codingInterview.generateCompileToken", codingInterviewHandlers.GenerateCompileToken)
-	public.Get("codingInterview.getCompileResult/:token", codingInterviewHandlers.GetCompileResult)
 	public.Get("codingInterview.getQuestions", codingInterviewHandlers.GetQuestions)
+	public.Get("codingInterview.getQuestionsInPortal/:portalId", codingInterviewHandlers.GetQuestionsInPortal)
+	public.Get("codingInterview.getQuestionByTitle/:title", codingInterviewHandlers.GetQuestionByTitle)
+	public.Post("codingInterview.getCompileResult", codingInterviewHandlers.GetCompileResult)
 	public.Post("codingInterview.createQuestion", codingInterviewHandlers.CreateQuestion)
+	public.Post("codingInterview.addQuestion", codingInterviewHandlers.AddQuestion)
+	public.Delete("codingInterview.deleteQuestion/:codingQuestionID", codingInterviewHandlers.DeleteQuestion)
+
 	// video question
 	public.Post("videoQuestion.createVideoQuestion", questionHandlers.CreateVideoQuestion)
 	public.Get("videoQuestion.getVideoQuestion", questionHandlers.GetVideoQuestion)

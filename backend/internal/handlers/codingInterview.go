@@ -4,21 +4,27 @@ import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 )
 
-type CodingInterviewGenerateCompileTokenQuery struct {
+type CodingInterviewGetCompileResultQuery struct {
 	Body domains.CompilationRequest `json:"body"  validate:"required"`
-} // @name CodingInterviewGenerateCompileTokenQuery
+} // @name CodingInterviewGetCompileResultQuery
 
-type CodingInterviewGenerateCompileTokenResponse struct {
-	Token string `json:"token"`
-} // @name CodingInterviewGenerateCompileTokenResponse
+type CodingInterviewAddQuestionQuery struct {
+	CodingQuestionID int    `json:"codingQuestionID" validate:"required"`
+	Target           string `json:"target" validate:"required"`
+	TargetID         int    `json:"targetID" validate:"required"`
+} // @name CodingInterviewAddQuestionQuery
 
-type CodingInterviewGetCompileResultResponse struct {
-	CompileResult domains.CompilationResultResponse `json:"compileResult"`
-} // @name CodingInterviewGetCompileResultResponse
+// @name CodingInterviewGetCompileResultResponse
+type CodingInterviewGetCompileResultResponse []domains.CompilationResultResponse
 
-type CodingInterviewGetQuestionsResponse struct {
-	Questions []domains.CodingQuestionResponse `json:"questions"`
-} // @name CodingInterviewGetQuestionsResponse
+// @name CodingInterviewGetQuestionsResponse
+type CodingInterviewGetQuestionsResponse []domains.CodingQuestionResponse
+
+// @name CodingInterviewGetQuestionByTitleResponse
+type CodingInterviewGetQuestionByTitleResponse domains.CodingQuestionResponse
+
+// @name CodingInterviewGetQuestionsInPortalResponse
+type CodingInterviewGetQuestionsInPortalResponse []domains.CodingQuestion
 
 type CodingInterviewCreateQuestionQuery struct {
 	Body domains.CreateCodingQuestionRequest `json:"body"  validate:"required"`

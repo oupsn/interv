@@ -1,6 +1,9 @@
 package services
 
 import (
+	"strings"
+	"time"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 )
@@ -27,20 +30,76 @@ func (s *codingInterviewService) GetCodingInterviewQuestions() ([]domains.Coding
 	return questions, nil
 }
 
+func (s *codingInterviewService) GetCodingInterviewQuestionByTitle(title string) (domains.CodingQuestionResponse, error) {
+	question, err := s.codingInterviewRepository.GetCodingQuestionByTitle(title)
+	if err != nil {
+		return domains.CodingQuestionResponse{}, ErrorGetCodingInterviewQuestionByTitle
+	}
+	return question, nil
+}
+
+func (s *codingInterviewService) GetCodingInterviewQuestionsInPortal(portalID int) ([]domains.CodingQuestion, error) {
+	questions, err := s.codingInterviewRepository.GetCodingQuestionListInPortal(portalID)
+	if err != nil {
+		return []domains.CodingQuestion{}, ErrorGetCodingInterviewQuestions
+	}
+	return questions, nil
+}
+
 func (s *codingInterviewService) GenerateCompileToken(req domains.CompilationRequest) (string, error) {
-	token, err := s.codeCompilationRepository.GenerateCompileToken(req)
+	token, err := s.codeCompilationRepository.GenerateCompileToken(req, "")
 	if err != nil {
 		return "", ErrorGetCompileToken
 	}
 	return token.Token, nil
 }
 
-func (s *codingInterviewService) GetCompileResult(token string) (domains.CompilationResultResponse, error) {
-	res, err := s.codeCompilationRepository.GetCompileResult(token)
+func (s *codingInterviewService) GetCompileResult(req domains.CompilationRequest) ([]domains.CompilationResultResponse, error) {
+	var compileResult []domains.CompilationResultResponse
+	testCases, err := s.codingInterviewRepository.GetCodingQuestionTestcaseByQuestionID(int(req.QuestionID))
 	if err != nil {
-		return domains.CompilationResultResponse{}, ErrorGetCompileResult
+		return []domains.CompilationResultResponse{}, ErrorGetCodingInterviewTestcase
 	}
-	return res, nil
+	for _, testCase := range testCases {
+		input := strings.TrimRight(testCase.Input, "\n")
+		output := testCase.Output
+		token, err := s.codeCompilationRepository.GenerateCompileToken(req, input)
+		if err != nil {
+			return []domains.CompilationResultResponse{}, ErrorGetCompileToken
+		}
+		var result domains.CompilationCompileResult
+		startTime := time.Now()
+		for time.Since(startTime) < 20*time.Second {
+			res, err := s.codeCompilationRepository.GetCompileResult(token.Token)
+			if err != nil {
+				return []domains.CompilationResultResponse{}, ErrorGetCompileResult
+			}
+
+			if res.Status.Description == "Accepted" {
+				result = res
+			}
+
+			if res.Status.Description != "Processing" && res.Status.Description != "In Queue" {
+				break
+			}
+
+			time.Sleep(500 * time.Millisecond)
+		}
+		if strings.TrimRight(result.Stdout, "\n") == strings.TrimRight(output, "\n") {
+			compileResult = append(compileResult, domains.CompilationResultResponse{
+				TestcaseId:    int(testCase.ID),
+				IsPassed:      true,
+				CompileResult: result,
+			})
+		} else {
+			compileResult = append(compileResult, domains.CompilationResultResponse{
+				TestcaseId:    int(testCase.ID),
+				IsPassed:      false,
+				CompileResult: result,
+			})
+		}
+	}
+	return compileResult, nil
 }
 
 func (s *codingInterviewService) CreateCodingQuestion(req domains.CodingQuestion) (domains.CreateCodingQuestionResponse, error) {
@@ -54,6 +113,10 @@ func (s *codingInterviewService) CreateCodingQuestion(req domains.CodingQuestion
 	}, nil
 }
 
-func (*codingInterviewService) SaveCodingSnapshot(code string) (string, error) {
-	panic("unimplemented")
+func (s *codingInterviewService) AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error {
+	return s.codingInterviewRepository.AddCodingQuestion(codingQuestionID, target, targetID)
+}
+
+func (s *codingInterviewService) DeleteCodingQuestion(codingQuestionID uint) error {
+	return s.codingInterviewRepository.DeleteCodingQuestion(codingQuestionID)
 }

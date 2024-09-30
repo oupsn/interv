@@ -5,10 +5,12 @@ import CodingInterviewQuestion, {
 import CodeEditor from "./codingInterviewPanel/CodingInterviewEditor"
 import { Button } from "@/components/ui/button"
 import { server } from "@/contexts/swr"
+import { DomainsCompilationResultResponse } from "@/api/server"
 
 interface CodingInterviewPanelProps {
   timeRemain: number
   questions: CodingInterviewQuestionProps[]
+  currentQuestion: CodingInterviewQuestionProps
   currentQuestionIndex: number
   onNextQuestion: () => void
   onPreviousQuestion: () => void
@@ -20,12 +22,14 @@ interface CodingInterviewPanelProps {
 interface EditorState {
   content: string
   language: string
-  output: string
+  isCompiling: boolean
+  compileOutput: DomainsCompilationResultResponse[]
 }
 
 const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   timeRemain,
   questions,
+  currentQuestion,
   currentQuestionIndex,
   onNextQuestion,
   onPreviousQuestion,
@@ -37,12 +41,13 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   const [editorStates, setEditorStates] = useState<EditorState[]>(
     new Array(questions.length).fill({
       content: "",
-      language: "javascript",
-      output: "",
+      language: "python",
+      compileOutput: "",
     }),
   )
   const [leftPanelWidth, setLeftPanelWidth] = useState(50)
   const [isDragging, setIsDragging] = useState(false)
+  const [isCompiling, setIsCompiling] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -88,8 +93,6 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
   }
 
-  const currentQuestion = questions[currentQuestionIndex]
-
   const handleEditorChange = (newContent: string) => {
     setEditorStates((prevStates) => {
       const newStates = [...prevStates]
@@ -107,73 +110,40 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
       newStates[currentQuestionIndex] = {
         ...newStates[currentQuestionIndex],
         language: newLanguage,
-        output: "",
       }
       return newStates
     })
   }
-  const handleCompile = async (
-    language: number,
-    content: string,
-    input: string,
-  ) => {
-    const tokenResponse = await server.codingInterview.generateCompileToken({
-      body: {
-        language,
-        source_code: content,
-        input,
-      },
-    })
-    const token = tokenResponse.data?.token
-    if (!token) {
-      return
-    }
+  const handleCompile = async (language: number, content: string) => {
+    setIsCompiling(true)
     setEditorStates((prevStates) => {
       const newStates = [...prevStates]
       newStates[currentQuestionIndex] = {
         ...newStates[currentQuestionIndex],
-        output: "Compiling...",
+        isCompiling: true,
       }
       return newStates
     })
-
-    const pollCompileResult = async () => {
-      const compileResponse =
-        await server.codingInterview.getCompileResult(token)
-      const compileStatus =
-        compileResponse.data?.compileResult?.status?.description
-
-      if (compileStatus === "Accepted") {
-        const compileResult = compileResponse.data?.compileResult
-        if (compileResult) {
-          console.log(compileResult)
-          const formattedResult =
-            compileResult.stdout +
-            "\n" +
-            compileResult.stderr +
-            "\n" +
-            "Time: " +
-            compileResult.time +
-            "ms" +
-            "\n" +
-            "Memory: " +
-            compileResult.memory +
-            "KB"
-          setEditorStates((prevStates) => {
-            const newStates = [...prevStates]
-            newStates[currentQuestionIndex] = {
-              ...newStates[currentQuestionIndex],
-              output: formattedResult,
-            }
-            return newStates
-          })
+    const result = await server.codingInterview.getCompileResult({
+      body: {
+        language,
+        source_code: content,
+        question_id: currentQuestion.id,
+      },
+    })
+    setIsCompiling(false)
+    if (result.data) {
+      console.log(result.data)
+      setEditorStates((prevStates) => {
+        const newStates = [...prevStates]
+        newStates[currentQuestionIndex] = {
+          ...newStates[currentQuestionIndex],
+          compileOutput: result.data || [],
+          isCompiling: false,
         }
-      } else {
-        setTimeout(pollCompileResult, 1000)
-      }
+        return newStates
+      })
     }
-
-    pollCompileResult()
   }
 
   return (
@@ -181,20 +151,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
       <p className="text-lg font-semibold">
         Time remaining: {formatTime(countdown)}
       </p>
-      <div className="flex gap-2 mb-4">
-        {questions.map((_, index) => (
-          <Button
-            key={index}
-            variant={index === currentQuestionIndex ? "default" : "outline"}
-            onClick={() => {
-              setCurrentQuestionIndex(index)
-            }}
-            className="w-10 h-10"
-          >
-            {index + 1}
-          </Button>
-        ))}
-      </div>
+
       <div
         className="flex flex-row w-full h-[calc(100vh-200px)] relative"
         ref={containerRef}
@@ -205,11 +162,13 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
         >
           <CodingInterviewQuestion
             id={currentQuestion.id}
+            index={currentQuestionIndex}
             title={currentQuestion.title}
             description={currentQuestion.description}
-            exampleInputList={currentQuestion.exampleInputList}
-            exampleOutputList={currentQuestion.exampleOutputList}
+            inputDescription={currentQuestion.inputDescription}
+            outputDescription={currentQuestion.outputDescription}
             testcaseList={currentQuestion.testcaseList}
+            testcaseCompileResult={currentQuestion.testcaseCompileResult}
           />
         </div>
         <div
@@ -234,7 +193,9 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
             language={editorStates[currentQuestionIndex].language}
             onLanguageChange={handleLanguageChange}
             onCompile={handleCompile}
-            output={editorStates[currentQuestionIndex].output}
+            isCompiling={isCompiling}
+            output={editorStates[currentQuestionIndex].compileOutput}
+            testCasesList={currentQuestion.testcaseList}
           />
         </div>
       </div>
@@ -246,6 +207,20 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
         >
           Previous Question
         </Button>
+        <div className="flex gap-2 mb-4">
+          {questions.map((_, index) => (
+            <Button
+              key={index}
+              variant={index === currentQuestionIndex ? "default" : "outline"}
+              onClick={() => {
+                setCurrentQuestionIndex(index)
+              }}
+              className="w-10 h-10"
+            >
+              {index + 1}
+            </Button>
+          ))}
+        </div>
         <div className="flex gap-4">
           <Button
             onClick={onNextQuestion}

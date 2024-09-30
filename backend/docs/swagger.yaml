@@ -10,6 +10,19 @@ definitions:
     - portalId
     - user
     type: object
+  CodingInterviewAddQuestionQuery:
+    properties:
+      codingQuestionID:
+        type: integer
+      target:
+        type: string
+      targetID:
+        type: integer
+    required:
+    - codingQuestionID
+    - target
+    - targetID
+    type: object
   CodingInterviewCreateQuestionQuery:
     properties:
       body:
@@ -17,29 +30,12 @@ definitions:
     required:
     - body
     type: object
-  CodingInterviewGenerateCompileTokenQuery:
+  CodingInterviewGetCompileResultQuery:
     properties:
       body:
         $ref: '#/definitions/domains.CompilationRequest'
     required:
     - body
-    type: object
-  CodingInterviewGenerateCompileTokenResponse:
-    properties:
-      token:
-        type: string
-    type: object
-  CodingInterviewGetCompileResultResponse:
-    properties:
-      compileResult:
-        $ref: '#/definitions/domains.CompilationResultResponse'
-    type: object
-  CodingInterviewGetQuestionsResponse:
-    properties:
-      questions:
-        items:
-          $ref: '#/definitions/domains.CodingQuestionResponse'
-        type: array
     type: object
   CreatePortalBody:
     properties:
@@ -440,37 +436,45 @@ definitions:
     type: object
   domains.CodingQuestion:
     properties:
-      createdAt:
+      coding_question_in_portal:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionInPortal'
+        type: array
+      created_at:
         type: string
-      createdBy:
+      created_by:
+        type: string
+      createdAt:
         type: string
       deletedAt:
         $ref: '#/definitions/gorm.DeletedAt'
       description:
         type: string
-      examples:
-        items:
-          $ref: '#/definitions/domains.CodingQuestionExample'
-        type: array
+      difficulty:
+        type: string
       id:
         type: integer
-      tags:
-        items:
-          type: string
-        type: array
-      testCases:
+      input_description:
+        type: string
+      output_description:
+        type: string
+      test_cases:
         items:
           $ref: '#/definitions/domains.CodingQuestionTestCase'
         type: array
       title:
         type: string
+      updated_at:
+        type: string
+      updated_by:
+        type: string
       updatedAt:
         type: string
-      updatedBy:
-        type: string
     type: object
-  domains.CodingQuestionExample:
+  domains.CodingQuestionInPortal:
     properties:
+      codingQuestion:
+        $ref: '#/definitions/domains.CodingQuestion'
       codingQuestionID:
         type: integer
       createdAt:
@@ -479,10 +483,10 @@ definitions:
         $ref: '#/definitions/gorm.DeletedAt'
       id:
         type: integer
-      input:
-        type: string
-      output:
-        type: string
+      portal:
+        $ref: '#/definitions/domains.Portal'
+      portalID:
+        type: integer
       updatedAt:
         type: string
     type: object
@@ -490,15 +494,17 @@ definitions:
     properties:
       description:
         type: string
-      example_input:
-        type: string
-      example_output:
+      difficulty:
         type: string
       id:
         type: integer
+      input_description:
+        type: string
+      output_description:
+        type: string
       test_case:
         items:
-          $ref: '#/definitions/domains.CodingQuestionTestCase'
+          $ref: '#/definitions/domains.CodingQuestionTestCaseResponse'
         type: array
       title:
         type: string
@@ -515,6 +521,8 @@ definitions:
         type: integer
       input:
         type: string
+      isExample:
+        type: boolean
       isHidden:
         type: boolean
       output:
@@ -522,16 +530,14 @@ definitions:
       updatedAt:
         type: string
     type: object
-  domains.CompilationRequest:
+  domains.CodingQuestionTestCaseResponse:
     properties:
       input:
         type: string
-      language:
-        type: integer
-      source_code:
+      output:
         type: string
     type: object
-  domains.CompilationResultResponse:
+  domains.CompilationCompileResult:
     properties:
       compile_output:
         type: string
@@ -552,8 +558,24 @@ definitions:
         type: string
       time:
         type: string
-      token:
+    type: object
+  domains.CompilationRequest:
+    properties:
+      language:
+        type: integer
+      question_id:
+        type: integer
+      source_code:
         type: string
+    type: object
+  domains.CompilationResultResponse:
+    properties:
+      compile_result:
+        $ref: '#/definitions/domains.CompilationCompileResult'
+      is_passed:
+        type: boolean
+      test_case_id:
+        type: integer
     type: object
   domains.CreateCodingQuestionRequest:
     properties:
@@ -561,19 +583,28 @@ definitions:
         type: string
       difficulty:
         type: string
-      examples:
-        items:
-          $ref: '#/definitions/domains.CodingQuestionExample'
-        type: array
-      tags:
-        items:
-          type: string
-        type: array
+      input_description:
+        type: string
+      output_description:
+        type: string
       test_cases:
         items:
           $ref: '#/definitions/domains.CodingQuestionTestCase'
         type: array
       title:
+        type: string
+    type: object
+  domains.Portal:
+    properties:
+      companyName:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      updatedAt:
         type: string
     type: object
   domains.User:
@@ -603,6 +634,25 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
+  handlers.CodingInterviewGetQuestionByTitleResponse:
+    properties:
+      description:
+        type: string
+      difficulty:
+        type: string
+      id:
+        type: integer
+      input_description:
+        type: string
+      output_description:
+        type: string
+      test_case:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionTestCaseResponse'
+        type: array
+      title:
+        type: string
+    type: object
   handlers.ErrResponse:
     properties:
       code:
@@ -624,39 +674,6 @@ definitions:
     properties:
       code:
         type: integer
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
-  handlers.Response-CodingInterviewGenerateCompileTokenResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/CodingInterviewGenerateCompileTokenResponse'
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
-  handlers.Response-CodingInterviewGetCompileResultResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/CodingInterviewGetCompileResultResponse'
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
-  handlers.Response-CodingInterviewGetQuestionsResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/CodingInterviewGetQuestionsResponse'
       message:
         type: string
       timestamp:
@@ -833,6 +850,56 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.Response-handlers_CodingInterviewGetCompileResultResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/domains.CompilationResultResponse'
+        type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-handlers_CodingInterviewGetQuestionByTitleResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/handlers.CodingInterviewGetQuestionByTitleResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-handlers_CodingInterviewGetQuestionsInPortalResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/domains.CodingQuestion'
+        type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-handlers_CodingInterviewGetQuestionsResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionResponse'
+        type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
   handlers.Response-string:
     properties:
       code:
@@ -909,6 +976,38 @@ paths:
       summary: Get current user in the system
       tags:
       - authentication
+  /codingInterview.addQuestion:
+    post:
+      consumes:
+      - application/json
+      description: Add a coding interview question to a target
+      operationId: AddQuestion
+      parameters:
+      - description: Request body containing the coding question ID, target, and target
+          ID
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/CodingInterviewAddQuestionQuery'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with a message
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Add a coding interview question to a target
+      tags:
+      - codingInterview
   /codingInterview.createQuestion:
     post:
       consumes:
@@ -940,56 +1039,26 @@ paths:
       summary: Create a new coding interview question
       tags:
       - codingInterview
-  /codingInterview.generateCompileToken:
+  /codingInterview.getCompileResult:
     post:
-      consumes:
-      - application/json
-      description: Generate compile token for a coding interview
-      operationId: GenerateCompileToken
-      parameters:
-      - description: Request body containing the code to be compiled
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/CodingInterviewGenerateCompileTokenQuery'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successful response with the compile token
-          schema:
-            $ref: '#/definitions/handlers.Response-CodingInterviewGenerateCompileTokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-      summary: Generate compile token for a coding interview
-      tags:
-      - codingInterview
-  /codingInterview.getCompileResult/{token}:
-    get:
       consumes:
       - application/json
       description: Get compile result for a coding interview
       operationId: GetCompileResult
       parameters:
-      - description: Token to get the compile result
-        in: path
-        name: token
+      - description: Request body containing the token to get the compile result
+        in: body
+        name: body
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/CodingInterviewGetCompileResultQuery'
       produces:
       - application/json
       responses:
         "200":
           description: Successful response with the compile result
           schema:
-            $ref: '#/definitions/handlers.Response-CodingInterviewGetCompileResultResponse'
+            $ref: '#/definitions/handlers.Response-handlers_CodingInterviewGetCompileResultResponse'
         "400":
           description: Bad Request
           schema:
@@ -999,6 +1068,36 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get compile result for a coding interview
+      tags:
+      - codingInterview
+  /codingInterview.getQuestionByTitle/{title}:
+    get:
+      consumes:
+      - application/json
+      description: Get coding interview question by title
+      operationId: GetQuestionByTitle
+      parameters:
+      - description: Question Title
+        in: path
+        name: title
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the coding interview question by title
+          schema:
+            $ref: '#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionByTitleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get coding interview question by title
       tags:
       - codingInterview
   /codingInterview.getQuestions:
@@ -1013,7 +1112,7 @@ paths:
         "200":
           description: Successful response with the coding interview questions
           schema:
-            $ref: '#/definitions/handlers.Response-CodingInterviewGetQuestionsResponse'
+            $ref: '#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionsResponse'
         "400":
           description: Bad Request
           schema:
@@ -1023,6 +1122,37 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get coding interview questions
+      tags:
+      - codingInterview
+  /codingInterview.getQuestionsInPortal/{portalId}:
+    get:
+      consumes:
+      - application/json
+      description: Get coding interview questions in a portal
+      operationId: GetQuestionsInPortal
+      parameters:
+      - description: Portal ID
+        in: path
+        name: portalId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the coding interview questions in
+            a portal
+          schema:
+            $ref: '#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionsInPortalResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get coding interview questions in a portal
       tags:
       - codingInterview
   /lobby.getLobbyContext:
