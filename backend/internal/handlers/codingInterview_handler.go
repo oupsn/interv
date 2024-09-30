@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"strconv"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
 	"github.com/gofiber/fiber/v2"
@@ -16,56 +18,29 @@ func NewCodingInterviewHandler(codingInterviewService services.ICodingInterviewS
 	}
 }
 
-// @Summary Generate compile token for a coding interview
-// @Description Generate compile token for a coding interview
-// @Tags codingInterview
-// @ID GenerateCompileToken
-// @Accept json
-// @Produce json
-// @Param body body CodingInterviewGenerateCompileTokenQuery true "Request body containing the code to be compiled"
-// @Success 200 {object} Response[CodingInterviewGenerateCompileTokenResponse] "Successful response with the compile token"
-// @Failure 400 {object} ErrResponse
-// @Failure 500 {object} ErrResponse
-// @Router /codingInterview.generateCompileToken [post]
-func (co CodingInterviewHandler) GenerateCompileToken(c *fiber.Ctx) error {
-	var req CodingInterviewGenerateCompileTokenQuery
-	if err := c.BodyParser(&req); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	res, err := co.codingInterviewService.GenerateCompileToken(req.Body)
-	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
-	}
-
-	return Ok(c, CodingInterviewGenerateCompileTokenResponse{
-		Token: res,
-	})
-
-}
-
 // @Summary Get compile result for a coding interview
 // @Description Get compile result for a coding interview
 // @Tags codingInterview
 // @ID GetCompileResult
 // @Accept json
 // @Produce json
-// @Param token path string true "Token to get the compile result"
+// @Param body body CodingInterviewGetCompileResultQuery true "Request body containing the token to get the compile result"
 // @Success 200 {object} Response[CodingInterviewGetCompileResultResponse] "Successful response with the compile result"
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /codingInterview.getCompileResult/{token} [get]
+// @Router /codingInterview.getCompileResult [post]
 func (co CodingInterviewHandler) GetCompileResult(c *fiber.Ctx) error {
-	token := c.Params("token")
+	var req CodingInterviewGetCompileResultQuery
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
 
-	res, err := co.codingInterviewService.GetCompileResult(token)
+	res, err := co.codingInterviewService.GetCompileResult(req.Body)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	return Ok(c, CodingInterviewGetCompileResultResponse{
-		CompileResult: res,
-	})
+	return Ok(c, res)
 }
 
 // @Summary Get coding interview questions
@@ -84,6 +59,49 @@ func (co CodingInterviewHandler) GetQuestions(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
+	return Ok(c, questions)
+}
+
+// @Summary Get coding interview question by title
+// @Description Get coding interview question by title
+// @Tags codingInterview
+// @ID GetQuestionByTitle
+// @Accept json
+// @Produce json
+// @Param title path string true "Question Title"
+// @Success 200 {object} Response[CodingInterviewGetQuestionByTitleResponse] "Successful response with the coding interview question by title"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.getQuestionByTitle/{title} [get]
+func (co CodingInterviewHandler) GetQuestionByTitle(c *fiber.Ctx) error {
+	title := c.Params("title")
+	question, err := co.codingInterviewService.GetCodingInterviewQuestionByTitle(title)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+	return Ok(c, question)
+}
+
+// @Summary Get coding interview questions in a portal
+// @Description Get coding interview questions in a portal
+// @Tags codingInterview
+// @ID GetQuestionsInPortal
+// @Accept json
+// @Produce json
+// @Param portalId path int true "Portal ID"
+// @Success 200 {object} Response[CodingInterviewGetQuestionsInPortalResponse] "Successful response with the coding interview questions in a portal"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.getQuestionsInPortal/{portalId} [get]
+func (co CodingInterviewHandler) GetQuestionsInPortal(c *fiber.Ctx) error {
+	portalID, err := strconv.Atoi(c.Params("portalId"))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	questions, err := co.codingInterviewService.GetCodingInterviewQuestionsInPortal(portalID)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
 	return Ok(c, questions)
 }
 
@@ -106,11 +124,12 @@ func (co CodingInterviewHandler) CreateQuestion(c *fiber.Ctx) error {
 
 	question, err := co.codingInterviewService.CreateCodingQuestion(
 		domains.CodingQuestion{
-			Title:       req.Body.Title,
-			Description: req.Body.Description,
-			Examples:    req.Body.Examples,
-			TestCases:   req.Body.TestCases,
-			Tags:        req.Body.Tags,
+			Title:             req.Body.Title,
+			Description:       req.Body.Description,
+			InputDescription:  req.Body.InputDescription,
+			OutputDescription: req.Body.OutputDescription,
+			TestCases:         req.Body.TestCases,
+			Difficulty:        req.Body.Difficulty,
 		},
 	)
 	if err != nil {
@@ -119,4 +138,54 @@ func (co CodingInterviewHandler) CreateQuestion(c *fiber.Ctx) error {
 
 	return Ok(c, question)
 
+}
+
+// @Summary Add a coding interview question to a target
+// @Description Add a coding interview question to a target
+// @Tags codingInterview
+// @ID AddQuestion
+// @Accept json
+// @Produce json
+// @Param body body CodingInterviewAddQuestionQuery true "Request body containing the coding question ID, target, and target ID"
+// @Success 200 {object} Response[string] "Successful response with a message"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.addQuestion [post]
+func (co CodingInterviewHandler) AddQuestion(c *fiber.Ctx) error {
+	var req CodingInterviewAddQuestionQuery
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err := co.codingInterviewService.AddCodingQuestion(uint(req.CodingQuestionID), req.Target, uint(req.TargetID))
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, "Coding question added to portal successfully")
+}
+
+// @Summary Delete a coding interview question
+// @Description Delete a coding interview question
+// @Tags codingInterview
+// @ID DeleteQuestion
+// @Accept json
+// @Produce json
+// @Param codingQuestionID path int true "Coding Question ID"
+// @Success 200 {object} Response[string] "Successful response with a message"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.deleteQuestion/{codingQuestionID} [delete]
+func (co CodingInterviewHandler) DeleteQuestion(c *fiber.Ctx) error {
+	codingQuestionID, err := strconv.Atoi(c.Params("codingQuestionID"))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err = co.codingInterviewService.DeleteCodingQuestion(uint(codingQuestionID))
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, "Coding question deleted successfully")
 }

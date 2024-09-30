@@ -2,10 +2,11 @@ package repositories
 
 import (
 	"bytes"
-	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 )
 
 type codeCompilationRepository struct {
@@ -18,11 +19,11 @@ func NewCodeCompilationRepository(baseURL string) ICompilationRepository {
 	}
 }
 
-func (r *codeCompilationRepository) GenerateCompileToken(request domains.CompilationRequest) (domains.CompilationTokenResponse, error) {
+func (r *codeCompilationRepository) GenerateCompileToken(request domains.CompilationRequest, input string) (domains.CompilationTokenResponse, error) {
 	payload, err := json.Marshal(map[string]interface{}{
 		"source_code": request.SourceCode,
 		"language_id": request.Language,
-		"stdin":       request.Input,
+		"stdin":       input,
 	})
 	if err != nil {
 		return domains.CompilationTokenResponse{}, err
@@ -43,17 +44,17 @@ func (r *codeCompilationRepository) GenerateCompileToken(request domains.Compila
 	return result, nil
 }
 
-func (r *codeCompilationRepository) GetCompileResult(token string) (domains.CompilationResultResponse, error) {
+func (r *codeCompilationRepository) GetCompileResult(token string) (domains.CompilationCompileResult, error) {
 	resp, err := http.Get(fmt.Sprintf("%s/submissions/%s", r.BaseURL, token))
 	if err != nil {
-		return domains.CompilationResultResponse{}, err
+		return domains.CompilationCompileResult{}, err
 	}
 	defer resp.Body.Close()
-	var result domains.CompilationResultResponse
+	var result domains.CompilationCompileResult
 	err = json.NewDecoder(resp.Body).Decode(&result)
-
+	fmt.Println(result)
 	if err != nil {
-		return domains.CompilationResultResponse{}, err
+		return domains.CompilationCompileResult{}, err
 	}
 
 	return result, nil
