@@ -30,6 +30,14 @@ func (s *codingInterviewService) GetCodingInterviewQuestions() ([]domains.Coding
 	return questions, nil
 }
 
+func (s *codingInterviewService) GetCodingInterviewQuestionByTitle(title string) (domains.CodingQuestionResponse, error) {
+	question, err := s.codingInterviewRepository.GetCodingQuestionByTitle(title)
+	if err != nil {
+		return domains.CodingQuestionResponse{}, ErrorGetCodingInterviewQuestionByTitle
+	}
+	return question, nil
+}
+
 func (s *codingInterviewService) GetCodingInterviewQuestionsInPortal(portalID int) ([]domains.CodingQuestion, error) {
 	questions, err := s.codingInterviewRepository.GetCodingQuestionListInPortal(portalID)
 	if err != nil {
@@ -109,6 +117,6 @@ func (s *codingInterviewService) AddCodingQuestion(codingQuestionID uint, target
 	return s.codingInterviewRepository.AddCodingQuestion(codingQuestionID, target, targetID)
 }
 
-func (*codingInterviewService) SaveCodingSnapshot(code string) (string, error) {
-	panic("unimplemented")
+func (s *codingInterviewService) DeleteCodingQuestion(codingQuestionID uint) error {
+	return s.codingInterviewRepository.DeleteCodingQuestion(codingQuestionID)
 }

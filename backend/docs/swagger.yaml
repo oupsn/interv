@@ -634,6 +634,25 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
+  handlers.CodingInterviewGetQuestionByTitleResponse:
+    properties:
+      description:
+        type: string
+      difficulty:
+        type: string
+      id:
+        type: integer
+      input_description:
+        type: string
+      output_description:
+        type: string
+      test_case:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionTestCaseResponse'
+        type: array
+      title:
+        type: string
+    type: object
   handlers.ErrResponse:
     properties:
       code:
@@ -844,6 +863,17 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.Response-handlers_CodingInterviewGetQuestionByTitleResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/handlers.CodingInterviewGetQuestionByTitleResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
   handlers.Response-handlers_CodingInterviewGetQuestionsInPortalResponse:
     properties:
       code:
@@ -1038,6 +1068,36 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get compile result for a coding interview
+      tags:
+      - codingInterview
+  /codingInterview.getQuestionByTitle/{title}:
+    get:
+      consumes:
+      - application/json
+      description: Get coding interview question by title
+      operationId: GetQuestionByTitle
+      parameters:
+      - description: Question Title
+        in: path
+        name: title
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the coding interview question by title
+          schema:
+            $ref: '#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionByTitleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get coding interview question by title
       tags:
       - codingInterview
   /codingInterview.getQuestions:

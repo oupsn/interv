@@ -47,6 +47,20 @@ type CodingQuestionTestCase struct {
 	IsExample        bool   `gorm:"default:false"`
 }
 
+type CodingQuestionSnapshot struct {
+	gorm.Model
+	CodingQuestionID uint           `gorm:"index"`
+	LobbyID          uint           `gorm:"index"`
+	Code             string         `gorm:"type:text"`
+	Language         string         `gorm:"type:text"`
+	MemoryUsage      string         `gorm:"type:text"`
+	RunTime          string         `gorm:"type:text"`
+	LinterResult     string         `gorm:"type:text"`
+	TestCasesResult  uint           `gorm:"type:integer"`
+	CodingQuestion   CodingQuestion `gorm:"foreignKey:CodingQuestionID"`
+	Lobby            Lobby          `gorm:"foreignKey:LobbyID"`
+}
+
 type CodingQuestionTestCaseResponse struct {
 	Input  string `json:"input"`
 	Output string `json:"output"`

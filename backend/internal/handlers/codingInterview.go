@@ -20,6 +20,9 @@ type CodingInterviewGetCompileResultResponse []domains.CompilationResultResponse
 // @name CodingInterviewGetQuestionsResponse
 type CodingInterviewGetQuestionsResponse []domains.CodingQuestionResponse
 
+// @name CodingInterviewGetQuestionByTitleResponse
+type CodingInterviewGetQuestionByTitleResponse domains.CodingQuestionResponse
+
 // @name CodingInterviewGetQuestionsInPortalResponse
 type CodingInterviewGetQuestionsInPortalResponse []domains.CodingQuestion
 

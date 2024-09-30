@@ -56,13 +56,27 @@ func (c *codingInterviewRepository) GetCodingQuestionListInPortal(portalID int) 
 	}
 	return codingQuestions, nil
 }
-func (c *codingInterviewRepository) GetCodingQuestionByID(id int) (domains.CodingQuestion, error) {
+func (c *codingInterviewRepository) GetCodingQuestionByTitle(title string) (domains.CodingQuestionResponse, error) {
 	var codingQuestion domains.CodingQuestion
 
-	if err := c.DB.First(&codingQuestion, "id = ?", id).Error; err != nil {
-		return domains.CodingQuestion{}, err
+	if err := c.DB.Preload("TestCases").First(&codingQuestion, "title = ?", title).Error; err != nil {
+		return domains.CodingQuestionResponse{}, err
 	}
-	return codingQuestion, nil
+	var testCaseResponses []domains.CodingQuestionTestCaseResponse
+	for _, testCase := range codingQuestion.TestCases {
+		testCaseResponses = append(testCaseResponses, domains.CodingQuestionTestCaseResponse{
+			Input:  testCase.Input,
+			Output: testCase.Output,
+		})
+	}
+	return domains.CodingQuestionResponse{
+		Id:                codingQuestion.Id,
+		Title:             codingQuestion.Title,
+		Description:       codingQuestion.Description,
+		InputDescription:  codingQuestion.InputDescription,
+		OutputDescription: codingQuestion.OutputDescription,
+		TestCase:          testCaseResponses,
+	}, nil
 }
 
 func (c *codingInterviewRepository) GetCodingQuestionTestcaseByQuestionID(questionID int) ([]domains.CodingQuestionTestCase, error) {
@@ -97,6 +111,13 @@ func (c *codingInterviewRepository) AddCodingQuestion(codingQuestionID uint, tar
 		}
 	} else {
 		return fmt.Errorf("invalid target: %s", target)
+	}
+	return nil
+}
+
+func (c *codingInterviewRepository) DeleteCodingQuestion(codingQuestionID uint) error {
+	if err := c.DB.Delete(&domains.CodingQuestion{}, codingQuestionID).Error; err != nil {
+		return err
 	}
 	return nil
 }

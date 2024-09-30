@@ -288,6 +288,10 @@ export type GetPortalWorkspaceData = HandlersResponseArrayWorkspaceDetail
 
 export type GetPortalWorkspaceError = HandlersErrResponse
 
+export type GetQuestionByTitleData = HandlersResponseHandlersCodingInterviewGetQuestionByTitleResponse
+
+export type GetQuestionByTitleError = HandlersErrResponse
+
 export type GetQuestionsData = HandlersResponseHandlersCodingInterviewGetQuestionsResponse
 
 export type GetQuestionsError = HandlersErrResponse
@@ -359,6 +363,16 @@ export interface GormDeletedAt {
   time?: string
   /** Valid is true if Time is not NULL */
   valid?: boolean
+}
+
+export interface HandlersCodingInterviewGetQuestionByTitleResponse {
+  description?: string
+  difficulty?: string
+  id?: number
+  input_description?: string
+  output_description?: string
+  test_case?: DomainsCodingQuestionTestCaseResponse[]
+  title?: string
 }
 
 export interface HandlersErrResponse {
@@ -437,6 +451,13 @@ export interface HandlersResponseGetVideoQuestionByIdResponse {
 export interface HandlersResponseHandlersCodingInterviewGetCompileResultResponse {
   code?: number
   data?: DomainsCompilationResultResponse[]
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseHandlersCodingInterviewGetQuestionByTitleResponse {
+  code?: number
+  data?: HandlersCodingInterviewGetQuestionByTitleResponse
   message?: string
   timestamp?: string
 }
@@ -772,6 +793,27 @@ export namespace CodingInterview {
     export type RequestBody = CodingInterviewGetCompileResultQuery
     export type RequestHeaders = {}
     export type ResponseBody = GetCompileResultData
+  }
+
+  /**
+   * @description Get coding interview question by title
+   * @tags codingInterview
+   * @name GetQuestionByTitle
+   * @summary Get coding interview question by title
+   * @request GET:/codingInterview.getQuestionByTitle/{title}
+   * @response `200` `GetQuestionByTitleData` Successful response with the coding interview question by title
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetQuestionByTitle {
+    export type RequestParams = {
+      /** Question Title */
+      title: string
+    }
+    export type RequestQuery = {}
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetQuestionByTitleData
   }
 
   /**
@@ -1566,6 +1608,26 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         path: `/codingInterview.getCompileResult`,
         method: "POST",
         body: body,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Get coding interview question by title
+     *
+     * @tags codingInterview
+     * @name GetQuestionByTitle
+     * @summary Get coding interview question by title
+     * @request GET:/codingInterview.getQuestionByTitle/{title}
+     * @response `200` `GetQuestionByTitleData` Successful response with the coding interview question by title
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getQuestionByTitle: (title: string, params: RequestParams = {}) =>
+      this.request<GetQuestionByTitleData, GetQuestionByTitleError>({
+        path: `/codingInterview.getQuestionByTitle/${title}`,
+        method: "GET",
         type: ContentType.Json,
         format: "json",
         ...params,

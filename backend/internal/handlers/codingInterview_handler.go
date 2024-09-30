@@ -62,6 +62,26 @@ func (co CodingInterviewHandler) GetQuestions(c *fiber.Ctx) error {
 	return Ok(c, questions)
 }
 
+// @Summary Get coding interview question by title
+// @Description Get coding interview question by title
+// @Tags codingInterview
+// @ID GetQuestionByTitle
+// @Accept json
+// @Produce json
+// @Param title path string true "Question Title"
+// @Success 200 {object} Response[CodingInterviewGetQuestionByTitleResponse] "Successful response with the coding interview question by title"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.getQuestionByTitle/{title} [get]
+func (co CodingInterviewHandler) GetQuestionByTitle(c *fiber.Ctx) error {
+	title := c.Params("title")
+	question, err := co.codingInterviewService.GetCodingInterviewQuestionByTitle(title)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+	return Ok(c, question)
+}
+
 // @Summary Get coding interview questions in a portal
 // @Description Get coding interview questions in a portal
 // @Tags codingInterview
@@ -143,4 +163,29 @@ func (co CodingInterviewHandler) AddQuestion(c *fiber.Ctx) error {
 	}
 
 	return Ok(c, "Coding question added to portal successfully")
+}
+
+// @Summary Delete a coding interview question
+// @Description Delete a coding interview question
+// @Tags codingInterview
+// @ID DeleteQuestion
+// @Accept json
+// @Produce json
+// @Param codingQuestionID path int true "Coding Question ID"
+// @Success 200 {object} Response[string] "Successful response with a message"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.deleteQuestion/{codingQuestionID} [delete]
+func (co CodingInterviewHandler) DeleteQuestion(c *fiber.Ctx) error {
+	codingQuestionID, err := strconv.Atoi(c.Params("codingQuestionID"))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err = co.codingInterviewService.DeleteCodingQuestion(uint(codingQuestionID))
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, "Coding question deleted successfully")
 }
