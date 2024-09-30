@@ -210,6 +210,25 @@ definitions:
       updatedAt:
         type: string
     type: object
+  GetVideoQuestionByPortalIdResponse:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      portalId:
+        type: integer
+      retryAmount:
+        type: integer
+      timeToAnswer:
+        type: integer
+      timeToPrepare:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
   IndividualUser:
     properties:
       id:
@@ -800,13 +819,13 @@ definitions:
       timestamp:
         type: string
     type: object
-  handlers.Response-array_GetVideoQuestionByIdResponse:
+  handlers.Response-array_GetVideoQuestionByPortalIdResponse:
     properties:
       code:
         type: integer
       data:
         items:
-          $ref: '#/definitions/GetVideoQuestionByIdResponse'
+          $ref: '#/definitions/GetVideoQuestionByPortalIdResponse'
         type: array
       message:
         type: string
@@ -1037,6 +1056,36 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Create a new coding interview question
+      tags:
+      - codingInterview
+  /codingInterview.deleteQuestion/{codingQuestionID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a coding interview question
+      operationId: DeleteQuestion
+      parameters:
+      - description: Coding Question ID
+        in: path
+        name: codingQuestionID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with a message
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Delete a coding interview question
       tags:
       - codingInterview
   /codingInterview.getCompileResult:
@@ -1736,9 +1785,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/handlers.Response-array_GetVideoQuestionByIdResponse'
-            type: array
+            $ref: '#/definitions/handlers.Response-array_GetVideoQuestionByPortalIdResponse'
         "400":
           description: Bad Request
           schema:
