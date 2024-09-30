@@ -9,6 +9,7 @@ type IVideoQuestionRepository interface {
 	Create(question domains.VideoQuestion) (*domains.VideoQuestion, error)
 	GetById(id uint) (*domains.VideoQuestion, error)
 	GetByPortalId(id uint) ([]domains.VideoQuestion, error)
+	GetByWorkspaceId(id uint) (*domains.Workspace, error)
 	Update(question domains.VideoQuestion) error
 	DeleteById(id uint) error
 }
@@ -17,7 +18,7 @@ type videoQuestionRepository struct {
 	DB gorm.DB
 }
 
-func NewQuestionRepository(db gorm.DB) IVideoQuestionRepository {
+func NewVideoQuestionRepository(db gorm.DB) IVideoQuestionRepository {
 	return &videoQuestionRepository{
 		DB: db,
 	}
@@ -47,6 +48,15 @@ func (v videoQuestionRepository) GetByPortalId(id uint) ([]domains.VideoQuestion
 	}
 
 	return question, nil
+}
+
+func (v videoQuestionRepository) GetByWorkspaceId(id uint) (*domains.Workspace, error) {
+	var workspace domains.Workspace
+	if err := v.DB.Preload("VideoQuestion").First(&workspace, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return &workspace, nil
 }
 
 func (v videoQuestionRepository) Update(question domains.VideoQuestion) error {
