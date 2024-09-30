@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card.tsx"
+import React from "react"
 
 export default function ContentPanel({
   children,
@@ -6,11 +7,9 @@ export default function ContentPanel({
   children: React.ReactNode
 }) {
   return (
-    <Card className="rounded-lg border-none mt-6">
-      <CardContent className="p-4">
-        <div className="p-2 min-h-[calc(100vh-56px-64px-20px-24px-56px-48px)] max-h-[calc(100vh-56px-64px-20px-24px-56px-48px)] overflow-auto">
-          {children}
-        </div>
+    <Card className="rounded-lg border-none relative h-full overflow-y-clip">
+      <CardContent className=" h-full w-full px-4 py-6 absolute">
+        <div className={"overflow-y-auto px-2 h-full"}>{children}</div>
       </CardContent>
     </Card>
   )

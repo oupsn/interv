@@ -201,6 +201,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/codingInterview.deleteQuestion/{codingQuestionID}": {
+            "delete": {
+                "description": "Delete a coding interview question",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Delete a coding interview question",
+                "operationId": "DeleteQuestion",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Coding Question ID",
+                        "name": "codingQuestionID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with a message",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/codingInterview.getCompileResult": {
             "post": {
                 "description": "Get compile result for a coding interview",
@@ -1264,10 +1309,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/handlers.Response-array_GetVideoQuestionByIdResponse"
-                            }
+                            "$ref": "#/definitions/handlers.Response-array_GetVideoQuestionByPortalIdResponse"
                         }
                     },
                     "400": {
@@ -1796,6 +1838,35 @@ const docTemplate = `{
             }
         },
         "GetVideoQuestionByIdResponse": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "portalId": {
+                    "type": "integer"
+                },
+                "retryAmount": {
+                    "type": "integer"
+                },
+                "timeToAnswer": {
+                    "type": "integer"
+                },
+                "timeToPrepare": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "GetVideoQuestionByPortalIdResponse": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -2720,7 +2791,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.Response-array_GetVideoQuestionByIdResponse": {
+        "handlers.Response-array_GetVideoQuestionByPortalIdResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2729,7 +2800,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/GetVideoQuestionByIdResponse"
+                        "$ref": "#/definitions/GetVideoQuestionByPortalIdResponse"
                     }
                 },
                 "message": {

@@ -107,7 +107,7 @@ func (q VideoQuestionHandler) GetVideoQuestion(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param payload query GetVideoQuestionByPortalIdParam true "Portal ID"
-// @Success 200 {array} Response[[]GetVideoQuestionByIdResponse]
+// @Success 200 {object} Response[[]GetVideoQuestionByPortalIdResponse]
 // @Failure 400 {object} ErrResponse
 // @Failure 404 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
@@ -126,7 +126,21 @@ func (q VideoQuestionHandler) GetVideoQuestionByPortalId(c *fiber.Ctx) error {
 		return err
 	}
 
-	return Ok(c, response)
+	var result []GetVideoQuestionByPortalIdResponse
+	for _, v := range response {
+		result = append(result, GetVideoQuestionByPortalIdResponse{
+			ID:            v.ID,
+			Title:         v.Title,
+			TimeToPrepare: v.TimeToPrepare,
+			TimeToAnswer:  v.TimeToAnswer,
+			RetryAmount:   v.RetryAmount,
+			PortalID:      v.PortalID,
+			CreatedAt:     v.CreatedAt,
+			UpdatedAt:     v.UpdatedAt,
+		})
+	}
+
+	return Ok(c, result)
 }
 
 // UpdateVideoQuestion
