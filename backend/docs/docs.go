@@ -201,6 +201,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/codingInterview.deleteQuestion/{codingQuestionID}": {
+            "delete": {
+                "description": "Delete a coding interview question",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Delete a coding interview question",
+                "operationId": "DeleteQuestion",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Coding Question ID",
+                        "name": "codingQuestionID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with a message",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/codingInterview.getCompileResult": {
             "post": {
                 "description": "Get compile result for a coding interview",
@@ -357,6 +402,60 @@ const docTemplate = `{
                         "description": "Successful response with the coding interview questions in a portal",
                         "schema": {
                             "$ref": "#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionsInPortalResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/codingInterview.updateQuestion": {
+            "put": {
+                "description": "Update a coding interview question",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Update a coding interview question",
+                "operationId": "UpdateQuestion",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Coding Question ID",
+                        "name": "codingQuestionID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Request body containing the updated question details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CodingInterviewUpdateQuestionQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with the updated question",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-domains_CodingQuestion"
                         }
                     },
                     "400": {
@@ -1571,6 +1670,21 @@ const docTemplate = `{
                 }
             }
         },
+        "CodingInterviewUpdateQuestionQuery": {
+            "type": "object",
+            "required": [
+                "body",
+                "codingQuestionID"
+            ],
+            "properties": {
+                "body": {
+                    "$ref": "#/definitions/domains.CreateCodingQuestionRequest"
+                },
+                "codingQuestionID": {
+                    "type": "integer"
+                }
+            }
+        },
         "CreatePortalBody": {
             "type": "object",
             "required": [
@@ -2310,6 +2424,12 @@ const docTemplate = `{
             "properties": {
                 "input": {
                     "type": "string"
+                },
+                "is_example": {
+                    "type": "boolean"
+                },
+                "is_hidden": {
+                    "type": "boolean"
                 },
                 "output": {
                     "type": "string"

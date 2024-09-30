@@ -24,4 +24,5 @@ type ICodingInterviewService interface {
 	CreateCodingQuestion(req domains.CodingQuestion) (domains.CreateCodingQuestionResponse, error)
 	AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error
 	DeleteCodingQuestion(codingQuestionID uint) error
+	UpdateCodingQuestion(codingQuestionID uint, question domains.CodingQuestion) (domains.CodingQuestion, error)
 }

@@ -117,6 +117,10 @@ func (s *codingInterviewService) AddCodingQuestion(codingQuestionID uint, target
 	return s.codingInterviewRepository.AddCodingQuestion(codingQuestionID, target, targetID)
 }
 
+func (s *codingInterviewService) UpdateCodingQuestion(codingQuestionID uint, question domains.CodingQuestion) (domains.CodingQuestion, error) {
+	return s.codingInterviewRepository.UpdateCodingQuestion(codingQuestionID, question)
+}
+
 func (s *codingInterviewService) DeleteCodingQuestion(codingQuestionID uint) error {
 	return s.codingInterviewRepository.DeleteCodingQuestion(codingQuestionID)
 }

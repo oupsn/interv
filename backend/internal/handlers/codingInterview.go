@@ -29,3 +29,8 @@ type CodingInterviewGetQuestionsInPortalResponse []domains.CodingQuestion
 type CodingInterviewCreateQuestionQuery struct {
 	Body domains.CreateCodingQuestionRequest `json:"body"  validate:"required"`
 } // @name CodingInterviewCreateQuestionQuery
+
+type CodingInterviewUpdateQuestionQuery struct {
+	CodingQuestionID int                                 `json:"codingQuestionID" validate:"required"`
+	Body             domains.CreateCodingQuestionRequest `json:"body"  validate:"required"`
+} // @name CodingInterviewUpdateQuestionQuery

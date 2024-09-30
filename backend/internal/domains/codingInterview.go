@@ -62,8 +62,10 @@ type CodingQuestionSnapshot struct {
 }
 
 type CodingQuestionTestCaseResponse struct {
-	Input  string `json:"input"`
-	Output string `json:"output"`
+	Input     string `json:"input"`
+	Output    string `json:"output"`
+	IsExample bool   `json:"is_example"`
+	IsHidden  bool   `json:"is_hidden"`
 }
 
 type CodingQuestionResponse struct {

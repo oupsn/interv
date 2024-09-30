@@ -32,6 +32,11 @@ export interface CodingInterviewGetCompileResultQuery {
   body: DomainsCompilationRequest
 }
 
+export interface CodingInterviewUpdateQuestionQuery {
+  body: DomainsCreateCodingQuestionRequest
+  codingQuestionID: number
+}
+
 export type CreateAdminData = HandlersResponseUser
 
 export type CreateAdminError = HandlersErrResponse
@@ -104,6 +109,10 @@ export interface DeletePortalBody {
 export type DeletePortalByIdData = HandlersResponseString
 
 export type DeletePortalByIdError = HandlersErrResponse
+
+export type DeleteQuestionData = HandlersResponseString
+
+export type DeleteQuestionError = HandlersErrResponse
 
 export type DeleteUserData = HandlersResponseString
 
@@ -187,6 +196,8 @@ export interface DomainsCodingQuestionTestCase {
 
 export interface DomainsCodingQuestionTestCaseResponse {
   input?: string
+  is_example?: boolean
+  is_hidden?: boolean
   output?: string
 }
 
@@ -600,6 +611,10 @@ export type UpdateLobbyContextData = HandlersResponseString
 
 export type UpdateLobbyContextError = HandlersErrResponse
 
+export type UpdateQuestionData = HandlersResponseDomainsCodingQuestion
+
+export type UpdateQuestionError = HandlersErrResponse
+
 export interface UpdateVideoQuestionBody {
   id: number
   portalId?: number
@@ -778,6 +793,27 @@ export namespace CodingInterview {
   }
 
   /**
+   * @description Delete a coding interview question
+   * @tags codingInterview
+   * @name DeleteQuestion
+   * @summary Delete a coding interview question
+   * @request DELETE:/codingInterview.deleteQuestion/{codingQuestionID}
+   * @response `200` `DeleteQuestionData` Successful response with a message
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace DeleteQuestion {
+    export type RequestParams = {
+      /** Coding Question ID */
+      codingQuestionId: number
+    }
+    export type RequestQuery = {}
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = DeleteQuestionData
+  }
+
+  /**
    * @description Get compile result for a coding interview
    * @tags codingInterview
    * @name GetCompileResult
@@ -853,6 +889,27 @@ export namespace CodingInterview {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetQuestionsInPortalData
+  }
+
+  /**
+   * @description Update a coding interview question
+   * @tags codingInterview
+   * @name UpdateQuestion
+   * @summary Update a coding interview question
+   * @request PUT:/codingInterview.updateQuestion
+   * @response `200` `UpdateQuestionData` Successful response with the updated question
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace UpdateQuestion {
+    export type RequestParams = {
+      /** Coding Question ID */
+      codingQuestionId: number
+    }
+    export type RequestQuery = {}
+    export type RequestBody = CodingInterviewUpdateQuestionQuery
+    export type RequestHeaders = {}
+    export type ResponseBody = UpdateQuestionData
   }
 }
 
@@ -1593,6 +1650,26 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
 
     /**
+     * @description Delete a coding interview question
+     *
+     * @tags codingInterview
+     * @name DeleteQuestion
+     * @summary Delete a coding interview question
+     * @request DELETE:/codingInterview.deleteQuestion/{codingQuestionID}
+     * @response `200` `DeleteQuestionData` Successful response with a message
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    deleteQuestion: (codingQuestionId: number, params: RequestParams = {}) =>
+      this.request<DeleteQuestionData, DeleteQuestionError>({
+        path: `/codingInterview.deleteQuestion/${codingQuestionId}`,
+        method: "DELETE",
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Get compile result for a coding interview
      *
      * @tags codingInterview
@@ -1668,6 +1745,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       this.request<GetQuestionsInPortalData, GetQuestionsInPortalError>({
         path: `/codingInterview.getQuestionsInPortal/${portalId}`,
         method: "GET",
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Update a coding interview question
+     *
+     * @tags codingInterview
+     * @name UpdateQuestion
+     * @summary Update a coding interview question
+     * @request PUT:/codingInterview.updateQuestion
+     * @response `200` `UpdateQuestionData` Successful response with the updated question
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    updateQuestion: (codingQuestionId: number, body: CodingInterviewUpdateQuestionQuery, params: RequestParams = {}) =>
+      this.request<UpdateQuestionData, UpdateQuestionError>({
+        path: `/codingInterview.updateQuestion`,
+        method: "PUT",
+        body: body,
         type: ContentType.Json,
         format: "json",
         ...params,

@@ -11,16 +11,35 @@ import { FaCode, FaEye, FaEdit, FaTrash, FaPlus } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import useCurrentUser from "@/hooks/UseCurrentUser"
+import { useState } from "react"
+import { server } from "@/contexts/swr.tsx"
+import { toast } from "sonner"
+import { useEffect } from "react"
+import useIsFocused from "@/hooks/useIsFocused"
+
 const AssessmentCodingListPage = () => {
   const navigate = useNavigate()
   const currentUser = useCurrentUser()
-  // TODO: replace with actual portalId
+  const isFocused = useIsFocused()
   const {
     data: codingAssessmentList,
     error,
     isLoading,
+    mutate,
   } = useGetCodingInterviewQuestionByPortalId(currentUser.currentUser.portalId)
+
+  const [deleteItemId, setDeleteItemId] = useState<number | null>(null)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   const handleAdd = () => {
     navigate("/portal/assessment/coding/create")
@@ -29,13 +48,37 @@ const AssessmentCodingListPage = () => {
     navigate(`/portal/assessment/coding/${encodeURIComponent(title)}`)
   }
 
-  const handleEdit = (id: number) => {
-    console.log("edit", id)
+  const handleEdit = (title: string) => {
+    navigate(`/portal/assessment/coding/edit/${encodeURIComponent(title)}`)
   }
 
   const handleDelete = (id: number) => {
-    console.log("delete", id)
+    setDeleteItemId(id)
+    setIsDeleteDialogOpen(true)
   }
+
+  const confirmDelete = () => {
+    if (deleteItemId) {
+      toast.promise(
+        server.codingInterview
+          .deleteQuestion(deleteItemId)
+          .then(() => mutate()),
+        {
+          loading: "Deleting...",
+          success: "Deleted successfully",
+          error: "Failed to delete",
+        },
+      )
+    }
+    setIsDeleteDialogOpen(false)
+    setDeleteItemId(null)
+  }
+
+  useEffect(() => {
+    if (isFocused) {
+      mutate()
+    }
+  }, [isFocused, mutate])
 
   return (
     <ContentLayout title={"Coding Assessments"}>
@@ -95,17 +138,47 @@ const AssessmentCodingListPage = () => {
                         <FaEye />
                       </Button>
                       <Button
-                        onClick={() => handleEdit(item.id ?? 0)}
+                        onClick={() => handleEdit(item.title ?? "")}
                         size="icon"
                       >
                         <FaEdit />
                       </Button>
-                      <Button
-                        onClick={() => handleDelete(item.id ?? 0)}
-                        size="icon"
+                      <Dialog
+                        open={isDeleteDialogOpen}
+                        onOpenChange={setIsDeleteDialogOpen}
                       >
-                        <FaTrash />
-                      </Button>
+                        <DialogTrigger asChild>
+                          <Button
+                            onClick={() => handleDelete(item.id ?? 0)}
+                            size="icon"
+                          >
+                            <FaTrash />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-white">
+                          <DialogHeader>
+                            <DialogTitle>Confirm Deletion</DialogTitle>
+                            <DialogDescription>
+                              Are you sure you want to delete this coding
+                              assessment? This action cannot be undone.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogFooter>
+                            <Button
+                              variant="outline"
+                              onClick={() => setIsDeleteDialogOpen(false)}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              onClick={confirmDelete}
+                            >
+                              Delete
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </td>
                   </tr>
                 ))}
