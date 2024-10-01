@@ -28,7 +28,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb.tsx"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import {
@@ -57,7 +57,6 @@ function AssessmentCodingEdit() {
   const decodedTitle = decodeURIComponent(encodedTitle ?? "")
   const { data: originalCodingQuestion, isLoading } =
     useGetCodingInterviewQuestionByTitle(encodedTitle ?? "")
-  const navigate = useNavigate()
 
   const formSchema = z.object({
     title: z.string().min(1),
@@ -127,7 +126,7 @@ function AssessmentCodingEdit() {
     setIsConfirmDialogOpen(true)
   }
 
-  const confirmUpdate = () => {
+  const confirmUpdate = async () => {
     if (formValues) {
       const codingQuestionID = originalCodingQuestion?.data?.id ?? 0
       const updateBody: CodingInterviewUpdateQuestionQuery = {
@@ -154,8 +153,7 @@ function AssessmentCodingEdit() {
           error: "Failed to update question",
         },
       )
-
-      navigate("/portal/assessment/coding")
+      setIsConfirmDialogOpen(false)
     }
   }
 
@@ -241,24 +239,28 @@ function AssessmentCodingEdit() {
   }
 
   return (
-    <ContentLayout title={"Edit Coding Assessment"}>
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to="/portal/assessment/coding">Coding Assessments</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Edit</BreadcrumbPage>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{decodedTitle}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+    <ContentLayout
+      title={"Edit Coding Assessment"}
+      breadcrumb={
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to="/portal/assessment/coding">Coding Assessments</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Edit</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{decodedTitle}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      }
+    >
       <ContentPanel>
         <Form {...form}>
           <form

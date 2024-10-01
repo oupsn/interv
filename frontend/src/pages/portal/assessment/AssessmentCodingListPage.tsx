@@ -26,11 +26,13 @@ import { server } from "@/contexts/swr.tsx"
 import { toast } from "sonner"
 import { useEffect } from "react"
 import useIsFocused from "@/hooks/useIsFocused"
+import { useLocation } from "react-router-dom"
 
 const AssessmentCodingListPage = () => {
   const navigate = useNavigate()
   const currentUser = useCurrentUser()
   const isFocused = useIsFocused()
+  const location = useLocation()
   const {
     data: codingAssessmentList,
     error,
@@ -75,30 +77,38 @@ const AssessmentCodingListPage = () => {
   }
 
   useEffect(() => {
-    if (isFocused) {
+    if (isFocused || location.state?.refresh) {
       mutate()
+      // Clear the refresh flag from location state
+      if (location.state?.refresh) {
+        navigate(location.pathname, { replace: true, state: {} })
+      }
     }
-  }, [isFocused, mutate])
+  }, [isFocused, location, mutate, navigate])
 
   return (
-    <ContentLayout title={"Coding Assessments"}>
-      <Breadcrumb>
-        <BreadcrumbList className="flex flex-row justify-between">
-          <BreadcrumbItem>
-            <BreadcrumbPage>Coding Assessments</BreadcrumbPage>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Button
-              variant="outline"
-              onClick={() => handleAdd()}
-              className="flex flex-row items-center gap-2"
-            >
-              <FaPlus />
-              Create new
-            </Button>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+    <ContentLayout
+      title={"Coding Assessments"}
+      breadcrumb={
+        <Breadcrumb>
+          <BreadcrumbList className="flex flex-row justify-between">
+            <BreadcrumbItem>
+              <BreadcrumbPage>Coding Assessments</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbItem>
+              <Button
+                variant="outline"
+                onClick={() => handleAdd()}
+                className="flex flex-row items-center gap-2"
+              >
+                <FaPlus />
+                Create new
+              </Button>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      }
+    >
       <ContentPanel>
         {isLoading ? (
           <p>Loading...</p>
