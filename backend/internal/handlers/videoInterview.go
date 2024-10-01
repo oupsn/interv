@@ -1,7 +1,7 @@
 package handlers
 
 type VideoInterviewContextQuery struct {
-	RoomID uint `json:"roomId"  validate:"required"`
+	RoomID string `json:"roomId"  validate:"required"`
 } // @name VideoInterviewContextQuery
 
 type VideoInterviewContextResponse struct {

@@ -171,7 +171,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   const confirmSubmit = async () => {
     const submissionData: DomainsCodingQuestionSnapshot[] = questions.map(
       (question, index) => ({
-        room_id: parseInt(roomId),
+        room_id: roomId,
         question_id: question.id,
         code: editorStates[index].content,
         language: editorStates[index].language,

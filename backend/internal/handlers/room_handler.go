@@ -16,6 +16,44 @@ func NewRoomHandler(roomService services.IRoomService) RoomHandler {
 	}
 }
 
+// CreateRoom
+// @ID createRoom
+// @Tags room
+// @Summary Create room
+// @Accept json
+// @Produce json
+// @Param payload body CreateRoomBody true "create room"
+// @Success 200 {object} Response[CreateRoomResponse]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /room.createRoom [post]
+func (l RoomHandler) CreateRoom(c *fiber.Ctx) error {
+	body := CreateRoomBody{}
+	if err := c.BodyParser(&body); err != nil {
+		return err
+	}
+
+	if err := validate.Struct(body); err != nil {
+		return err
+	}
+
+	_, err := l.roomService.CreateRoom(domains.Room{
+		CandidateID:         body.CandidateID,
+		TotalVideoTime:      body.TotalVideoTime,
+		TotalCodingTime:     body.TotalCodingTime,
+		TotalVideoQuestion:  body.TotalVideoQuestion,
+		TotalCodingQuestion: body.TotalCodingQuestion,
+		IsVideoDone:         *body.IsVideoDone,
+		IsCodingDone:        *body.IsCodingDone,
+		DueDate:             body.DueDate,
+	})
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, "room created")
+}
+
 // GetRoomContext
 // @ID getRoomContext
 // @Tags room
@@ -83,8 +121,8 @@ func (l RoomHandler) UpdateRoomContext(c *fiber.Ctx) error {
 		TotalCodingTime:     body.TotalCodingTime,
 		TotalVideoQuestion:  body.TotalVideoQuestion,
 		TotalCodingQuestion: body.TotalCodingQuestion,
-		IsVideoDone:         body.IsVideoDone,
-		IsCodingDone:        body.IsCodingDone,
+		IsVideoDone:         *body.IsVideoDone,
+		IsCodingDone:        *body.IsCodingDone,
 		DueDate:             body.DueDate,
 	})
 	if err != nil {

@@ -11,7 +11,8 @@ var (
 )
 
 type IRoomService interface {
-	GetRoomContext(roomId uint) (*domains.Room, error)
+	CreateRoom(room domains.Room) (*domains.Room, error)
+	GetRoomContext(roomId string) (*domains.Room, error)
 	UpdateRoomContext(room domains.Room) error
 }
 
@@ -25,7 +26,16 @@ func NewRoomService(roomRepo repositories.IRoomRepository) IRoomService {
 	}
 }
 
-func (l roomService) GetRoomContext(roomId uint) (*domains.Room, error) {
+func (l roomService) CreateRoom(room domains.Room) (*domains.Room, error) {
+	createdRoom, err := l.roomRepo.Create(room)
+	if err != nil {
+		return nil, err
+	}
+
+	return createdRoom, nil
+}
+
+func (l roomService) GetRoomContext(roomId string) (*domains.Room, error) {
 	room, err := l.roomRepo.GetById(roomId)
 	if err != nil {
 		return nil, ErrorGetRoomContext

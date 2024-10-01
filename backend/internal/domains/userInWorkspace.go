@@ -33,7 +33,3 @@ func (UserInWorkspace *UserInWorkspace) BeforeCreate(tx *gorm.DB) (err error) {
 	}
 	return fiber.NewError(fiber.StatusBadRequest, "invalid status , must be one of: "+StatusUnseen+", "+StatusPending+", "+StatusSuccess)
 }
-
-func (UserInWorkspace *UserInWorkspace) getUserId(tx *gorm.DB) (userId uint) {
-	return UserInWorkspace.UserId
-}

@@ -62,6 +62,21 @@ export type CreateQuestionSnapshotError = HandlersErrResponse
 
 export type CreateQuestionSnapshotPayload = DomainsCodingQuestionSnapshot[]
 
+export interface CreateRoomBody {
+  candidateId: number
+  dueDate: string
+  isCodingDone: boolean
+  isVideoDone: boolean
+  totalCodingQuestion: number
+  totalCodingTime: number
+  totalVideoQuestion: number
+  totalVideoTime: number
+}
+
+export type CreateRoomData = HandlersResponseHandlersCreateRoomResponse
+
+export type CreateRoomError = HandlersErrResponse
+
 export type CreateUserData = HandlersResponseUser
 
 export type CreateUserError = HandlersErrResponse
@@ -206,7 +221,7 @@ export interface DomainsCodingQuestionSnapshot {
   language?: string
   linter_result?: string
   memory_usage?: string
-  room_id?: number
+  room_id?: string
   run_time?: string
   test_cases_result?: number
   time_taken?: number
@@ -327,7 +342,7 @@ export type GetRoomContextData = HandlersResponseGetRoomContextResponse
 export type GetRoomContextError = HandlersErrResponse
 
 export interface GetRoomContextParams {
-  roomId: number
+  roomId: string
 }
 
 export interface GetRoomContextResponse {
@@ -335,7 +350,7 @@ export interface GetRoomContextResponse {
   dueDate: string
   isCodingDone: boolean
   isVideoDone: boolean
-  roomId: number
+  roomId: string
   totalCodingQuestion: number
   totalCodingTime: number
   totalVideoQuestion: number
@@ -355,7 +370,7 @@ export type GetVideoInterviewContextData = HandlersResponseVideoInterviewContext
 export type GetVideoInterviewContextError = HandlersErrResponse
 
 export interface GetVideoInterviewContextParams {
-  roomId: number
+  roomId: string
 }
 
 export type GetVideoInterviewQuestionData = HandlersResponseVideoInterviewQuestionResponse
@@ -426,6 +441,18 @@ export interface HandlersCodingInterviewGetQuestionByTitleResponse {
   output_description?: string
   test_case?: DomainsCodingQuestionTestCaseResponse[]
   title?: string
+}
+
+export interface HandlersCreateRoomResponse {
+  candidateId: number
+  dueDate: string
+  isCodingDone: boolean
+  isVideoDone: boolean
+  roomId: string
+  totalCodingQuestion: number
+  totalCodingTime: number
+  totalVideoQuestion: number
+  totalVideoTime: number
 }
 
 export interface HandlersErrResponse {
@@ -529,6 +556,13 @@ export interface HandlersResponseHandlersCodingInterviewGetQuestionsResponse {
   timestamp?: string
 }
 
+export interface HandlersResponseHandlersCreateRoomResponse {
+  code?: number
+  data?: HandlersCreateRoomResponse
+  message?: string
+  timestamp?: string
+}
+
 export interface HandlersResponsePortalData {
   code?: number
   data?: PortalData
@@ -605,7 +639,7 @@ export type LogoutData = HandlersOkResponse
 export interface MailObject {
   dueDate?: string
   name: string
-  roomId: number
+  roomId: string
   to: string
 }
 
@@ -646,7 +680,7 @@ export interface UpdateRoomContextBody {
   dueDate?: string
   isCodingDone?: boolean
   isVideoDone?: boolean
-  roomId: number
+  roomId: string
   totalCodingQuestion?: number
   totalCodingTime?: number
   totalVideoQuestion?: number
@@ -1097,6 +1131,24 @@ export namespace Room {
   /**
    * No description
    * @tags room
+   * @name CreateRoom
+   * @summary Create room
+   * @request POST:/room.createRoom
+   * @response `200` `CreateRoomData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CreateRoom {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = CreateRoomBody
+    export type RequestHeaders = {}
+    export type ResponseBody = CreateRoomData
+  }
+
+  /**
+   * No description
+   * @tags room
    * @name GetRoomContext
    * @summary Get room context
    * @request GET:/room.getRoomContext
@@ -1107,7 +1159,7 @@ export namespace Room {
   export namespace GetRoomContext {
     export type RequestParams = {}
     export type RequestQuery = {
-      roomId: number
+      roomId: string
     }
     export type RequestBody = never
     export type RequestHeaders = {}
@@ -1243,7 +1295,7 @@ export namespace VideoInterview {
   export namespace GetVideoInterviewContext {
     export type RequestParams = {}
     export type RequestQuery = {
-      roomId: number
+      roomId: string
     }
     export type RequestBody = never
     export type RequestHeaders = {}
@@ -1986,6 +2038,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
   }
   room = {
+    /**
+     * No description
+     *
+     * @tags room
+     * @name CreateRoom
+     * @summary Create room
+     * @request POST:/room.createRoom
+     * @response `200` `CreateRoomData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    createRoom: (payload: CreateRoomBody, params: RequestParams = {}) =>
+      this.request<CreateRoomData, CreateRoomError>({
+        path: `/room.createRoom`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
     /**
      * No description
      *

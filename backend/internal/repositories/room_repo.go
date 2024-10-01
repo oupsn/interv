@@ -7,9 +7,9 @@ import (
 
 type IRoomRepository interface {
 	Create(question domains.Room) (*domains.Room, error)
-	GetById(id uint) (*domains.Room, error)
+	GetById(id string) (*domains.Room, error)
 	Update(question domains.Room) error
-	DeleteById(id uint) error
+	DeleteById(id string) error
 }
 
 type roomRepository struct {
@@ -22,21 +22,21 @@ func NewRoomRepository(db gorm.DB) IRoomRepository {
 	}
 }
 
-func (l roomRepository) Create(question domains.Room) (*domains.Room, error) {
-	if err := l.DB.Create(&question).Error; err != nil { // Do we need .Clauses(clause.Returning{}) here???
+func (l roomRepository) Create(room domains.Room) (*domains.Room, error) {
+	if err := l.DB.Create(&room).Error; err != nil { // Do we need .Clauses(clause.Returning{}) here???
 		return nil, err
 	}
 
-	return &question, nil
+	return &room, nil
 }
 
-func (l roomRepository) GetById(id uint) (*domains.Room, error) {
-	question := domains.Room{}
-	if err := l.DB.First(&question, "id = ?", id).Error; err != nil {
+func (l roomRepository) GetById(id string) (*domains.Room, error) {
+	room := domains.Room{}
+	if err := l.DB.First(&room, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	return &question, nil
+	return &room, nil
 }
 
 func (l roomRepository) Update(question domains.Room) error {
@@ -47,7 +47,7 @@ func (l roomRepository) Update(question domains.Room) error {
 	return nil
 }
 
-func (l roomRepository) DeleteById(id uint) error {
+func (l roomRepository) DeleteById(id string) error {
 	if err := l.DB.Delete(&domains.Room{}, "id = ?", id).Error; err != nil {
 		return err
 	}

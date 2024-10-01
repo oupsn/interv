@@ -50,7 +50,7 @@ type CodingQuestionTestCase struct {
 type CodingQuestionSnapshot struct {
 	gorm.Model
 	CodingQuestionID uint   `gorm:"index" json:"coding_question_id"`
-	RoomID           uint   `gorm:"index" json:"room_id"`
+	RoomID           string `gorm:"index" json:"room_id"`
 	Code             string `gorm:"type:text" json:"code"`
 	Language         string `gorm:"type:text" json:"language"`
 	MemoryUsage      string `gorm:"type:text" json:"memory_usage"`

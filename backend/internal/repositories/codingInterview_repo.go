@@ -178,7 +178,7 @@ func (c *codingInterviewRepository) UpdateCodingQuestion(codingQuestionID uint, 
 
 	return updatedQuestion, nil
 }
-func (c *codingInterviewRepository) UpdateCodingDoneInRoom(roomID uint, isDone bool) error {
+func (c *codingInterviewRepository) UpdateCodingDoneInRoom(roomID string, isDone bool) error {
 	if err := c.DB.Model(&domains.Room{}).Where("id = ?", roomID).Update("is_coding_done", isDone).Error; err != nil {
 		return err
 	}

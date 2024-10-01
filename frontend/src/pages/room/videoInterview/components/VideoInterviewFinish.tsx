@@ -9,7 +9,7 @@ export const VideoInterviewFinish = () => {
   useEffect(() => {
     server.room
       .updateRoomContext({
-        roomId: Number(roomId),
+        roomId: roomId!,
         isVideoDone: true,
       })
       .finally(() => {

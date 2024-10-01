@@ -798,6 +798,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/room.createRoom": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "room"
+                ],
+                "summary": "Create room",
+                "operationId": "createRoom",
+                "parameters": [
+                    {
+                        "description": "create room",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateRoomBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-handlers_CreateRoomResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/room.getRoomContext": {
             "get": {
                 "consumes": [
@@ -813,7 +859,7 @@ const docTemplate = `{
                 "operationId": "getRoomContext",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "name": "roomId",
                         "in": "query",
                         "required": true
@@ -1129,7 +1175,7 @@ const docTemplate = `{
                 "operationId": "getVideoInterviewContext",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "name": "roomId",
                         "in": "query",
                         "required": true
@@ -1755,6 +1801,45 @@ const docTemplate = `{
                 }
             }
         },
+        "CreateRoomBody": {
+            "type": "object",
+            "required": [
+                "candidateId",
+                "dueDate",
+                "isCodingDone",
+                "isVideoDone",
+                "totalCodingQuestion",
+                "totalCodingTime",
+                "totalVideoQuestion",
+                "totalVideoTime"
+            ],
+            "properties": {
+                "candidateId": {
+                    "type": "integer"
+                },
+                "dueDate": {
+                    "type": "string"
+                },
+                "isCodingDone": {
+                    "type": "boolean"
+                },
+                "isVideoDone": {
+                    "type": "boolean"
+                },
+                "totalCodingQuestion": {
+                    "type": "integer"
+                },
+                "totalCodingTime": {
+                    "type": "integer"
+                },
+                "totalVideoQuestion": {
+                    "type": "integer"
+                },
+                "totalVideoTime": {
+                    "type": "integer"
+                }
+            }
+        },
         "CreateVideoQuestionBody": {
             "type": "object",
             "required": [
@@ -1972,7 +2057,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "roomId": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "totalCodingQuestion": {
                     "type": "integer"
@@ -2095,7 +2180,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "roomId": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "to": {
                     "type": "string"
@@ -2150,7 +2235,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "roomId": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "totalCodingQuestion": {
                     "type": "integer"
@@ -2539,7 +2624,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "room_id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "run_time": {
                     "type": "string"
@@ -2779,6 +2864,49 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "handlers.CreateRoomResponse": {
+            "type": "object",
+            "required": [
+                "candidateId",
+                "dueDate",
+                "isCodingDone",
+                "isVideoDone",
+                "roomId",
+                "totalCodingQuestion",
+                "totalCodingTime",
+                "totalVideoQuestion",
+                "totalVideoTime"
+            ],
+            "properties": {
+                "candidateId": {
+                    "type": "integer"
+                },
+                "dueDate": {
+                    "type": "string"
+                },
+                "isCodingDone": {
+                    "type": "boolean"
+                },
+                "isVideoDone": {
+                    "type": "boolean"
+                },
+                "roomId": {
+                    "type": "string"
+                },
+                "totalCodingQuestion": {
+                    "type": "integer"
+                },
+                "totalCodingTime": {
+                    "type": "integer"
+                },
+                "totalVideoQuestion": {
+                    "type": "integer"
+                },
+                "totalVideoTime": {
+                    "type": "integer"
                 }
             }
         },
@@ -3153,6 +3281,23 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domains.CodingQuestionResponse"
                     }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-handlers_CreateRoomResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/handlers.CreateRoomResponse"
                 },
                 "message": {
                     "type": "string"
