@@ -523,8 +523,6 @@ definitions:
     properties:
       code:
         type: string
-      coding_question:
-        $ref: '#/definitions/domains.CodingQuestion'
       coding_question_id:
         type: integer
       createdAt:
@@ -539,8 +537,6 @@ definitions:
         type: string
       linter_result:
         type: string
-      lobby:
-        $ref: '#/definitions/domains.Lobby'
       lobby_id:
         type: integer
       memory_usage:
@@ -548,6 +544,8 @@ definitions:
       run_time:
         type: string
       test_cases_result:
+        type: integer
+      time_taken:
         type: integer
       updatedAt:
         type: string
@@ -640,35 +638,6 @@ definitions:
         type: array
       title:
         type: string
-    type: object
-  domains.Lobby:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      dueDate:
-        type: string
-      id:
-        type: integer
-      isCodingDone:
-        type: boolean
-      isVideoDone:
-        type: boolean
-      totalCodingQuestion:
-        type: integer
-      totalCodingTime:
-        type: integer
-      totalVideoQuestion:
-        type: integer
-      totalVideoTime:
-        type: integer
-      updatedAt:
-        type: string
-      userID:
-        type: integer
-      workspaceID:
-        type: integer
     type: object
   domains.Portal:
     properties:

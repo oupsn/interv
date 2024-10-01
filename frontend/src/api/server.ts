@@ -190,7 +190,6 @@ export interface DomainsCodingQuestionResponse {
 
 export interface DomainsCodingQuestionSnapshot {
   code?: string
-  coding_question?: DomainsCodingQuestion
   coding_question_id?: number
   createdAt?: string
   deletedAt?: GormDeletedAt
@@ -198,11 +197,11 @@ export interface DomainsCodingQuestionSnapshot {
   is_submitted?: boolean
   language?: string
   linter_result?: string
-  lobby?: DomainsLobby
   lobby_id?: number
   memory_usage?: string
   run_time?: string
   test_cases_result?: number
+  time_taken?: number
   updatedAt?: string
 }
 
@@ -257,22 +256,6 @@ export interface DomainsCreateCodingQuestionRequest {
   output_description?: string
   test_cases?: DomainsCodingQuestionTestCase[]
   title?: string
-}
-
-export interface DomainsLobby {
-  createdAt?: string
-  deletedAt?: GormDeletedAt
-  dueDate?: string
-  id?: number
-  isCodingDone?: boolean
-  isVideoDone?: boolean
-  totalCodingQuestion?: number
-  totalCodingTime?: number
-  totalVideoQuestion?: number
-  totalVideoTime?: number
-  updatedAt?: string
-  userID?: number
-  workspaceID?: number
 }
 
 export interface DomainsPortal {

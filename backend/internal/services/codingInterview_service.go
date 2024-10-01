@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -120,6 +121,10 @@ func (s *codingInterviewService) CreateCodingSnapshot(req []domains.CodingQuesti
 		if err != nil {
 			return domains.CreateCodingQuestionResponse{}, ErrorCreateCodingSnapshot
 		}
+	}
+	fmt.Println(*req[0].IsSubmitted)
+	if req[0].IsSubmitted != nil && *req[0].IsSubmitted {
+		s.codingInterviewRepository.UpdateCodingDoneInLobby(req[0].LobbyID, true)
 	}
 
 	return domains.CreateCodingQuestionResponse{

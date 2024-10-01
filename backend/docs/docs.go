@@ -2443,9 +2443,6 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
-                "coding_question": {
-                    "$ref": "#/definitions/domains.CodingQuestion"
-                },
                 "coding_question_id": {
                     "type": "integer"
                 },
@@ -2467,9 +2464,6 @@ const docTemplate = `{
                 "linter_result": {
                     "type": "string"
                 },
-                "lobby": {
-                    "$ref": "#/definitions/domains.Lobby"
-                },
                 "lobby_id": {
                     "type": "integer"
                 },
@@ -2480,6 +2474,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "test_cases_result": {
+                    "type": "integer"
+                },
+                "time_taken": {
                     "type": "integer"
                 },
                 "updatedAt": {
@@ -2621,50 +2618,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "domains.Lobby": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "dueDate": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "isCodingDone": {
-                    "type": "boolean"
-                },
-                "isVideoDone": {
-                    "type": "boolean"
-                },
-                "totalCodingQuestion": {
-                    "type": "integer"
-                },
-                "totalCodingTime": {
-                    "type": "integer"
-                },
-                "totalVideoQuestion": {
-                    "type": "integer"
-                },
-                "totalVideoTime": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userID": {
-                    "type": "integer"
-                },
-                "workspaceID": {
-                    "type": "integer"
                 }
             }
         },

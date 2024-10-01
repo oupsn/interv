@@ -175,7 +175,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
         question_id: question.id,
         code: editorStates[index].content,
         language: editorStates[index].language,
-        run_time: timeTaken.toString(),
+        time_taken: timeTaken,
         is_submitted: true,
       }),
     )

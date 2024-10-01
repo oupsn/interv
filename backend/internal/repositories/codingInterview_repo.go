@@ -178,6 +178,12 @@ func (c *codingInterviewRepository) UpdateCodingQuestion(codingQuestionID uint, 
 
 	return updatedQuestion, nil
 }
+func (c *codingInterviewRepository) UpdateCodingDoneInLobby(lobbyID uint, isDone bool) error {
+	if err := c.DB.Model(&domains.Lobby{}).Where("id = ?", lobbyID).Update("is_coding_done", isDone).Error; err != nil {
+		return err
+	}
+	return nil
+}
 
 func (c *codingInterviewRepository) DeleteCodingQuestion(codingQuestionID uint) error {
 	if err := c.DB.Delete(&domains.CodingQuestion{}, codingQuestionID).Error; err != nil {
