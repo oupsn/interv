@@ -28,7 +28,7 @@ interface CodingInterviewPanelProps {
   isFirstQuestion: boolean
   isLastQuestion: boolean
   setCurrentQuestionIndex: (index: number) => void
-  lobbyId: string
+  roomId: string
   setIsFinish: (isFinish: boolean) => void
   timeTaken: number
 }
@@ -50,7 +50,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   isFirstQuestion,
   isLastQuestion,
   setCurrentQuestionIndex,
-  lobbyId,
+  roomId,
   setIsFinish,
   timeTaken,
 }) => {
@@ -171,7 +171,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   const confirmSubmit = async () => {
     const submissionData: DomainsCodingQuestionSnapshot[] = questions.map(
       (question, index) => ({
-        lobby_id: parseInt(lobbyId),
+        room_id: parseInt(roomId),
         question_id: question.id,
         code: editorStates[index].content,
         language: editorStates[index].language,

@@ -18,7 +18,7 @@ func NewCodingInterviewRepository(db gorm.DB) ICodingInterviewRepository {
 	}
 }
 
-// TODO: Add lobbyId to filter coding question by lobby
+// TODO: Add roomId to filter coding question by room
 func (c *codingInterviewRepository) GetCodingQuestionList() ([]domains.CodingQuestionResponse, error) {
 	var codingQuestions []domains.CodingQuestion
 
@@ -178,8 +178,8 @@ func (c *codingInterviewRepository) UpdateCodingQuestion(codingQuestionID uint, 
 
 	return updatedQuestion, nil
 }
-func (c *codingInterviewRepository) UpdateCodingDoneInLobby(lobbyID uint, isDone bool) error {
-	if err := c.DB.Model(&domains.Lobby{}).Where("id = ?", lobbyID).Update("is_coding_done", isDone).Error; err != nil {
+func (c *codingInterviewRepository) UpdateCodingDoneInRoom(roomID uint, isDone bool) error {
+	if err := c.DB.Model(&domains.Room{}).Where("id = ?", roomID).Update("is_coding_done", isDone).Error; err != nil {
 		return err
 	}
 	return nil

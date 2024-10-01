@@ -13,7 +13,7 @@ type MailObject struct {
 	To      string    `json:"to" validate:"required,email"`
 	Name    string    `json:"name" validate:"required"`
 	DueDate time.Time `json:"dueDate"`
-	Link    string    `json:"link"`
+	RoomId  uint      `json:"roomId" validate:"required"`
 } // @name MailObject
 
 type SendMailBody struct {

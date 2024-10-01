@@ -41,7 +41,7 @@ func (m *MailHandler) SendMail(c *fiber.Ctx) error {
 			To:      v.To,
 			Name:    v.Name,
 			DueDate: v.DueDate,
-			Link:    v.Link,
+			RoomId:  v.RoomId,
 		})
 	}
 	mailPayload := services.MailListPayload{

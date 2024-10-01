@@ -2,17 +2,17 @@ import { useEffect, useState } from "react"
 import SideBar from "@/components/layout/SideBar.tsx"
 import SideBarItem from "@/components/layout/SideBarItem.tsx"
 import MainPanel from "@/components/layout/MainPanel.tsx"
-import VideoInterviewSetupDeviceSetup from "@/pages/lobby/videoInterview/components/VideoInterviewSetupDeviceSetup.tsx"
+import VideoInterviewSetupDeviceSetup from "@/pages/room/videoInterview/components/VideoInterviewSetupDeviceSetup.tsx"
 import { useParams } from "react-router-dom"
 import { useGetVideoInterviewContext } from "@/hooks/useGetVideoInterviewContext.ts"
-import VideoInterviewQuestionPanel from "@/pages/lobby/videoInterview/components/VideoInterviewQuestionPanel.tsx"
+import VideoInterviewQuestionPanel from "@/pages/room/videoInterview/components/VideoInterviewQuestionPanel.tsx"
 import { cn } from "@/lib/utils.ts"
-import { VideoInterviewFinish } from "@/pages/lobby/videoInterview/components/VideoInterviewFinish.tsx"
+import { VideoInterviewFinish } from "@/pages/room/videoInterview/components/VideoInterviewFinish.tsx"
 
 const VideoInterviewPage = () => {
-  const { lobbyId } = useParams()
+  const { roomId } = useParams()
   const [activeQuestion, setActiveQuestion] = useState(0) // 0 for setup
-  const { data } = useGetVideoInterviewContext(Number(lobbyId))
+  const { data } = useGetVideoInterviewContext(Number(roomId))
   const isActive = (id: number) => {
     return activeQuestion == id
   }
@@ -51,7 +51,9 @@ const VideoInterviewPage = () => {
             data!.data!.questionSetting[activeQuestion - 1].questionId
           }
           questionIndex={activeQuestion}
-          maxRetry={data!.data!.questionSetting[activeQuestion - 1].retry}
+          totalAttempt={
+            data!.data!.questionSetting[activeQuestion - 1].totalAttempt
+          }
           timeToPrepare={
             data!.data!.questionSetting[activeQuestion - 1].timeToPrepare
           }

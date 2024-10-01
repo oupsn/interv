@@ -3,7 +3,7 @@ import { Dispatch, FC, SetStateAction } from "react"
 
 interface VideoInterviewPreQuestionProps {
   questionIndex: number
-  maxRetry: number
+  totalAttempt: number
   timeToPrepare: number
   timeToAnswer: number
   setRecordState: Dispatch<SetStateAction<"pre" | "detail" | "post">>
@@ -11,7 +11,7 @@ interface VideoInterviewPreQuestionProps {
 
 export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
   questionIndex,
-  maxRetry,
+  totalAttempt,
   timeToAnswer,
   timeToPrepare,
   setRecordState,
@@ -21,8 +21,8 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
       <p className={"text-2xl font-semibold"}>Question {questionIndex}</p>
       <div className={"flex gap-8 bg-iWhiteHover p-4 rounded-xl"}>
         <div>
-          <p className={"text-xl font-semibold"}>Max retry</p>
-          <p className={"text-xl text-center"}>{maxRetry}</p>
+          <p className={"text-xl font-semibold"}>Total Attempt</p>
+          <p className={"text-xl text-center"}>{totalAttempt}</p>
         </div>
         <div>
           <p className={"text-xl font-semibold"}>Time to prepare</p>

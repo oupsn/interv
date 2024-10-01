@@ -33,7 +33,7 @@ const AssessmentCreateVideoQuestionForm = () => {
     title: z.string().min(1, { message: "Required" }),
     timeToPrepare: z.coerce.number().min(1, { message: "Required" }),
     timeToAnswer: z.coerce.number().min(1, { message: "Required" }),
-    retryAmount: z.coerce.number().min(0, { message: "Required" }),
+    totalAttempt: z.coerce.number().min(0, { message: "Required" }),
   })
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,7 +41,7 @@ const AssessmentCreateVideoQuestionForm = () => {
       title: "",
       timeToPrepare: 0,
       timeToAnswer: 0,
-      retryAmount: 1,
+      totalAttempt: 1,
     },
   })
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -165,10 +165,10 @@ const AssessmentCreateVideoQuestionForm = () => {
             />
             <FormField
               control={form.control}
-              name="retryAmount"
+              name="totalAttempt"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-lg">Max Retry</FormLabel>
+                  <FormLabel className="text-lg">Total Attempt</FormLabel>
                   <FormControl>
                     <Input type={"number"} {...field} />
                   </FormControl>

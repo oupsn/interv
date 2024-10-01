@@ -27,7 +27,7 @@ func SetupRoutes() {
 	var codingInterviewRepositories = repositories.NewCodingInterviewRepository(*DB)
 	var mailRepositories = repositories.NewMailRepository(*MAILJET)
 	var videoQuestionRepositories = repositories.NewVideoQuestionRepository(*DB)
-	var lobbyRepositories = repositories.NewLobbyRepository(*DB)
+	var roomRepositories = repositories.NewRoomRepository(*DB)
 	var workspaceRepositories = repositories.NewWorkspaceRepository(*DB)
 	var userInWorkspaceRepositories = repositories.NewUserInWorkspaceRepository(*DB)
 	var portalRepository = repositories.NewPortalRepository(*DB)
@@ -35,12 +35,12 @@ func SetupRoutes() {
 
 	// Services
 	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, userInPoratlRepository, workspaceRepositories)
-	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, lobbyRepositories)
+	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
 	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories)
 	var mailServices = services.NewMailService(mailRepositories)
 	var questionServices = services.NewVideoQuestionService(videoQuestionRepositories)
-	var lobbyServices = services.NewLobbyService(lobbyRepositories)
+	var roomServices = services.NewRoomService(roomRepositories)
 	var portalService = services.NewPortalService(portalRepository)
 	var userInportalService = services.NewUserInPortalService(userInPoratlRepository)
 	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, userInportalService)
@@ -54,7 +54,7 @@ func SetupRoutes() {
 	var codingInterviewHandlers = handlers.NewCodingInterviewHandler(codingInterviewServices)
 	var mailHandlers = handlers.NewMailHandler(mailServices)
 	var questionHandlers = handlers.NewVideoQuestionHandler(questionServices)
-	var lobbyHandlers = handlers.NewLobbyHandler(lobbyServices)
+	var roomHandlers = handlers.NewRoomHandler(roomServices)
 	var workspaceHandlers = handlers.NewWorkspaceHandler(workspaceService, userInportalService, authServices)
 	var portalHandler = handlers.NewPortalHandler(portalService)
 
@@ -104,9 +104,9 @@ func SetupRoutes() {
 	public.Post("videoQuestion.updateVideoQuestion", questionHandlers.UpdateVideoQuestion)
 	public.Post("videoQuestion.deleteVideoQuestion", questionHandlers.DeleteVideoQuestion)
 
-	// lobby
-	public.Get("lobby.getLobbyContext", lobbyHandlers.GetLobbyContext)
-	public.Post("lobby.updateLobbyContext", lobbyHandlers.UpdateLobbyContext)
+	// Room
+	public.Get("room.getRoomContext", roomHandlers.GetRoomContext)
+	public.Post("room.updateRoomContext", roomHandlers.UpdateRoomContext)
 
 	// portal
 	public.Get("portal.get", portalHandler.GetPortalById)

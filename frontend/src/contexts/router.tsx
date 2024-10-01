@@ -2,11 +2,11 @@ import { createBrowserRouter } from "react-router-dom"
 import AppLayout from "@/components/layout/AppLayout.tsx"
 import MainLayout from "@/components/layout/MainLayout.tsx"
 import LoginPage from "@/pages/login/Login.tsx"
-import LobbyPage from "@/pages/lobby/Lobby.tsx"
+import RoomPage from "@/pages/room/Room.tsx"
 import Playground from "@/pages/playground/Playground.tsx"
 import WorkspaceListPage from "@/pages/portal/workspace/WorkspaceListPage"
-import CodingInterviewPage from "@/pages/lobby/codingInterview/CodingInterview.tsx"
-import VideoInterviewPage from "@/pages/lobby/videoInterview/VideoInterview.tsx"
+import CodingInterviewPage from "@/pages/room/codingInterview/CodingInterview.tsx"
+import VideoInterviewPage from "@/pages/room/videoInterview/VideoInterview.tsx"
 import CreateWorkspace from "@/pages/portal/workspace/CreateWorkspace"
 import AssessmentCreateVideoQuestionForm from "@/pages/portal/assessment/components/AssessmentCreateVideoQuestionForm.tsx"
 import WorkspaceDetailPage from "@/pages/portal/workspace/WorkspaceDetailPage"
@@ -101,12 +101,12 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/room/:lobbyId",
+    path: "/room/:roomId",
     element: <MainLayout />,
     children: [
       {
         path: "",
-        element: <LobbyPage />,
+        element: <RoomPage />,
       },
       {
         path: "coding",

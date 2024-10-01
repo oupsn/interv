@@ -5,26 +5,26 @@ import { server } from "@/contexts/swr.tsx"
 
 export const VideoInterviewFinish = () => {
   const navigate = useNavigate()
-  const { lobbyId } = useParams()
+  const { roomId } = useParams()
   useEffect(() => {
-    server.lobby
-      .updateLobbyContext({
-        lobbyId: Number(lobbyId),
+    server.room
+      .updateRoomContext({
+        roomId: Number(roomId),
         isVideoDone: true,
       })
       .finally(() => {
         // add loading wrapper here
       })
-  }, [lobbyId])
+  }, [roomId])
   return (
     <>
       All done!
       <Button
         onClick={() => {
-          navigate("/lobby/" + lobbyId)
+          navigate("/room/" + roomId)
         }}
       >
-        Back to lobby
+        Back to interview room
       </Button>
     </>
   )

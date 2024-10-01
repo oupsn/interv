@@ -5,9 +5,9 @@ import (
 	"time"
 )
 
-type Lobby struct {
+type Room struct {
 	ID                  uint `gorm:"primaryKey"`
-	UserID              uint
+	CandidateID         uint
 	WorkspaceID         uint
 	TotalVideoTime      uint
 	TotalCodingTime     uint

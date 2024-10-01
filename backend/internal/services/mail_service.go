@@ -26,7 +26,7 @@ func (m *mailService) SendMail(mailListPayload MailListPayload) error {
 
 		switch mailListPayload.Preset {
 		case Invite:
-			mailContent = mail.BuildInviteMail(v.Name, v.DueDate, v.Link)
+			mailContent = mail.BuildInviteMail(v.Name, v.DueDate, v.RoomId)
 			subject = "Invitation To Interview"
 		case Finish:
 			mailContent = mail.BuildFinishMail()

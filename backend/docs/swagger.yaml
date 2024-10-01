@@ -67,20 +67,20 @@ definitions:
     properties:
       portalId:
         type: integer
-      retryAmount:
-        type: integer
       timeToAnswer:
         type: integer
       timeToPrepare:
         type: integer
       title:
         type: string
+      totalAttempt:
+        type: integer
     required:
     - portalId
-    - retryAmount
     - timeToAnswer
     - timeToPrepare
     - title
+    - totalAttempt
     type: object
   CreateVideoQuestionResponse:
     properties:
@@ -90,14 +90,14 @@ definitions:
         type: integer
       portalId:
         type: integer
-      retryAmount:
-        type: integer
       timeToAnswer:
         type: integer
       timeToPrepare:
         type: integer
       title:
         type: string
+      totalAttempt:
+        type: integer
       updatedAt:
         type: string
     type: object
@@ -184,37 +184,6 @@ definitions:
     required:
     - id
     type: object
-  GetLobbyContextResponse:
-    properties:
-      dueDate:
-        type: string
-      isCodingDone:
-        type: boolean
-      isVideoDone:
-        type: boolean
-      lobbyId:
-        type: integer
-      totalCodingQuestion:
-        type: integer
-      totalCodingTime:
-        type: integer
-      totalVideoQuestion:
-        type: integer
-      totalVideoTime:
-        type: integer
-      userId:
-        type: integer
-    required:
-    - dueDate
-    - isCodingDone
-    - isVideoDone
-    - lobbyId
-    - totalCodingQuestion
-    - totalCodingTime
-    - totalVideoQuestion
-    - totalVideoTime
-    - userId
-    type: object
   GetObjectBody:
     properties:
       bucketName:
@@ -225,6 +194,37 @@ definitions:
     - bucketName
     - objectName
     type: object
+  GetRoomContextResponse:
+    properties:
+      candidateId:
+        type: integer
+      dueDate:
+        type: string
+      isCodingDone:
+        type: boolean
+      isVideoDone:
+        type: boolean
+      roomId:
+        type: integer
+      totalCodingQuestion:
+        type: integer
+      totalCodingTime:
+        type: integer
+      totalVideoQuestion:
+        type: integer
+      totalVideoTime:
+        type: integer
+    required:
+    - candidateId
+    - dueDate
+    - isCodingDone
+    - isVideoDone
+    - roomId
+    - totalCodingQuestion
+    - totalCodingTime
+    - totalVideoQuestion
+    - totalVideoTime
+    type: object
   GetVideoQuestionByIdResponse:
     properties:
       createdAt:
@@ -233,14 +233,14 @@ definitions:
         type: integer
       portalId:
         type: integer
-      retryAmount:
-        type: integer
       timeToAnswer:
         type: integer
       timeToPrepare:
         type: integer
       title:
         type: string
+      totalAttempt:
+        type: integer
       updatedAt:
         type: string
     type: object
@@ -252,14 +252,14 @@ definitions:
         type: integer
       portalId:
         type: integer
-      retryAmount:
-        type: integer
       timeToAnswer:
         type: integer
       timeToPrepare:
         type: integer
       title:
         type: string
+      totalAttempt:
+        type: integer
       updatedAt:
         type: string
     type: object
@@ -290,14 +290,15 @@ definitions:
     properties:
       dueDate:
         type: string
-      link:
-        type: string
       name:
         type: string
+      roomId:
+        type: integer
       to:
         type: string
     required:
     - name
+    - roomId
     - to
     type: object
   PortalData:
@@ -319,15 +320,17 @@ definitions:
     - mailList
     - preset
     type: object
-  UpdateLobbyContextBody:
+  UpdateRoomContextBody:
     properties:
+      candidateId:
+        type: integer
       dueDate:
         type: string
       isCodingDone:
         type: boolean
       isVideoDone:
         type: boolean
-      lobbyId:
+      roomId:
         type: integer
       totalCodingQuestion:
         type: integer
@@ -337,10 +340,8 @@ definitions:
         type: integer
       totalVideoTime:
         type: integer
-      userId:
-        type: integer
     required:
-    - lobbyId
+    - roomId
     type: object
   UpdateVideoQuestionBody:
     properties:
@@ -348,14 +349,14 @@ definitions:
         type: integer
       portalId:
         type: integer
-      retryAmount:
-        type: integer
       timeToAnswer:
         type: integer
       timeToPrepare:
         type: integer
       title:
         type: string
+      totalAttempt:
+        type: integer
     required:
     - id
     type: object
@@ -442,19 +443,19 @@ definitions:
         type: integer
       questionIndex:
         type: integer
-      retry:
-        type: integer
       timeToAnswer:
         type: integer
       timeToPrepare:
+        type: integer
+      totalAttempt:
         type: integer
     required:
     - isLast
     - questionId
     - questionIndex
-    - retry
     - timeToAnswer
     - timeToPrepare
+    - totalAttempt
     type: object
   WorkspaceData:
     properties:
@@ -588,10 +589,10 @@ definitions:
         type: string
       linter_result:
         type: string
-      lobby_id:
-        type: integer
       memory_usage:
         type: string
+      room_id:
+        type: integer
       run_time:
         type: string
       test_cases_result:
@@ -797,12 +798,12 @@ definitions:
       timestamp:
         type: string
     type: object
-  handlers.Response-GetLobbyContextResponse:
+  handlers.Response-GetRoomContextResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/GetLobbyContextResponse'
+        $ref: '#/definitions/GetRoomContextResponse'
       message:
         type: string
       timestamp:
@@ -1350,64 +1351,6 @@ paths:
       summary: Update a coding interview question
       tags:
       - codingInterview
-  /lobby.getLobbyContext:
-    get:
-      consumes:
-      - application/json
-      operationId: getLobbyContext
-      parameters:
-      - in: query
-        name: lobbyId
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response-GetLobbyContextResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-      summary: Get lobby context
-      tags:
-      - lobby
-  /lobby.updateLobbyContext:
-    post:
-      consumes:
-      - application/json
-      operationId: updateLobbyContext
-      parameters:
-      - description: update lobby context
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/UpdateLobbyContextBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response-string'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-      summary: Update lobby context
-      tags:
-      - lobby
   /mail.sendMail:
     post:
       consumes:
@@ -1588,6 +1531,64 @@ paths:
       summary: Get portal
       tags:
       - portal
+  /room.getRoomContext:
+    get:
+      consumes:
+      - application/json
+      operationId: getRoomContext
+      parameters:
+      - in: query
+        name: roomId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-GetRoomContextResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get room context
+      tags:
+      - room
+  /room.updateRoomContext:
+    post:
+      consumes:
+      - application/json
+      operationId: updateRoomContext
+      parameters:
+      - description: update room context
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateRoomContextBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Update room context
+      tags:
+      - room
   /user.createAdmin:
     post:
       consumes:
@@ -1743,7 +1744,7 @@ paths:
       operationId: getVideoInterviewContext
       parameters:
       - in: query
-        name: lobbyId
+        name: roomId
         required: true
         type: integer
       produces:

@@ -1,7 +1,7 @@
 package handlers
 
 type VideoInterviewContextQuery struct {
-	LobbyID uint `json:"lobbyId"  validate:"required"`
+	RoomID uint `json:"roomId"  validate:"required"`
 } // @name VideoInterviewContextQuery
 
 type VideoInterviewContextResponse struct {
@@ -21,7 +21,7 @@ type VideoInterviewQuestionResponse struct {
 type VideoInterviewQuestionSetting struct {
 	QuestionID    uint `json:"questionId"  validate:"required"`
 	QuestionIndex int  `json:"questionIndex"  validate:"required"`
-	Retry         uint `json:"retry"  validate:"required"`
+	TotalAttempt  uint `json:"totalAttempt"  validate:"required"`
 	TimeToPrepare uint `json:"timeToPrepare"  validate:"required"`
 	TimeToAnswer  uint `json:"timeToAnswer"  validate:"required"`
 	IsLast        bool `json:"isLast"  validate:"required"`

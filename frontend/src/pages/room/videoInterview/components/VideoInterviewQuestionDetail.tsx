@@ -2,8 +2,8 @@ import { useGetVideoInterviewQuestion } from "@/hooks/useGetVideoInterviewQuesti
 import { Dispatch, FC, SetStateAction, useContext, useState } from "react"
 import { DeviceContext } from "@/contexts/device.tsx"
 import { useReactMediaRecorder } from "react-media-recorder-2"
-import { VideoPreviewStream } from "@/pages/lobby/videoInterview/components/VideoPreviewStream.tsx"
-import { VideoInterviewQuestionTimeRemain } from "@/pages/lobby/videoInterview/components/VideoInterviewQuestionTimeRemain.tsx"
+import { VideoPreviewStream } from "@/pages/room/videoInterview/components/VideoPreviewStream.tsx"
+import { VideoInterviewQuestionTimeRemain } from "@/pages/room/videoInterview/components/VideoInterviewQuestionTimeRemain.tsx"
 import DOMPurify from "dompurify"
 import parse from "html-react-parser"
 
@@ -14,7 +14,7 @@ interface VideoInterviewQuestionDetailProps {
   timeToAnswer: number
   setMediaBlob: Dispatch<SetStateAction<string[]>>
   setRecordState: Dispatch<SetStateAction<"pre" | "detail" | "post">>
-  setRetryLeft: Dispatch<SetStateAction<number>>
+  setAttemptLeft: Dispatch<SetStateAction<number>>
 }
 const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
   questionId,
@@ -23,7 +23,7 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
   timeToAnswer,
   setMediaBlob,
   setRecordState,
-  setRetryLeft,
+  setAttemptLeft,
 }) => {
   const { data } = useGetVideoInterviewQuestion(questionId)
   const { selectedCameraId, selectedMicrophoneId } = useContext(DeviceContext)
@@ -52,7 +52,7 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
         setMediaBlob={setMediaBlob}
         mediaBlobUrl={mediaBlobUrl ?? ""}
         setRecordState={setRecordState}
-        setRetryLeft={setRetryLeft}
+        setAttemptLeft={setAttemptLeft}
       />
       <div className={"w-fit h-fit relative"}>
         {!isStarted ? (

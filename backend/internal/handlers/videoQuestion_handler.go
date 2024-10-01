@@ -42,7 +42,7 @@ func (q VideoQuestionHandler) CreateVideoQuestion(c *fiber.Ctx) error {
 		Title:         body.Title,
 		TimeToPrepare: body.TimeToPrepare,
 		TimeToAnswer:  body.TimeToAnswer,
-		RetryAmount:   body.RetryAmount,
+		TotalAttempt:  body.TotalAttempt,
 		PortalID:      body.PortalID,
 	})
 
@@ -55,7 +55,7 @@ func (q VideoQuestionHandler) CreateVideoQuestion(c *fiber.Ctx) error {
 		Title:         response.Title,
 		TimeToPrepare: response.TimeToPrepare,
 		TimeToAnswer:  response.TimeToAnswer,
-		RetryAmount:   response.RetryAmount,
+		TotalAttempt:  response.TotalAttempt,
 		PortalID:      response.PortalID,
 		CreatedAt:     response.CreatedAt,
 		UpdatedAt:     response.UpdatedAt,
@@ -93,7 +93,7 @@ func (q VideoQuestionHandler) GetVideoQuestion(c *fiber.Ctx) error {
 		Title:         response.Title,
 		TimeToPrepare: response.TimeToPrepare,
 		TimeToAnswer:  response.TimeToAnswer,
-		RetryAmount:   response.RetryAmount,
+		TotalAttempt:  response.TotalAttempt,
 		PortalID:      response.PortalID,
 		CreatedAt:     response.CreatedAt,
 		UpdatedAt:     response.UpdatedAt,
@@ -133,7 +133,7 @@ func (q VideoQuestionHandler) GetVideoQuestionByPortalId(c *fiber.Ctx) error {
 			Title:         v.Title,
 			TimeToPrepare: v.TimeToPrepare,
 			TimeToAnswer:  v.TimeToAnswer,
-			RetryAmount:   v.RetryAmount,
+			TotalAttempt:  v.TotalAttempt,
 			PortalID:      v.PortalID,
 			CreatedAt:     v.CreatedAt,
 			UpdatedAt:     v.UpdatedAt,
@@ -171,7 +171,7 @@ func (q VideoQuestionHandler) UpdateVideoQuestion(c *fiber.Ctx) error {
 		Title:         body.Title,
 		TimeToPrepare: body.TimeToPrepare,
 		TimeToAnswer:  body.TimeToAnswer,
-		RetryAmount:   body.RetryAmount,
+		TotalAttempt:  body.TotalAttempt,
 		PortalID:      body.PortalID,
 	})
 
@@ -184,7 +184,7 @@ func (q VideoQuestionHandler) UpdateVideoQuestion(c *fiber.Ctx) error {
 		Title:         response.Title,
 		TimeToPrepare: response.TimeToPrepare,
 		TimeToAnswer:  response.TimeToAnswer,
-		RetryAmount:   response.RetryAmount,
+		TotalAttempt:  response.TotalAttempt,
 		PortalID:      response.PortalID,
 		CreatedAt:     response.CreatedAt,
 		UpdatedAt:     response.UpdatedAt,

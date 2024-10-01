@@ -7,35 +7,35 @@ import (
 )
 
 var (
-	ErrorGetLobbyContext = fiber.NewError(fiber.StatusInternalServerError, "error getting lobby context")
+	ErrorGetRoomContext = fiber.NewError(fiber.StatusInternalServerError, "error getting room context")
 )
 
-type ILobbyService interface {
-	GetLobbyContext(lobbyId uint) (*domains.Lobby, error)
-	UpdateLobbyContext(lobby domains.Lobby) error
+type IRoomService interface {
+	GetRoomContext(roomId uint) (*domains.Room, error)
+	UpdateRoomContext(room domains.Room) error
 }
 
-type lobbyService struct {
-	lobbyRepo repositories.ILobbyRepository
+type roomService struct {
+	roomRepo repositories.IRoomRepository
 }
 
-func NewLobbyService(lobbyRepo repositories.ILobbyRepository) ILobbyService {
-	return &lobbyService{
-		lobbyRepo: lobbyRepo,
+func NewRoomService(roomRepo repositories.IRoomRepository) IRoomService {
+	return &roomService{
+		roomRepo: roomRepo,
 	}
 }
 
-func (l lobbyService) GetLobbyContext(lobbyId uint) (*domains.Lobby, error) {
-	lobby, err := l.lobbyRepo.GetById(lobbyId)
+func (l roomService) GetRoomContext(roomId uint) (*domains.Room, error) {
+	room, err := l.roomRepo.GetById(roomId)
 	if err != nil {
-		return nil, ErrorGetLobbyContext
+		return nil, ErrorGetRoomContext
 	}
 
-	return lobby, nil
+	return room, nil
 }
 
-func (l lobbyService) UpdateLobbyContext(lobby domains.Lobby) error {
-	if err := l.lobbyRepo.Update(lobby); err != nil {
+func (l roomService) UpdateRoomContext(room domains.Room) error {
+	if err := l.roomRepo.Update(room); err != nil {
 		return err
 	}
 

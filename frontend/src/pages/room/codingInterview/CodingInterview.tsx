@@ -23,7 +23,7 @@ interface Question {
   testcaseCompileResult: DomainsCompilationResultResponse[]
 }
 const CodingInterviewPage = () => {
-  const { lobbyId } = useParams<{ lobbyId: string }>()
+  const { roomId } = useParams<{ roomId: string }>()
   const [isStart, setIsStart] = useState(mockData.isStart)
   const [timeRemain, setTimeRemain] = useState(mockData.timeRemain)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -112,12 +112,12 @@ const CodingInterviewPage = () => {
           isFinish ? (
             <CodingInterviewFinish
               timeTaken={calculateTimeTaken()}
-              lobbyId={lobbyId ?? ""}
+              roomId={roomId ?? ""}
             />
           ) : questionsLoaded && questionList.length > 0 && !isFinish ? (
             <CodingInterviewPanel
               timeTaken={calculateTimeTaken()}
-              lobbyId={lobbyId ?? ""}
+              roomId={roomId ?? ""}
               timeRemain={timeRemain}
               questions={questionList}
               currentQuestion={questionList[currentQuestionIndex]}
