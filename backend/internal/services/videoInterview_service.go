@@ -15,8 +15,8 @@ var (
 )
 
 type IVideoInterviewService interface {
-	GetVideoInterviewContext(roomId uint) ([]domains.VideoQuestion, error)
-	GetVideoInterviewQuestion(roomId uint) (*domains.VideoQuestion, error)
+	GetVideoInterviewContext(roomId string) ([]domains.VideoQuestion, error)
+	GetVideoInterviewQuestion(questionId uint) (*domains.VideoQuestion, error)
 	SubmitVideoInterview(file *multipart.FileHeader) error
 }
 
@@ -34,7 +34,7 @@ func NewVideoInterviewService(objectRepo repositories.IObjectRepository, videoQu
 	}
 }
 
-func (v videoInterviewService) GetVideoInterviewContext(roomId uint) ([]domains.VideoQuestion, error) {
+func (v videoInterviewService) GetVideoInterviewContext(roomId string) ([]domains.VideoQuestion, error) {
 	room, err := v.roomRepo.GetById(roomId)
 	if err != nil {
 		return nil, ErrorFindRoom

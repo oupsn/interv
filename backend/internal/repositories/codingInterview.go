@@ -13,6 +13,6 @@ type ICodingInterviewRepository interface {
 	SaveCodingSnapshot(snapshot domains.CodingQuestionSnapshot) (domains.CodingQuestionSnapshot, error)
 	AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error
 	UpdateCodingQuestion(codingQuestionID uint, question domains.CodingQuestion) (domains.CodingQuestion, error)
-	UpdateCodingDoneInRoom(roomID uint, isDone bool) error
+	UpdateCodingDoneInRoom(roomID string, isDone bool) error
 	DeleteCodingQuestion(codingQuestionID uint) error
 }

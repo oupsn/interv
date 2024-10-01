@@ -105,6 +105,7 @@ func SetupRoutes() {
 	public.Post("videoQuestion.deleteVideoQuestion", questionHandlers.DeleteVideoQuestion)
 
 	// Room
+	public.Post("room.createRoom", roomHandlers.CreateRoom)
 	public.Get("room.getRoomContext", roomHandlers.GetRoomContext)
 	public.Post("room.updateRoomContext", roomHandlers.UpdateRoomContext)
 

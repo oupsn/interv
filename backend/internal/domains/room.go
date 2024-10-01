@@ -1,12 +1,13 @@
 package domains
 
 import (
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"time"
 )
 
 type Room struct {
-	ID                  uint `gorm:"primaryKey"`
+	ID                  string `gorm:"primaryKey"`
 	CandidateID         uint
 	WorkspaceID         uint
 	TotalVideoTime      uint
@@ -17,4 +18,9 @@ type Room struct {
 	IsCodingDone        bool
 	DueDate             time.Time
 	gorm.Model
+}
+
+func (r *Room) BeforeCreate(tx *gorm.DB) (err error) {
+	r.ID = uuid.New().String()
+	return
 }

@@ -21,7 +21,7 @@ type MailObject struct {
 	To      string    `json:"to" validate:"required,email"`
 	Name    string    `json:"name" validate:"required"`
 	DueDate time.Time `json:"dueDate"`
-	RoomId  uint      `json:"roomId"`
+	RoomId  string    `json:"roomId"`
 }
 
 type MailListPayload struct {

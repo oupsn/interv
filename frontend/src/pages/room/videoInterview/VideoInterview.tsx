@@ -12,7 +12,7 @@ import { VideoInterviewFinish } from "@/pages/room/videoInterview/components/Vid
 const VideoInterviewPage = () => {
   const { roomId } = useParams()
   const [activeQuestion, setActiveQuestion] = useState(0) // 0 for setup
-  const { data } = useGetVideoInterviewContext(Number(roomId))
+  const { data } = useGetVideoInterviewContext(roomId!)
   const isActive = (id: number) => {
     return activeQuestion == id
   }

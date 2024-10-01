@@ -63,6 +63,34 @@ definitions:
     required:
     - company_name
     type: object
+  CreateRoomBody:
+    properties:
+      candidateId:
+        type: integer
+      dueDate:
+        type: string
+      isCodingDone:
+        type: boolean
+      isVideoDone:
+        type: boolean
+      totalCodingQuestion:
+        type: integer
+      totalCodingTime:
+        type: integer
+      totalVideoQuestion:
+        type: integer
+      totalVideoTime:
+        type: integer
+    required:
+    - candidateId
+    - dueDate
+    - isCodingDone
+    - isVideoDone
+    - totalCodingQuestion
+    - totalCodingTime
+    - totalVideoQuestion
+    - totalVideoTime
+    type: object
   CreateVideoQuestionBody:
     properties:
       portalId:
@@ -205,7 +233,7 @@ definitions:
       isVideoDone:
         type: boolean
       roomId:
-        type: integer
+        type: string
       totalCodingQuestion:
         type: integer
       totalCodingTime:
@@ -293,7 +321,7 @@ definitions:
       name:
         type: string
       roomId:
-        type: integer
+        type: string
       to:
         type: string
     required:
@@ -331,7 +359,7 @@ definitions:
       isVideoDone:
         type: boolean
       roomId:
-        type: integer
+        type: string
       totalCodingQuestion:
         type: integer
       totalCodingTime:
@@ -592,7 +620,7 @@ definitions:
       memory_usage:
         type: string
       room_id:
-        type: integer
+        type: string
       run_time:
         type: string
       test_cases_result:
@@ -749,6 +777,37 @@ definitions:
         type: array
       title:
         type: string
+    type: object
+  handlers.CreateRoomResponse:
+    properties:
+      candidateId:
+        type: integer
+      dueDate:
+        type: string
+      isCodingDone:
+        type: boolean
+      isVideoDone:
+        type: boolean
+      roomId:
+        type: string
+      totalCodingQuestion:
+        type: integer
+      totalCodingTime:
+        type: integer
+      totalVideoQuestion:
+        type: integer
+      totalVideoTime:
+        type: integer
+    required:
+    - candidateId
+    - dueDate
+    - isCodingDone
+    - isVideoDone
+    - roomId
+    - totalCodingQuestion
+    - totalCodingTime
+    - totalVideoQuestion
+    - totalVideoTime
     type: object
   handlers.ErrResponse:
     properties:
@@ -992,6 +1051,17 @@ definitions:
         items:
           $ref: '#/definitions/domains.CodingQuestionResponse'
         type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-handlers_CreateRoomResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/handlers.CreateRoomResponse'
       message:
         type: string
       timestamp:
@@ -1531,6 +1601,36 @@ paths:
       summary: Get portal
       tags:
       - portal
+  /room.createRoom:
+    post:
+      consumes:
+      - application/json
+      operationId: createRoom
+      parameters:
+      - description: create room
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/CreateRoomBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-handlers_CreateRoomResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Create room
+      tags:
+      - room
   /room.getRoomContext:
     get:
       consumes:
@@ -1540,7 +1640,7 @@ paths:
       - in: query
         name: roomId
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -1746,7 +1846,7 @@ paths:
       - in: query
         name: roomId
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:

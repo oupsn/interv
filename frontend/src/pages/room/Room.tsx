@@ -9,7 +9,7 @@ import dayjs from "dayjs"
 const RoomPage = () => {
   const { roomId } = useParams()
   const navigate = useNavigate()
-  const { data } = useGetRoomContext(Number(roomId))
+  const { data } = useGetRoomContext(roomId!)
   return (
     <>
       <SideBar>
