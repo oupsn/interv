@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom"
 
 interface CodingInterviewFinishProps {
   timeTaken: number
-  lobbyId: string
+  roomId: string
 }
 
 function CodingInterviewFinish({
   timeTaken,
-  lobbyId,
+  roomId,
 }: CodingInterviewFinishProps) {
   const navigate = useNavigate()
 
@@ -32,10 +32,10 @@ function CodingInterviewFinish({
         Time taken: {formatTime(timeTaken)}
       </p>
       <button
-        onClick={() => navigate(`/lobby/${lobbyId}`)}
+        onClick={() => navigate(`/room/${roomId}`)}
         className="bg-primary text-white font-bold py-2 px-4 rounded transition duration-300"
       >
-        Return to Lobby
+        Return to interview room
       </button>
     </div>
   )

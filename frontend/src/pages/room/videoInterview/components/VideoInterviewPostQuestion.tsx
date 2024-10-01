@@ -4,14 +4,14 @@ import { server } from "@/contexts/swr.tsx"
 import { cn } from "@/lib/utils.ts"
 
 interface VideoInterviewPostQuestion {
-  retryLeft: number
+  attemptLeft: number
   mediaBlob: string[]
   handleNextQuestion: () => void
   setRecordState: Dispatch<SetStateAction<"pre" | "detail" | "post">>
   setMediaBlob: Dispatch<SetStateAction<string[]>>
 }
 export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
-  retryLeft,
+  attemptLeft,
   mediaBlob,
   handleNextQuestion,
   setRecordState,
@@ -72,10 +72,10 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
       </div>
 
       <p className={"text-xl font-semibold"}>
-        You have {retryLeft} attempts left.
+        You have {attemptLeft} attempts left.
       </p>
       <div className={"flex gap-10"}>
-        {retryLeft > 0 ? (
+        {attemptLeft > 0 ? (
           <Button
             onClick={() => {
               setRecordState("detail")

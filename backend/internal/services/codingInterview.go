@@ -16,7 +16,7 @@ var (
 )
 
 type ICodingInterviewService interface {
-	//TODO: add get coding question by lobby id
+	//TODO: add get coding question by room id
 	GetCodingInterviewQuestions() ([]domains.CodingQuestionResponse, error)
 	GetCodingInterviewQuestionByTitle(title string) (domains.CodingQuestionResponse, error)
 	GetCodingInterviewQuestionsInPortal(portalID int) ([]domains.CodingQuestion, error)

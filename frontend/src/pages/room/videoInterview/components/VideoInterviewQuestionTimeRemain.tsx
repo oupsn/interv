@@ -10,7 +10,7 @@ interface VideoInterviewQuestionTimeRemainingProps {
   mediaBlobUrl: string
   setMediaBlob: Dispatch<SetStateAction<string[]>>
   setRecordState: Dispatch<SetStateAction<"pre" | "detail" | "post">>
-  setRetryLeft: Dispatch<SetStateAction<number>>
+  setAttemptLeft: Dispatch<SetStateAction<number>>
 }
 
 export const VideoInterviewQuestionTimeRemain: FC<
@@ -25,7 +25,7 @@ export const VideoInterviewQuestionTimeRemain: FC<
   mediaBlobUrl,
   setMediaBlob,
   setRecordState,
-  setRetryLeft,
+  setAttemptLeft,
 }) => {
   const [timeToPrepareRemain, setTimeToPrepareRemain] = useState(timeToPrepare)
   const [timeToAnswerRemain, setTimeToAnswerRemain] = useState(timeToAnswer)
@@ -53,7 +53,7 @@ export const VideoInterviewQuestionTimeRemain: FC<
           setTimeToAnswerRemain((prev) => prev - 1)
         } else {
           stopRecording()
-          setRetryLeft((prev) => prev - 1)
+          setAttemptLeft((prev) => prev - 1)
           clearInterval(intervalId)
         }
       }, 1000)

@@ -3,13 +3,13 @@ import { useNavigate, useParams } from "react-router-dom"
 import SideBarItem from "@/components/layout/SideBarItem.tsx"
 import SideBar from "@/components/layout/SideBar.tsx"
 import MainPanel from "@/components/layout/MainPanel.tsx"
-import { useGetLobbyContext } from "@/hooks/useGetLobbyContext.ts"
+import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
 import dayjs from "dayjs"
 
-const LobbyPage = () => {
-  const { lobbyId } = useParams()
+const RoomPage = () => {
+  const { roomId } = useParams()
   const navigate = useNavigate()
-  const { data } = useGetLobbyContext(Number(lobbyId))
+  const { data } = useGetRoomContext(Number(roomId))
   return (
     <>
       <SideBar>
@@ -57,4 +57,4 @@ const LobbyPage = () => {
   )
 }
 
-export default LobbyPage
+export default RoomPage

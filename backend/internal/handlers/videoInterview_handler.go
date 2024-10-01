@@ -36,7 +36,7 @@ func (v VideoInterviewHandler) GetVideoInterviewContext(c *fiber.Ctx) error {
 		return err
 	}
 
-	videoQuestion, err := v.videoInterviewService.GetVideoInterviewContext(query.LobbyID)
+	videoQuestion, err := v.videoInterviewService.GetVideoInterviewContext(query.RoomID)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func (v VideoInterviewHandler) GetVideoInterviewContext(c *fiber.Ctx) error {
 			VideoInterviewQuestionSetting{
 				QuestionID:    v.ID,
 				QuestionIndex: i,
-				Retry:         v.RetryAmount,
+				TotalAttempt:  v.TotalAttempt,
 				TimeToPrepare: v.TimeToPrepare,
 				TimeToAnswer:  v.TimeToAnswer,
 				IsLast:        i == len(videoQuestion)-1,

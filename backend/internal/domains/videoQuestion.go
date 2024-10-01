@@ -10,7 +10,7 @@ type VideoQuestion struct {
 	Title         string
 	TimeToPrepare uint
 	TimeToAnswer  uint
-	RetryAmount   uint
+	TotalAttempt  uint
 	Workspace     []*Workspace `gorm:"many2many:videoQuestion_workspace"`
 	gorm.Model
 }

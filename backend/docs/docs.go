@@ -523,95 +523,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/lobby.getLobbyContext": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "lobby"
-                ],
-                "summary": "Get lobby context",
-                "operationId": "getLobbyContext",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "name": "lobbyId",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response-GetLobbyContextResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/lobby.updateLobbyContext": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "lobby"
-                ],
-                "summary": "Update lobby context",
-                "operationId": "updateLobbyContext",
-                "parameters": [
-                    {
-                        "description": "update lobby context",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/UpdateLobbyContextBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response-string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/mail.sendMail": {
             "post": {
                 "consumes": [
@@ -887,6 +798,95 @@ const docTemplate = `{
                 }
             }
         },
+        "/room.getRoomContext": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "room"
+                ],
+                "summary": "Get room context",
+                "operationId": "getRoomContext",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-GetRoomContextResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/room.updateRoomContext": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "room"
+                ],
+                "summary": "Update room context",
+                "operationId": "updateRoomContext",
+                "parameters": [
+                    {
+                        "description": "update room context",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateRoomContextBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/user.createAdmin": {
             "post": {
                 "consumes": [
@@ -1130,7 +1130,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "lobbyId",
+                        "name": "roomId",
                         "in": "query",
                         "required": true
                     }
@@ -1759,16 +1759,13 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "portalId",
-                "retryAmount",
                 "timeToAnswer",
                 "timeToPrepare",
-                "title"
+                "title",
+                "totalAttempt"
             ],
             "properties": {
                 "portalId": {
-                    "type": "integer"
-                },
-                "retryAmount": {
                     "type": "integer"
                 },
                 "timeToAnswer": {
@@ -1779,6 +1776,9 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "totalAttempt": {
+                    "type": "integer"
                 }
             }
         },
@@ -1794,9 +1794,6 @@ const docTemplate = `{
                 "portalId": {
                     "type": "integer"
                 },
-                "retryAmount": {
-                    "type": "integer"
-                },
                 "timeToAnswer": {
                     "type": "integer"
                 },
@@ -1805,6 +1802,9 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "totalAttempt": {
+                    "type": "integer"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -1930,49 +1930,6 @@ const docTemplate = `{
                 }
             }
         },
-        "GetLobbyContextResponse": {
-            "type": "object",
-            "required": [
-                "dueDate",
-                "isCodingDone",
-                "isVideoDone",
-                "lobbyId",
-                "totalCodingQuestion",
-                "totalCodingTime",
-                "totalVideoQuestion",
-                "totalVideoTime",
-                "userId"
-            ],
-            "properties": {
-                "dueDate": {
-                    "type": "string"
-                },
-                "isCodingDone": {
-                    "type": "boolean"
-                },
-                "isVideoDone": {
-                    "type": "boolean"
-                },
-                "lobbyId": {
-                    "type": "integer"
-                },
-                "totalCodingQuestion": {
-                    "type": "integer"
-                },
-                "totalCodingTime": {
-                    "type": "integer"
-                },
-                "totalVideoQuestion": {
-                    "type": "integer"
-                },
-                "totalVideoTime": {
-                    "type": "integer"
-                },
-                "userId": {
-                    "type": "integer"
-                }
-            }
-        },
         "GetObjectBody": {
             "type": "object",
             "required": [
@@ -1988,6 +1945,49 @@ const docTemplate = `{
                 }
             }
         },
+        "GetRoomContextResponse": {
+            "type": "object",
+            "required": [
+                "candidateId",
+                "dueDate",
+                "isCodingDone",
+                "isVideoDone",
+                "roomId",
+                "totalCodingQuestion",
+                "totalCodingTime",
+                "totalVideoQuestion",
+                "totalVideoTime"
+            ],
+            "properties": {
+                "candidateId": {
+                    "type": "integer"
+                },
+                "dueDate": {
+                    "type": "string"
+                },
+                "isCodingDone": {
+                    "type": "boolean"
+                },
+                "isVideoDone": {
+                    "type": "boolean"
+                },
+                "roomId": {
+                    "type": "integer"
+                },
+                "totalCodingQuestion": {
+                    "type": "integer"
+                },
+                "totalCodingTime": {
+                    "type": "integer"
+                },
+                "totalVideoQuestion": {
+                    "type": "integer"
+                },
+                "totalVideoTime": {
+                    "type": "integer"
+                }
+            }
+        },
         "GetVideoQuestionByIdResponse": {
             "type": "object",
             "properties": {
@@ -2000,9 +2000,6 @@ const docTemplate = `{
                 "portalId": {
                     "type": "integer"
                 },
-                "retryAmount": {
-                    "type": "integer"
-                },
                 "timeToAnswer": {
                     "type": "integer"
                 },
@@ -2011,6 +2008,9 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "totalAttempt": {
+                    "type": "integer"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2029,9 +2029,6 @@ const docTemplate = `{
                 "portalId": {
                     "type": "integer"
                 },
-                "retryAmount": {
-                    "type": "integer"
-                },
                 "timeToAnswer": {
                     "type": "integer"
                 },
@@ -2040,6 +2037,9 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "totalAttempt": {
+                    "type": "integer"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2084,17 +2084,18 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "name",
+                "roomId",
                 "to"
             ],
             "properties": {
                 "dueDate": {
                     "type": "string"
                 },
-                "link": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
+                },
+                "roomId": {
+                    "type": "integer"
                 },
                 "to": {
                     "type": "string"
@@ -2130,12 +2131,15 @@ const docTemplate = `{
                 }
             }
         },
-        "UpdateLobbyContextBody": {
+        "UpdateRoomContextBody": {
             "type": "object",
             "required": [
-                "lobbyId"
+                "roomId"
             ],
             "properties": {
+                "candidateId": {
+                    "type": "integer"
+                },
                 "dueDate": {
                     "type": "string"
                 },
@@ -2145,7 +2149,7 @@ const docTemplate = `{
                 "isVideoDone": {
                     "type": "boolean"
                 },
-                "lobbyId": {
+                "roomId": {
                     "type": "integer"
                 },
                 "totalCodingQuestion": {
@@ -2158,9 +2162,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "totalVideoTime": {
-                    "type": "integer"
-                },
-                "userId": {
                     "type": "integer"
                 }
             }
@@ -2177,9 +2178,6 @@ const docTemplate = `{
                 "portalId": {
                     "type": "integer"
                 },
-                "retryAmount": {
-                    "type": "integer"
-                },
                 "timeToAnswer": {
                     "type": "integer"
                 },
@@ -2188,6 +2186,9 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "totalAttempt": {
+                    "type": "integer"
                 }
             }
         },
@@ -2309,9 +2310,9 @@ const docTemplate = `{
                 "isLast",
                 "questionId",
                 "questionIndex",
-                "retry",
                 "timeToAnswer",
-                "timeToPrepare"
+                "timeToPrepare",
+                "totalAttempt"
             ],
             "properties": {
                 "isLast": {
@@ -2323,13 +2324,13 @@ const docTemplate = `{
                 "questionIndex": {
                     "type": "integer"
                 },
-                "retry": {
-                    "type": "integer"
-                },
                 "timeToAnswer": {
                     "type": "integer"
                 },
                 "timeToPrepare": {
+                    "type": "integer"
+                },
+                "totalAttempt": {
                     "type": "integer"
                 }
             }
@@ -2534,11 +2535,11 @@ const docTemplate = `{
                 "linter_result": {
                     "type": "string"
                 },
-                "lobby_id": {
-                    "type": "integer"
-                },
                 "memory_usage": {
                     "type": "string"
+                },
+                "room_id": {
+                    "type": "integer"
                 },
                 "run_time": {
                     "type": "string"
@@ -2854,14 +2855,14 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.Response-GetLobbyContextResponse": {
+        "handlers.Response-GetRoomContextResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/GetLobbyContextResponse"
+                    "$ref": "#/definitions/GetRoomContextResponse"
                 },
                 "message": {
                     "type": "string"

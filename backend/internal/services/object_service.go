@@ -18,7 +18,7 @@ func NewObjectService(objectRepository repositories.IObjectRepository) IObjectSe
 }
 
 func (o objectService) UploadObject(file *multipart.FileHeader, bucketName string) error {
-	objectName := "UID-LOBBYID-QUESTIONID-SOMETHING-" + file.Filename //TODO: Implement this
+	objectName := "UID-RoomID-QUESTIONID-SOMETHING-" + file.Filename //TODO: Implement this
 	objectName = strings.ReplaceAll(objectName, " ", "")
 	err := o.objectRepository.Upload(file, bucketName, objectName)
 	if err != nil {

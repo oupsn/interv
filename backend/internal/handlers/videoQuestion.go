@@ -7,7 +7,7 @@ type CreateVideoQuestionBody struct {
 	PortalID      uint   `json:"portalId" validate:"required"`
 	TimeToPrepare uint   `json:"timeToPrepare" validate:"required"`
 	TimeToAnswer  uint   `json:"timeToAnswer" validate:"required"`
-	RetryAmount   uint   `json:"retryAmount" validate:"required"`
+	TotalAttempt  uint   `json:"totalAttempt" validate:"required"`
 } // @name CreateVideoQuestionBody
 
 type CreateVideoQuestionResponse struct {
@@ -15,7 +15,7 @@ type CreateVideoQuestionResponse struct {
 	Title         string    `json:"title"`
 	TimeToPrepare uint      `json:"timeToPrepare"`
 	TimeToAnswer  uint      `json:"timeToAnswer"`
-	RetryAmount   uint      `json:"retryAmount"`
+	TotalAttempt  uint      `json:"totalAttempt"`
 	PortalID      uint      `json:"portalId"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
@@ -30,7 +30,7 @@ type GetVideoQuestionByIdResponse struct {
 	Title         string    `json:"title"`
 	TimeToPrepare uint      `json:"timeToPrepare"`
 	TimeToAnswer  uint      `json:"timeToAnswer"`
-	RetryAmount   uint      `json:"retryAmount"`
+	TotalAttempt  uint      `json:"totalAttempt"`
 	PortalID      uint      `json:"portalId"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
@@ -45,7 +45,7 @@ type GetVideoQuestionByPortalIdResponse struct {
 	Title         string    `json:"title"`
 	TimeToPrepare uint      `json:"timeToPrepare"`
 	TimeToAnswer  uint      `json:"timeToAnswer"`
-	RetryAmount   uint      `json:"retryAmount"`
+	TotalAttempt  uint      `json:"totalAttempt"`
 	PortalID      uint      `json:"portalId"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
@@ -56,7 +56,7 @@ type UpdateVideoQuestionBody struct {
 	Title         string `json:"title"`
 	TimeToPrepare uint   `json:"timeToPrepare"`
 	TimeToAnswer  uint   `json:"timeToAnswer"`
-	RetryAmount   uint   `json:"retryAmount"`
+	TotalAttempt  uint   `json:"totalAttempt"`
 	PortalID      uint   `json:"portalId"`
 } // @name UpdateVideoQuestionBody
 
@@ -65,7 +65,7 @@ type UpdateVideoQuestionResponse struct {
 	Title         string `json:"title"`
 	TimeToPrepare uint   `json:"timeToPrepare"`
 	TimeToAnswer  uint   `json:"timeToAnswer"`
-	RetryAmount   uint   `json:"retryAmount"`
+	TotalAttempt  uint   `json:"totalAttempt"`
 	PortalID      uint   `json:"portalId"`
 } // @name UpdateVideoQuestionResponse
 

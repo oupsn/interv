@@ -10,37 +10,37 @@ import (
 
 var (
 	ErrorUploadingVideo = fiber.NewError(fiber.StatusInternalServerError, "error uploading video")
-	ErrorFindLobby      = fiber.NewError(fiber.StatusInternalServerError, "error finding lobby")
+	ErrorFindRoom       = fiber.NewError(fiber.StatusInternalServerError, "error finding room")
 	ErrorFindQuestion   = fiber.NewError(fiber.StatusInternalServerError, "error finding question")
 )
 
 type IVideoInterviewService interface {
-	GetVideoInterviewContext(lobbyId uint) ([]domains.VideoQuestion, error)
-	GetVideoInterviewQuestion(lobbyId uint) (*domains.VideoQuestion, error)
+	GetVideoInterviewContext(roomId uint) ([]domains.VideoQuestion, error)
+	GetVideoInterviewQuestion(roomId uint) (*domains.VideoQuestion, error)
 	SubmitVideoInterview(file *multipart.FileHeader) error
 }
 
 type videoInterviewService struct {
 	objectRepo        repositories.IObjectRepository
 	videoQuestionRepo repositories.IVideoQuestionRepository
-	lobbyRepo         repositories.ILobbyRepository
+	roomRepo          repositories.IRoomRepository
 }
 
-func NewVideoInterviewService(objectRepo repositories.IObjectRepository, videoQuestionRepo repositories.IVideoQuestionRepository, lobbyRepo repositories.ILobbyRepository) IVideoInterviewService {
+func NewVideoInterviewService(objectRepo repositories.IObjectRepository, videoQuestionRepo repositories.IVideoQuestionRepository, roomRepo repositories.IRoomRepository) IVideoInterviewService {
 	return &videoInterviewService{
 		objectRepo:        objectRepo,
 		videoQuestionRepo: videoQuestionRepo,
-		lobbyRepo:         lobbyRepo,
+		roomRepo:          roomRepo,
 	}
 }
 
-func (v videoInterviewService) GetVideoInterviewContext(lobbyId uint) ([]domains.VideoQuestion, error) {
-	lobby, err := v.lobbyRepo.GetById(lobbyId)
+func (v videoInterviewService) GetVideoInterviewContext(roomId uint) ([]domains.VideoQuestion, error) {
+	room, err := v.roomRepo.GetById(roomId)
 	if err != nil {
-		return nil, ErrorFindLobby
+		return nil, ErrorFindRoom
 	}
 
-	workspace, err := v.videoQuestionRepo.GetByWorkspaceId(lobby.WorkspaceID)
+	workspace, err := v.videoQuestionRepo.GetByWorkspaceId(room.WorkspaceID)
 	if err != nil {
 		return nil, ErrorFindQuestion
 	}
@@ -63,7 +63,7 @@ func (v videoInterviewService) GetVideoInterviewQuestion(questionId uint) (*doma
 }
 
 func (v videoInterviewService) SubmitVideoInterview(file *multipart.FileHeader) error {
-	filename := "LOBBYID-UID-QUESTIONINDEX-QUESTIONID" + file.Filename //TODO: Implement this
+	filename := "RoomID-UID-QUESTIONINDEX-QUESTIONID" + file.Filename //TODO: Implement this
 	filename = strings.ReplaceAll(filename, " ", "")
 	if err := v.objectRepo.Upload(file, "video-interview", filename); err != nil {
 		return ErrorUploadingVideo

@@ -2,13 +2,13 @@ package handlers
 
 import "time"
 
-type GetLobbyContextQuery struct {
-	LobbyID uint `json:"lobbyId"  validate:"required"`
-} // @name GetLobbyContextQuery
+type GetRoomContextQuery struct {
+	RoomID uint `json:"roomId"  validate:"required"`
+} // @name GetLRoomContextQuery
 
-type GetLobbyContextResponse struct {
-	LobbyID             uint      `json:"lobbyId"  validate:"required"`
-	UserID              uint      `json:"userId"  validate:"required"`
+type GetRoomContextResponse struct {
+	RoomID              uint      `json:"roomId"  validate:"required"`
+	CandidateID         uint      `json:"candidateId"  validate:"required"`
 	TotalVideoTime      uint      `json:"totalVideoTime"  validate:"required"`
 	TotalCodingTime     uint      `json:"totalCodingTime"  validate:"required"`
 	TotalVideoQuestion  uint      `json:"totalVideoQuestion"  validate:"required"`
@@ -16,11 +16,11 @@ type GetLobbyContextResponse struct {
 	IsVideoDone         bool      `json:"isVideoDone"  validate:"required"`
 	IsCodingDone        bool      `json:"isCodingDone"  validate:"required"`
 	DueDate             time.Time `json:"dueDate"  validate:"required"`
-} // @name GetLobbyContextResponse
+} // @name GetRoomContextResponse
 
-type UpdateLobbyContextBody struct {
-	LobbyID             uint      `json:"lobbyId"  validate:"required"`
-	UserID              uint      `json:"userId"`
+type UpdateRoomContextBody struct {
+	RoomID              uint      `json:"roomId"  validate:"required"`
+	CandidateID         uint      `json:"candidateId"`
 	TotalVideoTime      uint      `json:"totalVideoTime"`
 	TotalCodingTime     uint      `json:"totalCodingTime"`
 	TotalVideoQuestion  uint      `json:"totalVideoQuestion"`
@@ -28,4 +28,4 @@ type UpdateLobbyContextBody struct {
 	IsVideoDone         bool      `json:"isVideoDone"`
 	IsCodingDone        bool      `json:"isCodingDone"`
 	DueDate             time.Time `json:"dueDate"`
-} // @name UpdateLobbyContextBody
+} // @name UpdateRoomContextBody

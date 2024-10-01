@@ -7,11 +7,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select.tsx"
-import VideoInterviewStatusBox from "@/pages/lobby/videoInterview/components/VideoInterviewStatusBox.tsx"
+import VideoInterviewStatusBox from "@/pages/room/videoInterview/components/VideoInterviewStatusBox.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { FC, useContext, useState } from "react"
 import { DeviceContext } from "@/contexts/device.tsx"
-import { VideoPreviewStream } from "@/pages/lobby/videoInterview/components/VideoPreviewStream.tsx"
+import { VideoPreviewStream } from "@/pages/room/videoInterview/components/VideoPreviewStream.tsx"
 
 interface VideoInterviewSetupDeviceSetupProps {
   handleNextQuestion: () => void
