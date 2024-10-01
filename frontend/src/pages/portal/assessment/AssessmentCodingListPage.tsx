@@ -44,10 +44,10 @@ const AssessmentCodingListPage = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   const handleAdd = () => {
-    navigate("/portal/assessment/coding/create")
+    navigate("/portal/question/coding/create")
   }
   const handleView = (title: string) => {
-    navigate(`/portal/assessment/coding/${encodeURIComponent(title)}`)
+    navigate(`/portal/question/coding/${encodeURIComponent(title)}`)
   }
 
   const handleEdit = (title: string) => {
@@ -88,12 +88,12 @@ const AssessmentCodingListPage = () => {
 
   return (
     <ContentLayout
-      title={"Coding Assessments"}
+      title={"Coding Questions"}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList className="flex flex-row justify-between">
             <BreadcrumbItem>
-              <BreadcrumbPage>Coding Assessments</BreadcrumbPage>
+              <BreadcrumbPage>Coding Questions</BreadcrumbPage>
             </BreadcrumbItem>
             <BreadcrumbItem>
               <Button
