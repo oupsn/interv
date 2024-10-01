@@ -14,8 +14,11 @@ export type AddQuestionData = HandlersResponseString
 export type AddQuestionError = HandlersErrResponse
 
 export interface AdminCreateBody {
+  name: string
+  password: string
   portalId: number
-  user: DomainsUser
+  role: string
+  username: string
 }
 
 export interface CodingInterviewAddQuestionQuery {
@@ -87,10 +90,15 @@ export interface CreateVideoQuestionResponse {
 }
 
 export interface CreateWorkspaceBody {
+  codingTime: number
+  endDate: string
   isCoding: boolean
   isVideo: boolean
+  portalId: number
+  reqCamera: boolean
+  reqMicrophone: boolean
+  reqScreen: boolean
   startDate: string
-  stopDate: string
   title: string
 }
 
@@ -727,13 +735,17 @@ export interface WorkspaceData {
 }
 
 export interface WorkspaceDetail {
+  codingTime?: number
+  endDate?: string
   id?: number
   isCoding?: boolean
   isVideo?: boolean
   memberNum?: number
   portalId?: number
+  reqCamera?: boolean
+  reqMicrophone?: boolean
+  reqScreen?: boolean
   startDate?: string
-  stopDate?: string
   title?: string
 }
 

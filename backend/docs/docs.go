@@ -1664,15 +1664,27 @@ const docTemplate = `{
         "AdminCreateBody": {
             "type": "object",
             "required": [
+                "name",
+                "password",
                 "portalId",
-                "user"
+                "role",
+                "username"
             ],
             "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
                 "portalId": {
                     "type": "integer"
                 },
-                "user": {
-                    "$ref": "#/definitions/domains.User"
+                "role": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
@@ -1802,23 +1814,43 @@ const docTemplate = `{
         "CreateWorkspaceBody": {
             "type": "object",
             "required": [
+                "codingTime",
+                "endDate",
                 "isCoding",
                 "isVideo",
+                "portalId",
+                "reqCamera",
+                "reqMicrophone",
+                "reqScreen",
                 "startDate",
-                "stopDate",
                 "title"
             ],
             "properties": {
+                "codingTime": {
+                    "type": "integer"
+                },
+                "endDate": {
+                    "type": "string"
+                },
                 "isCoding": {
                     "type": "boolean"
                 },
                 "isVideo": {
                     "type": "boolean"
                 },
-                "startDate": {
-                    "type": "string"
+                "portalId": {
+                    "type": "integer"
                 },
-                "stopDate": {
+                "reqCamera": {
+                    "type": "boolean"
+                },
+                "reqMicrophone": {
+                    "type": "boolean"
+                },
+                "reqScreen": {
+                    "type": "boolean"
+                },
+                "startDate": {
                     "type": "string"
                 },
                 "title": {
@@ -2323,6 +2355,12 @@ const docTemplate = `{
         "WorkspaceDetail": {
             "type": "object",
             "properties": {
+                "codingTime": {
+                    "type": "integer"
+                },
+                "endDate": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -2338,10 +2376,16 @@ const docTemplate = `{
                 "portalId": {
                     "type": "integer"
                 },
-                "startDate": {
-                    "type": "string"
+                "reqCamera": {
+                    "type": "boolean"
                 },
-                "stopDate": {
+                "reqMicrophone": {
+                    "type": "boolean"
+                },
+                "reqScreen": {
+                    "type": "boolean"
+                },
+                "startDate": {
                     "type": "string"
                 },
                 "title": {

@@ -4,17 +4,18 @@ import MainLayout from "@/components/layout/MainLayout.tsx"
 import LoginPage from "@/pages/login/Login.tsx"
 import LobbyPage from "@/pages/lobby/Lobby.tsx"
 import Playground from "@/pages/playground/Playground.tsx"
-import WorkspaceListPage from "@/pages/portal/WorkspaceListPage.tsx"
+import WorkspaceListPage from "@/pages/portal/workspace/WorkspaceListPage"
 import CodingInterviewPage from "@/pages/lobby/codingInterview/CodingInterview.tsx"
 import VideoInterviewPage from "@/pages/lobby/videoInterview/VideoInterview.tsx"
-import CreateWorkspace from "@/pages/portal/createWorkspace/CreateWorkspace"
+import CreateWorkspace from "@/pages/portal/workspace/CreateWorkspace"
 import AssessmentCreateVideoQuestionForm from "@/pages/portal/assessment/components/AssessmentCreateVideoQuestionForm.tsx"
-import WorkspaceDetailPage from "@/pages/portal/WorkspaceDetailPage.tsx"
+import WorkspaceDetailPage from "@/pages/portal/workspace/WorkspaceDetailPage"
 import MainLayoutRevamp from "@/components/layout/MainLayoutRevamp.tsx"
 import AssessmentCreateCodingQuestionForm from "@/pages/portal/assessment/components/AssessmentCreateCodingQuestionForm"
 import AssessmentVideoListPage from "@/pages/portal/assessment/AssessmentVideoListPage.tsx"
 import AssessmentCodingListPage from "@/pages/portal/assessment/AssessmentCodingListPage.tsx"
 import AssessmentCodingDetail from "@/pages/portal/assessment/components/AssessmentCodingDetail"
+import WorkspaceCandidateList from "@/pages/portal/workspace/WorkspaceCandidateList"
 import AssessmentVideoDetail from "@/pages/portal/assessment/components/AssessmentVideoDetail.tsx"
 import AssessmentCodingEdit from "@/pages/portal/assessment/components/AssessmentCodingEdit"
 
@@ -44,7 +45,16 @@ export const router = createBrowserRouter([
               },
               {
                 path: ":workspaceId",
-                element: <WorkspaceDetailPage />,
+                children: [
+                  {
+                    path: "",
+                    element: <WorkspaceDetailPage />,
+                  },
+                  {
+                    path: "candidateList",
+                    element: <WorkspaceCandidateList />,
+                  },
+                ],
               },
             ],
           },

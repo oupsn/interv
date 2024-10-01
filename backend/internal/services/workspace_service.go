@@ -15,7 +15,12 @@ type workspaceService struct {
 	userInPortalService       IUserInPortalService
 }
 
-func NewWorkspaceService(workspaceRepository repositories.IWorkspaceRepository, userInWorkspaceRepository repositories.IUserInWorkspaceRepository, userRepository repositories.IUserRepository, userInPortalService IUserInPortalService) IWorkspaceService {
+func NewWorkspaceService(
+	workspaceRepository repositories.IWorkspaceRepository,
+	userInWorkspaceRepository repositories.IUserInWorkspaceRepository,
+	userRepository repositories.IUserRepository,
+	userInPortalService IUserInPortalService,
+) IWorkspaceService {
 	return &workspaceService{
 		userInWorkspaceRepository: userInWorkspaceRepository,
 		workspaceRepository:       workspaceRepository,
@@ -70,23 +75,42 @@ func (w *workspaceService) GetUserNumInWorkspace(portalId *uint) (workspaceId []
 	return userWorkspace, nil
 }
 
-func (w *workspaceService) Create(title string, isCoding *bool, isVideo *bool, startDate time.Time, stopDate time.Time, userId *uint) (workspace *domains.Workspace, err error) {
-
+func (w *workspaceService) Create(
+	title string,
+	startDate string,
+	endDate string,
+	isVideo *bool,
+	isCoding *bool,
+	codingTime uint,
+	reqScreen *bool,
+	reqMicrophone *bool,
+	reqCamera *bool,
+	portalId uint,
+) (workspace *domains.Workspace, err error) {
+	const layout = "2006-01-02T15:04:05Z07:00"
 	if _, err := w.workspaceRepository.FindByTitle(strings.TrimSpace(title)); err == nil {
 		return nil, ErrorWorkspaceExists
 	}
-	portalId, err := w.userInPortalService.GetPortalByUserId(userId)
+	startdate, err := time.Parse(layout, startDate)
+	if err != nil {
+		return nil, err
+	}
+	enddate, err := time.Parse(layout, endDate)
 	if err != nil {
 		return nil, err
 	}
 
 	return w.workspaceRepository.Create(domains.Workspace{
-		Title:     strings.TrimSpace(title),
-		IsVideo:   isVideo,
-		IsCoding:  isCoding,
-		StartDate: startDate,
-		StopDate:  stopDate,
-		PortalId:  *portalId,
+		Title:         strings.TrimSpace(title),
+		StartDate:     startdate,
+		EndDate:       enddate,
+		IsVideo:       isVideo,
+		IsCoding:      isCoding,
+		CodingTime:    codingTime,
+		ReqScreen:     reqScreen,
+		ReqMicrophone: reqMicrophone,
+		ReqCamera:     reqCamera,
+		PortalId:      portalId,
 	})
 }
 

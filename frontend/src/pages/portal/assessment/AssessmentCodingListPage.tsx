@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/breadcrumb.tsx"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { useGetCodingInterviewQuestionByPortalId } from "@/hooks/useGetCodingInterviewQuestionByPortalId"
-import { FaCode, FaEye, FaEdit, FaTrash, FaPlus } from "react-icons/fa"
+import { FaCode, FaEye, FaEdit, FaTrash } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
@@ -27,6 +27,7 @@ import { toast } from "sonner"
 import { useEffect } from "react"
 import useIsFocused from "@/hooks/useIsFocused"
 import { useLocation } from "react-router-dom"
+import { Plus } from "lucide-react"
 
 const AssessmentCodingListPage = () => {
   const navigate = useNavigate()
@@ -95,17 +96,16 @@ const AssessmentCodingListPage = () => {
             <BreadcrumbItem>
               <BreadcrumbPage>Coding Questions</BreadcrumbPage>
             </BreadcrumbItem>
-            <BreadcrumbItem>
-              <Button
-                variant="outline"
-                onClick={() => handleAdd()}
-                className="flex flex-row items-center gap-2"
-              >
-                <FaPlus />
-                Create new
-              </Button>
-            </BreadcrumbItem>
+            <BreadcrumbItem></BreadcrumbItem>
           </BreadcrumbList>
+          <Button
+            variant="outline"
+            onClick={() => handleAdd()}
+            className="flex flex-row items-center gap-2"
+          >
+            <Plus />
+            Create new
+          </Button>
         </Breadcrumb>
       }
     >
