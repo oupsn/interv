@@ -15,6 +15,7 @@ import AssessmentCreateCodingQuestionForm from "@/pages/portal/assessment/compon
 import AssessmentVideoListPage from "@/pages/portal/assessment/AssessmentVideoListPage.tsx"
 import AssessmentCodingListPage from "@/pages/portal/assessment/AssessmentCodingListPage.tsx"
 import AssessmentCodingDetail from "@/pages/portal/assessment/components/AssessmentCodingDetail"
+import AssessmentVideoDetail from "@/pages/portal/assessment/components/AssessmentVideoDetail.tsx"
 import AssessmentCodingEdit from "@/pages/portal/assessment/components/AssessmentCodingEdit"
 
 export const router = createBrowserRouter([
@@ -48,7 +49,7 @@ export const router = createBrowserRouter([
             ],
           },
           {
-            path: "assessment/coding",
+            path: "question/coding",
             children: [
               {
                 path: "",
@@ -69,7 +70,7 @@ export const router = createBrowserRouter([
             ],
           },
           {
-            path: "assessment/video",
+            path: "question/video",
             children: [
               {
                 path: "",
@@ -79,6 +80,10 @@ export const router = createBrowserRouter([
                 path: "create",
                 element: <AssessmentCreateVideoQuestionForm />,
               },
+              {
+                path: ":videoQuestionId",
+                element: <AssessmentVideoDetail />,
+              },
             ],
           },
         ],
@@ -86,7 +91,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/lobby/:lobbyId",
+    path: "/room/:lobbyId",
     element: <MainLayout />,
     children: [
       {

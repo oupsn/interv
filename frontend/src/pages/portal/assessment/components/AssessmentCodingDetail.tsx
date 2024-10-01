@@ -64,13 +64,13 @@ function AssessmentCodingDetail() {
 
   return (
     <ContentLayout
-      title={"Coding Assessments"}
+      title={"Coding Question"}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/portal/assessment/coding">Coding Assessments</Link>
+                <Link to="/portal/question/coding">Coding Question</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />

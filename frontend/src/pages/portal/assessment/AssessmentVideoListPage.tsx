@@ -30,10 +30,10 @@ const AssessmentVideoListPage = () => {
   } = useGetVideoInterviewQuestionByPortalId(currentUser.portalId)
   const navigate = useNavigate()
   const handleAdd = () => {
-    navigate("/portal/assessment/video/create")
+    navigate("/portal/question/video/create")
   }
   const handleView = (id: number) => {
-    navigate(`/portal/assessment/video/${encodeURIComponent(id)}`)
+    navigate(`/portal/question/video/${encodeURIComponent(id)}`)
   }
 
   const handleEdit = (id: number) => {
@@ -46,12 +46,12 @@ const AssessmentVideoListPage = () => {
 
   return (
     <ContentLayout
-      title={"Video Assessments"}
+      title={"Video Questions"}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbPage>Video Assessments</BreadcrumbPage>
+              <BreadcrumbPage>Video Questions</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           <Button

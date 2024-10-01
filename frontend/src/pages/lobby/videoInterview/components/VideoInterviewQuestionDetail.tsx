@@ -4,6 +4,8 @@ import { DeviceContext } from "@/contexts/device.tsx"
 import { useReactMediaRecorder } from "react-media-recorder-2"
 import { VideoPreviewStream } from "@/pages/lobby/videoInterview/components/VideoPreviewStream.tsx"
 import { VideoInterviewQuestionTimeRemain } from "@/pages/lobby/videoInterview/components/VideoInterviewQuestionTimeRemain.tsx"
+import DOMPurify from "dompurify"
+import parse from "html-react-parser"
 
 interface VideoInterviewQuestionDetailProps {
   questionId: number
@@ -36,6 +38,7 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
       },
     },
   )
+  const cleanDescription = DOMPurify.sanitize(data?.data?.question ?? "")
 
   return (
     <>
@@ -62,7 +65,7 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
         <VideoPreviewStream />
       </div>
       <p className={"text-2xl font-semibold"}>Question {questionIndex}</p>
-      <p className={"text-xl"}>{data?.data?.question}</p>
+      <p className={"text-xl"}>{parse(cleanDescription)}</p>
     </>
   )
 }

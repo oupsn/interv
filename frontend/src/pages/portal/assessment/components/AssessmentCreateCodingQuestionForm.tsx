@@ -96,7 +96,7 @@ function CreateCodingQuestion() {
         error: "Failed to create question",
       },
     )
-    navigate("/portal/assessment/coding")
+    navigate("/portal/question/coding")
   }
   const editorFormats = [
     "header",
@@ -182,13 +182,13 @@ function CreateCodingQuestion() {
 
   return (
     <ContentLayout
-      title={"Create Coding Assessment"}
+      title={"Create Coding Question"}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/portal/assessment/coding">Coding Assessments</Link>
+                <Link to="/portal/question/coding">Coding Questions</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
