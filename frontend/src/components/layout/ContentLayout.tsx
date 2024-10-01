@@ -1,15 +1,24 @@
 import { Navbar } from "@/components/layout/NavBar.tsx"
+import React from "react"
 
 interface ContentLayoutProps {
   title: string
+  breadcrumb: React.ReactNode
   children: React.ReactNode
 }
 
-export function ContentLayout({ title, children }: ContentLayoutProps) {
+export function ContentLayout({
+  title,
+  breadcrumb,
+  children,
+}: ContentLayoutProps) {
   return (
-    <div>
+    <>
       <Navbar title={title} />
-      <div className="container pt-8 pb-8 px-4 sm:px-8">{children}</div>
-    </div>
+      {breadcrumb}
+      <div className="container py-8 px-8 h-full max-w-[1200px]">
+        {children}
+      </div>
+    </>
   )
 }

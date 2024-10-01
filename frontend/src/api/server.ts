@@ -32,11 +32,6 @@ export interface CodingInterviewGetCompileResultQuery {
   body: DomainsCompilationRequest
 }
 
-export interface CodingInterviewUpdateQuestionQuery {
-  body: DomainsCreateCodingQuestionRequest
-  codingQuestionID: number
-}
-
 export type CreateAdminData = HandlersResponseUser
 
 export type CreateAdminError = HandlersErrResponse
@@ -52,12 +47,6 @@ export type CreatePortalError = HandlersErrResponse
 export type CreateQuestionData = HandlersResponseDomainsCodingQuestion
 
 export type CreateQuestionError = HandlersErrResponse
-
-export type CreateQuestionSnapshotData = HandlersResponseString
-
-export type CreateQuestionSnapshotError = HandlersErrResponse
-
-export type CreateQuestionSnapshotPayload = DomainsCodingQuestionSnapshot[]
 
 export type CreateUserData = HandlersResponseUser
 
@@ -188,23 +177,6 @@ export interface DomainsCodingQuestionResponse {
   title?: string
 }
 
-export interface DomainsCodingQuestionSnapshot {
-  code?: string
-  coding_question_id?: number
-  createdAt?: string
-  deletedAt?: GormDeletedAt
-  id?: number
-  is_submitted?: boolean
-  language?: string
-  linter_result?: string
-  lobby_id?: number
-  memory_usage?: string
-  run_time?: string
-  test_cases_result?: number
-  time_taken?: number
-  updatedAt?: string
-}
-
 export interface DomainsCodingQuestionTestCase {
   codingQuestionID?: number
   createdAt?: string
@@ -219,8 +191,6 @@ export interface DomainsCodingQuestionTestCase {
 
 export interface DomainsCodingQuestionTestCaseResponse {
   input?: string
-  is_example?: boolean
-  is_hidden?: boolean
   output?: string
 }
 
@@ -377,12 +347,23 @@ export interface GetVideoQuestionByIdResponse {
   updatedAt?: string
 }
 
-export type GetVideoQuestionByPortalIdData = HandlersResponseArrayGetVideoQuestionByIdResponse[]
+export type GetVideoQuestionByPortalIdData = HandlersResponseArrayGetVideoQuestionByPortalIdResponse
 
 export type GetVideoQuestionByPortalIdError = HandlersErrResponse
 
 export interface GetVideoQuestionByPortalIdParams {
   id: number
+}
+
+export interface GetVideoQuestionByPortalIdResponse {
+  createdAt?: string
+  id?: number
+  portalId?: number
+  retryAmount?: number
+  timeToAnswer?: number
+  timeToPrepare?: number
+  title?: string
+  updatedAt?: string
 }
 
 export type GetWorkspaceData = HandlersResponseWorkspaceData
@@ -426,9 +407,9 @@ export interface HandlersOkResponse {
   timestamp?: string
 }
 
-export interface HandlersResponseArrayGetVideoQuestionByIdResponse {
+export interface HandlersResponseArrayGetVideoQuestionByPortalIdResponse {
   code?: number
-  data?: GetVideoQuestionByIdResponse[]
+  data?: GetVideoQuestionByPortalIdResponse[]
   message?: string
   timestamp?: string
 }
@@ -634,10 +615,6 @@ export type UpdateLobbyContextData = HandlersResponseString
 
 export type UpdateLobbyContextError = HandlersErrResponse
 
-export type UpdateQuestionData = HandlersResponseDomainsCodingQuestion
-
-export type UpdateQuestionError = HandlersErrResponse
-
 export interface UpdateVideoQuestionBody {
   id: number
   portalId?: number
@@ -816,24 +793,6 @@ export namespace CodingInterview {
   }
 
   /**
-   * @description Create a new coding interview question snapshot
-   * @tags codingInterview
-   * @name CreateQuestionSnapshot
-   * @summary Create a new coding interview question snapshot
-   * @request POST:/codingInterview.createQuestionSnapshot
-   * @response `200` `CreateQuestionSnapshotData` Successful response with a message
-   * @response `400` `HandlersErrResponse` Bad Request
-   * @response `500` `HandlersErrResponse` Internal Server Error
-   */
-  export namespace CreateQuestionSnapshot {
-    export type RequestParams = {}
-    export type RequestQuery = {}
-    export type RequestBody = CreateQuestionSnapshotPayload
-    export type RequestHeaders = {}
-    export type ResponseBody = CreateQuestionSnapshotData
-  }
-
-  /**
    * @description Delete a coding interview question
    * @tags codingInterview
    * @name DeleteQuestion
@@ -930,27 +889,6 @@ export namespace CodingInterview {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetQuestionsInPortalData
-  }
-
-  /**
-   * @description Update a coding interview question
-   * @tags codingInterview
-   * @name UpdateQuestion
-   * @summary Update a coding interview question
-   * @request PUT:/codingInterview.updateQuestion/{codingQuestionID}
-   * @response `200` `UpdateQuestionData` Successful response with the updated question
-   * @response `400` `HandlersErrResponse` Bad Request
-   * @response `500` `HandlersErrResponse` Internal Server Error
-   */
-  export namespace UpdateQuestion {
-    export type RequestParams = {
-      /** Coding Question ID */
-      codingQuestionId: number
-    }
-    export type RequestQuery = {}
-    export type RequestBody = CodingInterviewUpdateQuestionQuery
-    export type RequestHeaders = {}
-    export type ResponseBody = UpdateQuestionData
   }
 }
 
@@ -1691,27 +1629,6 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
 
     /**
-     * @description Create a new coding interview question snapshot
-     *
-     * @tags codingInterview
-     * @name CreateQuestionSnapshot
-     * @summary Create a new coding interview question snapshot
-     * @request POST:/codingInterview.createQuestionSnapshot
-     * @response `200` `CreateQuestionSnapshotData` Successful response with a message
-     * @response `400` `HandlersErrResponse` Bad Request
-     * @response `500` `HandlersErrResponse` Internal Server Error
-     */
-    createQuestionSnapshot: (body: CreateQuestionSnapshotPayload, params: RequestParams = {}) =>
-      this.request<CreateQuestionSnapshotData, CreateQuestionSnapshotError>({
-        path: `/codingInterview.createQuestionSnapshot`,
-        method: "POST",
-        body: body,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
      * @description Delete a coding interview question
      *
      * @tags codingInterview
@@ -1807,27 +1724,6 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       this.request<GetQuestionsInPortalData, GetQuestionsInPortalError>({
         path: `/codingInterview.getQuestionsInPortal/${portalId}`,
         method: "GET",
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * @description Update a coding interview question
-     *
-     * @tags codingInterview
-     * @name UpdateQuestion
-     * @summary Update a coding interview question
-     * @request PUT:/codingInterview.updateQuestion/{codingQuestionID}
-     * @response `200` `UpdateQuestionData` Successful response with the updated question
-     * @response `400` `HandlersErrResponse` Bad Request
-     * @response `500` `HandlersErrResponse` Internal Server Error
-     */
-    updateQuestion: (codingQuestionId: number, body: CodingInterviewUpdateQuestionQuery, params: RequestParams = {}) =>
-      this.request<UpdateQuestionData, UpdateQuestionError>({
-        path: `/codingInterview.updateQuestion/${codingQuestionId}`,
-        method: "PUT",
-        body: body,
         type: ContentType.Json,
         format: "json",
         ...params,

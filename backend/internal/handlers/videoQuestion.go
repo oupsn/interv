@@ -38,7 +38,7 @@ type GetVideoQuestionByIdResponse struct {
 
 type GetVideoQuestionByPortalIdParam struct {
 	ID uint `json:"id" validate:"required"`
-} // @name GetVideoQuestionByportalIdParam
+} // @name GetVideoQuestionByPortalIdParam
 
 type GetVideoQuestionByPortalIdResponse struct {
 	ID            uint      `json:"id"`

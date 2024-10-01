@@ -29,7 +29,7 @@ export function SideBarRevamp() {
           variant="link"
           asChild
         >
-          <Link to="/portal">
+          <Link to="/portal/workspace">
             <img src={IntervLogo} alt="interv" className="w-40" />
           </Link>
         </Button>

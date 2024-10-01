@@ -38,7 +38,7 @@ func (q VideoQuestionHandler) CreateVideoQuestion(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := q.videoQuestionService.CreateQuestion(domains.VideoQuestion{
+	response, err := q.videoQuestionService.CreateVideoQuestion(domains.VideoQuestion{
 		Title:         body.Title,
 		TimeToPrepare: body.TimeToPrepare,
 		TimeToAnswer:  body.TimeToAnswer,
@@ -83,7 +83,7 @@ func (q VideoQuestionHandler) GetVideoQuestion(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := q.videoQuestionService.GetQuestionById(param.ID)
+	response, err := q.videoQuestionService.GetVideoQuestionById(param.ID)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (q VideoQuestionHandler) GetVideoQuestion(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param payload query GetVideoQuestionByPortalIdParam true "Portal ID"
-// @Success 200 {array} Response[[]GetVideoQuestionByIdResponse]
+// @Success 200 {object} Response[[]GetVideoQuestionByPortalIdResponse]
 // @Failure 400 {object} ErrResponse
 // @Failure 404 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
@@ -121,12 +121,26 @@ func (q VideoQuestionHandler) GetVideoQuestionByPortalId(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := q.videoQuestionService.GetQuestionByPortalId(param.ID)
+	response, err := q.videoQuestionService.GetVideoQuestionByPortalId(param.ID)
 	if err != nil {
 		return err
 	}
 
-	return Ok(c, response)
+	var result []GetVideoQuestionByPortalIdResponse
+	for _, v := range response {
+		result = append(result, GetVideoQuestionByPortalIdResponse{
+			ID:            v.ID,
+			Title:         v.Title,
+			TimeToPrepare: v.TimeToPrepare,
+			TimeToAnswer:  v.TimeToAnswer,
+			RetryAmount:   v.RetryAmount,
+			PortalID:      v.PortalID,
+			CreatedAt:     v.CreatedAt,
+			UpdatedAt:     v.UpdatedAt,
+		})
+	}
+
+	return Ok(c, result)
 }
 
 // UpdateVideoQuestion
@@ -152,7 +166,7 @@ func (q VideoQuestionHandler) UpdateVideoQuestion(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := q.videoQuestionService.UpdateQuestion(domains.VideoQuestion{
+	response, err := q.videoQuestionService.UpdateVideoQuestion(domains.VideoQuestion{
 		ID:            body.ID,
 		Title:         body.Title,
 		TimeToPrepare: body.TimeToPrepare,
@@ -198,7 +212,7 @@ func (q VideoQuestionHandler) DeleteVideoQuestion(c *fiber.Ctx) error {
 		return err
 	}
 
-	err := q.videoQuestionService.DeleteQuestionById(body.ID)
+	err := q.videoQuestionService.DeleteVideoQuestionById(body.ID)
 	if err != nil {
 		return err
 	}
