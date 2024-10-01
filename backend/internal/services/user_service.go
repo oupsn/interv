@@ -28,8 +28,11 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 	var checkedUser []*domains.UserInWorkspace
 
 	for x, aImportUser := range importUser {
-		userFound, err := u.userRepository.FindByUsername(strings.TrimSpace(importUser[x].Username))
 		bytes, err := bcrypt.GenerateFromPassword([]byte(aImportUser.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
+		userFound, err := u.userRepository.FindByUsername(strings.TrimSpace(importUser[x].Username))
 		if err != nil {
 			user, err := u.userRepository.Create(domains.User{
 				ID:       aImportUser.ID,

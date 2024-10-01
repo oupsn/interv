@@ -21,8 +21,11 @@ type CreateUserBody struct {
 } // @name UserCreateBody
 
 type CreateAdminBody struct {
-	User     domains.User `json:"user" validate:"required"`
-	PortalId uint         `json:"portalId" validate:"required"`
+	Name     string `json:"name" validate:"required"`
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
+	Role     string `json:"role" validate:"required"`
+	PortalId uint   `json:"portalId" validate:"required"`
 } // @name AdminCreateBody
 
 type DeleteUserBody struct {

@@ -64,13 +64,17 @@ func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 	}
 	return Ok(c, WorkspaceData{
 		WorkspaceDetail: WorkspaceDetail{
-			Id:        workspace.Id,
-			Title:     workspace.Title,
-			IsVideo:   *workspace.IsVideo,
-			IsCoding:  *workspace.IsCoding,
-			StartDate: workspace.StartDate,
-			StopDate:  workspace.StopDate,
-			MemberNum: 0,
+			Id:            workspace.Id,
+			Title:         workspace.Title,
+			StartDate:     workspace.StartDate,
+			EndDate:       workspace.EndDate,
+			IsVideo:       *workspace.IsVideo,
+			IsCoding:      *workspace.IsCoding,
+			CodingTime:    workspace.CodingTime,
+			ReqScreen:     *workspace.ReqScreen,
+			ReqMicrophone: *workspace.ReqScreen,
+			ReqCamera:     *workspace.ReqCamera,
+			MemberNum:     0,
 		},
 		IndividualUser: res,
 	})
@@ -138,7 +142,7 @@ func (w WorkspaceHandler) GetPortalWorkspace(c *fiber.Ctx) error {
 			IsVideo:   *v.IsVideo,
 			IsCoding:  *v.IsCoding,
 			StartDate: v.StartDate,
-			StopDate:  v.StopDate,
+			EndDate:   v.EndDate,
 			PortalId:  v.PortalId,
 			MemberNum: member[index],
 		})
@@ -169,23 +173,20 @@ func (w WorkspaceHandler) CreateWorkspace(c *fiber.Ctx) error {
 		return err
 	}
 
-	userId, err := GetCurrentUser(c)
-	if err != nil {
-		return err
-	}
-
-	response, err := w.workspaceService.Create(form.Title, form.IsVideo, form.IsCoding, form.StartDate, form.StopDate, userId)
+	response, err := w.workspaceService.Create(form.Title, form.StartDate, form.EndDate, form.IsVideo, form.IsCoding, form.CodingTime, form.ReqScreen, form.ReqMicrophone, form.ReqCamera, form.PortalId)
 	if err != nil {
 		return err
 	}
 
 	return Created(c, WorkspaceDetail{
-		Id:        response.Id,
-		Title:     response.Title,
-		IsVideo:   *response.IsVideo,
-		IsCoding:  *response.IsCoding,
-		StartDate: response.StartDate,
-		StopDate:  response.StopDate,
+		Id:         response.Id,
+		Title:      response.Title,
+		StartDate:  response.StartDate,
+		EndDate:    response.EndDate,
+		IsVideo:    *response.IsVideo,
+		IsCoding:   *response.IsCoding,
+		CodingTime: response.CodingTime,
+		PortalId:   response.PortalId,
 	})
 }
 

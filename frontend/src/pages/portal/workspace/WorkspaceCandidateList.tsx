@@ -17,7 +17,7 @@ import {
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 
-const WorkspaceDetailPage = () => {
+const WorkspaceCandidateList = () => {
   const [importUser, setImportUser] = useState<UserData[]>()
   const { workspaceId } = useParams()
   const { data, mutate } = useGetWorkspace(Number(workspaceId))
@@ -27,6 +27,8 @@ const WorkspaceDetailPage = () => {
     username: string
     password: string
     role: string
+    createdAt: string
+    updatedAt: string
   }
 
   type ImportData = {
@@ -35,6 +37,8 @@ const WorkspaceDetailPage = () => {
   }
 
   function parseUserData(input: unknown[]): UserData[] {
+    const currentTimestamp = new Date().toISOString() // or any timestamp logic
+
     return input
       .filter(
         (item): item is string[] =>
@@ -47,6 +51,8 @@ const WorkspaceDetailPage = () => {
         username,
         password,
         role,
+        createdAt: currentTimestamp,
+        updatedAt: currentTimestamp,
       }))
   }
 
@@ -67,13 +73,12 @@ const WorkspaceDetailPage = () => {
       listUser: importUser ?? [],
       workspaceId: Number(workspaceId),
     }
-    console.log(workspaceId)
-    console.log(importUser)
     if (importUser) {
       server.user.createUser(importData).finally(() => {
         mutate()
       })
     }
+    console.log(data?.data?.workspaceDetail)
   }
 
   return (
@@ -123,4 +128,4 @@ const WorkspaceDetailPage = () => {
   )
 }
 
-export default WorkspaceDetailPage
+export default WorkspaceCandidateList
