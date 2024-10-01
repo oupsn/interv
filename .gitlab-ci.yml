@@ -105,7 +105,8 @@ deploy-qa:
     - apk update
     - apk add --no-cache openssh
   script:
-    - IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
+    #- IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
+    - IMAGE_TAG=${CI_COMMIT_SHORT_SHA}-$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - echo "Deploying to qa ..."
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
@@ -122,7 +123,8 @@ deploy-prod:
     - apk update
     - apk add --no-cache openssh
   script:
-    - IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
+    #- IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
+    - IMAGE_TAG=${CI_COMMIT_SHORT_SHA}-$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - echo "Deploying to prod ..."
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
