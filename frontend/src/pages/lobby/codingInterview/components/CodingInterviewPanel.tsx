@@ -5,7 +5,18 @@ import CodingInterviewQuestion, {
 import CodeEditor from "./codingInterviewPanel/CodingInterviewEditor"
 import { Button } from "@/components/ui/button"
 import { server } from "@/contexts/swr"
-import { DomainsCompilationResultResponse } from "@/api/server"
+import {
+  DomainsCompilationResultResponse,
+  DomainsCodingQuestionSnapshot,
+} from "@/api/server"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 interface CodingInterviewPanelProps {
   timeRemain: number
@@ -17,6 +28,9 @@ interface CodingInterviewPanelProps {
   isFirstQuestion: boolean
   isLastQuestion: boolean
   setCurrentQuestionIndex: (index: number) => void
+  lobbyId: string
+  setIsFinish: (isFinish: boolean) => void
+  timeTaken: number
 }
 
 interface EditorState {
@@ -36,6 +50,9 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   isFirstQuestion,
   isLastQuestion,
   setCurrentQuestionIndex,
+  lobbyId,
+  setIsFinish,
+  timeTaken,
 }) => {
   const [countdown, setCountdown] = useState(timeRemain)
   const [editorStates, setEditorStates] = useState<EditorState[]>(
@@ -49,6 +66,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   const [isDragging, setIsDragging] = useState(false)
   const [isCompiling, setIsCompiling] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -146,6 +164,34 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
     }
   }
 
+  const handleSubmit = () => {
+    setIsSubmitDialogOpen(true)
+  }
+
+  const confirmSubmit = async () => {
+    const submissionData: DomainsCodingQuestionSnapshot[] = questions.map(
+      (question, index) => ({
+        lobby_id: parseInt(lobbyId),
+        question_id: question.id,
+        code: editorStates[index].content,
+        language: editorStates[index].language,
+        time_taken: timeTaken,
+        is_submitted: true,
+      }),
+    )
+
+    console.log(submissionData)
+    try {
+      const response =
+        await server.codingInterview.createQuestionSnapshot(submissionData)
+      console.log("Submission successful:", response)
+    } catch (error) {
+      console.error("Submission failed:", error)
+    }
+    setIsFinish(true)
+    setIsSubmitDialogOpen(false)
+  }
+
   return (
     <div className="flex flex-col items-center justify-start h-full w-full gap-4 p-4">
       <p className="text-lg font-semibold">
@@ -229,9 +275,36 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
           >
             Next Question
           </Button>
-          {isLastQuestion && <Button variant="default">Submit</Button>}
+          {isLastQuestion && (
+            <Button variant="default" onClick={handleSubmit}>
+              Submit
+            </Button>
+          )}
         </div>
       </div>
+
+      <Dialog open={isSubmitDialogOpen} onOpenChange={setIsSubmitDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Submit Coding Assessment</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to submit your coding assessment? You won't
+              be able to make any changes after submission.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsSubmitDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="default" onClick={confirmSubmit}>
+              Confirm Submission
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

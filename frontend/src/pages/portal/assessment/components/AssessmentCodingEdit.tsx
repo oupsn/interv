@@ -19,7 +19,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Trash2 } from "lucide-react"
 import { server } from "@/contexts/swr"
 import { Textarea } from "@/components/ui/textarea"
-import { DomainsCreateCodingQuestionRequest } from "@/api/server"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Breadcrumb,
@@ -29,7 +28,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb.tsx"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import {
@@ -38,9 +37,27 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select" // Import Select components
+} from "@/components/ui/select"
+import { useGetCodingInterviewQuestionByTitle } from "@/hooks/useGetCodingInterviewQuestionByTitle"
+import { useEffect, useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { CodingInterviewUpdateQuestionQuery } from "@/api/server"
+import { Controller } from "react-hook-form"
 
-function CreateCodingQuestion() {
+function AssessmentCodingEdit() {
+  const { codingTitle } = useParams()
+  const encodedTitle = encodeURIComponent(codingTitle ?? "")
+  const decodedTitle = decodeURIComponent(encodedTitle ?? "")
+  const { data: originalCodingQuestion, isLoading } =
+    useGetCodingInterviewQuestionByTitle(encodedTitle ?? "")
+
   const formSchema = z.object({
     title: z.string().min(1),
     description: z.string().min(1),
@@ -70,34 +87,76 @@ function CreateCodingQuestion() {
       difficulty: "easy",
     },
   })
-  const navigate = useNavigate()
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const body: DomainsCreateCodingQuestionRequest = {
-      title: values.title || "",
-      description: values.description || "",
-      input_description: values.inputDescription || "",
-      output_description: values.outputDescription || "",
-      test_cases:
-        values.testCases.map((testCase) => ({
-          ...testCase,
-          input: testCase.input.replace(/\n/g, "\\n"),
-          output: testCase.output.replace(/\n/g, "\\n"),
-        })) || [],
-      difficulty: values.difficulty,
-    }
 
-    toast.promise(
-      server.codingInterview.createQuestion({
-        body,
-      }),
-      {
-        loading: "Creating question...",
-        success: "Question created successfully",
-        error: "Failed to create question",
-      },
-    )
-    navigate("/portal/assessment/coding")
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "testCases",
+  })
+
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
+  const [formValues, setFormValues] = useState<z.infer<
+    typeof formSchema
+  > | null>(null)
+
+  useEffect(() => {
+    if (originalCodingQuestion?.data) {
+      form.reset({
+        title: originalCodingQuestion.data.title ?? "",
+        description: originalCodingQuestion.data.description ?? "",
+        inputDescription: originalCodingQuestion.data.input_description ?? "",
+        outputDescription: originalCodingQuestion.data.output_description ?? "",
+        testCases:
+          originalCodingQuestion.data.test_case?.map((tc) => ({
+            input: tc.input?.replace(/\\n/g, "\n") ?? "",
+            output: tc.output?.replace(/\\n/g, "\n") ?? "",
+            isHidden: tc.is_hidden || false,
+            isExample: tc.is_example || false,
+          })) || [],
+        difficulty:
+          (originalCodingQuestion.data.difficulty as
+            | "easy"
+            | "moderate"
+            | "hard") || "easy",
+      })
+    }
+  }, [originalCodingQuestion, form])
+
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    setFormValues(values)
+    setIsConfirmDialogOpen(true)
   }
+
+  const confirmUpdate = async () => {
+    if (formValues) {
+      const codingQuestionID = originalCodingQuestion?.data?.id ?? 0
+      const updateBody: CodingInterviewUpdateQuestionQuery = {
+        codingQuestionID,
+        body: {
+          title: formValues.title || "",
+          description: formValues.description || "",
+          input_description: formValues.inputDescription || "",
+          output_description: formValues.outputDescription || "",
+          test_cases: formValues.testCases.map((testCase) => ({
+            ...testCase,
+            input: testCase.input.replace(/\n/g, "\\n") || "",
+            output: testCase.output.replace(/\n/g, "\\n") || "",
+          })),
+          difficulty: formValues.difficulty || "easy",
+        },
+      }
+
+      toast.promise(
+        server.codingInterview.updateQuestion(codingQuestionID, updateBody),
+        {
+          loading: "Updating question...",
+          success: "Question updated successfully",
+          error: "Failed to update question",
+        },
+      )
+      setIsConfirmDialogOpen(false)
+    }
+  }
+
   const editorFormats = [
     "header",
     "font",
@@ -175,14 +234,13 @@ function CreateCodingQuestion() {
     reader.readAsText(file)
   }
 
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "testCases",
-  })
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <ContentLayout
-      title={"Create Coding Assessment"}
+      title={"Edit Coding Assessment"}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
@@ -193,7 +251,11 @@ function CreateCodingQuestion() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Create</BreadcrumbPage>
+              <BreadcrumbPage>Edit</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{decodedTitle}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -201,7 +263,10 @@ function CreateCodingQuestion() {
     >
       <ContentPanel>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-6"
+          >
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="details">Question Details</TabsTrigger>
@@ -322,6 +387,7 @@ function CreateCodingQuestion() {
                           {...field}
                           value={field.value}
                           onValueChange={field.onChange}
+                          defaultValue={field.value}
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select difficulty" />
@@ -388,14 +454,18 @@ function CreateCodingQuestion() {
                                     >
                                       Input
                                     </label>
-                                    <Textarea
-                                      id={`input-${index}`}
-                                      placeholder="Input"
-                                      {...form.register(
-                                        `testCases.${index}.input`,
+                                    <Controller
+                                      name={`testCases.${index}.input`}
+                                      control={form.control}
+                                      render={({ field }) => (
+                                        <Textarea
+                                          id={`input-${index}`}
+                                          placeholder="Input"
+                                          {...field}
+                                          className="w-full font-mono"
+                                          rows={3}
+                                        />
                                       )}
-                                      className="w-full font-mono"
-                                      rows={3}
                                     />
                                   </div>
                                   <div className="flex-1">
@@ -405,14 +475,18 @@ function CreateCodingQuestion() {
                                     >
                                       Output
                                     </label>
-                                    <Textarea
-                                      id={`output-${index}`}
-                                      placeholder="Output"
-                                      {...form.register(
-                                        `testCases.${index}.output`,
+                                    <Controller
+                                      name={`testCases.${index}.output`}
+                                      control={form.control}
+                                      render={({ field }) => (
+                                        <Textarea
+                                          id={`output-${index}`}
+                                          placeholder="Output"
+                                          {...field}
+                                          className="w-full font-mono"
+                                          rows={3}
+                                        />
                                       )}
-                                      className="w-full font-mono"
-                                      rows={3}
                                     />
                                   </div>
                                 </div>
@@ -467,16 +541,18 @@ function CreateCodingQuestion() {
                                       </label>
                                     </div>
                                   </div>
-                                  <Button
-                                    type="button"
-                                    onClick={() => remove(index)}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8"
-                                  >
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    Remove
-                                  </Button>
+                                  {
+                                    <Button
+                                      type="button"
+                                      onClick={() => remove(index)}
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8"
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      Remove
+                                    </Button>
+                                  }
                                 </div>
                               </div>
                             ))
@@ -510,8 +586,37 @@ function CreateCodingQuestion() {
                 />
               </TabsContent>
             </Tabs>
+            <Dialog
+              open={isConfirmDialogOpen}
+              onOpenChange={setIsConfirmDialogOpen}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Confirm Update</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to update the question "
+                    {formValues?.title}"?
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsConfirmDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="default"
+                    onClick={confirmUpdate}
+                    className="bg-primary text-white"
+                  >
+                    Update
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             <Button type="submit" className="w-full">
-              Create Question
+              Update Question
             </Button>
           </form>
         </Form>
@@ -520,4 +625,4 @@ function CreateCodingQuestion() {
   )
 }
 
-export default CreateCodingQuestion
+export default AssessmentCodingEdit
