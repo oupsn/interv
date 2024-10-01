@@ -21,10 +21,10 @@ import {
 } from "@/components/ui/table.tsx"
 import { Plus } from "lucide-react"
 
-const AssessmentVideoListPage = () => {
+const QuestionBankVideoListPage = () => {
   const { currentUser } = useCurrentUser()
   const {
-    data: videoAssessmentList,
+    data: videoQuestionList,
     error,
     isLoading,
   } = useGetVideoInterviewQuestionByPortalId(currentUser.portalId)
@@ -37,7 +37,7 @@ const AssessmentVideoListPage = () => {
   }
 
   const handleEdit = (id: number) => {
-    console.log("edit", id)
+    navigate(`/portal/question/video/${encodeURIComponent(id)}/edit`)
   }
 
   const handleDelete = (id: number) => {
@@ -54,14 +54,16 @@ const AssessmentVideoListPage = () => {
               <BreadcrumbPage>Video Questions</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
-          <Button
-            variant="outline"
-            onClick={() => handleAdd()}
-            className="flex flex-row items-center gap-2"
-          >
-            <Plus />
-            Create new
-          </Button>
+          <BreadcrumbList>
+            <Button
+              variant="outline"
+              onClick={() => handleAdd()}
+              className="flex flex-row items-center gap-2"
+            >
+              <Plus />
+              Create new
+            </Button>
+          </BreadcrumbList>
         </Breadcrumb>
       }
     >
@@ -79,7 +81,7 @@ const AssessmentVideoListPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {videoAssessmentList?.data?.map((item) => (
+              {videoQuestionList?.data?.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.title}</TableCell>
                   <TableCell>
@@ -111,4 +113,4 @@ const AssessmentVideoListPage = () => {
   )
 }
 
-export default AssessmentVideoListPage
+export default QuestionBankVideoListPage

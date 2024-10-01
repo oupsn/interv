@@ -8,7 +8,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb.tsx"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
-import AssessmentPicker from "./components/AssessmentPicker"
+import QuestionPicker from "./components/QuestionPicker"
 import { Button } from "@/components/ui/button"
 import {
   FormField,
@@ -73,10 +73,10 @@ const CreateWorkspace = () => {
   const startDate = watch("date.startDate")
   const endDate = watch("date.endDate")
 
-  const [codeStockAssessment, setCodeStockAssessment] = useState<
+  const [codeStockQuestion, setCodeStockQuestion] = useState<
     DomainsCodingQuestion[] | undefined
   >(data?.data)
-  const [codeCurrentAssessment, setCodeCurrentAssessment] = useState<
+  const [codeCurrentQuestion, setCodeCurrentQuestion] = useState<
     DomainsCodingQuestion[] | undefined
   >([])
   // const [, setVideoStockAssessment] = useState<string[]>([])
@@ -85,9 +85,7 @@ const CreateWorkspace = () => {
   // >([])
   // const isVideo = videoCurrentAssessment.length > 0
   const isCoding =
-    codeCurrentAssessment === undefined
-      ? false
-      : codeCurrentAssessment.length > 0
+    codeCurrentQuestion === undefined ? false : codeCurrentQuestion.length > 0
   setValue("isVideo", false)
   setValue("isCoding", isCoding)
 
@@ -185,7 +183,7 @@ const CreateWorkspace = () => {
               name="isVideo"
               render={() => (
                 <FormItem>
-                  <FormLabel>Video Assessment</FormLabel>
+                  <FormLabel>Video Question</FormLabel>
                   <FormControl>
                     {/* <AssessmentPicker
                       currentAssessment={videoCurrentAssessment}
@@ -203,13 +201,13 @@ const CreateWorkspace = () => {
               name="isCoding"
               render={() => (
                 <FormItem>
-                  <FormLabel>Coding Assessment</FormLabel>
+                  <FormLabel>Coding Question</FormLabel>
                   <FormControl>
-                    <AssessmentPicker
-                      currentAssessment={codeCurrentAssessment}
-                      setCurrentAssessment={setCodeCurrentAssessment}
-                      stockAssessment={codeStockAssessment}
-                      setStockAssessment={setCodeStockAssessment}
+                    <QuestionPicker
+                      currentQuestion={codeCurrentQuestion}
+                      setCurrentQuestion={setCodeCurrentQuestion}
+                      stockQuestion={codeStockQuestion}
+                      setStockQuestion={setCodeStockQuestion}
                     />
                   </FormControl>
                   <FormMessage />

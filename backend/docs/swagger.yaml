@@ -373,9 +373,9 @@ definitions:
     type: object
   UpdateVideoQuestionBody:
     properties:
-      id:
-        type: integer
       portalId:
+        type: integer
+      questionId:
         type: integer
       timeToAnswer:
         type: integer
@@ -386,7 +386,7 @@ definitions:
       totalAttempt:
         type: integer
     required:
-    - id
+    - questionId
     type: object
   User:
     properties:
@@ -1984,7 +1984,7 @@ paths:
       summary: Delete video question by id
       tags:
       - videoQuestion
-  /videoQuestion.getVideoQuestionById/{id}:
+  /videoQuestion.getVideoQuestionById:
     get:
       consumes:
       - application/json

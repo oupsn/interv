@@ -1385,7 +1385,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/videoQuestion.getVideoQuestionById/{id}": {
+        "/videoQuestion.getVideoQuestionById": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -2254,13 +2254,13 @@ const docTemplate = `{
         "UpdateVideoQuestionBody": {
             "type": "object",
             "required": [
-                "id"
+                "questionId"
             ],
             "properties": {
-                "id": {
+                "portalId": {
                     "type": "integer"
                 },
-                "portalId": {
+                "questionId": {
                     "type": "integer"
                 },
                 "timeToAnswer": {

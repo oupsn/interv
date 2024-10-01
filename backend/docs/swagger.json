@@ -1377,7 +1377,7 @@
                 }
             }
         },
-        "/videoQuestion.getVideoQuestionById/{id}": {
+        "/videoQuestion.getVideoQuestionById": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -2246,13 +2246,13 @@
         "UpdateVideoQuestionBody": {
             "type": "object",
             "required": [
-                "id"
+                "questionId"
             ],
             "properties": {
-                "id": {
+                "portalId": {
                     "type": "integer"
                 },
-                "portalId": {
+                "questionId": {
                     "type": "integer"
                 },
                 "timeToAnswer": {

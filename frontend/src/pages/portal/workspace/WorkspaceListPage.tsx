@@ -29,14 +29,16 @@ const WorkspaceListPage = () => {
               <BreadcrumbPage>Workspaces</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
-          <Button
-            variant="outline"
-            onClick={() => handleAdd()}
-            className="flex flex-row items-center gap-2"
-          >
-            <Plus />
-            Create new
-          </Button>
+          <BreadcrumbList>
+            <Button
+              variant="outline"
+              onClick={() => handleAdd()}
+              className="flex flex-row items-center gap-2"
+            >
+              <Plus />
+              Create new
+            </Button>
+          </BreadcrumbList>
         </Breadcrumb>
       }
     >

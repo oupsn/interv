@@ -25,9 +25,8 @@ import {
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import useCurrentUser from "@/hooks/UseCurrentUser.ts"
-import ReactQuill from "react-quill"
 
-const AssessmentCreateVideoQuestionForm = () => {
+const QuestionBankCreateVideoQuestionForm = () => {
   const { currentUser } = useCurrentUser()
   const formSchema = z.object({
     title: z.string().min(1, { message: "Required" }),
@@ -63,37 +62,9 @@ const AssessmentCreateVideoQuestionForm = () => {
     )
   }
 
-  const editorFormats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-    "video",
-  ]
-
-  const editorModules = {
-    toolbar: [
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      ["bold", "italic", "underline", "strike"],
-      ["blockquote", "code-block"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ script: "sub" }, { script: "super" }],
-      ["link", "image", "video"],
-    ],
-  }
-
   return (
     <ContentLayout
-      title={"Create Video Questions"}
+      title={"Create Video Question"}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
@@ -120,14 +91,7 @@ const AssessmentCreateVideoQuestionForm = () => {
                 <FormItem>
                   <FormLabel className="text-lg">Question Title</FormLabel>
                   <FormControl>
-                    <ReactQuill
-                      theme="snow"
-                      value={field.value}
-                      onChange={field.onChange}
-                      formats={editorFormats}
-                      modules={editorModules}
-                      className="bg-white rounded-md"
-                    />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -186,4 +150,4 @@ const AssessmentCreateVideoQuestionForm = () => {
   )
 }
 
-export default AssessmentCreateVideoQuestionForm
+export default QuestionBankCreateVideoQuestionForm

@@ -286,10 +286,10 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
       <Dialog open={isSubmitDialogOpen} onOpenChange={setIsSubmitDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Submit Coding Assessment</DialogTitle>
+            <DialogTitle>Submit Coding Question</DialogTitle>
             <DialogDescription>
-              Are you sure you want to submit your coding assessment? You won't
-              be able to make any changes after submission.
+              Are you sure you want to submit your coding question? You won't be
+              able to make any changes after submission.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
