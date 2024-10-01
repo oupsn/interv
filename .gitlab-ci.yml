@@ -61,7 +61,7 @@ frontend_release-image:
     - staging
   script:
     #- IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
-    - IMAGE_TAG=${CI_COMMIT_SHORT_SHA}
+    - IMAGE_TAG=${CI_COMMIT_SHORT_SHA}-$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - CONTAINER_TEST_IMAGE_CLIENTSIDE="$CI_REGISTRY_IMAGE_CLIENTSIDE:$IMAGE_TAG"
     - cd frontend
     - echo "Building Docker image..."
@@ -83,7 +83,7 @@ backend_release-image:
     - staging
   script:
     #- IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
-    - IMAGE_TAG=${CI_COMMIT_SHORT_SHA}
+    - IMAGE_TAG=${CI_COMMIT_SHORT_SHA}-$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - CONTAINER_TEST_IMAGE_CORE="$CI_REGISTRY_IMAGE_CORE:$IMAGE_TAG"
     - cd backend
     - echo "Building Docker image..."
