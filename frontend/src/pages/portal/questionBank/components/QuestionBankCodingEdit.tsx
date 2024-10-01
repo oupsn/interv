@@ -51,7 +51,7 @@ import {
 import { CodingInterviewUpdateQuestionQuery } from "@/api/server"
 import { Controller } from "react-hook-form"
 
-function AssessmentCodingEdit() {
+function QuestionBankCodingEdit() {
   const { codingTitle } = useParams()
   const encodedTitle = encodeURIComponent(codingTitle ?? "")
   const decodedTitle = decodeURIComponent(encodedTitle ?? "")
@@ -240,13 +240,13 @@ function AssessmentCodingEdit() {
 
   return (
     <ContentLayout
-      title={"Edit Coding Assessment"}
+      title={"Edit Coding Question"}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/portal/assessment/coding">Coding Assessments</Link>
+                <Link to="/portal/question/coding">Coding Questions</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -625,4 +625,4 @@ function AssessmentCodingEdit() {
   )
 }
 
-export default AssessmentCodingEdit
+export default QuestionBankCodingEdit

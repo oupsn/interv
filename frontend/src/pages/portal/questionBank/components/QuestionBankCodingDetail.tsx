@@ -25,8 +25,9 @@ import DOMPurify from "dompurify"
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
 import { Edit } from "lucide-react"
+import { FaEdit, FaTrash } from "react-icons/fa"
 
-function AssessmentCodingDetail() {
+function QuestionBankCodingDetail() {
   const { codingTitle } = useParams()
   const {
     data: codingQuestion,
@@ -46,6 +47,9 @@ function AssessmentCodingDetail() {
         {index < text.split("\\n").length - 1 && <br />}
       </React.Fragment>
     ))
+  }
+  const handleEdit = (title: string) => {
+    navigate(`/portal/question/coding/edit/${encodeURIComponent(title)}`)
   }
   useEffect(() => {
     console.log(codingQuestion)
@@ -82,6 +86,18 @@ function AssessmentCodingDetail() {
               <BreadcrumbPage>{codingTitle}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
+          <BreadcrumbList>
+            <Button
+              variant="outline"
+              onClick={() => handleEdit(codingTitle!)}
+              size="icon"
+            >
+              <FaEdit />
+            </Button>
+            <Button variant="outline" onClick={() => {}} size="icon">
+              <FaTrash />
+            </Button>
+          </BreadcrumbList>
         </Breadcrumb>
       }
     >
@@ -98,7 +114,7 @@ function AssessmentCodingDetail() {
                   className="mr-2"
                   onClick={() =>
                     navigate(
-                      `/portal/assessment/coding/edit/${codingQuestion?.data?.title}`,
+                      `/portal/question/coding/edit/${codingQuestion?.data?.title}`,
                     )
                   }
                 >
@@ -222,4 +238,4 @@ function AssessmentCodingDetail() {
   )
 }
 
-export default AssessmentCodingDetail
+export default QuestionBankCodingDetail

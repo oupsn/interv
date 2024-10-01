@@ -62,7 +62,7 @@ func (q VideoQuestionHandler) CreateVideoQuestion(c *fiber.Ctx) error {
 	})
 }
 
-// GetVideoQuestion
+// GetVideoQuestionById
 // @ID getVideoQuestionById
 // @Tags videoQuestion
 // @Summary Get video question by id
@@ -73,8 +73,8 @@ func (q VideoQuestionHandler) CreateVideoQuestion(c *fiber.Ctx) error {
 // @Failure 400 {object} ErrResponse
 // @Failure 404 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /videoQuestion.getVideoQuestionById/{id} [get]
-func (q VideoQuestionHandler) GetVideoQuestion(c *fiber.Ctx) error {
+// @Router /videoQuestion.getVideoQuestionById [get]
+func (q VideoQuestionHandler) GetVideoQuestionById(c *fiber.Ctx) error {
 	param := GetVideoQuestionByIdParam{}
 	if err := c.QueryParser(&param); err != nil {
 		return err
@@ -167,7 +167,7 @@ func (q VideoQuestionHandler) UpdateVideoQuestion(c *fiber.Ctx) error {
 	}
 
 	response, err := q.videoQuestionService.UpdateVideoQuestion(domains.VideoQuestion{
-		ID:            body.ID,
+		ID:            body.QuestionID,
 		Title:         body.Title,
 		TimeToPrepare: body.TimeToPrepare,
 		TimeToAnswer:  body.TimeToAnswer,

@@ -386,7 +386,7 @@ export type GetVideoQuestionByIdData = HandlersResponseGetVideoQuestionByIdRespo
 export type GetVideoQuestionByIdError = HandlersErrResponse
 
 export interface GetVideoQuestionByIdParams {
-  id: string
+  id: number
 }
 
 export interface GetVideoQuestionByIdResponse {
@@ -692,8 +692,8 @@ export type UpdateRoomContextData = HandlersResponseString
 export type UpdateRoomContextError = HandlersErrResponse
 
 export interface UpdateVideoQuestionBody {
-  id: number
   portalId?: number
+  questionId: number
   timeToAnswer?: number
   timeToPrepare?: number
   title?: string
@@ -1386,16 +1386,14 @@ export namespace VideoQuestion {
    * @tags videoQuestion
    * @name GetVideoQuestionById
    * @summary Get video question by id
-   * @request GET:/videoQuestion.getVideoQuestionById/{id}
+   * @request GET:/videoQuestion.getVideoQuestionById
    * @response `200` `GetVideoQuestionByIdData` OK
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `404` `HandlersErrResponse` Not Found
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
   export namespace GetVideoQuestionById {
-    export type RequestParams = {
-      id: string
-    }
+    export type RequestParams = {}
     export type RequestQuery = {
       id: number
     }
@@ -2322,15 +2320,15 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * @tags videoQuestion
      * @name GetVideoQuestionById
      * @summary Get video question by id
-     * @request GET:/videoQuestion.getVideoQuestionById/{id}
+     * @request GET:/videoQuestion.getVideoQuestionById
      * @response `200` `GetVideoQuestionByIdData` OK
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `404` `HandlersErrResponse` Not Found
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    getVideoQuestionById: ({ id, ...query }: GetVideoQuestionByIdParams, params: RequestParams = {}) =>
+    getVideoQuestionById: (query: GetVideoQuestionByIdParams, params: RequestParams = {}) =>
       this.request<GetVideoQuestionByIdData, GetVideoQuestionByIdError>({
-        path: `/videoQuestion.getVideoQuestionById/${id}`,
+        path: `/videoQuestion.getVideoQuestionById`,
         method: "GET",
         query: query,
         type: ContentType.Json,

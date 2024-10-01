@@ -52,7 +52,7 @@ type GetVideoQuestionByPortalIdResponse struct {
 } // @name GetVideoQuestionByPortalIdResponse
 
 type UpdateVideoQuestionBody struct {
-	ID            uint   `json:"id" validate:"required"`
+	QuestionID    uint   `json:"questionId" validate:"required"`
 	Title         string `json:"title"`
 	TimeToPrepare uint   `json:"timeToPrepare"`
 	TimeToAnswer  uint   `json:"timeToAnswer"`

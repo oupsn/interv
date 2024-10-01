@@ -29,13 +29,13 @@ import useIsFocused from "@/hooks/useIsFocused"
 import { useLocation } from "react-router-dom"
 import { Plus } from "lucide-react"
 
-const AssessmentCodingListPage = () => {
+const QuestionBankCodingListPage = () => {
   const navigate = useNavigate()
   const currentUser = useCurrentUser()
   const isFocused = useIsFocused()
   const location = useLocation()
   const {
-    data: codingAssessmentList,
+    data: codingQuestionList,
     error,
     isLoading,
     mutate,
@@ -52,7 +52,7 @@ const AssessmentCodingListPage = () => {
   }
 
   const handleEdit = (title: string) => {
-    navigate(`/portal/assessment/coding/edit/${encodeURIComponent(title)}`)
+    navigate(`/portal/question/coding/edit/${encodeURIComponent(title)}`)
   }
 
   const handleDelete = (id: number) => {
@@ -98,14 +98,16 @@ const AssessmentCodingListPage = () => {
             </BreadcrumbItem>
             <BreadcrumbItem></BreadcrumbItem>
           </BreadcrumbList>
-          <Button
-            variant="outline"
-            onClick={() => handleAdd()}
-            className="flex flex-row items-center gap-2"
-          >
-            <Plus />
-            Create new
-          </Button>
+          <BreadcrumbList>
+            <Button
+              variant="outline"
+              onClick={() => handleAdd()}
+              className="flex flex-row items-center gap-2"
+            >
+              <Plus />
+              Create new
+            </Button>
+          </BreadcrumbList>
         </Breadcrumb>
       }
     >
@@ -125,7 +127,7 @@ const AssessmentCodingListPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {codingAssessmentList?.data?.map((item) => (
+                {codingQuestionList?.data?.map((item) => (
                   <tr key={item.id} className="border-b hover:bg-gray-100">
                     <td className="px-4 py-2 flex items-center gap-4">
                       <FaCode className="mr-2" size={20} />
@@ -170,7 +172,7 @@ const AssessmentCodingListPage = () => {
                             <DialogTitle>Confirm Deletion</DialogTitle>
                             <DialogDescription>
                               Are you sure you want to delete this coding
-                              assessment? This action cannot be undone.
+                              question? This action cannot be undone.
                             </DialogDescription>
                           </DialogHeader>
                           <DialogFooter>
@@ -201,4 +203,4 @@ const AssessmentCodingListPage = () => {
   )
 }
 
-export default AssessmentCodingListPage
+export default QuestionBankCodingListPage
