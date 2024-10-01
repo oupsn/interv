@@ -12,6 +12,7 @@ var (
 	ErrorGetCodingInterviewTestcase        = fiber.NewError(fiber.StatusInternalServerError, "can not get coding interview testcase")
 	ErrorCreateCodingQuestion              = fiber.NewError(fiber.StatusInternalServerError, "can not create coding question")
 	ErrorGetCodingInterviewQuestionByTitle = fiber.NewError(fiber.StatusInternalServerError, "can not get coding interview question by title")
+	ErrorCreateCodingSnapshot              = fiber.NewError(fiber.StatusInternalServerError, "can not create coding snapshot")
 )
 
 type ICodingInterviewService interface {
@@ -22,6 +23,8 @@ type ICodingInterviewService interface {
 	GenerateCompileToken(req domains.CompilationRequest) (string, error)
 	GetCompileResult(req domains.CompilationRequest) ([]domains.CompilationResultResponse, error)
 	CreateCodingQuestion(req domains.CodingQuestion) (domains.CreateCodingQuestionResponse, error)
+	CreateCodingSnapshot(req []domains.CodingQuestionSnapshot) (domains.CreateCodingQuestionResponse, error)
 	AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error
 	DeleteCodingQuestion(codingQuestionID uint) error
+	UpdateCodingQuestion(codingQuestionID uint, question domains.CodingQuestion) (domains.CodingQuestion, error)
 }

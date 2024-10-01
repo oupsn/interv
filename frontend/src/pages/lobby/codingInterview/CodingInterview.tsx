@@ -9,6 +9,9 @@ import {
   DomainsCodingQuestionTestCase,
   DomainsCompilationResultResponse,
 } from "@/api/server"
+import { useParams } from "react-router-dom"
+import CodingInterviewFinish from "./components/CodingInterviewFinish"
+
 interface Question {
   index: number
   id: number
@@ -20,11 +23,13 @@ interface Question {
   testcaseCompileResult: DomainsCompilationResultResponse[]
 }
 const CodingInterviewPage = () => {
+  const { lobbyId } = useParams<{ lobbyId: string }>()
   const [isStart, setIsStart] = useState(mockData.isStart)
   const [timeRemain, setTimeRemain] = useState(mockData.timeRemain)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [questionList, setQuestionList] = useState<Question[]>([])
   const { data: fetchedQuestions, mutate } = useGetCodingInterviewQuestion()
+  const [isFinish, setIsFinish] = useState(false)
 
   // Add a new state to track if questions are loaded
   const [questionsLoaded, setQuestionsLoaded] = useState(false)
@@ -58,7 +63,7 @@ const CodingInterviewPage = () => {
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined
 
-    if (isStart) {
+    if (isStart && !isFinish) {
       timer = setInterval(() => {
         setTimeRemain((prevTime) => {
           if (prevTime > 0) {
@@ -70,8 +75,12 @@ const CodingInterviewPage = () => {
       }, 1000)
     }
 
-    return () => clearInterval(timer)
-  }, [isStart])
+    return () => {
+      if (timer) {
+        clearInterval(timer)
+      }
+    }
+  }, [isStart, isFinish])
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questionList.length - 1) {
@@ -85,18 +94,30 @@ const CodingInterviewPage = () => {
     }
   }
 
+  const calculateTimeTaken = () => {
+    const timeTaken = mockData.timeRemain - timeRemain
+    return timeTaken
+  }
+
   return (
     <>
       <SideBar>
         {!isStart && <SideBarItem title={"Instruction"} isActive={!isStart} />}
-        {isStart && (
-          <SideBarItem title={"Coding Interview"} isActive={isStart} />
+        {isStart && !isFinish && (
+          <SideBarItem title={"Coding Interview"} isActive={true} />
         )}
       </SideBar>
       <div className={"w-dvw h-dvh flex max-h-sr z-0"}>
         {isStart ? (
-          questionsLoaded && questionList.length > 0 ? (
+          isFinish ? (
+            <CodingInterviewFinish
+              timeTaken={calculateTimeTaken()}
+              lobbyId={lobbyId ?? ""}
+            />
+          ) : questionsLoaded && questionList.length > 0 && !isFinish ? (
             <CodingInterviewPanel
+              timeTaken={calculateTimeTaken()}
+              lobbyId={lobbyId ?? ""}
               timeRemain={timeRemain}
               questions={questionList}
               currentQuestion={questionList[currentQuestionIndex]}
@@ -106,6 +127,7 @@ const CodingInterviewPage = () => {
               isFirstQuestion={currentQuestionIndex === 0}
               isLastQuestion={currentQuestionIndex === questionList.length - 1}
               setCurrentQuestionIndex={setCurrentQuestionIndex}
+              setIsFinish={setIsFinish}
             />
           ) : (
             <div className="flex items-center justify-center w-full h-full">

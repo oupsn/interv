@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -113,8 +114,31 @@ func (s *codingInterviewService) CreateCodingQuestion(req domains.CodingQuestion
 	}, nil
 }
 
+func (s *codingInterviewService) CreateCodingSnapshot(req []domains.CodingQuestionSnapshot) (domains.CreateCodingQuestionResponse, error) {
+
+	for _, question := range req {
+		_, err := s.codingInterviewRepository.SaveCodingSnapshot(question)
+		if err != nil {
+			return domains.CreateCodingQuestionResponse{}, ErrorCreateCodingSnapshot
+		}
+	}
+	fmt.Println(*req[0].IsSubmitted)
+	if req[0].IsSubmitted != nil && *req[0].IsSubmitted {
+		s.codingInterviewRepository.UpdateCodingDoneInLobby(req[0].LobbyID, true)
+	}
+
+	return domains.CreateCodingQuestionResponse{
+		Status:  "success",
+		Message: "Coding snapshot created successfully",
+	}, nil
+}
+
 func (s *codingInterviewService) AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error {
 	return s.codingInterviewRepository.AddCodingQuestion(codingQuestionID, target, targetID)
+}
+
+func (s *codingInterviewService) UpdateCodingQuestion(codingQuestionID uint, question domains.CodingQuestion) (domains.CodingQuestion, error) {
+	return s.codingInterviewRepository.UpdateCodingQuestion(codingQuestionID, question)
 }
 
 func (s *codingInterviewService) DeleteCodingQuestion(codingQuestionID uint) error {

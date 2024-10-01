@@ -37,6 +37,16 @@ definitions:
     required:
     - body
     type: object
+  CodingInterviewUpdateQuestionQuery:
+    properties:
+      body:
+        $ref: '#/definitions/domains.CreateCodingQuestionRequest'
+      codingQuestionID:
+        type: integer
+    required:
+    - body
+    - codingQuestionID
+    type: object
   CreatePortalBody:
     properties:
       company_name:
@@ -528,6 +538,37 @@ definitions:
       title:
         type: string
     type: object
+  domains.CodingQuestionSnapshot:
+    properties:
+      code:
+        type: string
+      coding_question_id:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      is_submitted:
+        type: boolean
+      language:
+        type: string
+      linter_result:
+        type: string
+      lobby_id:
+        type: integer
+      memory_usage:
+        type: string
+      run_time:
+        type: string
+      test_cases_result:
+        type: integer
+      time_taken:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
   domains.CodingQuestionTestCase:
     properties:
       codingQuestionID:
@@ -553,6 +594,10 @@ definitions:
     properties:
       input:
         type: string
+      is_example:
+        type: boolean
+      is_hidden:
+        type: boolean
       output:
         type: string
     type: object
@@ -1058,6 +1103,39 @@ paths:
       summary: Create a new coding interview question
       tags:
       - codingInterview
+  /codingInterview.createQuestionSnapshot:
+    post:
+      consumes:
+      - application/json
+      description: Create a new coding interview question snapshot
+      operationId: CreateQuestionSnapshot
+      parameters:
+      - description: Request body containing the coding question snapshots
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/domains.CodingQuestionSnapshot'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with a message
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Create a new coding interview question snapshot
+      tags:
+      - codingInterview
   /codingInterview.deleteQuestion/{codingQuestionID}:
     delete:
       consumes:
@@ -1202,6 +1280,42 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get coding interview questions in a portal
+      tags:
+      - codingInterview
+  /codingInterview.updateQuestion/{codingQuestionID}:
+    put:
+      consumes:
+      - application/json
+      description: Update a coding interview question
+      operationId: UpdateQuestion
+      parameters:
+      - description: Coding Question ID
+        in: path
+        name: codingQuestionID
+        required: true
+        type: integer
+      - description: Request body containing the updated question details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/CodingInterviewUpdateQuestionQuery'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the updated question
+          schema:
+            $ref: '#/definitions/handlers.Response-domains_CodingQuestion'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Update a coding interview question
       tags:
       - codingInterview
   /lobby.getLobbyContext:

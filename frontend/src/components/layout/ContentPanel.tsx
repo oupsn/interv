@@ -7,7 +7,7 @@ export default function ContentPanel({
   children: React.ReactNode
 }) {
   return (
-    <Card className="rounded-lg border-none relative h-full overflow-y-clip">
+    <Card className="rounded-lg border-none relative h-full">
       <CardContent className=" h-full w-full px-4 py-6 absolute">
         <div className={"overflow-y-auto px-2 h-full"}>{children}</div>
       </CardContent>

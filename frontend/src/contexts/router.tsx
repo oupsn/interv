@@ -15,6 +15,7 @@ import AssessmentCreateCodingQuestionForm from "@/pages/portal/assessment/compon
 import AssessmentVideoListPage from "@/pages/portal/assessment/AssessmentVideoListPage.tsx"
 import AssessmentCodingListPage from "@/pages/portal/assessment/AssessmentCodingListPage.tsx"
 import AssessmentCodingDetail from "@/pages/portal/assessment/components/AssessmentCodingDetail"
+import AssessmentCodingEdit from "@/pages/portal/assessment/components/AssessmentCodingEdit"
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ export const router = createBrowserRouter([
               {
                 path: ":codingTitle",
                 element: <AssessmentCodingDetail />,
+              },
+              {
+                path: "edit/:codingTitle",
+                element: <AssessmentCodingEdit />,
               },
             ],
           },

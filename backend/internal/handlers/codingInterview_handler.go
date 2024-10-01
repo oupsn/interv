@@ -165,6 +165,64 @@ func (co CodingInterviewHandler) AddQuestion(c *fiber.Ctx) error {
 	return Ok(c, "Coding question added to portal successfully")
 }
 
+// @Summary Create a new coding interview question snapshot
+// @Description Create a new coding interview question snapshot
+// @Tags codingInterview
+// @ID CreateQuestionSnapshot
+// @Accept json
+// @Produce json
+// @Param body body CodingInterviewCreateQuestionSnapshotQuery true "Request body containing the coding question snapshots"
+// @Success 200 {object} Response[string] "Successful response with a message"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.createQuestionSnapshot [post]
+func (co CodingInterviewHandler) CreateCodingQuestionSnapshot(c *fiber.Ctx) error {
+	var req CodingInterviewCreateQuestionSnapshotQuery
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	_, err := co.codingInterviewService.CreateCodingSnapshot(req)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, "Coding question snapshot created successfully")
+}
+
+// @Summary Update a coding interview question
+// @Description Update a coding interview question
+// @Tags codingInterview
+// @ID UpdateQuestion
+// @Accept json
+// @Produce json
+// @Param codingQuestionID path int true "Coding Question ID"
+// @Param body body CodingInterviewUpdateQuestionQuery true "Request body containing the updated question details"
+// @Success 200 {object} Response[domains.CodingQuestion] "Successful response with the updated question"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.updateQuestion/{codingQuestionID} [put]
+func (co CodingInterviewHandler) UpdateQuestion(c *fiber.Ctx) error {
+	var req CodingInterviewUpdateQuestionQuery
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	question, err := co.codingInterviewService.UpdateCodingQuestion(uint(req.CodingQuestionID), domains.CodingQuestion{
+		Title:             req.Body.Title,
+		Description:       req.Body.Description,
+		InputDescription:  req.Body.InputDescription,
+		OutputDescription: req.Body.OutputDescription,
+		TestCases:         req.Body.TestCases,
+		Difficulty:        req.Body.Difficulty,
+	})
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, question)
+}
+
 // @Summary Delete a coding interview question
 // @Description Delete a coding interview question
 // @Tags codingInterview

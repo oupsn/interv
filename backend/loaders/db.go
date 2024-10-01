@@ -53,6 +53,7 @@ func CheckAutoMigrate() {
 			&domains.CodingQuestionTestCase{},
 			&domains.CodingQuestionInPortal{},
 			&domains.CodingQuestionInWorkspace{},
+			&domains.CodingQuestionSnapshot{},
 			&domains.Lobby{},
 		)
 		if err != nil {
