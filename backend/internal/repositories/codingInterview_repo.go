@@ -102,6 +102,13 @@ func (c *codingInterviewRepository) SaveCodingQuestion(question domains.CodingQu
 	return question, nil
 }
 
+func (c *codingInterviewRepository) SaveCodingSnapshot(snapshot domains.CodingQuestionSnapshot) (domains.CodingQuestionSnapshot, error) {
+	if err := c.DB.Create(&snapshot).Error; err != nil {
+		return domains.CodingQuestionSnapshot{}, err
+	}
+	return snapshot, nil
+}
+
 func (c *codingInterviewRepository) AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error {
 	if target == "portal" {
 		if err := c.DB.Create(&domains.CodingQuestionInPortal{

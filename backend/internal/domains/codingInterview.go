@@ -49,16 +49,15 @@ type CodingQuestionTestCase struct {
 
 type CodingQuestionSnapshot struct {
 	gorm.Model
-	CodingQuestionID uint           `gorm:"index"`
-	LobbyID          uint           `gorm:"index"`
-	Code             string         `gorm:"type:text"`
-	Language         string         `gorm:"type:text"`
-	MemoryUsage      string         `gorm:"type:text"`
-	RunTime          string         `gorm:"type:text"`
-	LinterResult     string         `gorm:"type:text"`
-	TestCasesResult  uint           `gorm:"type:integer"`
-	CodingQuestion   CodingQuestion `gorm:"foreignKey:CodingQuestionID"`
-	Lobby            Lobby          `gorm:"foreignKey:LobbyID"`
+	CodingQuestionID uint   `gorm:"index" json:"coding_question_id"`
+	LobbyID          uint   `gorm:"index" json:"lobby_id"`
+	Code             string `gorm:"type:text" json:"code"`
+	Language         string `gorm:"type:text" json:"language"`
+	MemoryUsage      string `gorm:"type:text" json:"memory_usage"`
+	RunTime          string `gorm:"type:text" json:"run_time"`
+	LinterResult     string `gorm:"type:text" json:"linter_result"`
+	TestCasesResult  uint   `gorm:"type:integer" json:"test_cases_result"`
+	IsSubmitted      *bool  `gorm:"default:false" json:"is_submitted"`
 }
 
 type CodingQuestionTestCaseResponse struct {
@@ -85,6 +84,17 @@ type CreateCodingQuestionRequest struct {
 	OutputDescription string                   `json:"output_description"`
 	TestCases         []CodingQuestionTestCase `json:"test_cases"`
 	Difficulty        string                   `json:"difficulty"`
+}
+type CodingSnapshotQuestion struct {
+	QuestionID uint   `json:"question_id"`
+	Code       string `json:"code"`
+	Language   string `json:"language"`
+}
+
+type CreateCodingSnapshotRequest struct {
+	LobbyID   uint                     `json:"lobby_id"`
+	Questions []CodingSnapshotQuestion `json:"questions"`
+	TimeTaken int64                    `json:"time_taken"`
 }
 
 type CreateCodingQuestionResponse struct {

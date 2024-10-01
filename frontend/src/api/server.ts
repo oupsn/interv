@@ -53,6 +53,12 @@ export type CreateQuestionData = HandlersResponseDomainsCodingQuestion
 
 export type CreateQuestionError = HandlersErrResponse
 
+export type CreateQuestionSnapshotData = HandlersResponseString
+
+export type CreateQuestionSnapshotError = HandlersErrResponse
+
+export type CreateQuestionSnapshotPayload = DomainsCodingQuestionSnapshot[]
+
 export type CreateUserData = HandlersResponseUser
 
 export type CreateUserError = HandlersErrResponse
@@ -182,6 +188,24 @@ export interface DomainsCodingQuestionResponse {
   title?: string
 }
 
+export interface DomainsCodingQuestionSnapshot {
+  code?: string
+  coding_question?: DomainsCodingQuestion
+  coding_question_id?: number
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  id?: number
+  is_submitted?: boolean
+  language?: string
+  linter_result?: string
+  lobby?: DomainsLobby
+  lobby_id?: number
+  memory_usage?: string
+  run_time?: string
+  test_cases_result?: number
+  updatedAt?: string
+}
+
 export interface DomainsCodingQuestionTestCase {
   codingQuestionID?: number
   createdAt?: string
@@ -233,6 +257,22 @@ export interface DomainsCreateCodingQuestionRequest {
   output_description?: string
   test_cases?: DomainsCodingQuestionTestCase[]
   title?: string
+}
+
+export interface DomainsLobby {
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  dueDate?: string
+  id?: number
+  isCodingDone?: boolean
+  isVideoDone?: boolean
+  totalCodingQuestion?: number
+  totalCodingTime?: number
+  totalVideoQuestion?: number
+  totalVideoTime?: number
+  updatedAt?: string
+  userID?: number
+  workspaceID?: number
 }
 
 export interface DomainsPortal {
@@ -793,6 +833,24 @@ export namespace CodingInterview {
   }
 
   /**
+   * @description Create a new coding interview question snapshot
+   * @tags codingInterview
+   * @name CreateQuestionSnapshot
+   * @summary Create a new coding interview question snapshot
+   * @request POST:/codingInterview.createQuestionSnapshot
+   * @response `200` `CreateQuestionSnapshotData` Successful response with a message
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CreateQuestionSnapshot {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = CreateQuestionSnapshotPayload
+    export type RequestHeaders = {}
+    export type ResponseBody = CreateQuestionSnapshotData
+  }
+
+  /**
    * @description Delete a coding interview question
    * @tags codingInterview
    * @name DeleteQuestion
@@ -896,7 +954,7 @@ export namespace CodingInterview {
    * @tags codingInterview
    * @name UpdateQuestion
    * @summary Update a coding interview question
-   * @request PUT:/codingInterview.updateQuestion
+   * @request PUT:/codingInterview.updateQuestion/{codingQuestionID}
    * @response `200` `UpdateQuestionData` Successful response with the updated question
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `500` `HandlersErrResponse` Internal Server Error
@@ -1650,6 +1708,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
 
     /**
+     * @description Create a new coding interview question snapshot
+     *
+     * @tags codingInterview
+     * @name CreateQuestionSnapshot
+     * @summary Create a new coding interview question snapshot
+     * @request POST:/codingInterview.createQuestionSnapshot
+     * @response `200` `CreateQuestionSnapshotData` Successful response with a message
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    createQuestionSnapshot: (body: CreateQuestionSnapshotPayload, params: RequestParams = {}) =>
+      this.request<CreateQuestionSnapshotData, CreateQuestionSnapshotError>({
+        path: `/codingInterview.createQuestionSnapshot`,
+        method: "POST",
+        body: body,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Delete a coding interview question
      *
      * @tags codingInterview
@@ -1756,14 +1835,14 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * @tags codingInterview
      * @name UpdateQuestion
      * @summary Update a coding interview question
-     * @request PUT:/codingInterview.updateQuestion
+     * @request PUT:/codingInterview.updateQuestion/{codingQuestionID}
      * @response `200` `UpdateQuestionData` Successful response with the updated question
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
     updateQuestion: (codingQuestionId: number, body: CodingInterviewUpdateQuestionQuery, params: RequestParams = {}) =>
       this.request<UpdateQuestionData, UpdateQuestionError>({
-        path: `/codingInterview.updateQuestion`,
+        path: `/codingInterview.updateQuestion/${codingQuestionId}`,
         method: "PUT",
         body: body,
         type: ContentType.Json,

@@ -113,6 +113,21 @@ func (s *codingInterviewService) CreateCodingQuestion(req domains.CodingQuestion
 	}, nil
 }
 
+func (s *codingInterviewService) CreateCodingSnapshot(req []domains.CodingQuestionSnapshot) (domains.CreateCodingQuestionResponse, error) {
+
+	for _, question := range req {
+		_, err := s.codingInterviewRepository.SaveCodingSnapshot(question)
+		if err != nil {
+			return domains.CreateCodingQuestionResponse{}, ErrorCreateCodingSnapshot
+		}
+	}
+
+	return domains.CreateCodingQuestionResponse{
+		Status:  "success",
+		Message: "Coding snapshot created successfully",
+	}, nil
+}
+
 func (s *codingInterviewService) AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error {
 	return s.codingInterviewRepository.AddCodingQuestion(codingQuestionID, target, targetID)
 }
