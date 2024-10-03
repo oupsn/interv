@@ -63,11 +63,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const getLanguageNumber = (lang: string) => {
     switch (lang) {
       case "python":
-        return 71
+        return 10
       case "java":
-        return 62
+        return 4
       case "c":
-        return 48
+        return 1
       default:
         return 0
     }

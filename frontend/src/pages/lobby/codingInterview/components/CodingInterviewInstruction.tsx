@@ -1,6 +1,6 @@
 import React from "react"
 import { LoadingContext } from "@/contexts/loading"
-import { Button } from "@/components/ui/button"
+import CodingInterviewDeviceSetup from "./CodingInterviewDeviceSetup"
 
 interface CodingInterviewInstructionProps {
   title: string
@@ -26,12 +26,7 @@ const CodingInterviewInstruction: React.FC<CodingInterviewInstructionProps> = ({
       <div className="flex flex-col items-center justify-center w-full h-full">
         <h1 className="text-2xl font-bold">{title}</h1>
         <p className="text-md font-normal">{description}</p>
-        <Button
-          className="mt-4 px-4 py-2 text-white  rounded-md"
-          onClick={clickStart}
-        >
-          Start
-        </Button>
+        <CodingInterviewDeviceSetup handleClickStart={clickStart} />
       </div>
     </>
   )
