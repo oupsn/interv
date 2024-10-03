@@ -22,7 +22,7 @@ func NewCodingInterviewService(codeCompilationRepository repositories.ICompilati
 	}
 }
 
-// TODO: Add lobbyId to filter coding question by lobby
+// TODO: Add roomId to filter coding question by room
 func (s *codingInterviewService) GetCodingInterviewQuestions() ([]domains.CodingQuestionResponse, error) {
 	questions, err := s.codingInterviewRepository.GetCodingQuestionList()
 	if err != nil {
@@ -124,7 +124,7 @@ func (s *codingInterviewService) CreateCodingSnapshot(req []domains.CodingQuesti
 	}
 	fmt.Println(*req[0].IsSubmitted)
 	if req[0].IsSubmitted != nil && *req[0].IsSubmitted {
-		s.codingInterviewRepository.UpdateCodingDoneInLobby(req[0].LobbyID, true)
+		s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, true)
 	}
 
 	return domains.CreateCodingQuestionResponse{

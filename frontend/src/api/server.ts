@@ -14,8 +14,11 @@ export type AddQuestionData = HandlersResponseString
 export type AddQuestionError = HandlersErrResponse
 
 export interface AdminCreateBody {
+  name: string
+  password: string
   portalId: number
-  user: DomainsUser
+  role: string
+  username: string
 }
 
 export interface CodingInterviewAddQuestionQuery {
@@ -59,16 +62,31 @@ export type CreateQuestionSnapshotError = HandlersErrResponse
 
 export type CreateQuestionSnapshotPayload = DomainsCodingQuestionSnapshot[]
 
+export interface CreateRoomBody {
+  candidateId: number
+  dueDate: string
+  isCodingDone: boolean
+  isVideoDone: boolean
+  totalCodingQuestion: number
+  totalCodingTime: number
+  totalVideoQuestion: number
+  totalVideoTime: number
+}
+
+export type CreateRoomData = HandlersResponseHandlersCreateRoomResponse
+
+export type CreateRoomError = HandlersErrResponse
+
 export type CreateUserData = HandlersResponseUser
 
 export type CreateUserError = HandlersErrResponse
 
 export interface CreateVideoQuestionBody {
   portalId: number
-  retryAmount: number
   timeToAnswer: number
   timeToPrepare: number
   title: string
+  totalAttempt: number
 }
 
 export type CreateVideoQuestionData = HandlersResponseCreateVideoQuestionResponse
@@ -79,18 +97,23 @@ export interface CreateVideoQuestionResponse {
   createdAt?: string
   id?: number
   portalId?: number
-  retryAmount?: number
   timeToAnswer?: number
   timeToPrepare?: number
   title?: string
+  totalAttempt?: number
   updatedAt?: string
 }
 
 export interface CreateWorkspaceBody {
+  codingTime: number
+  endDate: string
   isCoding: boolean
   isVideo: boolean
+  portalId: number
+  reqCamera: boolean
+  reqMicrophone: boolean
+  reqScreen: boolean
   startDate: string
-  stopDate: string
   title: string
 }
 
@@ -197,8 +220,8 @@ export interface DomainsCodingQuestionSnapshot {
   is_submitted?: boolean
   language?: string
   linter_result?: string
-  lobby_id?: number
   memory_usage?: string
+  room_id?: string
   run_time?: string
   test_cases_result?: number
   time_taken?: number
@@ -281,26 +304,6 @@ export type GetCompileResultData = HandlersResponseHandlersCodingInterviewGetCom
 
 export type GetCompileResultError = HandlersErrResponse
 
-export type GetLobbyContextData = HandlersResponseGetLobbyContextResponse
-
-export type GetLobbyContextError = HandlersErrResponse
-
-export interface GetLobbyContextParams {
-  lobbyId: number
-}
-
-export interface GetLobbyContextResponse {
-  dueDate: string
-  isCodingDone: boolean
-  isVideoDone: boolean
-  lobbyId: number
-  totalCodingQuestion: number
-  totalCodingTime: number
-  totalVideoQuestion: number
-  totalVideoTime: number
-  userId: number
-}
-
 export interface GetObjectBody {
   bucketName: string
   objectName: string
@@ -334,6 +337,26 @@ export type GetQuestionsInPortalData = HandlersResponseHandlersCodingInterviewGe
 
 export type GetQuestionsInPortalError = HandlersErrResponse
 
+export type GetRoomContextData = HandlersResponseGetRoomContextResponse
+
+export type GetRoomContextError = HandlersErrResponse
+
+export interface GetRoomContextParams {
+  roomId: string
+}
+
+export interface GetRoomContextResponse {
+  candidateId: number
+  dueDate: string
+  isCodingDone: boolean
+  isVideoDone: boolean
+  roomId: string
+  totalCodingQuestion: number
+  totalCodingTime: number
+  totalVideoQuestion: number
+  totalVideoTime: number
+}
+
 export type GetUserInWorkspaceData = HandlersResponseArrayUserInWorkspace
 
 export type GetUserInWorkspaceError = HandlersErrResponse
@@ -347,7 +370,7 @@ export type GetVideoInterviewContextData = HandlersResponseVideoInterviewContext
 export type GetVideoInterviewContextError = HandlersErrResponse
 
 export interface GetVideoInterviewContextParams {
-  lobbyId: number
+  roomId: string
 }
 
 export type GetVideoInterviewQuestionData = HandlersResponseVideoInterviewQuestionResponse
@@ -363,17 +386,17 @@ export type GetVideoQuestionByIdData = HandlersResponseGetVideoQuestionByIdRespo
 export type GetVideoQuestionByIdError = HandlersErrResponse
 
 export interface GetVideoQuestionByIdParams {
-  id: string
+  id: number
 }
 
 export interface GetVideoQuestionByIdResponse {
   createdAt?: string
   id?: number
   portalId?: number
-  retryAmount?: number
   timeToAnswer?: number
   timeToPrepare?: number
   title?: string
+  totalAttempt?: number
   updatedAt?: string
 }
 
@@ -389,10 +412,10 @@ export interface GetVideoQuestionByPortalIdResponse {
   createdAt?: string
   id?: number
   portalId?: number
-  retryAmount?: number
   timeToAnswer?: number
   timeToPrepare?: number
   title?: string
+  totalAttempt?: number
   updatedAt?: string
 }
 
@@ -418,6 +441,18 @@ export interface HandlersCodingInterviewGetQuestionByTitleResponse {
   output_description?: string
   test_case?: DomainsCodingQuestionTestCaseResponse[]
   title?: string
+}
+
+export interface HandlersCreateRoomResponse {
+  candidateId: number
+  dueDate: string
+  isCodingDone: boolean
+  isVideoDone: boolean
+  roomId: string
+  totalCodingQuestion: number
+  totalCodingTime: number
+  totalVideoQuestion: number
+  totalVideoTime: number
 }
 
 export interface HandlersErrResponse {
@@ -479,9 +514,9 @@ export interface HandlersResponseDomainsCodingQuestion {
   timestamp?: string
 }
 
-export interface HandlersResponseGetLobbyContextResponse {
+export interface HandlersResponseGetRoomContextResponse {
   code?: number
-  data?: GetLobbyContextResponse
+  data?: GetRoomContextResponse
   message?: string
   timestamp?: string
 }
@@ -517,6 +552,13 @@ export interface HandlersResponseHandlersCodingInterviewGetQuestionsInPortalResp
 export interface HandlersResponseHandlersCodingInterviewGetQuestionsResponse {
   code?: number
   data?: DomainsCodingQuestionResponse[]
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseHandlersCreateRoomResponse {
+  code?: number
+  data?: HandlersCreateRoomResponse
   message?: string
   timestamp?: string
 }
@@ -596,8 +638,8 @@ export type LogoutData = HandlersOkResponse
 
 export interface MailObject {
   dueDate?: string
-  link?: string
   name: string
+  roomId: string
   to: string
 }
 
@@ -629,33 +671,33 @@ export interface SubmitVideoInterviewPayload {
   file: File
 }
 
-export interface UpdateLobbyContextBody {
-  dueDate?: string
-  isCodingDone?: boolean
-  isVideoDone?: boolean
-  lobbyId: number
-  totalCodingQuestion?: number
-  totalCodingTime?: number
-  totalVideoQuestion?: number
-  totalVideoTime?: number
-  userId?: number
-}
-
-export type UpdateLobbyContextData = HandlersResponseString
-
-export type UpdateLobbyContextError = HandlersErrResponse
-
 export type UpdateQuestionData = HandlersResponseDomainsCodingQuestion
 
 export type UpdateQuestionError = HandlersErrResponse
 
+export interface UpdateRoomContextBody {
+  candidateId?: number
+  dueDate?: string
+  isCodingDone?: boolean
+  isVideoDone?: boolean
+  roomId: string
+  totalCodingQuestion?: number
+  totalCodingTime?: number
+  totalVideoQuestion?: number
+  totalVideoTime?: number
+}
+
+export type UpdateRoomContextData = HandlersResponseString
+
+export type UpdateRoomContextError = HandlersErrResponse
+
 export interface UpdateVideoQuestionBody {
-  id: number
   portalId?: number
-  retryAmount?: number
+  questionId: number
   timeToAnswer?: number
   timeToPrepare?: number
   title?: string
+  totalAttempt?: number
 }
 
 export type UpdateVideoQuestionData = HandlersResponseCreateVideoQuestionResponse
@@ -716,9 +758,9 @@ export interface VideoInterviewQuestionSetting {
   isLast: boolean
   questionId: number
   questionIndex: number
-  retry: number
   timeToAnswer: number
   timeToPrepare: number
+  totalAttempt: number
 }
 
 export interface WorkspaceData {
@@ -727,13 +769,17 @@ export interface WorkspaceData {
 }
 
 export interface WorkspaceDetail {
+  codingTime?: number
+  endDate?: string
   id?: number
   isCoding?: boolean
   isVideo?: boolean
   memberNum?: number
   portalId?: number
+  reqCamera?: boolean
+  reqMicrophone?: boolean
+  reqScreen?: boolean
   startDate?: string
-  stopDate?: string
   title?: string
 }
 
@@ -965,46 +1011,6 @@ export namespace CodingInterview {
   }
 }
 
-export namespace Lobby {
-  /**
-   * No description
-   * @tags lobby
-   * @name GetLobbyContext
-   * @summary Get lobby context
-   * @request GET:/lobby.getLobbyContext
-   * @response `200` `GetLobbyContextData` OK
-   * @response `400` `HandlersErrResponse` Bad Request
-   * @response `500` `HandlersErrResponse` Internal Server Error
-   */
-  export namespace GetLobbyContext {
-    export type RequestParams = {}
-    export type RequestQuery = {
-      lobbyId: number
-    }
-    export type RequestBody = never
-    export type RequestHeaders = {}
-    export type ResponseBody = GetLobbyContextData
-  }
-
-  /**
-   * No description
-   * @tags lobby
-   * @name UpdateLobbyContext
-   * @summary Update lobby context
-   * @request POST:/lobby.updateLobbyContext
-   * @response `200` `UpdateLobbyContextData` OK
-   * @response `400` `HandlersErrResponse` Bad Request
-   * @response `500` `HandlersErrResponse` Internal Server Error
-   */
-  export namespace UpdateLobbyContext {
-    export type RequestParams = {}
-    export type RequestQuery = {}
-    export type RequestBody = UpdateLobbyContextBody
-    export type RequestHeaders = {}
-    export type ResponseBody = UpdateLobbyContextData
-  }
-}
-
 export namespace Mail {
   /**
    * No description
@@ -1121,6 +1127,64 @@ export namespace Portal {
   }
 }
 
+export namespace Room {
+  /**
+   * No description
+   * @tags room
+   * @name CreateRoom
+   * @summary Create room
+   * @request POST:/room.createRoom
+   * @response `200` `CreateRoomData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CreateRoom {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = CreateRoomBody
+    export type RequestHeaders = {}
+    export type ResponseBody = CreateRoomData
+  }
+
+  /**
+   * No description
+   * @tags room
+   * @name GetRoomContext
+   * @summary Get room context
+   * @request GET:/room.getRoomContext
+   * @response `200` `GetRoomContextData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetRoomContext {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      roomId: string
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetRoomContextData
+  }
+
+  /**
+   * No description
+   * @tags room
+   * @name UpdateRoomContext
+   * @summary Update room context
+   * @request POST:/room.updateRoomContext
+   * @response `200` `UpdateRoomContextData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace UpdateRoomContext {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = UpdateRoomContextBody
+    export type RequestHeaders = {}
+    export type ResponseBody = UpdateRoomContextData
+  }
+}
+
 export namespace User {
   /**
    * No description
@@ -1231,7 +1295,7 @@ export namespace VideoInterview {
   export namespace GetVideoInterviewContext {
     export type RequestParams = {}
     export type RequestQuery = {
-      lobbyId: number
+      roomId: string
     }
     export type RequestBody = never
     export type RequestHeaders = {}
@@ -1322,16 +1386,14 @@ export namespace VideoQuestion {
    * @tags videoQuestion
    * @name GetVideoQuestionById
    * @summary Get video question by id
-   * @request GET:/videoQuestion.getVideoQuestionById/{id}
+   * @request GET:/videoQuestion.getVideoQuestionById
    * @response `200` `GetVideoQuestionByIdData` OK
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `404` `HandlersErrResponse` Not Found
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
   export namespace GetVideoQuestionById {
-    export type RequestParams = {
-      id: string
-    }
+    export type RequestParams = {}
     export type RequestQuery = {
       id: number
     }
@@ -1844,49 +1906,6 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         ...params,
       }),
   }
-  lobby = {
-    /**
-     * No description
-     *
-     * @tags lobby
-     * @name GetLobbyContext
-     * @summary Get lobby context
-     * @request GET:/lobby.getLobbyContext
-     * @response `200` `GetLobbyContextData` OK
-     * @response `400` `HandlersErrResponse` Bad Request
-     * @response `500` `HandlersErrResponse` Internal Server Error
-     */
-    getLobbyContext: (query: GetLobbyContextParams, params: RequestParams = {}) =>
-      this.request<GetLobbyContextData, GetLobbyContextError>({
-        path: `/lobby.getLobbyContext`,
-        method: "GET",
-        query: query,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags lobby
-     * @name UpdateLobbyContext
-     * @summary Update lobby context
-     * @request POST:/lobby.updateLobbyContext
-     * @response `200` `UpdateLobbyContextData` OK
-     * @response `400` `HandlersErrResponse` Bad Request
-     * @response `500` `HandlersErrResponse` Internal Server Error
-     */
-    updateLobbyContext: (payload: UpdateLobbyContextBody, params: RequestParams = {}) =>
-      this.request<UpdateLobbyContextData, UpdateLobbyContextError>({
-        path: `/lobby.updateLobbyContext`,
-        method: "POST",
-        body: payload,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-  }
   mail = {
     /**
      * No description
@@ -2011,6 +2030,70 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         path: `/portal.get`,
         method: "GET",
         query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  }
+  room = {
+    /**
+     * No description
+     *
+     * @tags room
+     * @name CreateRoom
+     * @summary Create room
+     * @request POST:/room.createRoom
+     * @response `200` `CreateRoomData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    createRoom: (payload: CreateRoomBody, params: RequestParams = {}) =>
+      this.request<CreateRoomData, CreateRoomError>({
+        path: `/room.createRoom`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
+     * @name GetRoomContext
+     * @summary Get room context
+     * @request GET:/room.getRoomContext
+     * @response `200` `GetRoomContextData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getRoomContext: (query: GetRoomContextParams, params: RequestParams = {}) =>
+      this.request<GetRoomContextData, GetRoomContextError>({
+        path: `/room.getRoomContext`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
+     * @name UpdateRoomContext
+     * @summary Update room context
+     * @request POST:/room.updateRoomContext
+     * @response `200` `UpdateRoomContextData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    updateRoomContext: (payload: UpdateRoomContextBody, params: RequestParams = {}) =>
+      this.request<UpdateRoomContextData, UpdateRoomContextError>({
+        path: `/room.updateRoomContext`,
+        method: "POST",
+        body: payload,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -2237,15 +2320,15 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * @tags videoQuestion
      * @name GetVideoQuestionById
      * @summary Get video question by id
-     * @request GET:/videoQuestion.getVideoQuestionById/{id}
+     * @request GET:/videoQuestion.getVideoQuestionById
      * @response `200` `GetVideoQuestionByIdData` OK
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `404` `HandlersErrResponse` Not Found
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    getVideoQuestionById: ({ id, ...query }: GetVideoQuestionByIdParams, params: RequestParams = {}) =>
+    getVideoQuestionById: (query: GetVideoQuestionByIdParams, params: RequestParams = {}) =>
       this.request<GetVideoQuestionByIdData, GetVideoQuestionByIdError>({
-        path: `/videoQuestion.getVideoQuestionById/${id}`,
+        path: `/videoQuestion.getVideoQuestionById`,
         method: "GET",
         query: query,
         type: ContentType.Json,

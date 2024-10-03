@@ -9,10 +9,14 @@ import (
 type Workspace struct {
 	Id            uint   `gorm:"primaryKey"`
 	Title         string `gorm:"unique"`
+	StartDate     time.Time
+	EndDate       time.Time
 	IsVideo       *bool
 	IsCoding      *bool
-	StartDate     time.Time
-	StopDate      time.Time
+	CodingTime    uint
+	ReqScreen     *bool
+	ReqMicrophone *bool
+	ReqCamera     *bool
 	PortalId      uint
 	VideoQuestion []*VideoQuestion `gorm:"many2many:videoQuestion_workspace"`
 	gorm.Model

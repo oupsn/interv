@@ -2,20 +2,23 @@ import { createBrowserRouter } from "react-router-dom"
 import AppLayout from "@/components/layout/AppLayout.tsx"
 import MainLayout from "@/components/layout/MainLayout.tsx"
 import LoginPage from "@/pages/login/Login.tsx"
-import LobbyPage from "@/pages/lobby/Lobby.tsx"
+import RoomPage from "@/pages/room/Room.tsx"
 import Playground from "@/pages/playground/Playground.tsx"
-import WorkspaceListPage from "@/pages/portal/WorkspaceListPage.tsx"
-import CodingInterviewPage from "@/pages/lobby/codingInterview/CodingInterview.tsx"
-import VideoInterviewPage from "@/pages/lobby/videoInterview/VideoInterview.tsx"
-import CreateWorkspace from "@/pages/portal/createWorkspace/CreateWorkspace"
-import AssessmentCreateVideoQuestionForm from "@/pages/portal/assessment/components/AssessmentCreateVideoQuestionForm.tsx"
-import WorkspaceDetailPage from "@/pages/portal/WorkspaceDetailPage.tsx"
+import WorkspaceListPage from "@/pages/portal/workspace/WorkspaceListPage"
+import CodingInterviewPage from "@/pages/room/codingInterview/CodingInterview.tsx"
+import VideoInterviewPage from "@/pages/room/videoInterview/VideoInterview.tsx"
+import CreateWorkspace from "@/pages/portal/workspace/CreateWorkspace"
+import QuestionBankCreateVideoQuestionForm from "@/pages/portal/questionBank/components/QuestionBankCreateVideoQuestionForm.tsx"
+import WorkspaceDetailPage from "@/pages/portal/workspace/WorkspaceDetailPage"
 import MainLayoutRevamp from "@/components/layout/MainLayoutRevamp.tsx"
-import AssessmentCreateCodingQuestionForm from "@/pages/portal/assessment/components/AssessmentCreateCodingQuestionForm"
-import AssessmentVideoListPage from "@/pages/portal/assessment/AssessmentVideoListPage.tsx"
-import AssessmentCodingListPage from "@/pages/portal/assessment/AssessmentCodingListPage.tsx"
-import AssessmentCodingDetail from "@/pages/portal/assessment/components/AssessmentCodingDetail"
-import AssessmentCodingEdit from "@/pages/portal/assessment/components/AssessmentCodingEdit"
+import QuestionBankCreateCodingQuestionForm from "@/pages/portal/questionBank/components/QuestionBankCreateCodingQuestionForm"
+import QuestionBankVideoListPage from "@/pages/portal/questionBank/QuestionBankVideoListPage.tsx"
+import QuestionBankCodingListPage from "@/pages/portal/questionBank/QuestionBankCodingListPage.tsx"
+import QuestionBankCodingDetail from "@/pages/portal/questionBank/components/QuestionBankCodingDetail"
+import WorkspaceCandidateList from "@/pages/portal/workspace/WorkspaceCandidateList"
+import QuestionBankVideoDetail from "@/pages/portal/questionBank/components/QuestionBankVideoDetail.tsx"
+import QuestionBankCodingEdit from "@/pages/portal/questionBank/components/QuestionBankCodingEdit"
+import QuestionBankEditVideoQuestionForm from "@/pages/portal/questionBank/components/QuestionBankEditVideoQuestionForm.tsx"
 
 export const router = createBrowserRouter([
   {
@@ -43,24 +46,37 @@ export const router = createBrowserRouter([
               },
               {
                 path: ":workspaceId",
-                element: <WorkspaceDetailPage />,
+                children: [
+                  {
+                    path: "",
+                    element: <WorkspaceDetailPage />,
+                  },
+                  {
+                    path: "candidateList",
+                    element: <WorkspaceCandidateList />,
+                  },
+                ],
               },
             ],
           },
           {
-            path: "assessment/coding",
+            path: "question/coding",
             children: [
               {
                 path: "",
-                element: <AssessmentCodingListPage />,
+                element: <QuestionBankCodingListPage />,
               },
               {
                 path: "create",
-                element: <AssessmentCreateCodingQuestionForm />,
+                element: <QuestionBankCreateCodingQuestionForm />,
               },
               {
                 path: ":codingTitle",
-                element: <AssessmentCodingDetail />,
+                element: <QuestionBankCodingDetail />,
+              },
+              {
+                path: "edit/:codingTitle",
+                element: <QuestionBankCodingEdit />,
               },
               {
                 path: "edit/:codingTitle",
@@ -69,15 +85,23 @@ export const router = createBrowserRouter([
             ],
           },
           {
-            path: "assessment/video",
+            path: "question/video",
             children: [
               {
                 path: "",
-                element: <AssessmentVideoListPage />,
+                element: <QuestionBankVideoListPage />,
               },
               {
                 path: "create",
-                element: <AssessmentCreateVideoQuestionForm />,
+                element: <QuestionBankCreateVideoQuestionForm />,
+              },
+              {
+                path: ":videoQuestionId",
+                element: <QuestionBankVideoDetail />,
+              },
+              {
+                path: ":videoQuestionId/edit",
+                element: <QuestionBankEditVideoQuestionForm />,
               },
             ],
           },
@@ -86,12 +110,12 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/lobby/:lobbyId",
+    path: "/room/:roomId",
     element: <MainLayout />,
     children: [
       {
         path: "",
-        element: <LobbyPage />,
+        element: <RoomPage />,
       },
       {
         path: "coding",

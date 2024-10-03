@@ -14,7 +14,7 @@ const SideBar: FC<SideBarProps> = ({ isSignOutEnabled, children }) => {
   const navigate = useNavigate()
   const handleClick = () => {
     toast.promise(server.authentication.logout, {
-      loading: "Signing in...",
+      loading: "Signing out...",
       success: () => {
         navigate("/login", {
           replace: true,

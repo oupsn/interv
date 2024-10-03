@@ -5,22 +5,31 @@ import (
 )
 
 type WorkspaceDetail struct {
-	Id        uint      `json:"id"`
-	Title     string    `json:"title"`
-	IsVideo   bool      `json:"isVideo"`
-	IsCoding  bool      `json:"isCoding"`
-	StartDate time.Time `json:"startDate"`
-	StopDate  time.Time `json:"stopDate"`
-	PortalId  uint      `json:"portalId"`
-	MemberNum uint      `json:"memberNum"`
+	Id            uint      `json:"id"`
+	Title         string    `json:"title"`
+	StartDate     time.Time `json:"startDate"`
+	EndDate       time.Time `json:"endDate"`
+	IsVideo       bool      `json:"isVideo"`
+	IsCoding      bool      `json:"isCoding"`
+	CodingTime    uint      `json:"codingTime"`
+	ReqScreen     bool      `json:"reqScreen"`
+	ReqMicrophone bool      `json:"reqMicrophone"`
+	ReqCamera     bool      `json:"reqCamera"`
+	PortalId      uint      `json:"portalId"`
+	MemberNum     uint      `json:"memberNum"`
 } // @name WorkspaceDetail
 
 type CreateWorkspaceBody struct {
-	Title     string    `json:"title" validate:"required"`
-	IsVideo   *bool     `json:"isVideo" validate:"required"`
-	IsCoding  *bool     `json:"isCoding" validate:"required"`
-	StartDate time.Time `json:"startDate" validate:"required"`
-	StopDate  time.Time `json:"stopDate" validate:"required"`
+	Title         string `json:"title" validate:"required"`
+	StartDate     string `json:"startDate" validate:"required"`
+	EndDate       string `json:"endDate" validate:"required"`
+	IsVideo       *bool  `json:"isVideo" validate:"required"`
+	IsCoding      *bool  `json:"isCoding" validate:"required"`
+	CodingTime    uint   `json:"codingTime" validate:"required"`
+	ReqScreen     *bool  `json:"reqScreen" validate:"required"`
+	ReqMicrophone *bool  `json:"reqMicrophone" validate:"required"`
+	ReqCamera     *bool  `json:"reqCamera" validate:"required"`
+	PortalId      uint   `json:"portalId" validate:"required"`
 } // @name CreateWorkspaceBody
 
 type GetWorkspaceBody struct {

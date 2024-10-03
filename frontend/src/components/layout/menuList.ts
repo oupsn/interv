@@ -53,12 +53,12 @@ export function getMenuList(pathname: string): Group[] {
     //   ],
     // },
     {
-      groupLabel: "Assessment",
+      groupLabel: "Question Bank",
       menus: [
         {
-          href: "/portal/assessment/video",
-          label: "Video Assessments",
-          active: pathname.includes("/portal/assessment/video"),
+          href: "/portal/question/video",
+          label: "Video Questions",
+          active: pathname.includes("/portal/question/video"),
           icon: Video,
           submenus: [
             // {
@@ -74,9 +74,9 @@ export function getMenuList(pathname: string): Group[] {
           ],
         },
         {
-          href: "/portal/assessment/coding",
-          label: "Coding Assessments",
-          active: pathname.includes("/portal/assessment/coding"),
+          href: "/portal/question/coding",
+          label: "Coding Questions",
+          active: pathname.includes("/portal/question/coding"),
           icon: Code,
           submenus: [
             // {

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
 	"github.com/gofiber/fiber/v2"
 )
@@ -66,13 +67,18 @@ func (u UserHandler) CreateAdmin(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	err := u.userService.CreateAdmin(body.User, body.PortalId)
+	err := u.userService.CreateAdmin(domains.User{
+		Name:     body.Name,
+		Username: body.Username,
+		Password: body.Password,
+		Role:     domains.UserType(body.Role),
+	}, body.PortalId)
 
 	if err != nil {
 		return err
 	}
 
-	return Ok(c, body.User)
+	return Ok(c, body)
 }
 
 // DeleteUser
