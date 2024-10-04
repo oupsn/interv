@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"mime/multipart"
 	"strings"
 	"time"
 
@@ -12,13 +13,15 @@ import (
 type codingInterviewService struct {
 	codeCompilationRepository repositories.ICompilationRepository
 	codingInterviewRepository repositories.ICodingInterviewRepository
+	objectRepository          repositories.IObjectRepository
 }
 
-func NewCodingInterviewService(codeCompilationRepository repositories.ICompilationRepository, codingInterviewRepository repositories.ICodingInterviewRepository) ICodingInterviewService {
+func NewCodingInterviewService(codeCompilationRepository repositories.ICompilationRepository, codingInterviewRepository repositories.ICodingInterviewRepository, objectRepository repositories.IObjectRepository) ICodingInterviewService {
 
 	return &codingInterviewService{
 		codeCompilationRepository: codeCompilationRepository,
 		codingInterviewRepository: codingInterviewRepository,
+		objectRepository:          objectRepository,
 	}
 }
 
@@ -143,4 +146,20 @@ func (s *codingInterviewService) UpdateCodingQuestion(codingQuestionID uint, que
 
 func (s *codingInterviewService) DeleteCodingQuestion(codingQuestionID uint) error {
 	return s.codingInterviewRepository.DeleteCodingQuestion(codingQuestionID)
+}
+
+func (s *codingInterviewService) UploadCodingVideo(roomID string, screenFile *multipart.FileHeader, videoFile *multipart.FileHeader) error {
+	filename := fmt.Sprintf("%s-%s", roomID, screenFile.Filename)
+	err := s.objectRepository.Upload(screenFile, "coding-interview", filename)
+	if err != nil {
+		fmt.Println(err)
+		return ErrorUploadingVideo
+	}
+	filename = fmt.Sprintf("%s-%s", roomID, videoFile.Filename)
+	err = s.objectRepository.Upload(videoFile, "coding-interview", filename)
+	if err != nil {
+		fmt.Println(err)
+		return ErrorUploadingVideo
+	}
+	return nil
 }

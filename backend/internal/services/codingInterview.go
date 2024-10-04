@@ -1,6 +1,8 @@
 package services
 
 import (
+	"mime/multipart"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"github.com/gofiber/fiber/v2"
 )
@@ -27,4 +29,5 @@ type ICodingInterviewService interface {
 	AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error
 	DeleteCodingQuestion(codingQuestionID uint) error
 	UpdateCodingQuestion(codingQuestionID uint, question domains.CodingQuestion) (domains.CodingQuestion, error)
+	UploadCodingVideo(roomID string, screenFile *multipart.FileHeader, videoFile *multipart.FileHeader) error
 }

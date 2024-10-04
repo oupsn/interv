@@ -35,6 +35,5 @@ type CodingInterviewUpdateQuestionQuery struct {
 	Body             domains.CreateCodingQuestionRequest `json:"body"  validate:"required"`
 } // @name CodingInterviewUpdateQuestionQuery
 
-type CodingInterviewCreateQuestionSnapshotQuery []domains.CodingQuestionSnapshot
-
 // @name CodingInterviewCreateQuestionSnapshotQuery
+type CodingInterviewCreateQuestionSnapshotQuery []domains.CodingQuestionSnapshot

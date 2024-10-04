@@ -7,24 +7,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select.tsx"
-import VideoInterviewStatusBox from "@/pages/lobby/videoInterview/components/VideoInterviewStatusBox.tsx"
+import VideoInterviewStatusBox from "../../videoInterview/components/VideoInterviewStatusBox"
 import { Button } from "@/components/ui/button.tsx"
-import { FC, useContext, useState } from "react"
+import { FC, useContext, useEffect } from "react"
 import { DeviceContext } from "@/contexts/device.tsx"
-import { VideoPreviewStream } from "@/pages/lobby/videoInterview/components/VideoPreviewStream.tsx"
-import { ScreenPreviewStream } from "./ScreenPreviewStream"
+import { CodingVideoPreviewStream } from "./CodingVideoPreviewStream"
+import { CodingScreenPreviewStream } from "./CodingScreenPreviewStream"
 
-interface VideoInterviewSetupDeviceSetupProps {
+interface CodingInterviewDeviceSetupProps {
   handleClickStart: () => void
+  mediaError: string
+  mediaStatus: StatusMessages
+  screenError: string
+  screenStatus: StatusMessages
+  previewVideoStream: MediaStream | null
+  previewScreenStream: MediaStream | null
 }
 
-const VideoInterviewSetupDeviceSetup: FC<
-  VideoInterviewSetupDeviceSetupProps
-> = ({ handleClickStart }) => {
-  const [mediaError, setMediaError] = useState<string>("")
-  const [mediaStatus, setMediaStatus] = useState<StatusMessages>("idle")
-  const [screenError, setScreenError] = useState<string>("")
-  const [screenStatus, setScreenStatus] = useState<StatusMessages>("idle")
+const CodingInterviewDeviceSetup: FC<CodingInterviewDeviceSetupProps> = ({
+  handleClickStart,
+  previewVideoStream,
+  previewScreenStream,
+  mediaError,
+  mediaStatus,
+  screenError,
+  screenStatus,
+}) => {
   const {
     selectedCameraId,
     selectedMicrophoneId,
@@ -32,22 +40,20 @@ const VideoInterviewSetupDeviceSetup: FC<
     setSelectedMicrophoneId,
     videoDevices,
     audioDevices,
+    fetchDevice,
   } = useContext(DeviceContext)
-
+  useEffect(() => {
+    fetchDevice()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   return (
-    <>
-      <div className="flex flex-row gap-10">
-        <VideoPreviewStream
-          setMediaError={setMediaError}
-          setMediaStatus={setMediaStatus}
-        />
-        <ScreenPreviewStream
-          setMediaError={setScreenError}
-          setMediaStatus={setScreenStatus}
-        />
+    <div className="flex flex-col gap-10 overflow-y-auto">
+      <div className="flex flex-row gap-10 justify-center">
+        <CodingVideoPreviewStream stream={previewVideoStream} />
+        <CodingScreenPreviewStream stream={previewScreenStream} />
       </div>
 
-      <div className={"flex gap-20"}>
+      <div className={"flex flex-row gap-20 justify-center"}>
         <div>
           <Label>Camera options</Label>
           <Select
@@ -113,13 +119,20 @@ const VideoInterviewSetupDeviceSetup: FC<
         />
       </div>
       <Button
-        disabled={!!mediaError || mediaStatus != "idle"}
-        onClick={handleClickStart}
+        disabled={
+          !!mediaError ||
+          mediaStatus != "idle" ||
+          !!screenError ||
+          screenStatus != "idle"
+        }
+        onClick={() => {
+          handleClickStart()
+        }}
       >
         Start
       </Button>
-    </>
+    </div>
   )
 }
 
-export default VideoInterviewSetupDeviceSetup
+export default CodingInterviewDeviceSetup

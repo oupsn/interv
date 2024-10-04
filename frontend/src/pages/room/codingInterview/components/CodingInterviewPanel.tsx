@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useContext } from "react"
 import CodingInterviewQuestion, {
   CodingInterviewQuestionProps,
 } from "./codingInterviewPanel/CodingInterviewQuestion"
@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { LoadingContext } from "@/contexts/loading"
 
 interface CodingInterviewPanelProps {
   timeRemain: number
@@ -67,7 +68,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   const [isCompiling, setIsCompiling] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false)
-
+  const { setLoading } = useContext(LoadingContext)
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown((prevCountdown) => prevCountdown - 1)
@@ -169,6 +170,8 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   }
 
   const confirmSubmit = async () => {
+    setLoading(true)
+
     const submissionData: DomainsCodingQuestionSnapshot[] = questions.map(
       (question, index) => ({
         room_id: roomId,
@@ -179,8 +182,6 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
         is_submitted: true,
       }),
     )
-
-    console.log(submissionData)
     try {
       const response =
         await server.codingInterview.createQuestionSnapshot(submissionData)
@@ -190,6 +191,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
     }
     setIsFinish(true)
     setIsSubmitDialogOpen(false)
+    setLoading(false)
   }
 
   return (

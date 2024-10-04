@@ -718,6 +718,25 @@ export interface UploadObjectPayload {
   file: File
 }
 
+export type UploadVideoData = HandlersResponseString
+
+export type UploadVideoError = HandlersErrResponse
+
+export interface UploadVideoPayload {
+  /** Room ID */
+  roomID: string
+  /**
+   * Coding Interview Screen File
+   * @format binary
+   */
+  screenFile: File
+  /**
+   * Coding Interview Video File
+   * @format binary
+   */
+  videoFile: File
+}
+
 export interface User {
   created_at?: string
   id?: number
@@ -1008,6 +1027,24 @@ export namespace CodingInterview {
     export type RequestBody = CodingInterviewUpdateQuestionQuery
     export type RequestHeaders = {}
     export type ResponseBody = UpdateQuestionData
+  }
+
+  /**
+   * @description Upload a coding interview video
+   * @tags codingInterview
+   * @name UploadVideo
+   * @summary Upload a coding interview video
+   * @request POST:/codingInterview.uploadVideo
+   * @response `200` `UploadVideoData` Successful response with a message
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace UploadVideo {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = UploadVideoPayload
+    export type RequestHeaders = {}
+    export type ResponseBody = UploadVideoData
   }
 }
 
@@ -1902,6 +1939,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         method: "PUT",
         body: body,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Upload a coding interview video
+     *
+     * @tags codingInterview
+     * @name UploadVideo
+     * @summary Upload a coding interview video
+     * @request POST:/codingInterview.uploadVideo
+     * @response `200` `UploadVideoData` Successful response with a message
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    uploadVideo: (data: UploadVideoPayload, params: RequestParams = {}) =>
+      this.request<UploadVideoData, UploadVideoError>({
+        path: `/codingInterview.uploadVideo`,
+        method: "POST",
+        body: data,
+        type: ContentType.FormData,
         format: "json",
         ...params,
       }),

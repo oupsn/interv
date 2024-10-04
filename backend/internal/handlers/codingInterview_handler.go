@@ -247,3 +247,32 @@ func (co CodingInterviewHandler) DeleteQuestion(c *fiber.Ctx) error {
 
 	return Ok(c, "Coding question deleted successfully")
 }
+
+// @Summary Upload a coding interview video
+// @Description Upload a coding interview video
+// @Tags codingInterview
+// @ID UploadVideo
+// @Accept json
+// @Produce json
+// @Param videoFile formData file true "Coding Interview Video File"
+// @Param screenFile formData file true "Coding Interview Screen File"
+// @Param roomID formData string true "Room ID"
+// @Success 200 {object} Response[string] "Successful response with a message"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.uploadVideo [post]
+func (co CodingInterviewHandler) UploadCodingVideo(c *fiber.Ctx) error {
+	videoFile, err := c.FormFile("videoFile")
+	screenFile, err := c.FormFile("screenFile")
+	roomID := c.FormValue("roomID")
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Failed to read file")
+	}
+
+	err = co.codingInterviewService.UploadCodingVideo(roomID, videoFile, screenFile)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, "Coding video uploaded successfully")
+}

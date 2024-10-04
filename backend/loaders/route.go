@@ -37,7 +37,7 @@ func SetupRoutes() {
 	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, userInPoratlRepository, workspaceRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
-	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories)
+	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, objectRepositories)
 	var mailServices = services.NewMailService(mailRepositories)
 	var questionServices = services.NewVideoQuestionService(videoQuestionRepositories)
 	var roomServices = services.NewRoomService(roomRepositories)
@@ -96,7 +96,7 @@ func SetupRoutes() {
 	public.Post("codingInterview.createQuestionSnapshot", codingInterviewHandlers.CreateCodingQuestionSnapshot)
 	public.Put("codingInterview.updateQuestion/:codingQuestionID", codingInterviewHandlers.UpdateQuestion)
 	public.Delete("codingInterview.deleteQuestion/:codingQuestionID", codingInterviewHandlers.DeleteQuestion)
-
+	public.Post("codingInterview.uploadVideo", codingInterviewHandlers.UploadCodingVideo)
 	// video question
 	public.Post("videoQuestion.createVideoQuestion", questionHandlers.CreateVideoQuestion)
 	public.Get("videoQuestion.getVideoQuestionById", questionHandlers.GetVideoQuestionById)

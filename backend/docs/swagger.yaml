@@ -1421,6 +1421,46 @@ paths:
       summary: Update a coding interview question
       tags:
       - codingInterview
+  /codingInterview.uploadVideo:
+    post:
+      consumes:
+      - application/json
+      description: Upload a coding interview video
+      operationId: UploadVideo
+      parameters:
+      - description: Coding Interview Video File
+        in: formData
+        name: videoFile
+        required: true
+        type: file
+      - description: Coding Interview Screen File
+        in: formData
+        name: screenFile
+        required: true
+        type: file
+      - description: Room ID
+        in: formData
+        name: roomID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with a message
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Upload a coding interview video
+      tags:
+      - codingInterview
   /mail.sendMail:
     post:
       consumes:

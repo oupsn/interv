@@ -80,7 +80,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: "edit/:codingTitle",
-                element: <AssessmentCodingEdit />,
+                element: <QuestionBankCodingEdit />,
               },
             ],
           },
