@@ -44,6 +44,12 @@ export type CreateAdminData = HandlersResponseUser
 
 export type CreateAdminError = HandlersErrResponse
 
+export type CreateCodingSubmissionData = HandlersResponseString
+
+export type CreateCodingSubmissionError = HandlersErrResponse
+
+export type CreateCodingSubmissionPayload = DomainsCreateCodingSubmissionRequest[]
+
 export interface CreatePortalBody {
   company_name: string
 }
@@ -217,14 +223,8 @@ export interface DomainsCodingQuestionSnapshot {
   createdAt?: string
   deletedAt?: GormDeletedAt
   id?: number
-  is_submitted?: boolean
   language?: string
-  linter_result?: string
-  memory_usage?: string
   room_id?: string
-  run_time?: string
-  test_cases_result?: number
-  time_taken?: number
   updatedAt?: string
 }
 
@@ -279,6 +279,14 @@ export interface DomainsCreateCodingQuestionRequest {
   output_description?: string
   test_cases?: DomainsCodingQuestionTestCase[]
   title?: string
+}
+
+export interface DomainsCreateCodingSubmissionRequest {
+  code?: string
+  language?: string
+  question_id?: number
+  room_id?: string
+  time_taken?: number
 }
 
 export interface DomainsPortal {
@@ -871,6 +879,24 @@ export namespace CodingInterview {
     export type RequestBody = CodingInterviewAddQuestionQuery
     export type RequestHeaders = {}
     export type ResponseBody = AddQuestionData
+  }
+
+  /**
+   * @description Create a new coding interview question submission
+   * @tags codingInterview
+   * @name CreateCodingSubmission
+   * @summary Create a new coding interview question submission
+   * @request POST:/codingInterview.createCodingSubmission
+   * @response `200` `CreateCodingSubmissionData` Successful response with a message
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CreateCodingSubmission {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = CreateCodingSubmissionPayload
+    export type RequestHeaders = {}
+    export type ResponseBody = CreateCodingSubmissionData
   }
 
   /**
@@ -1772,6 +1798,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
     addQuestion: (body: CodingInterviewAddQuestionQuery, params: RequestParams = {}) =>
       this.request<AddQuestionData, AddQuestionError>({
         path: `/codingInterview.addQuestion`,
+        method: "POST",
+        body: body,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Create a new coding interview question submission
+     *
+     * @tags codingInterview
+     * @name CreateCodingSubmission
+     * @summary Create a new coding interview question submission
+     * @request POST:/codingInterview.createCodingSubmission
+     * @response `200` `CreateCodingSubmissionData` Successful response with a message
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    createCodingSubmission: (body: CreateCodingSubmissionPayload, params: RequestParams = {}) =>
+      this.request<CreateCodingSubmissionData, CreateCodingSubmissionError>({
+        path: `/codingInterview.createCodingSubmission`,
         method: "POST",
         body: body,
         type: ContentType.Json,

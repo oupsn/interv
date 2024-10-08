@@ -10,6 +10,7 @@ interface CodingInterviewInstructionProps {
   title: string
   description: string
   questionLength: number
+  timeRemain: number
   clickStart: () => void
   previewVideoStream: MediaStream | null
   previewScreenStream: MediaStream | null
@@ -19,8 +20,17 @@ interface CodingInterviewInstructionProps {
   screenError: string
 }
 
+const formatTime = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  return `${hours} hour${hours !== 1 ? "s" : ""} ${
+    minutes !== 0 ? `${minutes} ${minutes !== 1 ? "minutes" : "minute"}` : ""
+  }`
+}
+
 const CodingInterviewInstruction: React.FC<CodingInterviewInstructionProps> = ({
   questionLength,
+  timeRemain,
   clickStart,
   previewVideoStream,
   previewScreenStream,
@@ -61,6 +71,10 @@ const CodingInterviewInstruction: React.FC<CodingInterviewInstructionProps> = ({
             <li className="text-md">
               This interview consists of{" "}
               <strong>{questionLength} question(s).</strong>
+            </li>
+            <li className="text-md">
+              You have <strong>{formatTime(timeRemain)}</strong> to complete the
+              interview.
             </li>
             <li className="text-md">
               You can code in <strong>Python</strong>, <strong>Java</strong>, or{" "}

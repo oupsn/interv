@@ -54,6 +54,8 @@ func CheckAutoMigrate() {
 			&domains.CodingQuestionInPortal{},
 			&domains.CodingQuestionInWorkspace{},
 			&domains.CodingQuestionSnapshot{},
+			&domains.CodingQuestionSubmission{},
+			&domains.CodingQuestionSubmissionTestCaseResult{},
 			&domains.Room{},
 		)
 		if err != nil {

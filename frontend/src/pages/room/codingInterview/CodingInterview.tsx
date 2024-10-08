@@ -1,7 +1,7 @@
 import CodingInterviewInstruction from "./components/CodingInterviewInstruction"
 import CodingInterviewPanel from "./components/CodingInterviewPanel"
 import { useContext, useEffect, useState } from "react"
-import { useGetCodingInterviewQuestion } from "@/hooks/UseGetCodingInterviewQuestion"
+import { useGetCodingInterviewQuestion } from "@/hooks/useGetCodingInterviewQuestion"
 import {
   DomainsCodingQuestionResponse,
   DomainsCodingQuestionTestCase,
@@ -12,6 +12,7 @@ import CodingInterviewFinish from "./components/CodingInterviewFinish"
 import { useReactMediaRecorder } from "react-media-recorder-2"
 import { DeviceContext } from "@/contexts/device"
 import { server } from "@/contexts/swr"
+import { LoadingContext } from "@/contexts/loading"
 
 interface Question {
   index: number
@@ -36,6 +37,7 @@ const CodingInterviewPage = () => {
 
   const { selectedCameraId, selectedMicrophoneId, fetchDevice } =
     useContext(DeviceContext)
+  const { setLoading, setText } = useContext(LoadingContext)
   const {
     mediaBlobUrl: videoBlobUrl,
     startRecording: startVideoRecording,
@@ -102,6 +104,8 @@ const CodingInterviewPage = () => {
     videoBlobUrl: string,
     screenBlobUrl: string,
   ) => {
+    setLoading(true)
+    setText("Submitting video and screen record...")
     const videoBlob = await fetch(videoBlobUrl).then((response) =>
       response.blob(),
     )
@@ -109,22 +113,14 @@ const CodingInterviewPage = () => {
       response.blob(),
     )
 
-    const videoFile = new File(
-      [videoBlob],
-      "video-" + Date.now().toString() + ".mp4",
-      {
-        type: "video/mp4",
-        lastModified: Date.now(),
-      },
-    )
-    const screenFile = new File(
-      [screenBlob],
-      "screen-" + Date.now().toString() + ".mp4",
-      {
-        type: "video/mp4",
-        lastModified: Date.now(),
-      },
-    )
+    const videoFile = new File([videoBlob], "video.mp4", {
+      type: "video/mp4",
+      lastModified: Date.now(),
+    })
+    const screenFile = new File([screenBlob], "screen.mp4", {
+      type: "video/mp4",
+      lastModified: Date.now(),
+    })
 
     server.codingInterview
       .uploadVideo({
@@ -137,6 +133,8 @@ const CodingInterviewPage = () => {
       })
       .finally(() => {
         setIsRecordingSaved(true)
+        setLoading(false)
+        setText("")
       })
   }
 
@@ -171,16 +169,11 @@ const CodingInterviewPage = () => {
   useEffect(() => {
     if (isFinish) {
       stopRecording()
-      console.log("stop recording")
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFinish])
   useEffect(() => {
-    console.log("Record available")
-    console.log(videoBlobUrl)
-    console.log(screenBlobUrl)
     if (videoBlobUrl && screenBlobUrl) {
-      console.log("Submit video")
       handleSubmitVideo(videoBlobUrl, screenBlobUrl)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -243,6 +236,7 @@ const CodingInterviewPage = () => {
           <CodingInterviewInstruction
             title={mockData.title}
             description={mockData.instuction}
+            timeRemain={mockData.timeRemain}
             questionLength={questionList.length}
             clickStart={() => {
               startRecording()

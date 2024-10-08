@@ -611,22 +611,10 @@ definitions:
         $ref: '#/definitions/gorm.DeletedAt'
       id:
         type: integer
-      is_submitted:
-        type: boolean
       language:
-        type: string
-      linter_result:
-        type: string
-      memory_usage:
         type: string
       room_id:
         type: string
-      run_time:
-        type: string
-      test_cases_result:
-        type: integer
-      time_taken:
-        type: integer
       updatedAt:
         type: string
     type: object
@@ -718,6 +706,19 @@ definitions:
         type: array
       title:
         type: string
+    type: object
+  domains.CreateCodingSubmissionRequest:
+    properties:
+      code:
+        type: string
+      language:
+        type: string
+      question_id:
+        type: integer
+      room_id:
+        type: string
+      time_taken:
+        type: integer
     type: object
   domains.Portal:
     properties:
@@ -1173,6 +1174,39 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Add a coding interview question to a target
+      tags:
+      - codingInterview
+  /codingInterview.createCodingSubmission:
+    post:
+      consumes:
+      - application/json
+      description: Create a new coding interview question submission
+      operationId: CreateCodingSubmission
+      parameters:
+      - description: Request body containing the coding question submissions
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/domains.CreateCodingSubmissionRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with a message
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Create a new coding interview question submission
       tags:
       - codingInterview
   /codingInterview.createQuestion:

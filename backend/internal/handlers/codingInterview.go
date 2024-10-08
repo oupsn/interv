@@ -37,3 +37,6 @@ type CodingInterviewUpdateQuestionQuery struct {
 
 // @name CodingInterviewCreateQuestionSnapshotQuery
 type CodingInterviewCreateQuestionSnapshotQuery []domains.CodingQuestionSnapshot
+
+// @name CodingInterviewCreateQuestionSubmissionQuery
+type CodingInterviewCreateQuestionSubmissionQuery []domains.CreateCodingSubmissionRequest

@@ -190,6 +190,31 @@ func (co CodingInterviewHandler) CreateCodingQuestionSnapshot(c *fiber.Ctx) erro
 	return Ok(c, "Coding question snapshot created successfully")
 }
 
+// @Summary Create a new coding interview question submission
+// @Description Create a new coding interview question submission
+// @Tags codingInterview
+// @ID CreateCodingSubmission
+// @Accept json
+// @Produce json
+// @Param body body CodingInterviewCreateQuestionSubmissionQuery true "Request body containing the coding question submissions"
+// @Success 200 {object} Response[string] "Successful response with a message"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.createCodingSubmission [post]
+func (co CodingInterviewHandler) CreateCodingSubmission(c *fiber.Ctx) error {
+	var req CodingInterviewCreateQuestionSubmissionQuery
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	_, err := co.codingInterviewService.CreateCodingSubmission(req)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, "Coding question submission created successfully")
+}
+
 // @Summary Update a coding interview question
 // @Description Update a coding interview question
 // @Tags codingInterview

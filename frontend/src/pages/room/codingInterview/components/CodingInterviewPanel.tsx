@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { server } from "@/contexts/swr"
 import {
   DomainsCompilationResultResponse,
-  DomainsCodingQuestionSnapshot,
+  DomainsCreateCodingSubmissionRequest,
 } from "@/api/server"
 import {
   Dialog,
@@ -68,7 +68,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   const [isCompiling, setIsCompiling] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false)
-  const { setLoading } = useContext(LoadingContext)
+  const { setLoading, setText } = useContext(LoadingContext)
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown((prevCountdown) => prevCountdown - 1)
@@ -170,27 +170,25 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   }
 
   const confirmSubmit = async () => {
+    setIsSubmitDialogOpen(false)
     setLoading(true)
-
-    const submissionData: DomainsCodingQuestionSnapshot[] = questions.map(
-      (question, index) => ({
+    setText("Submitting coding question...")
+    const submissionData: DomainsCreateCodingSubmissionRequest[] =
+      questions.map((question, index) => ({
         room_id: roomId,
         question_id: question.id,
         code: editorStates[index].content,
         language: editorStates[index].language,
         time_taken: timeTaken,
-        is_submitted: true,
-      }),
-    )
+      }))
     try {
       const response =
-        await server.codingInterview.createQuestionSnapshot(submissionData)
+        await server.codingInterview.createCodingSubmission(submissionData)
       console.log("Submission successful:", response)
     } catch (error) {
       console.error("Submission failed:", error)
     }
     setIsFinish(true)
-    setIsSubmitDialogOpen(false)
     setLoading(false)
   }
 
