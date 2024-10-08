@@ -1351,10 +1351,13 @@ const docTemplate = `{
                 "operationId": "deleteVideoQuestionById",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
+                        "description": "Video question ID",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeleteVideoQuestionByIdBody"
+                        }
                     }
                 ],
                 "responses": {
@@ -2000,6 +2003,17 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "workspaceId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "DeleteVideoQuestionByIdBody": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
                     "type": "integer"
                 }
             }

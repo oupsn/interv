@@ -26,10 +26,17 @@ import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import useCurrentUser from "@/hooks/UseCurrentUser.ts"
 import { useEffect } from "react"
+import { Spinner } from "@/components/ui/spinner.tsx"
+import { useGetVideoQuestionDetail } from "@/hooks/useGetVideoQuestionDetail.ts"
 
 const QuestionBankEditVideoQuestionForm = () => {
   const { currentUser } = useCurrentUser()
   const { videoQuestionId } = useParams()
+  const {
+    data: videoQuestion,
+    isLoading,
+    error,
+  } = useGetVideoQuestionDetail(parseInt(videoQuestionId!))
   const formSchema = z.object({
     title: z.string().min(1, { message: "Required" }),
     timeToPrepare: z.coerce.number().min(1, { message: "Required" }),
@@ -65,19 +72,20 @@ const QuestionBankEditVideoQuestionForm = () => {
   }
 
   useEffect(() => {
-    server.videoQuestion
-      .getVideoQuestionById({
-        id: parseInt(videoQuestionId!),
-      })
-      .then((res) => {
-        form.reset({
-          title: res.data?.title,
-          timeToPrepare: res.data?.timeToPrepare,
-          timeToAnswer: res.data?.timeToAnswer,
-          totalAttempt: res.data?.totalAttempt,
-        })
-      })
-  }, [form, videoQuestionId])
+    form.reset({
+      title: videoQuestion?.data?.title,
+      timeToPrepare: videoQuestion?.data?.timeToPrepare,
+      timeToAnswer: videoQuestion?.data?.timeToAnswer,
+      totalAttempt: videoQuestion?.data?.totalAttempt,
+    })
+  }, [
+    form,
+    isLoading,
+    videoQuestion?.data?.timeToAnswer,
+    videoQuestion?.data?.timeToPrepare,
+    videoQuestion?.data?.title,
+    videoQuestion?.data?.totalAttempt,
+  ])
 
   return (
     <ContentLayout
@@ -107,69 +115,79 @@ const QuestionBankEditVideoQuestionForm = () => {
       }
     >
       <ContentPanel>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-lg">Question Title</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="timeToPrepare"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-lg">
-                    Time To Prepare (seconds)
-                  </FormLabel>
-                  <FormControl>
-                    <Input type={"number"} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="timeToAnswer"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-lg">
-                    Time To Answer (seconds)
-                  </FormLabel>
-                  <FormControl>
-                    <Input type={"number"} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="totalAttempt"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-lg">Total Attempt</FormLabel>
-                  <FormControl>
-                    <Input type={"number"} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button className={"w-full"} type="submit">
-              Submit
-            </Button>
-          </form>
-        </Form>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <Spinner size="lg" />
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center h-full">
+            <div>Error: {error.message}</div>
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg">Question Title</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="timeToPrepare"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg">
+                      Time To Prepare (seconds)
+                    </FormLabel>
+                    <FormControl>
+                      <Input type={"number"} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="timeToAnswer"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg">
+                      Time To Answer (seconds)
+                    </FormLabel>
+                    <FormControl>
+                      <Input type={"number"} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="totalAttempt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg">Max Attempt</FormLabel>
+                    <FormControl>
+                      <Input type={"number"} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button className={"w-full"} type="submit">
+                Submit
+              </Button>
+            </form>
+          </Form>
+        )}
       </ContentPanel>
     </ContentLayout>
   )

@@ -21,7 +21,7 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
       <p className={"text-2xl font-semibold"}>Question {questionIndex}</p>
       <div className={"flex gap-8 bg-iWhiteHover p-4 rounded-xl"}>
         <div>
-          <p className={"text-xl font-semibold"}>Total Attempt</p>
+          <p className={"text-xl font-semibold"}>Max Attempt</p>
           <p className={"text-xl text-center"}>{totalAttempt}</p>
         </div>
         <div>

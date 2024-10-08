@@ -102,7 +102,7 @@ func SetupRoutes() {
 	public.Get("videoQuestion.getVideoQuestionById", questionHandlers.GetVideoQuestionById)
 	public.Get("videoQuestion.getVideoQuestionByPortalId", questionHandlers.GetVideoQuestionByPortalId)
 	public.Post("videoQuestion.updateVideoQuestion", questionHandlers.UpdateVideoQuestion)
-	public.Post("videoQuestion.deleteVideoQuestion", questionHandlers.DeleteVideoQuestion)
+	public.Post("videoQuestion.deleteVideoQuestionById", questionHandlers.DeleteVideoQuestion)
 
 	// Room
 	public.Post("room.createRoom", roomHandlers.CreateRoom)

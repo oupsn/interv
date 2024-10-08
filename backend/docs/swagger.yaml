@@ -205,6 +205,13 @@ definitions:
     - userId
     - workspaceId
     type: object
+  DeleteVideoQuestionByIdBody:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
   DeleteWorkspaceBody:
     properties:
       id:
@@ -1958,10 +1965,12 @@ paths:
       - application/json
       operationId: deleteVideoQuestionById
       parameters:
-      - in: query
-        name: id
+      - description: Video question ID
+        in: body
+        name: payload
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/DeleteVideoQuestionByIdBody'
       produces:
       - application/json
       responses:

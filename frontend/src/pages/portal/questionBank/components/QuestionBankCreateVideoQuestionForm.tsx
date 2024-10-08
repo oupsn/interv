@@ -132,7 +132,7 @@ const QuestionBankCreateVideoQuestionForm = () => {
               name="totalAttempt"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-lg">Total Attempt</FormLabel>
+                  <FormLabel className="text-lg">Max Attempt</FormLabel>
                   <FormControl>
                     <Input type={"number"} {...field} />
                   </FormControl>

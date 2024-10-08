@@ -156,13 +156,13 @@ export type DeleteUserFromWorkspaceData = HandlersResponseUserInWorkspace
 
 export type DeleteUserFromWorkspaceError = HandlersErrResponse
 
+export interface DeleteVideoQuestionByIdBody {
+  id: number
+}
+
 export type DeleteVideoQuestionByIdData = HandlersResponseString
 
 export type DeleteVideoQuestionByIdError = HandlersErrResponse
-
-export interface DeleteVideoQuestionByIdParams {
-  id: number
-}
 
 export interface DeleteWorkspaceBody {
   id: number
@@ -1373,10 +1373,8 @@ export namespace VideoQuestion {
    */
   export namespace DeleteVideoQuestionById {
     export type RequestParams = {}
-    export type RequestQuery = {
-      id: number
-    }
-    export type RequestBody = never
+    export type RequestQuery = {}
+    export type RequestBody = DeleteVideoQuestionByIdBody
     export type RequestHeaders = {}
     export type ResponseBody = DeleteVideoQuestionByIdData
   }
@@ -2304,11 +2302,11 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * @response `404` `HandlersErrResponse` Not Found
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    deleteVideoQuestionById: (query: DeleteVideoQuestionByIdParams, params: RequestParams = {}) =>
+    deleteVideoQuestionById: (payload: DeleteVideoQuestionByIdBody, params: RequestParams = {}) =>
       this.request<DeleteVideoQuestionByIdData, DeleteVideoQuestionByIdError>({
         path: `/videoQuestion.deleteVideoQuestionById`,
         method: "POST",
-        query: query,
+        body: payload,
         type: ContentType.Json,
         format: "json",
         ...params,
