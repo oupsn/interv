@@ -20,14 +20,32 @@ import {
   TableRow,
 } from "@/components/ui/table.tsx"
 import { Plus } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner.tsx"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog.tsx"
+import { useState } from "react"
+import { toast } from "sonner"
+import { server } from "@/contexts/swr.tsx"
 
 const QuestionBankVideoListPage = () => {
   const { currentUser } = useCurrentUser()
   const {
     data: videoQuestionList,
     error,
+    mutate,
     isLoading,
   } = useGetVideoInterviewQuestionByPortalId(currentUser.portalId)
+  const [selectedItemToDelete, setSelectedItemToDelete] = useState<
+    number | null
+  >(null)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const navigate = useNavigate()
   const handleAdd = () => {
     navigate("/portal/question/video/create")
@@ -41,7 +59,25 @@ const QuestionBankVideoListPage = () => {
   }
 
   const handleDelete = (id: number) => {
-    console.log("delete", id)
+    setSelectedItemToDelete(id)
+    setIsDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = () => {
+    if (selectedItemToDelete) {
+      toast.promise(
+        server.videoQuestion
+          .deleteVideoQuestionById({ id: selectedItemToDelete })
+          .then(() => mutate()),
+        {
+          loading: "Deleting...",
+          success: "Deleted successfully",
+          error: "Failed to delete",
+        },
+      )
+    }
+    setIsDeleteDialogOpen(false)
+    setSelectedItemToDelete(null)
   }
 
   return (
@@ -69,9 +105,13 @@ const QuestionBankVideoListPage = () => {
     >
       <ContentPanel>
         {isLoading ? (
-          <p>Loading...</p>
+          <div className="flex items-center justify-center h-full">
+            <Spinner size="lg" />
+          </div>
         ) : error ? (
-          <p>Error loading data</p>
+          <div className="flex items-center justify-center h-full">
+            <div>Error: {error.message}</div>
+          </div>
         ) : (
           <Table>
             <TableHeader>
@@ -95,12 +135,42 @@ const QuestionBankVideoListPage = () => {
                       >
                         <FaEdit />
                       </Button>
-                      <Button
-                        onClick={() => handleDelete(item.id ?? 0)}
-                        size="icon"
+                      <Dialog
+                        open={isDeleteDialogOpen}
+                        onOpenChange={setIsDeleteDialogOpen}
                       >
-                        <FaTrash />
-                      </Button>
+                        <DialogTrigger asChild>
+                          <Button
+                            onClick={() => handleDelete(item.id ?? 0)}
+                            size="icon"
+                          >
+                            <FaTrash />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-white">
+                          <DialogHeader>
+                            <DialogTitle>Delete Video Question</DialogTitle>
+                            <DialogDescription>
+                              Are you sure you want to delete this video
+                              question? This action cannot be undone.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogFooter>
+                            <Button
+                              variant="outline"
+                              onClick={() => setIsDeleteDialogOpen(false)}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              onClick={confirmDelete}
+                            >
+                              Delete
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </td>
                   </TableCell>
                 </TableRow>
