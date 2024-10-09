@@ -130,6 +130,11 @@ func (co CodingInterviewHandler) CreateQuestion(c *fiber.Ctx) error {
 			OutputDescription: req.Body.OutputDescription,
 			TestCases:         req.Body.TestCases,
 			Difficulty:        req.Body.Difficulty,
+			CodingQuestionInPortal: []domains.CodingQuestionInPortal{
+				{
+					PortalID: uint(req.Body.PortalID),
+				},
+			},
 		},
 	)
 	if err != nil {

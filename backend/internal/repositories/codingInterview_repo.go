@@ -50,8 +50,8 @@ func (c *codingInterviewRepository) GetCodingQuestionList() ([]domains.CodingQue
 
 func (c *codingInterviewRepository) GetCodingQuestionListInPortal(portalID int) ([]domains.CodingQuestion, error) {
 	var codingQuestions []domains.CodingQuestion
-	if err := c.DB.Preload("CodingQuestionInPortal.Portal", "id = ?", portalID).
-		Order("updated_at DESC").
+	if err := c.DB.Joins("JOIN coding_question_in_portals ON coding_questions.id = coding_question_in_portals.coding_question_id").
+		Where("coding_question_in_portals.portal_id = ?", portalID).
 		Find(&codingQuestions).Error; err != nil {
 		return nil, err
 	}

@@ -39,6 +39,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select" // Import Select components
+import useCurrentUser from "@/hooks/UseCurrentUser"
 
 function CreateCodingQuestion() {
   const formSchema = z.object({
@@ -58,7 +59,7 @@ function CreateCodingQuestion() {
       .min(1),
     difficulty: z.enum(["easy", "moderate", "hard"]),
   })
-
+  const { currentUser } = useCurrentUser()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -84,6 +85,7 @@ function CreateCodingQuestion() {
           output: testCase.output.replace(/\n/g, "\\n"),
         })) || [],
       difficulty: values.difficulty,
+      portal_id: currentUser.portalId,
     }
 
     toast.promise(

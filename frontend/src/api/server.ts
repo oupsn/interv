@@ -277,6 +277,7 @@ export interface DomainsCreateCodingQuestionRequest {
   difficulty?: string
   input_description?: string
   output_description?: string
+  portal_id?: number
   test_cases?: DomainsCodingQuestionTestCase[]
   title?: string
 }

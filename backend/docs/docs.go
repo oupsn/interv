@@ -2858,6 +2858,9 @@ const docTemplate = `{
                 "output_description": {
                     "type": "string"
                 },
+                "portal_id": {
+                    "type": "integer"
+                },
                 "test_cases": {
                     "type": "array",
                     "items": {
