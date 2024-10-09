@@ -798,6 +798,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/room.checkAuthCandidate": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "room"
+                ],
+                "summary": "Check authentication for candidate",
+                "operationId": "checkAuthCandidate",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "room id",
+                        "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "room token",
+                        "name": "rt",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/room.createRoom": {
             "post": {
                 "consumes": [
@@ -1835,37 +1886,13 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "candidateId",
-                "dueDate",
-                "isCodingDone",
-                "isVideoDone",
-                "totalCodingQuestion",
-                "totalCodingTime",
-                "totalVideoQuestion",
-                "totalVideoTime"
+                "workspaceId"
             ],
             "properties": {
                 "candidateId": {
                     "type": "integer"
                 },
-                "dueDate": {
-                    "type": "string"
-                },
-                "isCodingDone": {
-                    "type": "boolean"
-                },
-                "isVideoDone": {
-                    "type": "boolean"
-                },
-                "totalCodingQuestion": {
-                    "type": "integer"
-                },
-                "totalCodingTime": {
-                    "type": "integer"
-                },
-                "totalVideoQuestion": {
-                    "type": "integer"
-                },
-                "totalVideoTime": {
+                "workspaceId": {
                     "type": "integer"
                 }
             }
@@ -1874,42 +1901,14 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "candidateId",
-                "dueDate",
-                "isCodingDone",
-                "isVideoDone",
-                "roomId",
-                "totalCodingQuestion",
-                "totalCodingTime",
-                "totalVideoQuestion",
-                "totalVideoTime"
+                "roomId"
             ],
             "properties": {
                 "candidateId": {
                     "type": "integer"
                 },
-                "dueDate": {
-                    "type": "string"
-                },
-                "isCodingDone": {
-                    "type": "boolean"
-                },
-                "isVideoDone": {
-                    "type": "boolean"
-                },
                 "roomId": {
                     "type": "string"
-                },
-                "totalCodingQuestion": {
-                    "type": "integer"
-                },
-                "totalCodingTime": {
-                    "type": "integer"
-                },
-                "totalVideoQuestion": {
-                    "type": "integer"
-                },
-                "totalVideoTime": {
-                    "type": "integer"
                 }
             }
         },
@@ -2317,9 +2316,6 @@ const docTemplate = `{
                 "candidateId": {
                     "type": "integer"
                 },
-                "dueDate": {
-                    "type": "string"
-                },
                 "isCodingDone": {
                     "type": "boolean"
                 },
@@ -2328,18 +2324,6 @@ const docTemplate = `{
                 },
                 "roomId": {
                     "type": "string"
-                },
-                "totalCodingQuestion": {
-                    "type": "integer"
-                },
-                "totalCodingTime": {
-                    "type": "integer"
-                },
-                "totalVideoQuestion": {
-                    "type": "integer"
-                },
-                "totalVideoTime": {
-                    "type": "integer"
                 }
             }
         },
@@ -2580,6 +2564,12 @@ const docTemplate = `{
                         "$ref": "#/definitions/domains.CodingQuestionInPortal"
                     }
                 },
+                "coding_question_in_workspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionInWorkspace"
+                    }
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -2653,6 +2643,35 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "domains.CodingQuestionInWorkspace": {
+            "type": "object",
+            "properties": {
+                "codingQuestion": {
+                    "$ref": "#/definitions/domains.CodingQuestion"
+                },
+                "codingQuestionID": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "workspace": {
+                    "$ref": "#/definitions/domains.Workspace"
+                },
+                "workspaceID": {
+                    "type": "integer"
                 }
             }
         },
@@ -2915,6 +2934,97 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "domains.VideoQuestion": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "portalID": {
+                    "type": "integer"
+                },
+                "timeToAnswer": {
+                    "type": "integer"
+                },
+                "timeToPrepare": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "totalAttempt": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "workspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.Workspace"
+                    }
+                }
+            }
+        },
+        "domains.Workspace": {
+            "type": "object",
+            "properties": {
+                "codingTime": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isCoding": {
+                    "type": "boolean"
+                },
+                "isVideo": {
+                    "type": "boolean"
+                },
+                "portalId": {
+                    "type": "integer"
+                },
+                "reqCamera": {
+                    "type": "boolean"
+                },
+                "reqMicrophone": {
+                    "type": "boolean"
+                },
+                "reqScreen": {
+                    "type": "boolean"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "videoQuestion": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.VideoQuestion"
+                    }
                 }
             }
         },

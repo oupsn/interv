@@ -4,6 +4,7 @@ import { server } from "@/contexts/swr.tsx"
 import { cn } from "@/lib/utils.ts"
 import { useParams, useSearchParams } from "react-router-dom"
 import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
+import { toast } from "sonner"
 
 interface VideoInterviewPostQuestion {
   attemptLeft: number
@@ -33,21 +34,26 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
       type: "video/mp4",
       lastModified: Date.now(),
     })
-    server.videoInterview
-      .submitVideoInterview({
+    toast.promise(
+      server.videoInterview.submitVideoInterview({
         file: videoFile,
         videoQuestionId: questionId,
         roomId: data!.data!.roomId,
         candidateId: data!.data!.candidateId,
-      })
-      .catch((error) => {
-        console.error(error)
-      })
-      .finally(() => {
-        handleNextQuestion()
-        setMediaBlob([])
-        setRecordState("pre")
-      })
+      }),
+      {
+        loading: "Submitting video...",
+        success: () => {
+          handleNextQuestion()
+          setMediaBlob([])
+          setRecordState("pre")
+          return "Submitted video successfully"
+        },
+        error: (err) => {
+          return err.response.data.message
+        },
+      },
+    )
   }
   return (
     <>

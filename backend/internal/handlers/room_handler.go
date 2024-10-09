@@ -3,7 +3,9 @@ package handlers
 import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/cryptone"
 	"github.com/gofiber/fiber/v2"
+	"github.com/spf13/viper"
 	"time"
 )
 
@@ -38,17 +40,18 @@ func (l RoomHandler) CreateRoom(c *fiber.Ctx) error {
 		return err
 	}
 
-	_, _, err := l.roomService.CreateRoom(domains.Room{
-		CandidateID:  body.CandidateID,
-		IsVideoDone:  body.IsVideoDone,
-		IsCodingDone: body.IsCodingDone,
-		DueDate:      body.DueDate,
+	room, _, err := l.roomService.CreateRoom(domains.Room{
+		CandidateID: body.CandidateID,
+		WorkspaceID: body.WorkspaceID,
 	})
 	if err != nil {
 		return err
 	}
 
-	return Ok(c, "room created")
+	return Ok(c, CreateRoomResponse{
+		RoomID:      room.ID,
+		CandidateID: room.CandidateID,
+	})
 }
 
 // GetRoomContext
@@ -72,10 +75,18 @@ func (l RoomHandler) GetRoomContext(c *fiber.Ctx) error {
 		return err
 	}
 
-	room, candidate, videoLength, videoQuestionTotalTime, codingLength, codingQuestionTotalTime, err := l.roomService.GetRoomContext(query.RoomID, query.Rt)
+	room, candidate, videoLength, videoQuestionTotalTime, codingLength, codingQuestionTotalTime, rt, dueDate, err := l.roomService.GetRoomContext(query.RoomID, query.Rt)
 	if err != nil {
 		return err
 	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "rt",
+		Value:    rt,
+		Expires:  time.Now().Add(time.Hour * 3),
+		HTTPOnly: true,
+		Secure:   true,
+	})
 
 	return Ok(c, GetRoomContextResponse{
 		RoomID:              room.ID,
@@ -87,8 +98,8 @@ func (l RoomHandler) GetRoomContext(c *fiber.Ctx) error {
 		TotalCodingQuestion: codingLength,
 		IsVideoDone:         *room.IsVideoDone,
 		IsCodingDone:        *room.IsCodingDone,
-		DueDate:             room.DueDate,
-		IsOverdue:           room.DueDate.Before(time.Now()),
+		DueDate:             *dueDate,
+		IsOverdue:           (*dueDate).Before(time.Now()),
 	})
 }
 
@@ -118,11 +129,40 @@ func (l RoomHandler) UpdateRoomContext(c *fiber.Ctx) error {
 		CandidateID:  body.CandidateID,
 		IsVideoDone:  body.IsVideoDone,
 		IsCodingDone: body.IsCodingDone,
-		DueDate:      body.DueDate,
 	})
 	if err != nil {
 		return err
 	}
 
 	return Ok(c, "room context updated")
+}
+
+// CheckAuthCandidate
+// @ID checkAuthCandidate
+// @Tags room
+// @Summary Check authentication for candidate
+// @Accept json
+// @Produce json
+// @Param roomId query string true "room id"
+// @Param rt query string true "room token"
+// @Success 200 {object} Response[string]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /room.checkAuthCandidate [get]
+func (l RoomHandler) CheckAuthCandidate(c *fiber.Ctx) error {
+	token := c.Cookies("rt", "")
+	if token == "" {
+		token = c.Query("rt")
+	}
+
+	aes, err := cryptone.DecryptAES([]byte(viper.GetString("RT")), token)
+	if err != nil {
+		return err
+	}
+
+	if aes != c.Query("roomId") {
+		return fiber.NewError(fiber.StatusUnauthorized, "unauthorized candidate")
+	}
+
+	return Ok(c, "candidate authorized")
 }
