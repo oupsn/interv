@@ -9,6 +9,7 @@ type ICodingInterviewRepository interface {
 	GetCodingQuestionByTitle(title string) (domains.CodingQuestionResponse, error)
 	GetCodingQuestionListInPortal(portalID int) ([]domains.CodingQuestion, error)
 	GetCodingQuestionTestcaseByQuestionID(questionID int) ([]domains.CodingQuestionTestCase, error)
+	GetCodingQuestionByWorkspaceID(workspaceID int) ([]domains.CodingQuestionInWorkspace, error)
 	SaveCodingQuestion(question domains.CodingQuestion) (domains.CodingQuestion, error)
 	SaveCodingSnapshot(snapshot domains.CodingQuestionSnapshot) (domains.CodingQuestionSnapshot, error)
 	AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error

@@ -2,6 +2,8 @@ import { Dispatch, FC, SetStateAction, useState } from "react"
 import { Button } from "@/components/ui/button.tsx"
 import { server } from "@/contexts/swr.tsx"
 import { cn } from "@/lib/utils.ts"
+import { useParams, useSearchParams } from "react-router-dom"
+import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
 
 interface VideoInterviewPostQuestion {
   attemptLeft: number
@@ -9,6 +11,7 @@ interface VideoInterviewPostQuestion {
   handleNextQuestion: () => void
   setRecordState: Dispatch<SetStateAction<"pre" | "detail" | "post">>
   setMediaBlob: Dispatch<SetStateAction<string[]>>
+  questionId: number
 }
 export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
   attemptLeft,
@@ -16,7 +19,11 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
   handleNextQuestion,
   setRecordState,
   setMediaBlob,
+  questionId,
 }) => {
+  const { roomId } = useParams()
+  const [URLSearchParams] = useSearchParams()
+  const { data } = useGetRoomContext(roomId!, URLSearchParams.get("rt")!)
   const [selectedVideo, setSelectedVideo] = useState("")
   const handleSubmitVideo = async () => {
     const videoBlob = await fetch(selectedVideo).then((response) =>
@@ -29,6 +36,9 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
     server.videoInterview
       .submitVideoInterview({
         file: videoFile,
+        videoQuestionId: questionId,
+        roomId: data!.data!.roomId,
+        candidateId: data!.data!.candidateId,
       })
       .catch((error) => {
         console.error(error)

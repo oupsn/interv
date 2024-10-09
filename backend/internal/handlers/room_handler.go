@@ -4,6 +4,7 @@ import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
 	"github.com/gofiber/fiber/v2"
+	"time"
 )
 
 type RoomHandler struct {
@@ -37,15 +38,11 @@ func (l RoomHandler) CreateRoom(c *fiber.Ctx) error {
 		return err
 	}
 
-	_, err := l.roomService.CreateRoom(domains.Room{
-		CandidateID:         body.CandidateID,
-		TotalVideoTime:      body.TotalVideoTime,
-		TotalCodingTime:     body.TotalCodingTime,
-		TotalVideoQuestion:  body.TotalVideoQuestion,
-		TotalCodingQuestion: body.TotalCodingQuestion,
-		IsVideoDone:         *body.IsVideoDone,
-		IsCodingDone:        *body.IsCodingDone,
-		DueDate:             body.DueDate,
+	_, _, err := l.roomService.CreateRoom(domains.Room{
+		CandidateID:  body.CandidateID,
+		IsVideoDone:  body.IsVideoDone,
+		IsCodingDone: body.IsCodingDone,
+		DueDate:      body.DueDate,
 	})
 	if err != nil {
 		return err
@@ -75,21 +72,23 @@ func (l RoomHandler) GetRoomContext(c *fiber.Ctx) error {
 		return err
 	}
 
-	room, err := l.roomService.GetRoomContext(query.RoomID)
+	room, candidate, videoLength, videoQuestionTotalTime, codingLength, codingQuestionTotalTime, err := l.roomService.GetRoomContext(query.RoomID, query.Rt)
 	if err != nil {
 		return err
 	}
 
 	return Ok(c, GetRoomContextResponse{
 		RoomID:              room.ID,
+		CandidateName:       candidate.Name,
 		CandidateID:         room.CandidateID,
-		TotalVideoTime:      room.TotalVideoTime,
-		TotalCodingTime:     room.TotalCodingTime,
-		TotalVideoQuestion:  room.TotalVideoQuestion,
-		TotalCodingQuestion: room.TotalCodingQuestion,
-		IsVideoDone:         room.IsVideoDone,
-		IsCodingDone:        room.IsCodingDone,
+		TotalVideoTime:      videoQuestionTotalTime,
+		TotalCodingTime:     codingQuestionTotalTime,
+		TotalVideoQuestion:  videoLength,
+		TotalCodingQuestion: codingLength,
+		IsVideoDone:         *room.IsVideoDone,
+		IsCodingDone:        *room.IsCodingDone,
 		DueDate:             room.DueDate,
+		IsOverdue:           room.DueDate.Before(time.Now()),
 	})
 }
 
@@ -115,15 +114,11 @@ func (l RoomHandler) UpdateRoomContext(c *fiber.Ctx) error {
 	}
 
 	err := l.roomService.UpdateRoomContext(domains.Room{
-		ID:                  body.RoomID,
-		CandidateID:         body.CandidateID,
-		TotalVideoTime:      body.TotalVideoTime,
-		TotalCodingTime:     body.TotalCodingTime,
-		TotalVideoQuestion:  body.TotalVideoQuestion,
-		TotalCodingQuestion: body.TotalCodingQuestion,
-		IsVideoDone:         *body.IsVideoDone,
-		IsCodingDone:        *body.IsCodingDone,
-		DueDate:             body.DueDate,
+		ID:           body.RoomID,
+		CandidateID:  body.CandidateID,
+		IsVideoDone:  body.IsVideoDone,
+		IsCodingDone: body.IsCodingDone,
+		DueDate:      body.DueDate,
 	})
 	if err != nil {
 		return err

@@ -3,6 +3,7 @@ package services
 import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"mime/multipart"
 	"strings"
@@ -17,20 +18,22 @@ var (
 type IVideoInterviewService interface {
 	GetVideoInterviewContext(roomId string) ([]domains.VideoQuestion, error)
 	GetVideoInterviewQuestion(questionId uint) (*domains.VideoQuestion, error)
-	SubmitVideoInterview(file *multipart.FileHeader) error
+	SubmitVideoInterview(file *multipart.FileHeader, roomId string, candidateId uint, videoQuestionId uint) error
 }
 
 type videoInterviewService struct {
-	objectRepo        repositories.IObjectRepository
-	videoQuestionRepo repositories.IVideoQuestionRepository
-	roomRepo          repositories.IRoomRepository
+	objectRepo                repositories.IObjectRepository
+	videoQuestionRepo         repositories.IVideoQuestionRepository
+	roomRepo                  repositories.IRoomRepository
+	videoQuestionSnapshotRepo repositories.IVideoQuestionSnapshotRepository
 }
 
-func NewVideoInterviewService(objectRepo repositories.IObjectRepository, videoQuestionRepo repositories.IVideoQuestionRepository, roomRepo repositories.IRoomRepository) IVideoInterviewService {
+func NewVideoInterviewService(objectRepo repositories.IObjectRepository, videoQuestionRepo repositories.IVideoQuestionRepository, roomRepo repositories.IRoomRepository, videoQuestionSnapshotRepo repositories.IVideoQuestionSnapshotRepository) IVideoInterviewService {
 	return &videoInterviewService{
-		objectRepo:        objectRepo,
-		videoQuestionRepo: videoQuestionRepo,
-		roomRepo:          roomRepo,
+		objectRepo:                objectRepo,
+		videoQuestionRepo:         videoQuestionRepo,
+		roomRepo:                  roomRepo,
+		videoQuestionSnapshotRepo: videoQuestionSnapshotRepo,
 	}
 }
 
@@ -62,11 +65,15 @@ func (v videoInterviewService) GetVideoInterviewQuestion(questionId uint) (*doma
 	return videoQuestion, nil
 }
 
-func (v videoInterviewService) SubmitVideoInterview(file *multipart.FileHeader) error {
-	filename := "RoomID-UID-QUESTIONINDEX-QUESTIONID" + file.Filename //TODO: Implement this
+func (v videoInterviewService) SubmitVideoInterview(file *multipart.FileHeader, roomId string, candidateId uint, videoQuestionId uint) error {
+	filename := fmt.Sprintf("r_%s_c_%d_v_%d_f_%s", roomId, candidateId, videoQuestionId, file.Filename)
 	filename = strings.ReplaceAll(filename, " ", "")
 	if err := v.objectRepo.Upload(file, "video-interview", filename); err != nil {
 		return ErrorUploadingVideo
+	}
+	_, err := v.videoQuestionSnapshotRepo.Create(domains.VideoQuestionSnapshot{VideoQuestionID: videoQuestionId, CandidateID: candidateId, RoomID: roomId, FileName: filename})
+	if err != nil {
+		return err
 	}
 	return nil
 }

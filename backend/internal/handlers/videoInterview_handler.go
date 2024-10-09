@@ -3,6 +3,7 @@ package handlers
 import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
 	"github.com/gofiber/fiber/v2"
+	"strconv"
 )
 
 type VideoInterviewHandler struct {
@@ -100,6 +101,9 @@ func (v VideoInterviewHandler) GetVideoInterviewQuestion(c *fiber.Ctx) error {
 // @Accept multipart/form-data
 // @Produce json
 // @Param file formData file true "Video Interview File"
+// @Param roomId formData string true "Room ID"
+// @Param candidateId formData uint true "Candidate ID"
+// @Param videoQuestionId formData uint true "Video Question ID"
 // @Success 200 {object} Response[string]
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
@@ -109,8 +113,21 @@ func (v VideoInterviewHandler) SubmitVideoInterview(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Failed to read file")
 	}
+	roomId := c.FormValue("roomId")
+	candidateId := c.FormValue("candidateId")
+	videoQuestionId := c.FormValue("videoQuestionId")
 
-	err = v.videoInterviewService.SubmitVideoInterview(file)
+	candidateIdInt, err := strconv.Atoi(candidateId)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Failed to parse candidateId")
+	}
+
+	videoQuestionIdInt, err := strconv.Atoi(videoQuestionId)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Failed to parse videoQuestionId")
+	}
+
+	err = v.videoInterviewService.SubmitVideoInterview(file, roomId, uint(candidateIdInt), uint(videoQuestionIdInt))
 	if err != nil {
 		return err
 	}

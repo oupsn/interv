@@ -97,12 +97,12 @@ const LoginPage = () => {
             </Button>
           </form>
         </Form>
-        <Button
-          variant={"link"}
-          className={"w-fit h-fit p-0 place-self-center"}
-        >
-          Forgot password?
-        </Button>
+        {/*<Button*/}
+        {/*  variant={"link"}*/}
+        {/*  className={"w-fit h-fit p-0 place-self-center"}*/}
+        {/*>*/}
+        {/*  Forgot password?*/}
+        {/*</Button>*/}
       </div>
     </div>
   )
