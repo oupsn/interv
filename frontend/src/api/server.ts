@@ -73,9 +73,21 @@ export interface CreateRoomBody {
   totalVideoTime: number
 }
 
-export type CreateRoomData = HandlersResponseHandlersCreateRoomResponse
+export type CreateRoomData = HandlersResponseCreateRoomResponse
 
 export type CreateRoomError = HandlersErrResponse
+
+export interface CreateRoomResponse {
+  candidateId: number
+  dueDate: string
+  isCodingDone: boolean
+  isVideoDone: boolean
+  roomId: string
+  totalCodingQuestion: number
+  totalCodingTime: number
+  totalVideoQuestion: number
+  totalVideoTime: number
+}
 
 export type CreateUserData = HandlersResponseUser
 
@@ -343,12 +355,15 @@ export type GetRoomContextError = HandlersErrResponse
 
 export interface GetRoomContextParams {
   roomId: string
+  rt: string
 }
 
 export interface GetRoomContextResponse {
   candidateId: number
+  candidateName: string
   dueDate: string
   isCodingDone: boolean
+  isOverdue: boolean
   isVideoDone: boolean
   roomId: string
   totalCodingQuestion: number
@@ -443,18 +458,6 @@ export interface HandlersCodingInterviewGetQuestionByTitleResponse {
   title?: string
 }
 
-export interface HandlersCreateRoomResponse {
-  candidateId: number
-  dueDate: string
-  isCodingDone: boolean
-  isVideoDone: boolean
-  roomId: string
-  totalCodingQuestion: number
-  totalCodingTime: number
-  totalVideoQuestion: number
-  totalVideoTime: number
-}
-
 export interface HandlersErrResponse {
   code?: number
   message?: string
@@ -489,6 +492,13 @@ export interface HandlersResponseArrayUserInWorkspace {
 export interface HandlersResponseArrayWorkspaceDetail {
   code?: number
   data?: WorkspaceDetail[]
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseCreateRoomResponse {
+  code?: number
+  data?: CreateRoomResponse
   message?: string
   timestamp?: string
 }
@@ -552,13 +562,6 @@ export interface HandlersResponseHandlersCodingInterviewGetQuestionsInPortalResp
 export interface HandlersResponseHandlersCodingInterviewGetQuestionsResponse {
   code?: number
   data?: DomainsCodingQuestionResponse[]
-  message?: string
-  timestamp?: string
-}
-
-export interface HandlersResponseHandlersCreateRoomResponse {
-  code?: number
-  data?: HandlersCreateRoomResponse
   message?: string
   timestamp?: string
 }
@@ -664,11 +667,17 @@ export type SubmitVideoInterviewData = HandlersResponseString
 export type SubmitVideoInterviewError = HandlersErrResponse
 
 export interface SubmitVideoInterviewPayload {
+  /** Candidate ID */
+  candidateId: number
   /**
    * Video Interview File
    * @format binary
    */
   file: File
+  /** Room ID */
+  roomId: string
+  /** Video Question ID */
+  videoQuestionId: number
 }
 
 export type UpdateQuestionData = HandlersResponseDomainsCodingQuestion
@@ -1160,6 +1169,7 @@ export namespace Room {
     export type RequestParams = {}
     export type RequestQuery = {
       roomId: string
+      rt: string
     }
     export type RequestBody = never
     export type RequestHeaders = {}

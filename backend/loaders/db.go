@@ -55,6 +55,7 @@ func CheckAutoMigrate() {
 			&domains.CodingQuestionInWorkspace{},
 			&domains.CodingQuestionSnapshot{},
 			&domains.Room{},
+			&domains.VideoQuestionSnapshot{},
 		)
 		if err != nil {
 			panic(err)

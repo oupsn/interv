@@ -32,15 +32,16 @@ func SetupRoutes() {
 	var userInWorkspaceRepositories = repositories.NewUserInWorkspaceRepository(*DB)
 	var portalRepository = repositories.NewPortalRepository(*DB)
 	var userInPoratlRepository = repositories.NewUserInPortalRepository(*DB)
+	var videoQuestionSnapshotRepositories = repositories.NewVideoQuestionSnapshotRepository(*DB)
 
 	// Services
 	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, userInPoratlRepository, workspaceRepositories)
-	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories)
+	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories, videoQuestionSnapshotRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
 	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories)
 	var mailServices = services.NewMailService(mailRepositories)
 	var questionServices = services.NewVideoQuestionService(videoQuestionRepositories)
-	var roomServices = services.NewRoomService(roomRepositories)
+	var roomServices = services.NewRoomService(roomRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories)
 	var portalService = services.NewPortalService(portalRepository)
 	var userInportalService = services.NewUserInPortalService(userInPoratlRepository)
 	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, userInportalService)

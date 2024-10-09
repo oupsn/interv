@@ -64,6 +64,7 @@ const VideoInterviewQuestionPanel: FC<VideoInterviewQuestionPanelProps> = ({
         setRecordState={setRecordState}
         handleNextQuestion={handleNextQuestion}
         setMediaBlob={setMediaBlob}
+        questionId={questionId}
       />
     )
   }

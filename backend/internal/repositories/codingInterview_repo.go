@@ -95,6 +95,15 @@ func (c *codingInterviewRepository) GetCodingQuestionTestcaseByQuestionID(questi
 	return testCases, nil
 }
 
+func (c *codingInterviewRepository) GetCodingQuestionByWorkspaceID(workspaceID int) ([]domains.CodingQuestionInWorkspace, error) {
+	var codingQuestions []domains.CodingQuestionInWorkspace
+	if err := c.DB.Model(&domains.CodingQuestionInWorkspace{}).Preload("CodingQuestion", "id = ?", workspaceID).
+		Find(&codingQuestions).Error; err != nil {
+		return nil, err
+	}
+	return codingQuestions, nil
+}
+
 func (c *codingInterviewRepository) SaveCodingQuestion(question domains.CodingQuestion) (domains.CodingQuestion, error) {
 	if err := c.DB.Create(&question).Error; err != nil {
 		return domains.CodingQuestion{}, err

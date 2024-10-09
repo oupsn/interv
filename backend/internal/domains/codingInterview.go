@@ -8,18 +8,19 @@ import (
 
 type CodingQuestion struct {
 	gorm.Model
-	Id                     uint                     `gorm:"primaryKey;autoIncrement" json:"id"`
-	Title                  string                   `gorm:"type:text" json:"title"`
-	Description            string                   `gorm:"type:text" json:"description"`
-	InputDescription       string                   `gorm:"type:text" json:"input_description"`
-	OutputDescription      string                   `gorm:"type:text" json:"output_description"`
-	CreatedAt              time.Time                `gorm:"autoCreateTime" json:"created_at"`
-	CreatedBy              string                   `gorm:"type:text" json:"created_by"`
-	UpdatedAt              time.Time                `gorm:"autoUpdateTime" json:"updated_at"`
-	UpdatedBy              string                   `gorm:"type:text" json:"updated_by"`
-	TestCases              []CodingQuestionTestCase `gorm:"foreignKey:CodingQuestionID;references:Id" json:"test_cases"`
-	Difficulty             string                   `gorm:"type:text" json:"difficulty"`
-	CodingQuestionInPortal []CodingQuestionInPortal `gorm:"foreignKey:CodingQuestionID;references:Id" json:"coding_question_in_portal"`
+	Id                        uint                        `gorm:"primaryKey;autoIncrement" json:"id"`
+	Title                     string                      `gorm:"type:text" json:"title"`
+	Description               string                      `gorm:"type:text" json:"description"`
+	InputDescription          string                      `gorm:"type:text" json:"input_description"`
+	OutputDescription         string                      `gorm:"type:text" json:"output_description"`
+	CreatedAt                 time.Time                   `gorm:"autoCreateTime" json:"created_at"`
+	CreatedBy                 string                      `gorm:"type:text" json:"created_by"`
+	UpdatedAt                 time.Time                   `gorm:"autoUpdateTime" json:"updated_at"`
+	UpdatedBy                 string                      `gorm:"type:text" json:"updated_by"`
+	TestCases                 []CodingQuestionTestCase    `gorm:"foreignKey:CodingQuestionID;references:Id" json:"test_cases"`
+	Difficulty                string                      `gorm:"type:text" json:"difficulty"`
+	CodingQuestionInPortal    []CodingQuestionInPortal    `gorm:"foreignKey:CodingQuestionID;references:Id" json:"coding_question_in_portal"`
+	CodingQuestionInWorkspace []CodingQuestionInWorkspace `gorm:"foreignKey:CodingQuestionID;references:Id" json:"coding_question_in_workspace"`
 }
 
 type CodingQuestionInPortal struct {

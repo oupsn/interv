@@ -826,7 +826,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.Response-handlers_CreateRoomResponse"
+                            "$ref": "#/definitions/handlers.Response-CreateRoomResponse"
                         }
                     },
                     "400": {
@@ -861,6 +861,12 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "rt",
                         "in": "query",
                         "required": true
                     }
@@ -1264,6 +1270,27 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Video Interview File",
                         "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Room ID",
+                        "name": "roomId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Candidate ID",
+                        "name": "candidateId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Video Question ID",
+                        "name": "videoQuestionId",
                         "in": "formData",
                         "required": true
                     }
@@ -1843,6 +1870,49 @@ const docTemplate = `{
                 }
             }
         },
+        "CreateRoomResponse": {
+            "type": "object",
+            "required": [
+                "candidateId",
+                "dueDate",
+                "isCodingDone",
+                "isVideoDone",
+                "roomId",
+                "totalCodingQuestion",
+                "totalCodingTime",
+                "totalVideoQuestion",
+                "totalVideoTime"
+            ],
+            "properties": {
+                "candidateId": {
+                    "type": "integer"
+                },
+                "dueDate": {
+                    "type": "string"
+                },
+                "isCodingDone": {
+                    "type": "boolean"
+                },
+                "isVideoDone": {
+                    "type": "boolean"
+                },
+                "roomId": {
+                    "type": "string"
+                },
+                "totalCodingQuestion": {
+                    "type": "integer"
+                },
+                "totalCodingTime": {
+                    "type": "integer"
+                },
+                "totalVideoQuestion": {
+                    "type": "integer"
+                },
+                "totalVideoTime": {
+                    "type": "integer"
+                }
+            }
+        },
         "CreateVideoQuestionBody": {
             "type": "object",
             "required": [
@@ -2048,8 +2118,10 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "candidateId",
+                "candidateName",
                 "dueDate",
                 "isCodingDone",
+                "isOverdue",
                 "isVideoDone",
                 "roomId",
                 "totalCodingQuestion",
@@ -2061,10 +2133,16 @@ const docTemplate = `{
                 "candidateId": {
                     "type": "integer"
                 },
+                "candidateName": {
+                    "type": "string"
+                },
                 "dueDate": {
                     "type": "string"
                 },
                 "isCodingDone": {
+                    "type": "boolean"
+                },
+                "isOverdue": {
                     "type": "boolean"
                 },
                 "isVideoDone": {
@@ -2881,49 +2959,6 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.CreateRoomResponse": {
-            "type": "object",
-            "required": [
-                "candidateId",
-                "dueDate",
-                "isCodingDone",
-                "isVideoDone",
-                "roomId",
-                "totalCodingQuestion",
-                "totalCodingTime",
-                "totalVideoQuestion",
-                "totalVideoTime"
-            ],
-            "properties": {
-                "candidateId": {
-                    "type": "integer"
-                },
-                "dueDate": {
-                    "type": "string"
-                },
-                "isCodingDone": {
-                    "type": "boolean"
-                },
-                "isVideoDone": {
-                    "type": "boolean"
-                },
-                "roomId": {
-                    "type": "string"
-                },
-                "totalCodingQuestion": {
-                    "type": "integer"
-                },
-                "totalCodingTime": {
-                    "type": "integer"
-                },
-                "totalVideoQuestion": {
-                    "type": "integer"
-                },
-                "totalVideoTime": {
-                    "type": "integer"
-                }
-            }
-        },
         "handlers.ErrResponse": {
             "type": "object",
             "properties": {
@@ -2954,6 +2989,23 @@ const docTemplate = `{
             "properties": {
                 "code": {
                     "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-CreateRoomResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/CreateRoomResponse"
                 },
                 "message": {
                     "type": "string"
@@ -3295,23 +3347,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domains.CodingQuestionResponse"
                     }
-                },
-                "message": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.Response-handlers_CreateRoomResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/handlers.CreateRoomResponse"
                 },
                 "message": {
                     "type": "string"

@@ -91,6 +91,37 @@ definitions:
     - totalVideoQuestion
     - totalVideoTime
     type: object
+  CreateRoomResponse:
+    properties:
+      candidateId:
+        type: integer
+      dueDate:
+        type: string
+      isCodingDone:
+        type: boolean
+      isVideoDone:
+        type: boolean
+      roomId:
+        type: string
+      totalCodingQuestion:
+        type: integer
+      totalCodingTime:
+        type: integer
+      totalVideoQuestion:
+        type: integer
+      totalVideoTime:
+        type: integer
+    required:
+    - candidateId
+    - dueDate
+    - isCodingDone
+    - isVideoDone
+    - roomId
+    - totalCodingQuestion
+    - totalCodingTime
+    - totalVideoQuestion
+    - totalVideoTime
+    type: object
   CreateVideoQuestionBody:
     properties:
       portalId:
@@ -233,9 +264,13 @@ definitions:
     properties:
       candidateId:
         type: integer
+      candidateName:
+        type: string
       dueDate:
         type: string
       isCodingDone:
+        type: boolean
+      isOverdue:
         type: boolean
       isVideoDone:
         type: boolean
@@ -251,8 +286,10 @@ definitions:
         type: integer
     required:
     - candidateId
+    - candidateName
     - dueDate
     - isCodingDone
+    - isOverdue
     - isVideoDone
     - roomId
     - totalCodingQuestion
@@ -785,37 +822,6 @@ definitions:
       title:
         type: string
     type: object
-  handlers.CreateRoomResponse:
-    properties:
-      candidateId:
-        type: integer
-      dueDate:
-        type: string
-      isCodingDone:
-        type: boolean
-      isVideoDone:
-        type: boolean
-      roomId:
-        type: string
-      totalCodingQuestion:
-        type: integer
-      totalCodingTime:
-        type: integer
-      totalVideoQuestion:
-        type: integer
-      totalVideoTime:
-        type: integer
-    required:
-    - candidateId
-    - dueDate
-    - isCodingDone
-    - isVideoDone
-    - roomId
-    - totalCodingQuestion
-    - totalCodingTime
-    - totalVideoQuestion
-    - totalVideoTime
-    type: object
   handlers.ErrResponse:
     properties:
       code:
@@ -837,6 +843,17 @@ definitions:
     properties:
       code:
         type: integer
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-CreateRoomResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/CreateRoomResponse'
       message:
         type: string
       timestamp:
@@ -1058,17 +1075,6 @@ definitions:
         items:
           $ref: '#/definitions/domains.CodingQuestionResponse'
         type: array
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
-  handlers.Response-handlers_CreateRoomResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/handlers.CreateRoomResponse'
       message:
         type: string
       timestamp:
@@ -1626,7 +1632,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.Response-handlers_CreateRoomResponse'
+            $ref: '#/definitions/handlers.Response-CreateRoomResponse'
         "400":
           description: Bad Request
           schema:
@@ -1646,6 +1652,10 @@ paths:
       parameters:
       - in: query
         name: roomId
+        required: true
+        type: string
+      - in: query
+        name: rt
         required: true
         type: string
       produces:
@@ -1911,6 +1921,21 @@ paths:
         name: file
         required: true
         type: file
+      - description: Room ID
+        in: formData
+        name: roomId
+        required: true
+        type: string
+      - description: Candidate ID
+        in: formData
+        name: candidateId
+        required: true
+        type: integer
+      - description: Video Question ID
+        in: formData
+        name: videoQuestionId
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
