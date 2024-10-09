@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom"
 import AppLayout from "@/components/layout/AppLayout.tsx"
-import MainLayout from "@/components/layout/MainLayout.tsx"
+import RoomMainLayout from "@/components/layout/RoomMainLayout.tsx"
 import LoginPage from "@/pages/login/Login.tsx"
 import RoomPage from "@/pages/room/Room.tsx"
 import Playground from "@/pages/playground/Playground.tsx"
@@ -107,7 +107,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/room/:roomId",
-    element: <MainLayout />,
+    element: <RoomMainLayout />,
     children: [
       {
         path: "",

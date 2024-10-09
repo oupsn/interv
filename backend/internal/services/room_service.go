@@ -6,6 +6,7 @@ import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/cryptone"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
+	"time"
 )
 
 var (
@@ -14,7 +15,7 @@ var (
 
 type IRoomService interface {
 	CreateRoom(room domains.Room) (*domains.Room, string, error)
-	GetRoomContext(roomId string, rt string) (*domains.Room, *domains.User, uint, uint, uint, uint, error)
+	GetRoomContext(roomId string, rt string) (*domains.Room, *domains.User, uint, uint, uint, uint, string, *time.Time, error)
 	UpdateRoomContext(room domains.Room) error
 }
 
@@ -50,21 +51,21 @@ func (l roomService) CreateRoom(room domains.Room) (*domains.Room, string, error
 	return createdRoom, token, nil
 }
 
-func (l roomService) GetRoomContext(roomId string, rt string) (*domains.Room, *domains.User, uint, uint, uint, uint, error) {
+func (l roomService) GetRoomContext(roomId string, rt string) (*domains.Room, *domains.User, uint, uint, uint, uint, string, *time.Time, error) {
 	token, err := cryptone.DecryptAES([]byte(viper.GetString("RT")), rt)
 
 	if token != roomId {
-		return nil, nil, 0, 0, 0, 0, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
 	}
 
 	room, err := l.roomRepo.GetById(roomId)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
 	}
 
 	workspace, err := l.videoQuestionRepo.GetByWorkspaceId(room.WorkspaceID)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
 	}
 
 	var videoQuestion []domains.VideoQuestion
@@ -79,20 +80,25 @@ func (l roomService) GetRoomContext(roomId string, rt string) (*domains.Room, *d
 
 	codingQuestion, err := l.codingInterviewRepo.GetCodingQuestionByWorkspaceID(int(room.WorkspaceID))
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
 	}
 
 	candidate, err := l.userRepo.FindById(room.CandidateID)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
 	}
 
 	workspace, err = l.workspaceRepo.FindById(room.WorkspaceID)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
 	}
 
-	return room, candidate, uint(len(videoQuestion)), videoQuestionTotalTime, uint(len(codingQuestion)), workspace.CodingTime, nil
+	rt, err = cryptone.EncryptAES([]byte(viper.GetString("RT")), roomId)
+	if err != nil {
+		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
+	}
+
+	return room, candidate, uint(len(videoQuestion)), videoQuestionTotalTime, uint(len(codingQuestion)), workspace.CodingTime, rt, &workspace.EndDate, nil
 }
 
 func (l roomService) UpdateRoomContext(room domains.Room) error {

@@ -67,60 +67,21 @@ definitions:
     properties:
       candidateId:
         type: integer
-      dueDate:
-        type: string
-      isCodingDone:
-        type: boolean
-      isVideoDone:
-        type: boolean
-      totalCodingQuestion:
-        type: integer
-      totalCodingTime:
-        type: integer
-      totalVideoQuestion:
-        type: integer
-      totalVideoTime:
+      workspaceId:
         type: integer
     required:
     - candidateId
-    - dueDate
-    - isCodingDone
-    - isVideoDone
-    - totalCodingQuestion
-    - totalCodingTime
-    - totalVideoQuestion
-    - totalVideoTime
+    - workspaceId
     type: object
   CreateRoomResponse:
     properties:
       candidateId:
         type: integer
-      dueDate:
-        type: string
-      isCodingDone:
-        type: boolean
-      isVideoDone:
-        type: boolean
       roomId:
         type: string
-      totalCodingQuestion:
-        type: integer
-      totalCodingTime:
-        type: integer
-      totalVideoQuestion:
-        type: integer
-      totalVideoTime:
-        type: integer
     required:
     - candidateId
-    - dueDate
-    - isCodingDone
-    - isVideoDone
     - roomId
-    - totalCodingQuestion
-    - totalCodingTime
-    - totalVideoQuestion
-    - totalVideoTime
     type: object
   CreateVideoQuestionBody:
     properties:
@@ -396,22 +357,12 @@ definitions:
     properties:
       candidateId:
         type: integer
-      dueDate:
-        type: string
       isCodingDone:
         type: boolean
       isVideoDone:
         type: boolean
       roomId:
         type: string
-      totalCodingQuestion:
-        type: integer
-      totalCodingTime:
-        type: integer
-      totalVideoQuestion:
-        type: integer
-      totalVideoTime:
-        type: integer
     required:
     - roomId
     type: object
@@ -574,6 +525,10 @@ definitions:
         items:
           $ref: '#/definitions/domains.CodingQuestionInPortal'
         type: array
+      coding_question_in_workspace:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionInWorkspace'
+        type: array
       created_at:
         type: string
       created_by:
@@ -623,6 +578,25 @@ definitions:
         type: integer
       updatedAt:
         type: string
+    type: object
+  domains.CodingQuestionInWorkspace:
+    properties:
+      codingQuestion:
+        $ref: '#/definitions/domains.CodingQuestion'
+      codingQuestionID:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      updatedAt:
+        type: string
+      workspace:
+        $ref: '#/definitions/domains.Workspace'
+      workspaceID:
+        type: integer
     type: object
   domains.CodingQuestionResponse:
     properties:
@@ -794,6 +768,66 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  domains.VideoQuestion:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      portalID:
+        type: integer
+      timeToAnswer:
+        type: integer
+      timeToPrepare:
+        type: integer
+      title:
+        type: string
+      totalAttempt:
+        type: integer
+      updatedAt:
+        type: string
+      workspace:
+        items:
+          $ref: '#/definitions/domains.Workspace'
+        type: array
+    type: object
+  domains.Workspace:
+    properties:
+      codingTime:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      endDate:
+        type: string
+      id:
+        type: integer
+      isCoding:
+        type: boolean
+      isVideo:
+        type: boolean
+      portalId:
+        type: integer
+      reqCamera:
+        type: boolean
+      reqMicrophone:
+        type: boolean
+      reqScreen:
+        type: boolean
+      startDate:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+      videoQuestion:
+        items:
+          $ref: '#/definitions/domains.VideoQuestion'
+        type: array
     type: object
   gorm.DeletedAt:
     properties:
@@ -1614,6 +1648,40 @@ paths:
       summary: Get portal
       tags:
       - portal
+  /room.checkAuthCandidate:
+    get:
+      consumes:
+      - application/json
+      operationId: checkAuthCandidate
+      parameters:
+      - description: room id
+        in: query
+        name: roomId
+        required: true
+        type: string
+      - description: room token
+        in: query
+        name: rt
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Check authentication for candidate
+      tags:
+      - room
   /room.createRoom:
     post:
       consumes:

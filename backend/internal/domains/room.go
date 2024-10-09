@@ -3,7 +3,6 @@ package domains
 import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"time"
 )
 
 type Room struct {
@@ -12,7 +11,8 @@ type Room struct {
 	WorkspaceID  uint
 	IsVideoDone  *bool
 	IsCodingDone *bool
-	DueDate      time.Time
+	Workspace    Workspace `gorm:"foreignKey:WorkspaceID"`
+	Candidate    User      `gorm:"foreignKey:CandidateID"`
 	gorm.Model
 }
 

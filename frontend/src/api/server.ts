@@ -21,6 +21,17 @@ export interface AdminCreateBody {
   username: string
 }
 
+export type CheckAuthCandidateData = HandlersResponseString
+
+export type CheckAuthCandidateError = HandlersErrResponse
+
+export interface CheckAuthCandidateParams {
+  /** room id */
+  roomId: string
+  /** room token */
+  rt: string
+}
+
 export interface CodingInterviewAddQuestionQuery {
   codingQuestionID: number
   target: string
@@ -64,13 +75,7 @@ export type CreateQuestionSnapshotPayload = DomainsCodingQuestionSnapshot[]
 
 export interface CreateRoomBody {
   candidateId: number
-  dueDate: string
-  isCodingDone: boolean
-  isVideoDone: boolean
-  totalCodingQuestion: number
-  totalCodingTime: number
-  totalVideoQuestion: number
-  totalVideoTime: number
+  workspaceId: number
 }
 
 export type CreateRoomData = HandlersResponseCreateRoomResponse
@@ -79,14 +84,7 @@ export type CreateRoomError = HandlersErrResponse
 
 export interface CreateRoomResponse {
   candidateId: number
-  dueDate: string
-  isCodingDone: boolean
-  isVideoDone: boolean
   roomId: string
-  totalCodingQuestion: number
-  totalCodingTime: number
-  totalVideoQuestion: number
-  totalVideoTime: number
 }
 
 export type CreateUserData = HandlersResponseUser
@@ -186,6 +184,7 @@ export type DeleteWorkspaceByIdError = HandlersErrResponse
 
 export interface DomainsCodingQuestion {
   coding_question_in_portal?: DomainsCodingQuestionInPortal[]
+  coding_question_in_workspace?: DomainsCodingQuestionInWorkspace[]
   createdAt?: string
   created_at?: string
   created_by?: string
@@ -211,6 +210,17 @@ export interface DomainsCodingQuestionInPortal {
   portal?: DomainsPortal
   portalID?: number
   updatedAt?: string
+}
+
+export interface DomainsCodingQuestionInWorkspace {
+  codingQuestion?: DomainsCodingQuestion
+  codingQuestionID?: number
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  id?: number
+  updatedAt?: string
+  workspace?: DomainsWorkspace
+  workspaceID?: number
 }
 
 export interface DomainsCodingQuestionResponse {
@@ -310,6 +320,37 @@ export interface DomainsUser {
   role?: string
   updatedAt?: string
   username?: string
+}
+
+export interface DomainsVideoQuestion {
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  id?: number
+  portalID?: number
+  timeToAnswer?: number
+  timeToPrepare?: number
+  title?: string
+  totalAttempt?: number
+  updatedAt?: string
+  workspace?: DomainsWorkspace[]
+}
+
+export interface DomainsWorkspace {
+  codingTime?: number
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  endDate?: string
+  id?: number
+  isCoding?: boolean
+  isVideo?: boolean
+  portalId?: number
+  reqCamera?: boolean
+  reqMicrophone?: boolean
+  reqScreen?: boolean
+  startDate?: string
+  title?: string
+  updatedAt?: string
+  videoQuestion?: DomainsVideoQuestion[]
 }
 
 export type GetCompileResultData = HandlersResponseHandlersCodingInterviewGetCompileResultResponse
@@ -686,14 +727,9 @@ export type UpdateQuestionError = HandlersErrResponse
 
 export interface UpdateRoomContextBody {
   candidateId?: number
-  dueDate?: string
   isCodingDone?: boolean
   isVideoDone?: boolean
   roomId: string
-  totalCodingQuestion?: number
-  totalCodingTime?: number
-  totalVideoQuestion?: number
-  totalVideoTime?: number
 }
 
 export type UpdateRoomContextData = HandlersResponseString
@@ -1137,6 +1173,29 @@ export namespace Portal {
 }
 
 export namespace Room {
+  /**
+   * No description
+   * @tags room
+   * @name CheckAuthCandidate
+   * @summary Check authentication for candidate
+   * @request GET:/room.checkAuthCandidate
+   * @response `200` `CheckAuthCandidateData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CheckAuthCandidate {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      /** room id */
+      roomId: string
+      /** room token */
+      rt: string
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = CheckAuthCandidateData
+  }
+
   /**
    * No description
    * @tags room
@@ -2044,6 +2103,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
   }
   room = {
+    /**
+     * No description
+     *
+     * @tags room
+     * @name CheckAuthCandidate
+     * @summary Check authentication for candidate
+     * @request GET:/room.checkAuthCandidate
+     * @response `200` `CheckAuthCandidateData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    checkAuthCandidate: (query: CheckAuthCandidateParams, params: RequestParams = {}) =>
+      this.request<CheckAuthCandidateData, CheckAuthCandidateError>({
+        path: `/room.checkAuthCandidate`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
     /**
      * No description
      *

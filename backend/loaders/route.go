@@ -109,6 +109,7 @@ func SetupRoutes() {
 	public.Post("room.createRoom", roomHandlers.CreateRoom)
 	public.Get("room.getRoomContext", roomHandlers.GetRoomContext)
 	public.Post("room.updateRoomContext", roomHandlers.UpdateRoomContext)
+	public.Get("room.checkAuthCandidate", roomHandlers.CheckAuthCandidate)
 
 	// portal
 	public.Get("portal.get", portalHandler.GetPortalById)
