@@ -48,7 +48,7 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                 <TableCell className="font-medium ">
                   <div className="flex flex-row gap-1">
                     <FaRegUser className="text-primary text-lg" />
-                    {user.userData?.name} + {user.userData.id}
+                    {user.userData?.name}
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">
