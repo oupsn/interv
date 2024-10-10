@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom"
 interface CodingInterviewFinishProps {
   timeTaken: number
   roomId: string
+  isRecordingSaved: boolean
 }
 
 function CodingInterviewFinish({
   timeTaken,
   roomId,
+  isRecordingSaved,
 }: CodingInterviewFinishProps) {
   const navigate = useNavigate()
 
@@ -20,24 +22,31 @@ function CodingInterviewFinish({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen  w-full">
-      <FaCheckCircle className="text-green-500 w-24 h-24 mx-auto mb-4" />
-      <h1 className="text-4xl font-bold text-gray-800 mb-4">
-        Congratulations!
-      </h1>
-      <p className="text-xl text-gray-600 mb-6">
-        You've completed the coding interview.
-      </p>
-      <p className="text-2xl font-semibold text-gray-700 mb-8">
-        Time taken: {formatTime(timeTaken)}
-      </p>
-      <button
-        onClick={() => navigate(`/room/${roomId}`)}
-        className="bg-primary text-white font-bold py-2 px-4 rounded transition duration-300"
-      >
-        Return to interview room
-      </button>
-    </div>
+    <>
+      {isRecordingSaved ? (
+        <div className="flex flex-col items-center justify-center min-h-screen  w-full">
+          <FaCheckCircle className="text-green-500 w-24 h-24 mx-auto mb-4" />
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">
+            Congratulations!
+          </h1>
+          <p className="text-xl text-gray-600 mb-6">
+            You've completed the coding interview.
+          </p>
+          <p className="text-2xl font-semibold text-gray-700 mb-8">
+            Time taken: {formatTime(timeTaken)}
+          </p>
+
+          <button
+            onClick={() => navigate(`/room/${roomId}`)}
+            className="bg-primary text-white font-bold py-2 px-4 rounded transition duration-300"
+          >
+            Return to interview room
+          </button>
+        </div>
+      ) : (
+        <></>
+      )}
+    </>
   )
 }
 

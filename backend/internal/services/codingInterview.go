@@ -1,18 +1,25 @@
 package services
 
 import (
+	"mime/multipart"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"github.com/gofiber/fiber/v2"
 )
 
 var (
-	ErrorGetCompileToken                   = fiber.NewError(fiber.StatusInternalServerError, "can not get compile token")
-	ErrorGetCompileResult                  = fiber.NewError(fiber.StatusInternalServerError, "can not get compile result")
-	ErrorGetCodingInterviewQuestions       = fiber.NewError(fiber.StatusInternalServerError, "can not get coding interview questions")
-	ErrorGetCodingInterviewTestcase        = fiber.NewError(fiber.StatusInternalServerError, "can not get coding interview testcase")
-	ErrorCreateCodingQuestion              = fiber.NewError(fiber.StatusInternalServerError, "can not create coding question")
-	ErrorGetCodingInterviewQuestionByTitle = fiber.NewError(fiber.StatusInternalServerError, "can not get coding interview question by title")
-	ErrorCreateCodingSnapshot              = fiber.NewError(fiber.StatusInternalServerError, "can not create coding snapshot")
+	ErrorGetCompileToken                      = fiber.NewError(fiber.StatusInternalServerError, "can not get compile token")
+	ErrorGetCompileResult                     = fiber.NewError(fiber.StatusInternalServerError, "can not get compile result")
+	ErrorGetCodingInterviewQuestions          = fiber.NewError(fiber.StatusInternalServerError, "can not get coding interview questions")
+	ErrorGetCodingInterviewTestcase           = fiber.NewError(fiber.StatusInternalServerError, "can not get coding interview testcase")
+	ErrorCreateCodingQuestion                 = fiber.NewError(fiber.StatusInternalServerError, "can not create coding question")
+	ErrorGetCodingInterviewQuestionByTitle    = fiber.NewError(fiber.StatusInternalServerError, "can not get coding interview question by title")
+	ErrorCreateCodingSnapshot                 = fiber.NewError(fiber.StatusInternalServerError, "can not create coding snapshot")
+	ErrorCreateCodingSubmission               = fiber.NewError(fiber.StatusInternalServerError, "can not create coding submission")
+	ErrorGetLintResult                        = fiber.NewError(fiber.StatusInternalServerError, "can not get lint result")
+	ErrorCreateCodingSubmissionTestCaseResult = fiber.NewError(fiber.StatusInternalServerError, "can not create coding submission test case result")
+	ErrorEncodingLintResult                   = fiber.NewError(fiber.StatusInternalServerError, "can not encode lint result")
+	ErrorEncodingCompileResult                = fiber.NewError(fiber.StatusInternalServerError, "can not encode compile result")
 )
 
 type ICodingInterviewService interface {
@@ -25,7 +32,9 @@ type ICodingInterviewService interface {
 	GetCompileResult(req domains.CompilationRequest) ([]domains.CompilationResultResponse, error)
 	CreateCodingQuestion(req domains.CodingQuestion, portalID uint) (domains.CreateCodingQuestionResponse, error)
 	CreateCodingSnapshot(req []domains.CodingQuestionSnapshot) (domains.CreateCodingQuestionResponse, error)
+	CreateCodingSubmission(req []domains.CreateCodingSubmissionRequest) (domains.CreateCodingSubmissionResponse, error)
 	AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error
 	DeleteCodingQuestion(codingQuestionID uint) error
 	UpdateCodingQuestion(codingQuestionID uint, question domains.CodingQuestion) (domains.CodingQuestion, error)
+	UploadCodingVideo(roomID string, screenFile *multipart.FileHeader, videoFile *multipart.FileHeader) error
 }

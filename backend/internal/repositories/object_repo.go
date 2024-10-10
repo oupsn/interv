@@ -2,10 +2,11 @@ package repositories
 
 import (
 	"context"
-	"github.com/minio/minio-go/v7"
 	"mime/multipart"
 	"net/url"
 	"time"
+
+	"github.com/minio/minio-go/v7"
 )
 
 type objectRepository struct {
@@ -26,6 +27,17 @@ func (o objectRepository) Upload(file *multipart.FileHeader, bucketName string, 
 	defer src.Close()
 
 	contentType := file.Header.Get("Content-Type")
+
+	exists, err := o.MINIO.BucketExists(context.Background(), bucketName)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		err = o.MINIO.MakeBucket(context.Background(), bucketName, minio.MakeBucketOptions{})
+		if err != nil {
+			return err
+		}
+	}
 
 	_, err = o.MINIO.PutObject(context.Background(), bucketName, objectName, src, file.Size, minio.PutObjectOptions{ContentType: contentType})
 	if err != nil {

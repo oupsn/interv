@@ -55,6 +55,12 @@ export type CreateAdminData = HandlersResponseUser
 
 export type CreateAdminError = HandlersErrResponse
 
+export type CreateCodingSubmissionData = HandlersResponseString
+
+export type CreateCodingSubmissionError = HandlersErrResponse
+
+export type CreateCodingSubmissionPayload = DomainsCreateCodingSubmissionRequest[]
+
 export interface CreatePortalBody {
   company_name: string
 }
@@ -242,14 +248,8 @@ export interface DomainsCodingQuestionSnapshot {
   createdAt?: string
   deletedAt?: GormDeletedAt
   id?: number
-  is_submitted?: boolean
   language?: string
-  linter_result?: string
-  memory_usage?: string
   room_id?: string
-  run_time?: string
-  test_cases_result?: number
-  time_taken?: number
   updatedAt?: string
 }
 
@@ -305,6 +305,14 @@ export interface DomainsCreateCodingQuestionRequest {
   portal_id?: number
   test_cases?: DomainsCodingQuestionTestCase[]
   title?: string
+}
+
+export interface DomainsCreateCodingSubmissionRequest {
+  code?: string
+  language?: string
+  question_id?: number
+  room_id?: string
+  time_taken?: number
 }
 
 export interface DomainsPortal {
@@ -779,6 +787,25 @@ export interface UploadObjectPayload {
   file: File
 }
 
+export type UploadVideoData = HandlersResponseString
+
+export type UploadVideoError = HandlersErrResponse
+
+export interface UploadVideoPayload {
+  /** Room ID */
+  roomID: string
+  /**
+   * Coding Interview Screen File
+   * @format binary
+   */
+  screenFile: File
+  /**
+   * Coding Interview Video File
+   * @format binary
+   */
+  videoFile: File
+}
+
 export interface User {
   created_at?: string
   id?: number
@@ -925,6 +952,24 @@ export namespace CodingInterview {
     export type RequestBody = CodingInterviewAddQuestionQuery
     export type RequestHeaders = {}
     export type ResponseBody = AddQuestionData
+  }
+
+  /**
+   * @description Create a new coding interview question submission
+   * @tags codingInterview
+   * @name CreateCodingSubmission
+   * @summary Create a new coding interview question submission
+   * @request POST:/codingInterview.createCodingSubmission
+   * @response `200` `CreateCodingSubmissionData` Successful response with a message
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CreateCodingSubmission {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = CreateCodingSubmissionPayload
+    export type RequestHeaders = {}
+    export type ResponseBody = CreateCodingSubmissionData
   }
 
   /**
@@ -1102,6 +1147,24 @@ export namespace CodingInterview {
     export type RequestBody = CodingInterviewUpdateQuestionQuery
     export type RequestHeaders = {}
     export type ResponseBody = UpdateQuestionData
+  }
+
+  /**
+   * @description Upload a coding interview video
+   * @tags codingInterview
+   * @name UploadVideo
+   * @summary Upload a coding interview video
+   * @request POST:/codingInterview.uploadVideo
+   * @response `200` `UploadVideoData` Successful response with a message
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace UploadVideo {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = UploadVideoPayload
+    export type RequestHeaders = {}
+    export type ResponseBody = UploadVideoData
   }
 }
 
@@ -1859,6 +1922,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
 
     /**
+     * @description Create a new coding interview question submission
+     *
+     * @tags codingInterview
+     * @name CreateCodingSubmission
+     * @summary Create a new coding interview question submission
+     * @request POST:/codingInterview.createCodingSubmission
+     * @response `200` `CreateCodingSubmissionData` Successful response with a message
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    createCodingSubmission: (body: CreateCodingSubmissionPayload, params: RequestParams = {}) =>
+      this.request<CreateCodingSubmissionData, CreateCodingSubmissionError>({
+        path: `/codingInterview.createCodingSubmission`,
+        method: "POST",
+        body: body,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Create a new coding interview question
      *
      * @tags codingInterview
@@ -2038,6 +2122,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         method: "PUT",
         body: body,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Upload a coding interview video
+     *
+     * @tags codingInterview
+     * @name UploadVideo
+     * @summary Upload a coding interview video
+     * @request POST:/codingInterview.uploadVideo
+     * @response `200` `UploadVideoData` Successful response with a message
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    uploadVideo: (data: UploadVideoPayload, params: RequestParams = {}) =>
+      this.request<UploadVideoData, UploadVideoError>({
+        path: `/codingInterview.uploadVideo`,
+        method: "POST",
+        body: data,
+        type: ContentType.FormData,
         format: "json",
         ...params,
       }),

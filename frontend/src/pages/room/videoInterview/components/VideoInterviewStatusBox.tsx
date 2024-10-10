@@ -7,7 +7,7 @@ interface VideoInterviewStatusBoxProps {
   status: StatusMessages
   error: string
 }
-const videoInterviewStatusBox: FC<VideoInterviewStatusBoxProps> = ({
+const VideoInterviewStatusBox: FC<VideoInterviewStatusBoxProps> = ({
   title,
   status,
   error,
@@ -33,4 +33,4 @@ const videoInterviewStatusBox: FC<VideoInterviewStatusBoxProps> = ({
   )
 }
 
-export default videoInterviewStatusBox
+export default VideoInterviewStatusBox

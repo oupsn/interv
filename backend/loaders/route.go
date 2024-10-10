@@ -32,13 +32,14 @@ func SetupRoutes() {
 	var userInWorkspaceRepositories = repositories.NewUserInWorkspaceRepository(*DB)
 	var portalRepository = repositories.NewPortalRepository(*DB)
 	var userInPoratlRepository = repositories.NewUserInPortalRepository(*DB)
+	var lintRepository = repositories.NewLinterRepository(viper.GetString(EnvPythonLinterEndpoint), viper.GetString(EnvJavaLinterEndpoint), viper.GetString(EnvCLinterEndpoint))
 	var videoQuestionSnapshotRepositories = repositories.NewVideoQuestionSnapshotRepository(*DB)
 
 	// Services
 	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, userInPoratlRepository, workspaceRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories, videoQuestionSnapshotRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
-	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories)
+	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, objectRepositories, lintRepository)
 	var mailServices = services.NewMailService(mailRepositories)
 	var questionServices = services.NewVideoQuestionService(videoQuestionRepositories)
 	var roomServices = services.NewRoomService(roomRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories)
@@ -96,9 +97,10 @@ func SetupRoutes() {
 	public.Post("codingInterview.createQuestion", codingInterviewHandlers.CreateQuestion)
 	public.Post("codingInterview.addQuestion", codingInterviewHandlers.AddQuestion)
 	public.Post("codingInterview.createQuestionSnapshot", codingInterviewHandlers.CreateCodingQuestionSnapshot)
+	public.Post("codingInterview.createCodingSubmission", codingInterviewHandlers.CreateCodingSubmission)
 	public.Put("codingInterview.updateQuestion/:codingQuestionID", codingInterviewHandlers.UpdateQuestion)
 	public.Delete("codingInterview.deleteQuestion/:codingQuestionID", codingInterviewHandlers.DeleteQuestion)
-
+	public.Post("codingInterview.uploadVideo", codingInterviewHandlers.UploadCodingVideo)
 	// video question
 	public.Post("videoQuestion.createVideoQuestion", questionHandlers.CreateVideoQuestion)
 	public.Get("videoQuestion.getVideoQuestionById", questionHandlers.GetVideoQuestionById)

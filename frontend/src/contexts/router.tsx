@@ -101,6 +101,10 @@ export const router = createBrowserRouter([
                 path: "edit/:codingTitle",
                 element: <QuestionBankCodingEdit />,
               },
+              {
+                path: "edit/:codingTitle",
+                element: <QuestionBankCodingEdit />,
+              },
             ],
           },
           {
