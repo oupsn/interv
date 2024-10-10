@@ -37,6 +37,7 @@ import { useGetVideoInterviewQuestionByPortalId } from "@/hooks/useGetVideoInter
 import { Checkbox } from "@/components/ui/checkbox"
 import { Link, useNavigate } from "react-router-dom"
 import QuestionPicker from "./components/QuestionPicker"
+import { Spinner } from "@/components/ui/spinner"
 
 // Zod schema for form validation
 
@@ -191,7 +192,11 @@ const CreateWorkspace = () => {
   }, [codeQuestion, videoQuestion, videoCurrentQuestion, firstTime])
 
   if (isCodeQuestionLoading || isVideoQuestionLoading) {
-    return <div className="h-full">...Loading</div>
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spinner size="lg" />
+      </div>
+    )
   }
   return (
     <ContentLayout

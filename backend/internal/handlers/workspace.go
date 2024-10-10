@@ -84,3 +84,9 @@ type VideoQuestionDetail struct {
 	TimeToAnswer  uint   `json:"timeToAnswer" validate:"required"`
 	TotalAttempt  uint   `json:"totalAttempt" validate:"required"`
 } // @name VideoQuestionDetail
+
+type InterestUser struct {
+	WorkspaceId uint `json:"workspaceId" validate:"required"`
+	UserId      uint `json:"userId" validate:"required"`
+	IsInterest  bool `json:"isInterest" validate:"required"`
+} // @name InterestUser

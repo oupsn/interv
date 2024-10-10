@@ -163,6 +163,7 @@ const WorkspaceCandidateList = () => {
                 listUser={data?.data?.individualUser ?? []}
                 page={page}
                 size={size}
+                workspace={Number(data.data.workspaceDetail.id)}
               />
             }
             size={size}

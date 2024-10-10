@@ -125,6 +125,33 @@ func (w WorkspaceHandler) GetUserInWorkspace(c *fiber.Ctx) error {
 	return Ok(c, response)
 }
 
+// InterestUser
+// @ID InterestUser
+// @Tags userInWorkspace
+// @Summary Interest User In Workspace
+// @Accept json
+// @Produce json
+// @Param payload query InterestUser true "InterestUser"
+// @Success 200 {object} Response[UserInWorkspace]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /userInWorkspace.interest [patch]
+func (w WorkspaceHandler) InterestUser(c *fiber.Ctx) error {
+	form := InterestUser{}
+
+	if err := c.QueryParser(&form); err != nil {
+		return err
+	}
+
+	err := w.workspaceService.InterestUser(form.WorkspaceId, form.UserId, &form.IsInterest)
+
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, err)
+}
+
 // GetPortalWorkspace
 // @ID GetPortalWorkspace
 // @Tags workspace

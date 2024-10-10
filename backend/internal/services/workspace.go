@@ -16,7 +16,7 @@ type IWorkspaceService interface {
 	GetUserNumInWorkspace(protalId *uint) (workspace []uint, err error)
 	Create(title string, startDate string, endDate string, isVideo *bool, isCoding *bool, videoTime uint, codingTime uint, reqScreen *bool, reqMicrophone *bool, reqCamera *bool, portalId uint, codeQuestion []uint, videoQuestion []uint) (workspace *domains.Workspace, err error)
 	Delete(id uint) (err error)
-
+	InterestUser(workspaceId uint, candidateId uint, interest *bool) error
 	GetUserInWorkspace(workspaceId uint) (listUser *[]domains.UserInWorkspace, err error)
 	DeleteUserInWorkspace(userId uint, workspaceId uint) (err error)
 }

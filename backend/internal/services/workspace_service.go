@@ -60,7 +60,9 @@ func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspa
 
 	return workspace, userInWorkspace, userData, nil
 }
-
+func (w *workspaceService) InterestUser(workspaceId uint, candidateId uint, interest *bool) error {
+	return w.userInWorkspaceRepository.InterestUser(workspaceId, candidateId, interest)
+}
 func (w *workspaceService) GetUserInWorkspace(id uint) (workspace *[]domains.UserInWorkspace, err error) {
 	return w.userInWorkspaceRepository.FindByWorkspaceId(id)
 }

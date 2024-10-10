@@ -9,16 +9,25 @@ import {
   TableCell,
   Table,
 } from "@/components/ui/table"
-import { FaEye, FaEdit, FaTrash, FaRegUser } from "react-icons/fa"
+import { FaEdit, FaTrash, FaRegUser, FaStar, FaRegStar } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
+import { server } from "@/contexts/swr"
+import { useGetWorkspace } from "@/hooks/useGetWorkspace"
 
 export type ListWorkspaceProps = {
   listUser: IndividualUser[]
   page: number
   size: number
+  workspace: number
 }
 
-const ListUser: React.FC<ListWorkspaceProps> = ({ listUser, page, size }) => {
+const ListUser: React.FC<ListWorkspaceProps> = ({
+  listUser,
+  page,
+  size,
+  workspace,
+}) => {
+  const { mutate } = useGetWorkspace(workspace)
   return (
     <Table>
       <TableHeader>
@@ -34,11 +43,11 @@ const ListUser: React.FC<ListWorkspaceProps> = ({ listUser, page, size }) => {
         {listUser?.map((user, index) => {
           if (index >= (page - 1) * size && index <= page * size - 1)
             return (
-              <TableRow key={user.id} className="">
+              <TableRow key={user.userInWorkspace.userId}>
                 <TableCell className="font-medium ">
                   <div className="flex flex-row gap-1">
                     <FaRegUser className="text-primary text-lg" />
-                    {user.userData?.name}
+                    {user.userData?.name} + {user.userData.id}
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">
@@ -50,8 +59,23 @@ const ListUser: React.FC<ListWorkspaceProps> = ({ listUser, page, size }) => {
                 <TableCell className="font-medium">0/20</TableCell>
                 <TableCell>
                   <td className="flex w-fit gap-2">
-                    <Button onClick={() => {}}>
-                      <FaEye />
+                    <Button
+                      onClick={() => {
+                        console.log(user.userData.id)
+                        server.userInWorkspace
+                          .interestUser({
+                            workspaceId: user.userInWorkspace.workspaceId,
+                            userId: user.userData.id ?? 0,
+                            isInterest: user.userInWorkspace.isInterest,
+                          })
+                          .then(() => mutate())
+                      }}
+                    >
+                      {user.userInWorkspace.isInterest ? (
+                        <FaStar />
+                      ) : (
+                        <FaRegStar />
+                      )}
                     </Button>
                     <Button onClick={() => {}}>
                       <FaEdit />

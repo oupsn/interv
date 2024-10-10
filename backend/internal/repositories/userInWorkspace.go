@@ -10,7 +10,7 @@ type IUserInWorkspaceRepository interface {
 	FindByWorkspaceId(workspaceId uint) (userInWorkspace *[]domains.UserInWorkspace, err error)
 	FindByUserIdAndWorkspaceId(userId uint, workspaceId uint) (userInWorkspace *domains.UserInWorkspace, err error)
 	GetUserNumberInWorkspace(workspaceId uint) (userNum int64, err error)
-
+	InterestUser(workspaceId uint, candidateId uint, interest *bool) error
 	DeleteById(id uint) (err error)
 	DeleteByUserId(userId uint) (err error)
 	DeleteByWorkspaceId(workspaceId uint) (err error)

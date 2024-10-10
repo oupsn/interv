@@ -140,6 +140,7 @@ func SetupRoutes() {
 	//// UserInWorkspace
 	private.Get("userInWorkspace.get", workspaceHandlers.GetUserInWorkspace)
 	private.Delete("userInWorkspace.delete", workspaceHandlers.DeleteUserFromWorkspace)
+	private.Patch("userInWorkspace.interest", workspaceHandlers.InterestUser)
 
 	// Object
 	private.Post("object.uploadObject", objectHandlers.UploadObject)

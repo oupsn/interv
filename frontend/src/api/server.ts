@@ -693,6 +693,16 @@ export interface IndividualUser {
   userInWorkspace: UserInWorkspace
 }
 
+export type InterestUserData = HandlersResponseUserInWorkspace
+
+export type InterestUserError = HandlersErrResponse
+
+export interface InterestUserParams {
+  isInterest: boolean
+  userId: number
+  workspaceId: number
+}
+
 export interface LoginBody {
   password: string
   username: string
@@ -1459,6 +1469,28 @@ export namespace UserInWorkspace {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetUserInWorkspaceData
+  }
+
+  /**
+   * No description
+   * @tags userInWorkspace
+   * @name InterestUser
+   * @summary Interest User In Workspace
+   * @request PATCH:/userInWorkspace.interest
+   * @response `200` `InterestUserData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace InterestUser {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      isInterest: boolean
+      userId: number
+      workspaceId: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = InterestUserData
   }
 }
 
@@ -2462,6 +2494,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       this.request<GetUserInWorkspaceData, GetUserInWorkspaceError>({
         path: `/userInWorkspace.get`,
         method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags userInWorkspace
+     * @name InterestUser
+     * @summary Interest User In Workspace
+     * @request PATCH:/userInWorkspace.interest
+     * @response `200` `InterestUserData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    interestUser: (query: InterestUserParams, params: RequestParams = {}) =>
+      this.request<InterestUserData, InterestUserError>({
+        path: `/userInWorkspace.interest`,
+        method: "PATCH",
         query: query,
         type: ContentType.Json,
         format: "json",
