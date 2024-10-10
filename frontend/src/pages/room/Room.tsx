@@ -50,7 +50,7 @@ const RoomPage = () => {
         ) : (
           <>
             <div className={"p-4 space-y-4 text-center"}>
-              <p className={"text-2xl font-semibold"}>
+              <p className={"text-2xl font-semibold mb-4"}>
                 Hi {data?.data?.candidateName}
               </p>
               <span>Please complete all the tasks before </span>

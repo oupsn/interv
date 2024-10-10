@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"strings"
 	"time"
 
@@ -189,6 +190,10 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 			})
 		}
 
+	}
+
+	if mailList == nil {
+		return fiber.NewError(fiber.StatusBadRequest, "No candidate to invite")
 	}
 
 	mailPayload := MailListPayload{
