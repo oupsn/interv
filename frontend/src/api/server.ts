@@ -46,6 +46,10 @@ export interface CodingInterviewGetCompileResultQuery {
   body: DomainsCompilationRequest
 }
 
+export interface CodingInterviewGetSubmissionResultByUserQuery {
+  userID: number
+}
+
 export interface CodingInterviewUpdateQuestionQuery {
   body: DomainsCreateCodingQuestionRequest
   codingQuestionID: number
@@ -253,6 +257,34 @@ export interface DomainsCodingQuestionSnapshot {
   updatedAt?: string
 }
 
+export interface DomainsCodingQuestionSubmission {
+  code?: string
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  id?: number
+  language?: string
+  linter_result?: string
+  question?: DomainsCodingQuestion
+  question_id?: number
+  room_id?: string
+  test_cases_result?: DomainsCodingQuestionSubmissionTestCaseResult[]
+  time_taken?: number
+  updatedAt?: string
+}
+
+export interface DomainsCodingQuestionSubmissionTestCaseResult {
+  compile_result?: string
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  id?: number
+  is_passed?: boolean
+  submission?: DomainsCodingQuestionSubmission
+  submission_id?: number
+  testCase?: DomainsCodingQuestionTestCase
+  test_case_id?: number
+  updatedAt?: string
+}
+
 export interface DomainsCodingQuestionTestCase {
   codingQuestionID?: number
   createdAt?: string
@@ -430,6 +462,10 @@ export interface GetRoomContextResponse {
   totalVideoTime: number
 }
 
+export type GetSubmissionResultByUserData = HandlersResponseHandlersCodingInterviewGetSubmissionResultByUserResponse
+
+export type GetSubmissionResultByUserError = HandlersErrResponse
+
 export type GetUserInWorkspaceData = HandlersResponseArrayUserInWorkspace
 
 export type GetUserInWorkspaceError = HandlersErrResponse
@@ -516,10 +552,20 @@ export interface HandlersCodingInterviewGetQuestionByTitleResponse {
   title?: string
 }
 
+export interface HandlersCodingInterviewGetSubmissionResultByUserResponse {
+  result?: DomainsCodingQuestionSubmission[]
+  screen_url?: string
+  video_url?: string
+}
+
 export interface HandlersErrResponse {
   code?: number
   message?: string
   timestamp?: string
+}
+
+export interface HandlersInviteAllCandidateBody {
+  workspaceId: number
 }
 
 export enum HandlersMailPreset {
@@ -631,6 +677,13 @@ export interface HandlersResponseHandlersCodingInterviewGetQuestionsResponse {
   timestamp?: string
 }
 
+export interface HandlersResponseHandlersCodingInterviewGetSubmissionResultByUserResponse {
+  code?: number
+  data?: HandlersCodingInterviewGetSubmissionResultByUserResponse
+  message?: string
+  timestamp?: string
+}
+
 export interface HandlersResponsePortalData {
   code?: number
   data?: PortalData
@@ -702,6 +755,10 @@ export interface InterestUserParams {
   userId: number
   workspaceId: number
 }
+
+export type InviteAllCandidateData = HandlersResponseString
+
+export type InviteAllCandidateError = HandlersErrResponse
 
 export interface LoginBody {
   password: string
@@ -1136,6 +1193,24 @@ export namespace CodingInterview {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetQuestionsInWorkspaceData
+  }
+
+  /**
+   * @description Get coding interview submission result by user
+   * @tags codingInterview
+   * @name GetSubmissionResultByUser
+   * @summary Get coding interview submission result by user
+   * @request POST:/codingInterview.getSubmissionResultByUser
+   * @response `200` `GetSubmissionResultByUserData` Successful response with the coding interview submission result by user
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetSubmissionResultByUser {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = CodingInterviewGetSubmissionResultByUserQuery
+    export type RequestHeaders = {}
+    export type ResponseBody = GetSubmissionResultByUserData
   }
 
   /**
@@ -1728,6 +1803,23 @@ export namespace Workspace {
     export type RequestHeaders = {}
     export type ResponseBody = GetWorkspaceData
   }
+
+  /**
+   * No description
+   * @tags workspace
+   * @name InviteAllCandidate
+   * @request POST:/workspace.inviteAll
+   * @response `200` `InviteAllCandidateData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace InviteAllCandidate {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = HandlersInviteAllCandidateBody
+    export type RequestHeaders = {}
+    export type ResponseBody = InviteAllCandidateData
+  }
 }
 
 import type { AxiosInstance, AxiosRequestConfig, HeadersDefaults, ResponseType } from "axios"
@@ -2132,6 +2224,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       this.request<GetQuestionsInWorkspaceData, GetQuestionsInWorkspaceError>({
         path: `/codingInterview.getQuestionsInWorkspace/${workspaceId}`,
         method: "GET",
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Get coding interview submission result by user
+     *
+     * @tags codingInterview
+     * @name GetSubmissionResultByUser
+     * @summary Get coding interview submission result by user
+     * @request POST:/codingInterview.getSubmissionResultByUser
+     * @response `200` `GetSubmissionResultByUserData` Successful response with the coding interview submission result by user
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getSubmissionResultByUser: (body: CodingInterviewGetSubmissionResultByUserQuery, params: RequestParams = {}) =>
+      this.request<GetSubmissionResultByUserData, GetSubmissionResultByUserError>({
+        path: `/codingInterview.getSubmissionResultByUser`,
+        method: "POST",
+        body: body,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -2774,6 +2887,26 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         path: `/workspace.get`,
         method: "GET",
         query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags workspace
+     * @name InviteAllCandidate
+     * @request POST:/workspace.inviteAll
+     * @response `200` `InviteAllCandidateData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    inviteAllCandidate: (payload: HandlersInviteAllCandidateBody, params: RequestParams = {}) =>
+      this.request<InviteAllCandidateData, InviteAllCandidateError>({
+        path: `/workspace.inviteAll`,
+        method: "POST",
+        body: payload,
         type: ContentType.Json,
         format: "json",
         ...params,

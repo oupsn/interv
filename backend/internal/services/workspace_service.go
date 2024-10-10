@@ -4,6 +4,8 @@ import (
 	"strings"
 	"time"
 
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/v"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 )
@@ -13,6 +15,8 @@ type workspaceService struct {
 	userInWorkspaceRepository repositories.IUserInWorkspaceRepository
 	userRepository            repositories.IUserRepository
 	userInPortalService       IUserInPortalService
+	mailService               IMailService
+	roomService               IRoomService
 	codingInterviewService    ICodingInterviewService
 	videoQuestionService      IVideoQuestionService
 	videoQuestionRepositories repositories.IVideoQuestionRepository
@@ -23,6 +27,8 @@ func NewWorkspaceService(
 	userInWorkspaceRepository repositories.IUserInWorkspaceRepository,
 	userRepository repositories.IUserRepository,
 	userInPortalService IUserInPortalService,
+	mailService IMailService,
+	roomService IRoomService,
 	codingInterviewService ICodingInterviewService,
 	videoQuestionService IVideoQuestionService,
 	videoQuestionRepositories repositories.IVideoQuestionRepository,
@@ -32,6 +38,8 @@ func NewWorkspaceService(
 		workspaceRepository:       workspaceRepository,
 		userRepository:            userRepository,
 		userInPortalService:       userInPortalService,
+		mailService:               mailService,
+		roomService:               roomService,
 		codingInterviewService:    codingInterviewService,
 		videoQuestionService:      videoQuestionService,
 		videoQuestionRepositories: videoQuestionRepositories,
@@ -147,4 +155,52 @@ func (w *workspaceService) Delete(id uint) (err error) {
 
 func (w *workspaceService) DeleteUserInWorkspace(userId uint, workspaceId uint) (err error) {
 	return w.userInWorkspaceRepository.DeleteByUserIdAndWorkspaceId(userId, workspaceId)
+}
+
+func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
+	workspace, err := w.workspaceRepository.FindById(workspaceId)
+	if err != nil {
+		return err
+	}
+
+	userInWorkspace, err := w.userInWorkspaceRepository.FindByWorkspaceId(workspaceId)
+	if err != nil {
+		return err
+	}
+
+	var mailList []MailObject
+
+	for _, u := range *userInWorkspace {
+		if err != nil {
+			return err
+		}
+		if u.Status == "idle" {
+			room, rt, err := w.roomService.CreateRoom(domains.Room{CandidateID: u.UserId, WorkspaceID: workspaceId, IsCodingDone: v.Ptr(false), IsVideoDone: v.Ptr(false)})
+			if err != nil {
+				return err
+			}
+			user, err := w.userRepository.FindById(u.UserId)
+			if err != nil {
+				return err
+			}
+			mailList = append(mailList, MailObject{
+				To:      user.Username,
+				Name:    user.Name,
+				DueDate: workspace.EndDate,
+				RoomId:  room.ID + "?rt=" + rt,
+			})
+		}
+
+	}
+
+	mailPayload := MailListPayload{
+		Preset:   Invite,
+		MailList: mailList,
+	}
+
+	if err := w.mailService.SendMail(mailPayload); err != nil {
+		return err
+	}
+
+	return nil
 }

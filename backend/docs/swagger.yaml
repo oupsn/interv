@@ -46,6 +46,13 @@ definitions:
     required:
     - body
     type: object
+  CodingInterviewGetSubmissionResultByUserQuery:
+    properties:
+      userID:
+        type: integer
+    required:
+    - userID
+    type: object
   CodingInterviewUpdateQuestionQuery:
     properties:
       body:
@@ -677,6 +684,58 @@ definitions:
       updatedAt:
         type: string
     type: object
+  domains.CodingQuestionSubmission:
+    properties:
+      code:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      language:
+        type: string
+      linter_result:
+        type: string
+      question:
+        $ref: '#/definitions/domains.CodingQuestion'
+      question_id:
+        type: integer
+      room_id:
+        type: string
+      test_cases_result:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionSubmissionTestCaseResult'
+        type: array
+      time_taken:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  domains.CodingQuestionSubmissionTestCaseResult:
+    properties:
+      compile_result:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      is_passed:
+        type: boolean
+      submission:
+        $ref: '#/definitions/domains.CodingQuestionSubmission'
+      submission_id:
+        type: integer
+      test_case_id:
+        type: integer
+      testCase:
+        $ref: '#/definitions/domains.CodingQuestionTestCase'
+      updatedAt:
+        type: string
+    type: object
   domains.CodingQuestionTestCase:
     properties:
       codingQuestionID:
@@ -902,6 +961,17 @@ definitions:
       title:
         type: string
     type: object
+  handlers.CodingInterviewGetSubmissionResultByUserResponse:
+    properties:
+      result:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionSubmission'
+        type: array
+      screen_url:
+        type: string
+      video_url:
+        type: string
+    type: object
   handlers.ErrResponse:
     properties:
       code:
@@ -910,6 +980,13 @@ definitions:
         type: string
       timestamp:
         type: string
+    type: object
+  handlers.InviteAllCandidateBody:
+    properties:
+      workspaceId:
+        type: integer
+    required:
+    - workspaceId
     type: object
   handlers.MailPreset:
     enum:
@@ -1168,6 +1245,17 @@ definitions:
         items:
           $ref: '#/definitions/domains.CodingQuestionResponse'
         type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-handlers_CodingInterviewGetSubmissionResultByUserResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/handlers.CodingInterviewGetSubmissionResultByUserResponse'
       message:
         type: string
       timestamp:
@@ -1553,6 +1641,38 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get coding interview questions in a workspace
+      tags:
+      - codingInterview
+  /codingInterview.getSubmissionResultByUser:
+    post:
+      consumes:
+      - application/json
+      description: Get coding interview submission result by user
+      operationId: GetSubmissionResultByUser
+      parameters:
+      - description: Request body containing the user ID
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/CodingInterviewGetSubmissionResultByUserQuery'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the coding interview submission result
+            by user
+          schema:
+            $ref: '#/definitions/handlers.Response-handlers_CodingInterviewGetSubmissionResultByUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get coding interview submission result by user
       tags:
       - codingInterview
   /codingInterview.updateQuestion/{codingQuestionID}:
@@ -2492,6 +2612,35 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get List of workspace
+      tags:
+      - workspace
+  /workspace.inviteAll:
+    post:
+      consumes:
+      - application/json
+      operationId: inviteAllCandidate
+      parameters:
+      - description: InviteAllCandidateBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.InviteAllCandidateBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
       tags:
       - workspace
 swagger: "2.0"

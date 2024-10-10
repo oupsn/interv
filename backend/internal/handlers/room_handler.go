@@ -4,6 +4,7 @@ import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/cryptone"
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/v"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 	"time"
@@ -41,8 +42,10 @@ func (l RoomHandler) CreateRoom(c *fiber.Ctx) error {
 	}
 
 	room, _, err := l.roomService.CreateRoom(domains.Room{
-		CandidateID: body.CandidateID,
-		WorkspaceID: body.WorkspaceID,
+		CandidateID:  body.CandidateID,
+		WorkspaceID:  body.WorkspaceID,
+		IsCodingDone: v.Ptr(false),
+		IsVideoDone:  v.Ptr(false),
 	})
 	if err != nil {
 		return err

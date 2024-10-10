@@ -20,6 +20,7 @@ import QuestionBankVideoDetail from "@/pages/portal/questionBank/components/Ques
 import QuestionBankCodingEdit from "@/pages/portal/questionBank/components/QuestionBankCodingEdit"
 import QuestionBankEditVideoQuestionForm from "@/pages/portal/questionBank/components/QuestionBankEditVideoQuestionForm.tsx"
 import WorkspaceInterestPage from "@/pages/portal/workspace/WorkspaceInterestPage"
+import CodingResult from "@/pages/portal/workspace/components/CodingResult"
 
 export const router = createBrowserRouter([
   {
@@ -153,6 +154,10 @@ export const router = createBrowserRouter([
   {
     path: "playground",
     element: <Playground />,
+  },
+  {
+    path: "coding/:userId",
+    element: <CodingResult />,
   },
 ])
 

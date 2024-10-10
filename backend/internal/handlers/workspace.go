@@ -76,6 +76,9 @@ type IndividualUser struct {
 	UserData        UserData        `json:"userData" validate:"required"`
 } // @name IndividualUser
 
+type InviteAllCandidateBody struct {
+	WorkspaceId uint `json:"workspaceId" validate:"required"`
+}
 type VideoQuestionDetail struct {
 	ID            uint   `json:"id" validate:"required"`
 	PortalID      uint   `json:"portalId" validate:"required"`

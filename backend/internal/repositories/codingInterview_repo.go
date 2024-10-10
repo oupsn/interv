@@ -50,7 +50,8 @@ func (c *codingInterviewRepository) GetCodingQuestionList() ([]domains.CodingQue
 
 func (c *codingInterviewRepository) GetCodingQuestionListInPortal(portalID int) ([]domains.CodingQuestion, error) {
 	var codingQuestions []domains.CodingQuestion
-	if err := c.DB.Joins("JOIN coding_question_in_portals ON coding_questions.id = coding_question_in_portals.coding_question_id").
+	if err := c.DB.Distinct("coding_questions.*").
+		Joins("JOIN coding_question_in_portals ON coding_questions.id = coding_question_in_portals.coding_question_id").
 		Where("coding_question_in_portals.portal_id = ?", portalID).
 		Find(&codingQuestions).Error; err != nil {
 		return nil, err
@@ -60,7 +61,8 @@ func (c *codingInterviewRepository) GetCodingQuestionListInPortal(portalID int) 
 
 func (c *codingInterviewRepository) GetCodingQuestionListInWorkspace(workspaceId int) ([]domains.CodingQuestion, error) {
 	var codingQuestions []domains.CodingQuestion
-	if err := c.DB.Joins("JOIN coding_question_in_workspaces ON coding_questions.id = coding_question_in_workspaces.coding_question_id").
+	if err := c.DB.Distinct("coding_questions.*").
+		Joins("JOIN coding_question_in_workspaces ON coding_questions.id = coding_question_in_workspaces.coding_question_id").
 		Where("coding_question_in_workspaces.workspace_id = ?", workspaceId).
 		Find(&codingQuestions).Error; err != nil {
 		return nil, err
@@ -115,11 +117,48 @@ func (c *codingInterviewRepository) GetCodingQuestionByWorkspaceID(workspaceID i
 	return codingQuestions, nil
 }
 
+func (c *codingInterviewRepository) GetCodingQuestionSubmissionByUserID(userID uint) ([]domains.CodingQuestionSubmission, error) {
+	//get room id from user id
+	var roomID string
+	if err := c.DB.Model(&domains.Room{}).Where("candidate_id = ?", userID).Pluck("id", &roomID).Error; err != nil {
+		return nil, err
+	}
+	var codingQuestionSubmissions []domains.CodingQuestionSubmission
+
+	if err := c.DB.Where("room_id = ?", roomID).Find(&codingQuestionSubmissions).Error; err != nil {
+		return nil, err
+	}
+	var response []domains.CodingQuestionSubmission
+	for _, codingQuestionSubmission := range codingQuestionSubmissions {
+		var testCaseResults []domains.CodingQuestionSubmissionTestCaseResult
+		var codingQuestion domains.CodingQuestion
+		if err := c.DB.Where("submission_id = ?", codingQuestionSubmission.Id).Find(&testCaseResults).Error; err != nil {
+			return nil, err
+		}
+		if err := c.DB.Where("id = ?", codingQuestionSubmission.QuestionID).Find(&codingQuestion).Error; err != nil {
+			return nil, err
+		}
+		codingQuestionSubmission.Question = codingQuestion
+		codingQuestionSubmission.TestCasesResult = testCaseResults
+		response = append(response, codingQuestionSubmission)
+	}
+
+	return response, nil
+}
+
 func (c *codingInterviewRepository) SaveCodingQuestion(question domains.CodingQuestion) (domains.CodingQuestion, error) {
 	if err := c.DB.Create(&question).Error; err != nil {
 		return domains.CodingQuestion{}, err
 	}
 	return question, nil
+}
+
+func (c *codingInterviewRepository) GetRoomIDByUserID(userID uint) (string, error) {
+	var roomID string
+	if err := c.DB.Model(&domains.Room{}).Where("candidate_id = ?", userID).Pluck("id", &roomID).Error; err != nil {
+		return "", err
+	}
+	return roomID, nil
 }
 
 func (c *codingInterviewRepository) SaveCodingSnapshot(snapshot domains.CodingQuestionSnapshot) (domains.CodingQuestionSnapshot, error) {
