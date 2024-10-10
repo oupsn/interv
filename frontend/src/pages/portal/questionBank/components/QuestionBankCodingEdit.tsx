@@ -493,55 +493,69 @@ function QuestionBankCodingEdit() {
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center space-x-4">
                                     <div className="flex items-center space-x-2">
-                                      <Checkbox
-                                        id={`hidden-${index}`}
-                                        checked={field.isHidden}
-                                        onCheckedChange={(checked) => {
-                                          form.setValue(
-                                            `testCases.${index}.isHidden`,
-                                            checked as boolean,
-                                          )
-                                          if (checked) {
-                                            form.setValue(
-                                              `testCases.${index}.isExample`,
-                                              false,
-                                            )
-                                          }
-                                        }}
+                                      <FormField
+                                        control={form.control}
+                                        name={`testCases.${index}.isHidden`}
+                                        render={({ field }) => (
+                                          <FormItem className="flex items-center space-x-2">
+                                            <FormControl>
+                                              <Checkbox
+                                                id={`hidden-${index}`}
+                                                checked={field.value}
+                                                onCheckedChange={(checked) => {
+                                                  field.onChange(checked)
+                                                  if (checked) {
+                                                    form.setValue(
+                                                      `testCases.${index}.isExample`,
+                                                      false,
+                                                    )
+                                                  }
+                                                }}
+                                              />
+                                            </FormControl>
+                                            <label
+                                              htmlFor={`hidden-${index}`}
+                                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                            >
+                                              Hidden
+                                            </label>
+                                          </FormItem>
+                                        )}
                                       />
-                                      <label
-                                        htmlFor={`hidden-${index}`}
-                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                      >
-                                        Hidden
-                                      </label>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                      <Checkbox
-                                        id={`example-${index}`}
-                                        checked={field.isExample}
-                                        onCheckedChange={(checked) => {
-                                          form.setValue(
-                                            `testCases.${index}.isExample`,
-                                            checked as boolean,
-                                          )
-                                          if (checked) {
-                                            form.setValue(
-                                              `testCases.${index}.isHidden`,
-                                              false,
-                                            )
-                                          }
-                                        }}
+                                      <FormField
+                                        control={form.control}
+                                        name={`testCases.${index}.isExample`}
+                                        render={({ field }) => (
+                                          <FormItem className="flex items-center space-x-2">
+                                            <FormControl>
+                                              <Checkbox
+                                                id={`example-${index}`}
+                                                checked={field.value}
+                                                onCheckedChange={(checked) => {
+                                                  field.onChange(checked)
+                                                  if (checked) {
+                                                    form.setValue(
+                                                      `testCases.${index}.isHidden`,
+                                                      false,
+                                                    )
+                                                  }
+                                                }}
+                                              />
+                                            </FormControl>
+                                            <label
+                                              htmlFor={`example-${index}`}
+                                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                            >
+                                              Example
+                                            </label>
+                                          </FormItem>
+                                        )}
                                       />
-                                      <label
-                                        htmlFor={`example-${index}`}
-                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                      >
-                                        Example
-                                      </label>
                                     </div>
                                   </div>
-                                  {
+                                  {fields.length > 1 && (
                                     <Button
                                       type="button"
                                       onClick={() => remove(index)}
@@ -552,7 +566,7 @@ function QuestionBankCodingEdit() {
                                       <Trash2 className="h-4 w-4 mr-2" />
                                       Remove
                                     </Button>
-                                  }
+                                  )}
                                 </div>
                               </div>
                             ))

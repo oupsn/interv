@@ -129,6 +129,20 @@ func (c *codingInterviewRepository) SaveCodingSnapshot(snapshot domains.CodingQu
 	return snapshot, nil
 }
 
+func (c *codingInterviewRepository) SaveCodingSubmission(submission domains.CodingQuestionSubmission) (domains.CodingQuestionSubmission, error) {
+	if err := c.DB.Create(&submission).Error; err != nil {
+		return domains.CodingQuestionSubmission{}, err
+	}
+	return submission, nil
+}
+
+func (c *codingInterviewRepository) SaveCodingSubmissionTestCaseResult(submissionTestCaseResult domains.CodingQuestionSubmissionTestCaseResult) (domains.CodingQuestionSubmissionTestCaseResult, error) {
+	if err := c.DB.Create(&submissionTestCaseResult).Error; err != nil {
+		return domains.CodingQuestionSubmissionTestCaseResult{}, err
+	}
+	return submissionTestCaseResult, nil
+}
+
 func (c *codingInterviewRepository) AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error {
 	if target == "portal" {
 		if err := c.DB.Create(&domains.CodingQuestionInPortal{

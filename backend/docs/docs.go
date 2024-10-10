@@ -154,6 +154,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/codingInterview.createCodingSubmission": {
+            "post": {
+                "description": "Create a new coding interview question submission",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Create a new coding interview question submission",
+                "operationId": "CreateCodingSubmission",
+                "parameters": [
+                    {
+                        "description": "Request body containing the coding question submissions",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domains.CreateCodingSubmissionRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with a message",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/codingInterview.createQuestion": {
             "post": {
                 "description": "Create a new coding interview question",
@@ -551,6 +601,65 @@ const docTemplate = `{
                         "description": "Successful response with the updated question",
                         "schema": {
                             "$ref": "#/definitions/handlers.Response-domains_CodingQuestion"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/codingInterview.uploadVideo": {
+            "post": {
+                "description": "Upload a coding interview video",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Upload a coding interview video",
+                "operationId": "UploadVideo",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Coding Interview Video File",
+                        "name": "videoFile",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Coding Interview Screen File",
+                        "name": "screenFile",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Room ID",
+                        "name": "roomID",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with a message",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
                         }
                     },
                     "400": {
@@ -2826,29 +2935,11 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "is_submitted": {
-                    "type": "boolean"
-                },
                 "language": {
-                    "type": "string"
-                },
-                "linter_result": {
-                    "type": "string"
-                },
-                "memory_usage": {
                     "type": "string"
                 },
                 "room_id": {
                     "type": "string"
-                },
-                "run_time": {
-                    "type": "string"
-                },
-                "test_cases_result": {
-                    "type": "integer"
-                },
-                "time_taken": {
-                    "type": "integer"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2992,6 +3083,26 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "domains.CreateCodingSubmissionRequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "question_id": {
+                    "type": "integer"
+                },
+                "room_id": {
+                    "type": "string"
+                },
+                "time_taken": {
+                    "type": "integer"
                 }
             }
         },

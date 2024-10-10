@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useContext } from "react"
 import CodingInterviewQuestion, {
   CodingInterviewQuestionProps,
 } from "./codingInterviewPanel/CodingInterviewQuestion"
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { server } from "@/contexts/swr"
 import {
   DomainsCompilationResultResponse,
-  DomainsCodingQuestionSnapshot,
+  DomainsCreateCodingSubmissionRequest,
 } from "@/api/server"
 import {
   Dialog,
@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { LoadingContext } from "@/contexts/loading"
 
 interface CodingInterviewPanelProps {
   timeRemain: number
@@ -67,7 +68,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   const [isCompiling, setIsCompiling] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false)
-
+  const { setLoading, setText } = useContext(LoadingContext)
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown((prevCountdown) => prevCountdown - 1)
@@ -169,27 +170,26 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   }
 
   const confirmSubmit = async () => {
-    const submissionData: DomainsCodingQuestionSnapshot[] = questions.map(
-      (question, index) => ({
+    setIsSubmitDialogOpen(false)
+    setLoading(true)
+    setText("Submitting coding question...")
+    const submissionData: DomainsCreateCodingSubmissionRequest[] =
+      questions.map((question, index) => ({
         room_id: roomId,
         question_id: question.id,
         code: editorStates[index].content,
         language: editorStates[index].language,
         time_taken: timeTaken,
-        is_submitted: true,
-      }),
-    )
-
-    console.log(submissionData)
+      }))
     try {
       const response =
-        await server.codingInterview.createQuestionSnapshot(submissionData)
+        await server.codingInterview.createCodingSubmission(submissionData)
       console.log("Submission successful:", response)
     } catch (error) {
       console.error("Submission failed:", error)
     }
     setIsFinish(true)
-    setIsSubmitDialogOpen(false)
+    setLoading(false)
   }
 
   return (

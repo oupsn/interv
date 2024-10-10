@@ -54,12 +54,29 @@ type CodingQuestionSnapshot struct {
 	RoomID           string `gorm:"index" json:"room_id"`
 	Code             string `gorm:"type:text" json:"code"`
 	Language         string `gorm:"type:text" json:"language"`
-	MemoryUsage      string `gorm:"type:text" json:"memory_usage"`
-	RunTime          string `gorm:"type:text" json:"run_time"`
-	TimeTaken        int64  `gorm:"type:bigint" json:"time_taken"`
-	LinterResult     string `gorm:"type:text" json:"linter_result"`
-	TestCasesResult  uint   `gorm:"type:integer" json:"test_cases_result"`
-	IsSubmitted      *bool  `gorm:"default:false" json:"is_submitted"`
+}
+
+type CodingQuestionSubmission struct {
+	gorm.Model
+	Id              uint                                     `gorm:"primaryKey;autoIncrement" json:"id"`
+	RoomID          string                                   `gorm:"index" json:"room_id"`
+	QuestionID      uint                                     `gorm:"index" json:"question_id"`
+	Code            string                                   `gorm:"type:text" json:"code"`
+	Language        string                                   `gorm:"type:text" json:"language"`
+	TimeTaken       int64                                    `gorm:"type:bigint" json:"time_taken"`
+	LinterResult    string                                   `gorm:"type:text" json:"linter_result"`
+	TestCasesResult []CodingQuestionSubmissionTestCaseResult `gorm:"foreignKey:SubmissionId;references:Id" json:"test_cases_result"`
+	Question        CodingQuestion                           `gorm:"foreignKey:QuestionID"`
+}
+type CodingQuestionSubmissionTestCaseResult struct {
+	gorm.Model
+	Id            uint                     `gorm:"primaryKey;autoIncrement" json:"id"`
+	SubmissionId  uint                     `gorm:"index" json:"submission_id"`
+	TestCaseId    uint                     `gorm:"type:integer" json:"test_case_id"`
+	IsPassed      bool                     `gorm:"type:boolean" json:"is_passed"`
+	CompileResult string                   `gorm:"type:text" json:"compile_result"`
+	TestCase      CodingQuestionTestCase   `gorm:"foreignKey:TestCaseId"`
+	Submission    CodingQuestionSubmission `gorm:"foreignKey:SubmissionId"`
 }
 
 type CodingQuestionTestCaseResponse struct {
@@ -103,4 +120,27 @@ type CreateCodingSnapshotRequest struct {
 type CreateCodingQuestionResponse struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
+}
+
+type CreateCodingSubmissionRequest struct {
+	RoomID     string `json:"room_id"`
+	QuestionID uint   `json:"question_id"`
+	Code       string `json:"code"`
+	Language   string `json:"language"`
+	TimeTaken  int64  `json:"time_taken"`
+}
+
+type CreateCodingSubmissionResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
+type AnalyzeResponse struct {
+	Message string          `json:"message"`
+	Result  []AnalyzeResult `json:"result"`
+}
+
+type AnalyzeResult struct {
+	Line        int    `json:"line"`
+	Description string `json:"description"`
 }

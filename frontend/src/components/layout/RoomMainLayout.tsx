@@ -34,7 +34,7 @@ export default function RoomMainLayout() {
   }
 
   if (isAuthLoading) {
-    return <LoadingWrapper isLoading={isAuthLoading}></LoadingWrapper>
+    return <LoadingWrapper isLoading={isAuthLoading} text={""}></LoadingWrapper>
   } else {
     if (!isAuthedCandidate) {
       return (

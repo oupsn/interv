@@ -1,7 +1,9 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
+	"mime/multipart"
 	"strings"
 	"time"
 
@@ -12,13 +14,17 @@ import (
 type codingInterviewService struct {
 	codeCompilationRepository repositories.ICompilationRepository
 	codingInterviewRepository repositories.ICodingInterviewRepository
+	objectRepository          repositories.IObjectRepository
+	lintRepository            repositories.ILinterRepository
 }
 
-func NewCodingInterviewService(codeCompilationRepository repositories.ICompilationRepository, codingInterviewRepository repositories.ICodingInterviewRepository) ICodingInterviewService {
+func NewCodingInterviewService(codeCompilationRepository repositories.ICompilationRepository, codingInterviewRepository repositories.ICodingInterviewRepository, objectRepository repositories.IObjectRepository, lintRepository repositories.ILinterRepository) ICodingInterviewService {
 
 	return &codingInterviewService{
 		codeCompilationRepository: codeCompilationRepository,
 		codingInterviewRepository: codingInterviewRepository,
+		objectRepository:          objectRepository,
+		lintRepository:            lintRepository,
 	}
 }
 
@@ -134,14 +140,78 @@ func (s *codingInterviewService) CreateCodingSnapshot(req []domains.CodingQuesti
 			return domains.CreateCodingQuestionResponse{}, ErrorCreateCodingSnapshot
 		}
 	}
-	fmt.Println(*req[0].IsSubmitted)
-	if req[0].IsSubmitted != nil && *req[0].IsSubmitted {
-		s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, true)
-	}
 
 	return domains.CreateCodingQuestionResponse{
 		Status:  "success",
 		Message: "Coding snapshot created successfully",
+	}, nil
+}
+
+func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodingSubmissionRequest) (domains.CreateCodingSubmissionResponse, error) {
+	for _, submission := range req {
+		langCode := map[string]uint{
+			"python": 10,
+			"java":   4,
+			"c":      1,
+		}
+		compileReq := domains.CompilationRequest{
+			QuestionID: submission.QuestionID,
+			SourceCode: submission.Code,
+			Language:   langCode[submission.Language],
+		}
+		compileResult, err := s.GetCompileResult(compileReq)
+		if err != nil {
+			return domains.CreateCodingSubmissionResponse{}, ErrorGetCompileResult
+		}
+		lintReq := repositories.AnalyzeRequest{
+			Code:     submission.Code,
+			Language: submission.Language,
+		}
+		lintResult, err := s.lintRepository.Analyze(lintReq)
+		if err != nil {
+			return domains.CreateCodingSubmissionResponse{}, ErrorGetLintResult
+		}
+		// Encode lintResult to JSON string
+		lintResultJSON, err := json.Marshal(lintResult)
+		if err != nil {
+			return domains.CreateCodingSubmissionResponse{}, ErrorEncodingLintResult
+		}
+
+		submissionResult, err := s.codingInterviewRepository.SaveCodingSubmission(domains.CodingQuestionSubmission{
+			RoomID:       submission.RoomID,
+			Code:         submission.Code,
+			QuestionID:   submission.QuestionID,
+			Language:     submission.Language,
+			TimeTaken:    submission.TimeTaken,
+			LinterResult: string(lintResultJSON),
+		})
+		if err != nil {
+			return domains.CreateCodingSubmissionResponse{}, ErrorCreateCodingSubmission
+		}
+		/* 		Insert compile result
+		 */
+		for _, testCase := range compileResult {
+			compileResultJSON, err := json.Marshal(testCase.CompileResult)
+			if err != nil {
+				return domains.CreateCodingSubmissionResponse{}, ErrorEncodingCompileResult
+			}
+			_, err = s.codingInterviewRepository.SaveCodingSubmissionTestCaseResult(domains.CodingQuestionSubmissionTestCaseResult{
+				TestCaseId:    uint(testCase.TestcaseId),
+				SubmissionId:  submissionResult.Id,
+				IsPassed:      testCase.IsPassed,
+				CompileResult: string(compileResultJSON),
+			})
+			if err != nil {
+				return domains.CreateCodingSubmissionResponse{}, ErrorCreateCodingSubmissionTestCaseResult
+			}
+		}
+
+	}
+	s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, true)
+
+	return domains.CreateCodingSubmissionResponse{
+		Status:  "success",
+		Message: "Coding submission created successfully",
 	}, nil
 }
 
@@ -155,4 +225,20 @@ func (s *codingInterviewService) UpdateCodingQuestion(codingQuestionID uint, que
 
 func (s *codingInterviewService) DeleteCodingQuestion(codingQuestionID uint) error {
 	return s.codingInterviewRepository.DeleteCodingQuestion(codingQuestionID)
+}
+
+func (s *codingInterviewService) UploadCodingVideo(roomID string, screenFile *multipart.FileHeader, videoFile *multipart.FileHeader) error {
+	filename := fmt.Sprintf("%s-%s", roomID, screenFile.Filename)
+	err := s.objectRepository.Upload(screenFile, "coding-interview", filename)
+	if err != nil {
+		fmt.Println(err)
+		return ErrorUploadingVideo
+	}
+	filename = fmt.Sprintf("%s-%s", roomID, videoFile.Filename)
+	err = s.objectRepository.Upload(videoFile, "coding-interview", filename)
+	if err != nil {
+		fmt.Println(err)
+		return ErrorUploadingVideo
+	}
+	return nil
 }

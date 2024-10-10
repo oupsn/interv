@@ -153,6 +153,11 @@ func (co CodingInterviewHandler) CreateQuestion(c *fiber.Ctx) error {
 			OutputDescription: req.Body.OutputDescription,
 			TestCases:         req.Body.TestCases,
 			Difficulty:        req.Body.Difficulty,
+			CodingQuestionInPortal: []domains.CodingQuestionInPortal{
+				{
+					PortalID: uint(req.Body.PortalId),
+				},
+			},
 		},
 		req.Body.PortalId,
 	)
@@ -214,6 +219,31 @@ func (co CodingInterviewHandler) CreateCodingQuestionSnapshot(c *fiber.Ctx) erro
 	return Ok(c, "Coding question snapshot created successfully")
 }
 
+// @Summary Create a new coding interview question submission
+// @Description Create a new coding interview question submission
+// @Tags codingInterview
+// @ID CreateCodingSubmission
+// @Accept json
+// @Produce json
+// @Param body body CodingInterviewCreateQuestionSubmissionQuery true "Request body containing the coding question submissions"
+// @Success 200 {object} Response[string] "Successful response with a message"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.createCodingSubmission [post]
+func (co CodingInterviewHandler) CreateCodingSubmission(c *fiber.Ctx) error {
+	var req CodingInterviewCreateQuestionSubmissionQuery
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	_, err := co.codingInterviewService.CreateCodingSubmission(req)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, "Coding question submission created successfully")
+}
+
 // @Summary Update a coding interview question
 // @Description Update a coding interview question
 // @Tags codingInterview
@@ -270,4 +300,33 @@ func (co CodingInterviewHandler) DeleteQuestion(c *fiber.Ctx) error {
 	}
 
 	return Ok(c, "Coding question deleted successfully")
+}
+
+// @Summary Upload a coding interview video
+// @Description Upload a coding interview video
+// @Tags codingInterview
+// @ID UploadVideo
+// @Accept json
+// @Produce json
+// @Param videoFile formData file true "Coding Interview Video File"
+// @Param screenFile formData file true "Coding Interview Screen File"
+// @Param roomID formData string true "Room ID"
+// @Success 200 {object} Response[string] "Successful response with a message"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.uploadVideo [post]
+func (co CodingInterviewHandler) UploadCodingVideo(c *fiber.Ctx) error {
+	videoFile, err := c.FormFile("videoFile")
+	screenFile, err := c.FormFile("screenFile")
+	roomID := c.FormValue("roomID")
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Failed to read file")
+	}
+
+	err = co.codingInterviewService.UploadCodingVideo(roomID, videoFile, screenFile)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, "Coding video uploaded successfully")
 }

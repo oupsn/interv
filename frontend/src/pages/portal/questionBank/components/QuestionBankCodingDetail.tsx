@@ -26,6 +26,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
 import { Edit } from "lucide-react"
 import { FaEdit, FaTrash } from "react-icons/fa"
+import { CheckCircle2, XCircle } from "lucide-react"
 
 function QuestionBankCodingDetail() {
   const { codingTitle } = useParams()
@@ -172,6 +173,7 @@ function QuestionBankCodingDetail() {
                             textAlign: "left",
                             padding: "8px",
                             border: "1px solid #ddd",
+                            width: "40%",
                           }}
                         >
                           Input
@@ -181,9 +183,30 @@ function QuestionBankCodingDetail() {
                             textAlign: "left",
                             padding: "8px",
                             border: "1px solid #ddd",
+                            width: "40%",
                           }}
                         >
                           Output
+                        </th>
+                        <th
+                          style={{
+                            textAlign: "center",
+                            padding: "8px",
+                            border: "1px solid #ddd",
+                            width: "10%",
+                          }}
+                        >
+                          Hidden
+                        </th>
+                        <th
+                          style={{
+                            textAlign: "center",
+                            padding: "8px",
+                            border: "1px solid #ddd",
+                            width: "10%",
+                          }}
+                        >
+                          Example
                         </th>
                       </tr>
                     </thead>
@@ -222,6 +245,44 @@ function QuestionBankCodingDetail() {
                               >
                                 {formatTestCase(testcase.output || "")}
                               </pre>
+                            </td>
+                            <td
+                              style={{
+                                textAlign: "center",
+                                padding: "8px",
+                                border: "1px solid #ddd",
+                              }}
+                            >
+                              {testcase.is_hidden ? (
+                                <CheckCircle2
+                                  className="inline-block text-green-500"
+                                  size={20}
+                                />
+                              ) : (
+                                <XCircle
+                                  className="inline-block text-red-500"
+                                  size={20}
+                                />
+                              )}
+                            </td>
+                            <td
+                              style={{
+                                textAlign: "center",
+                                padding: "8px",
+                                border: "1px solid #ddd",
+                              }}
+                            >
+                              {testcase.is_example ? (
+                                <CheckCircle2
+                                  className="inline-block text-green-500"
+                                  size={20}
+                                />
+                              ) : (
+                                <XCircle
+                                  className="inline-block text-red-500"
+                                  size={20}
+                                />
+                              )}
                             </td>
                           </tr>
                         ),

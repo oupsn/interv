@@ -1,18 +1,20 @@
 package services
 
 import (
+	"mime/multipart"
+	"strings"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"mime/multipart"
-	"strings"
 )
 
 var (
-	ErrorUploadingVideo = fiber.NewError(fiber.StatusInternalServerError, "error uploading video")
-	ErrorFindRoom       = fiber.NewError(fiber.StatusInternalServerError, "error finding room")
-	ErrorFindQuestion   = fiber.NewError(fiber.StatusInternalServerError, "error finding question")
+	ErrorUploadingVideo  = fiber.NewError(fiber.StatusInternalServerError, "error uploading video")
+	ErrorUploadingScreen = fiber.NewError(fiber.StatusInternalServerError, "error uploading screen")
+	ErrorFindRoom        = fiber.NewError(fiber.StatusInternalServerError, "error finding room")
+	ErrorFindQuestion    = fiber.NewError(fiber.StatusInternalServerError, "error finding question")
 )
 
 type IVideoInterviewService interface {

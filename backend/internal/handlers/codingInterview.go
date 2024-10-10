@@ -38,6 +38,8 @@ type CodingInterviewUpdateQuestionQuery struct {
 	Body             domains.CreateCodingQuestionRequest `json:"body"  validate:"required"`
 } // @name CodingInterviewUpdateQuestionQuery
 
+// @name CodingInterviewCreateQuestionSnapshotQuery
 type CodingInterviewCreateQuestionSnapshotQuery []domains.CodingQuestionSnapshot
 
-// @name CodingInterviewCreateQuestionSnapshotQuery
+// @name CodingInterviewCreateQuestionSubmissionQuery
+type CodingInterviewCreateQuestionSubmissionQuery []domains.CreateCodingSubmissionRequest
