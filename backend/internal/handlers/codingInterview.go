@@ -43,3 +43,10 @@ type CodingInterviewCreateQuestionSnapshotQuery []domains.CodingQuestionSnapshot
 
 // @name CodingInterviewCreateQuestionSubmissionQuery
 type CodingInterviewCreateQuestionSubmissionQuery []domains.CreateCodingSubmissionRequest
+
+type CodingInterviewGetSubmissionResultByUserQuery struct {
+	UserID uint `json:"userID" validate:"required"`
+} // @name CodingInterviewGetSubmissionResultByUserQuery
+
+// @name CodingInterviewGetSubmissionResultByUserResponse
+type CodingInterviewGetSubmissionResultByUserResponse domains.CodingQuestionSubmissionResult

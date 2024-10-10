@@ -29,7 +29,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb.tsx"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import {
@@ -71,7 +71,8 @@ function CreateCodingQuestion() {
       difficulty: "easy",
     },
   })
-  const navigate = useNavigate()
+  /*   const navigate = useNavigate()
+   */
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const body: DomainsCreateCodingQuestionRequest = {
       title: values.title || "",
@@ -98,7 +99,8 @@ function CreateCodingQuestion() {
         error: "Failed to create question",
       },
     )
-    navigate("/portal/question/coding")
+    /*     navigate("/portal/question/coding")
+     */
   }
   const editorFormats = [
     "header",
