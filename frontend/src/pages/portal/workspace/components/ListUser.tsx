@@ -13,6 +13,7 @@ import { FaEdit, FaTrash, FaRegUser, FaStar, FaRegStar } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import { server } from "@/contexts/swr"
 import { useGetWorkspace } from "@/hooks/useGetWorkspace"
+import { toast } from "sonner"
 
 export type ListWorkspaceProps = {
   listUser: IndividualUser[]
@@ -62,13 +63,22 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                     <Button
                       onClick={() => {
                         console.log(user.userData.id)
-                        server.userInWorkspace
-                          .interestUser({
-                            workspaceId: user.userInWorkspace.workspaceId,
-                            userId: user.userData.id ?? 0,
-                            isInterest: user.userInWorkspace.isInterest,
-                          })
-                          .then(() => mutate())
+                        toast.promise(
+                          server.userInWorkspace
+                            .interestUser({
+                              workspaceId: user.userInWorkspace.workspaceId,
+                              userId: user.userData.id ?? 0,
+                              isInterest: user.userInWorkspace.isInterest,
+                            })
+                            .then(() => mutate()),
+                          {
+                            loading: "Adding interest candidate",
+                            success: "Adding successfully",
+                            error: (err) => {
+                              return err.response.data.message
+                            },
+                          },
+                        )
                       }}
                     >
                       {user.userInWorkspace.isInterest ? (

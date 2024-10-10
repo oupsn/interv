@@ -20,6 +20,7 @@ import Panigator from "./components/Panigator"
 import ListUser from "./components/ListUser"
 import { Spinner } from "@/components/ui/spinner"
 import saveAs from "file-saver"
+import { toast } from "sonner"
 
 const WorkspaceCandidateList = () => {
   const [importUser, setImportUser] = useState<UserData[]>()
@@ -119,7 +120,23 @@ const WorkspaceCandidateList = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>
-            <Button className="mr-5" onClick={() => {}}>
+            <Button
+              className="mr-5"
+              onClick={() => {
+                toast.promise(
+                  server.workspace.inviteAllCandidate({
+                    workspaceId: data?.data?.workspaceDetail.id ?? 0,
+                  }),
+                  {
+                    loading: "Sending invitation",
+                    success: "Invitation send successfully",
+                    error: (err) => {
+                      return err.response.data.message
+                    },
+                  },
+                )
+              }}
+            >
               Invite All
             </Button>
             <div className="flex flex-row gap-2">
