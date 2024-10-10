@@ -84,7 +84,12 @@ const WorkspaceInterestPage = () => {
           <Panigator
             dataLength={interest ? interest.length : 0}
             children={
-              <ListUser listUser={interest ?? []} page={page} size={size} />
+              <ListUser
+                listUser={interest ?? []}
+                page={page}
+                size={size}
+                workspace={Number(workspaceId)}
+              />
             }
             size={size}
             page={page}

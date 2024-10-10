@@ -2614,7 +2614,7 @@ paths:
       summary: Get List of workspace
       tags:
       - workspace
-  /workspace.inviteAll:
+  /workspace.inviteAllCandidate:
     post:
       consumes:
       - application/json

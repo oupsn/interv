@@ -1808,7 +1808,7 @@ export namespace Workspace {
    * No description
    * @tags workspace
    * @name InviteAllCandidate
-   * @request POST:/workspace.inviteAll
+   * @request POST:/workspace.inviteAllCandidate
    * @response `200` `InviteAllCandidateData` OK
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `500` `HandlersErrResponse` Internal Server Error
@@ -2897,14 +2897,14 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      *
      * @tags workspace
      * @name InviteAllCandidate
-     * @request POST:/workspace.inviteAll
+     * @request POST:/workspace.inviteAllCandidate
      * @response `200` `InviteAllCandidateData` OK
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
     inviteAllCandidate: (payload: HandlersInviteAllCandidateBody, params: RequestParams = {}) =>
       this.request<InviteAllCandidateData, InviteAllCandidateError>({
-        path: `/workspace.inviteAll`,
+        path: `/workspace.inviteAllCandidate`,
         method: "POST",
         body: payload,
         type: ContentType.Json,

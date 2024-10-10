@@ -2042,7 +2042,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/workspace.inviteAll": {
+        "/workspace.inviteAllCandidate": {
             "post": {
                 "consumes": [
                     "application/json"

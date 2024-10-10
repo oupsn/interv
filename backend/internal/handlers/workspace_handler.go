@@ -301,7 +301,7 @@ func (w WorkspaceHandler) DeleteUserFromWorkspace(c *fiber.Ctx) error {
 // @Success 200 {object} Response[string]
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /workspace.inviteAll [post]
+// @Router /workspace.inviteAllCandidate [post]
 func (w WorkspaceHandler) InviteAllCandidate(c *fiber.Ctx) error {
 	body := InviteAllCandidateBody{}
 
