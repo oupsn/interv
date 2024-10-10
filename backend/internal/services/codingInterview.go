@@ -22,6 +22,7 @@ var (
 	ErrorEncodingCompileResult                = fiber.NewError(fiber.StatusInternalServerError, "can not encode compile result")
 	ErrorGetCodingSubmissionResultByUser      = fiber.NewError(fiber.StatusInternalServerError, "can not get coding submission result by user")
 	ErrorGetObjectSubmission                  = fiber.NewError(fiber.StatusInternalServerError, "can not get object submission")
+	ErrorGetRoomIDByUserID                    = fiber.NewError(fiber.StatusInternalServerError, "can not get room id by user id")
 )
 
 type ICodingInterviewService interface {
@@ -30,7 +31,7 @@ type ICodingInterviewService interface {
 	GetCodingInterviewQuestionByTitle(title string) (domains.CodingQuestionResponse, error)
 	GetCodingInterviewQuestionsInPortal(portalID int) ([]domains.CodingQuestion, error)
 	GetCodingInterviewQuestionsInWorkspace(workspaceId int) ([]domains.CodingQuestion, error)
-	GetCodingSubmissionResultByUser(userID string) (domains.CodingQuestionSubmissionResult, error)
+	GetCodingSubmissionResultByUser(userID uint) (domains.CodingQuestionSubmissionResult, error)
 	GenerateCompileToken(req domains.CompilationRequest) (string, error)
 	GetCompileResult(req domains.CompilationRequest) ([]domains.CompilationResultResponse, error)
 	CreateCodingQuestion(req domains.CodingQuestion, portalID uint) (domains.CreateCodingQuestionResponse, error)

@@ -117,40 +117,33 @@ func (c *codingInterviewRepository) GetCodingQuestionByWorkspaceID(workspaceID i
 	return codingQuestions, nil
 }
 
-func (c *codingInterviewRepository) GetCodingQuestionSubmissionByUserID(userID string) ([]domains.CodingQuestionSubmission, error) {
+func (c *codingInterviewRepository) GetCodingQuestionSubmissionByUserID(userID uint) ([]domains.CodingQuestionSubmission, error) {
 	//get room id from user id
 	var roomID string
 	if err := c.DB.Model(&domains.Room{}).Where("candidate_id = ?", userID).Pluck("id", &roomID).Error; err != nil {
 		return nil, err
 	}
 	var codingQuestionSubmissions []domains.CodingQuestionSubmission
-	if err := c.DB.
-		Where("room_id = ?", roomID).Find(&codingQuestionSubmissions).Error; err != nil {
+
+	if err := c.DB.Where("room_id = ?", roomID).Find(&codingQuestionSubmissions).Error; err != nil {
 		return nil, err
 	}
+	var response []domains.CodingQuestionSubmission
 	for _, codingQuestionSubmission := range codingQuestionSubmissions {
 		var testCaseResults []domains.CodingQuestionSubmissionTestCaseResult
 		var codingQuestion domains.CodingQuestion
-		if err := c.DB.Where("coding_question_submission_id = ?", codingQuestionSubmission.ID).Find(&testCaseResults).Error; err != nil {
+		if err := c.DB.Where("submission_id = ?", codingQuestionSubmission.Id).Find(&testCaseResults).Error; err != nil {
 			return nil, err
 		}
-		if err := c.DB.First(&codingQuestion, codingQuestionSubmission.QuestionID).Error; err != nil {
+		if err := c.DB.Where("id = ?", codingQuestionSubmission.QuestionID).Find(&codingQuestion).Error; err != nil {
 			return nil, err
-		}
-		for _, testCaseResult := range testCaseResults {
-			var testCase domains.CodingQuestionTestCase
-			if err := c.DB.First(&testCase, testCaseResult.TestCaseId).Error; err != nil {
-				return nil, err
-			}
-			testCaseResults = append(testCaseResults, domains.CodingQuestionSubmissionTestCaseResult{
-				TestCase: testCase,
-			})
 		}
 		codingQuestionSubmission.Question = codingQuestion
 		codingQuestionSubmission.TestCasesResult = testCaseResults
+		response = append(response, codingQuestionSubmission)
 	}
 
-	return codingQuestionSubmissions, nil
+	return response, nil
 }
 
 func (c *codingInterviewRepository) SaveCodingQuestion(question domains.CodingQuestion) (domains.CodingQuestion, error) {
@@ -158,6 +151,14 @@ func (c *codingInterviewRepository) SaveCodingQuestion(question domains.CodingQu
 		return domains.CodingQuestion{}, err
 	}
 	return question, nil
+}
+
+func (c *codingInterviewRepository) GetRoomIDByUserID(userID uint) (string, error) {
+	var roomID string
+	if err := c.DB.Model(&domains.Room{}).Where("candidate_id = ?", userID).Pluck("id", &roomID).Error; err != nil {
+		return "", err
+	}
+	return roomID, nil
 }
 
 func (c *codingInterviewRepository) SaveCodingSnapshot(snapshot domains.CodingQuestionSnapshot) (domains.CodingQuestionSnapshot, error) {

@@ -61,10 +61,14 @@ func (s *codingInterviewService) GetCodingInterviewQuestionsInWorkspace(workspac
 	return questions, nil
 }
 
-func (s *codingInterviewService) GetCodingSubmissionResultByUser(userID string) (domains.CodingQuestionSubmissionResult, error) {
+func (s *codingInterviewService) GetCodingSubmissionResultByUser(userID uint) (domains.CodingQuestionSubmissionResult, error) {
 	var result domains.CodingQuestionSubmissionResult
-	videoURL, videoErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%d-video", userID))
-	screenURL, screenErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%d-screen", userID))
+	roomID, err := s.codingInterviewRepository.GetRoomIDByUserID(userID)
+	if err != nil {
+		return domains.CodingQuestionSubmissionResult{}, ErrorGetRoomIDByUserID
+	}
+	videoURL, videoErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%s-video", roomID))
+	screenURL, screenErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%s-screen", roomID))
 	if videoErr != nil || screenErr != nil {
 		return domains.CodingQuestionSubmissionResult{}, ErrorGetObjectSubmission
 	}
@@ -72,6 +76,7 @@ func (s *codingInterviewService) GetCodingSubmissionResultByUser(userID string) 
 	result.ScreenURL = screenURL
 	submissions, err := s.codingInterviewRepository.GetCodingQuestionSubmissionByUserID(userID)
 	if err != nil {
+		fmt.Println(err)
 		return domains.CodingQuestionSubmissionResult{}, ErrorGetCodingSubmissionResultByUser
 	}
 	result.Result = submissions
