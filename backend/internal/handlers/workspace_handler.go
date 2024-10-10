@@ -264,3 +264,27 @@ func (w WorkspaceHandler) DeleteUserFromWorkspace(c *fiber.Ctx) error {
 
 	return Ok(c, body.UserId, body.WorkspaceId)
 }
+
+// InviteAllCandidate
+// @ID inviteAllCandidate
+// @Tags workspace
+// @Accept json
+// @Produce json
+// @Param payload body InviteAllCandidateBody true "InviteAllCandidateBody"
+// @Success 200 {object} Response[string]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /workspace.inviteAll [post]
+func (w WorkspaceHandler) InviteAllCandidate(c *fiber.Ctx) error {
+	body := InviteAllCandidateBody{}
+
+	if err := c.BodyParser(&body); err != nil {
+		return err
+	}
+
+	if err := w.workspaceService.InviteAllCandidate(body.WorkspaceId); err != nil {
+		return err
+	}
+
+	return Ok(c, "Invitation email sent successfully")
+}

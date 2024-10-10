@@ -522,6 +522,10 @@ export interface HandlersErrResponse {
   timestamp?: string
 }
 
+export interface HandlersInviteAllCandidateBody {
+  workspaceId: number
+}
+
 export enum HandlersMailPreset {
   Invite = "invite",
   Finish = "finish",
@@ -692,6 +696,10 @@ export interface IndividualUser {
   userData: User
   userInWorkspace: UserInWorkspace
 }
+
+export type InviteAllCandidateData = HandlersResponseString
+
+export type InviteAllCandidateError = HandlersErrResponse
 
 export interface LoginBody {
   password: string
@@ -1695,6 +1703,23 @@ export namespace Workspace {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetWorkspaceData
+  }
+
+  /**
+   * No description
+   * @tags workspace
+   * @name InviteAllCandidate
+   * @request POST:/workspace.inviteAll
+   * @response `200` `InviteAllCandidateData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace InviteAllCandidate {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = HandlersInviteAllCandidateBody
+    export type RequestHeaders = {}
+    export type ResponseBody = InviteAllCandidateData
   }
 }
 
@@ -2721,6 +2746,26 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         path: `/workspace.get`,
         method: "GET",
         query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags workspace
+     * @name InviteAllCandidate
+     * @request POST:/workspace.inviteAll
+     * @response `200` `InviteAllCandidateData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    inviteAllCandidate: (payload: HandlersInviteAllCandidateBody, params: RequestParams = {}) =>
+      this.request<InviteAllCandidateData, InviteAllCandidateError>({
+        path: `/workspace.inviteAll`,
+        method: "POST",
+        body: payload,
         type: ContentType.Json,
         format: "json",
         ...params,

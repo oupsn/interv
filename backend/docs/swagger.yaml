@@ -911,6 +911,13 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.InviteAllCandidateBody:
+    properties:
+      workspaceId:
+        type: integer
+    required:
+    - workspaceId
+    type: object
   handlers.MailPreset:
     enum:
     - invite
@@ -2456,6 +2463,35 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get List of workspace
+      tags:
+      - workspace
+  /workspace.inviteAll:
+    post:
+      consumes:
+      - application/json
+      operationId: inviteAllCandidate
+      parameters:
+      - description: InviteAllCandidateBody
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.InviteAllCandidateBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
       tags:
       - workspace
 swagger: "2.0"
