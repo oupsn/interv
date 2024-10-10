@@ -41,7 +41,7 @@ func (uiw *userInWorkspaceRepository) FindByUserId(userId uint) (userInWorkspace
 
 func (uiw *userInWorkspaceRepository) FindByWorkspaceId(workspaceId uint) (userInWorkspace *[]domains.UserInWorkspace, err error) {
 	foundUserInWorkspace := new([]domains.UserInWorkspace)
-	if err := uiw.DB.Find(&foundUserInWorkspace, "workspace_id = ?", workspaceId).Error; err != nil {
+	if err := uiw.DB.Preload("User").Find(&foundUserInWorkspace, "workspace_id = ?", workspaceId).Error; err != nil {
 		return nil, err
 	}
 	return foundUserInWorkspace, nil

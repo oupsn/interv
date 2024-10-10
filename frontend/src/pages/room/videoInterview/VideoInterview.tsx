@@ -91,7 +91,7 @@ const VideoInterviewPage = () => {
           isActive={isActive((data?.data?.totalQuestions ?? 0) + 1)}
         />
       </SideBar>
-      <MainPanel className={"flex flex-col justify-center items-center gap-8"}>
+      <MainPanel className={"flex flex-col justify-center items-center"}>
         {renderVideoInterviewByStage()}
       </MainPanel>
     </>
