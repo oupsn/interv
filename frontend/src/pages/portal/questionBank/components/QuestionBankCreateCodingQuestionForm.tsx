@@ -60,7 +60,6 @@ function CreateCodingQuestion() {
       .min(1),
     difficulty: z.enum(["easy", "moderate", "hard"]),
   })
-  const { currentUser } = useCurrentUser()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

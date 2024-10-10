@@ -1,7 +1,7 @@
 import CodingInterviewInstruction from "./components/CodingInterviewInstruction"
 import CodingInterviewPanel from "./components/CodingInterviewPanel"
 import { useContext, useEffect, useState } from "react"
-import { useGetCodingInterviewQuestion } from "@/hooks/useGetCodingInterviewQuestion"
+import { useGetCodingInterviewQuestion } from "@/hooks/UseGetCodingInterviewQuestion"
 import {
   DomainsCodingQuestionResponse,
   DomainsCodingQuestionTestCase,

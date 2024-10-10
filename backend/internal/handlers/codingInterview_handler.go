@@ -155,7 +155,7 @@ func (co CodingInterviewHandler) CreateQuestion(c *fiber.Ctx) error {
 			Difficulty:        req.Body.Difficulty,
 			CodingQuestionInPortal: []domains.CodingQuestionInPortal{
 				{
-					PortalID: uint(req.Body.PortalID),
+					PortalID: uint(req.Body.PortalId),
 				},
 			},
 		},
