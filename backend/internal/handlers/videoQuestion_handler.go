@@ -197,7 +197,7 @@ func (q VideoQuestionHandler) UpdateVideoQuestion(c *fiber.Ctx) error {
 // @Summary Delete video question by id
 // @Accept json
 // @Produce json
-// @Param payload query GetVideoQuestionByIdParam true "Video question ID"
+// @Param payload body DeleteVideoQuestionByIdBody true "Video question ID"
 // @Success 200 {object} Response[string]
 // @Failure 400 {object} ErrResponse
 // @Failure 404 {object} ErrResponse

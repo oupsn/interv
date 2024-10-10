@@ -520,6 +520,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/codingInterview.getQuestionsInWorkspace/{workspaceId}": {
+            "get": {
+                "description": "Get coding interview questions in a workspace",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Get coding interview questions in a workspace",
+                "operationId": "GetQuestionsInWorkspace",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Workspace ID",
+                        "name": "workspaceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with the coding interview questions in a workspace",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionsInWorkspaceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/codingInterview.updateQuestion/{codingQuestionID}": {
             "put": {
                 "description": "Update a coding interview question",
@@ -908,6 +953,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/room.checkAuthCandidate": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "room"
+                ],
+                "summary": "Check authentication for candidate",
+                "operationId": "checkAuthCandidate",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "room id",
+                        "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "room token",
+                        "name": "rt",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/room.createRoom": {
             "post": {
                 "consumes": [
@@ -936,7 +1032,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.Response-handlers_CreateRoomResponse"
+                            "$ref": "#/definitions/handlers.Response-CreateRoomResponse"
                         }
                     },
                     "400": {
@@ -971,6 +1067,12 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "rt",
                         "in": "query",
                         "required": true
                     }
@@ -1376,6 +1478,27 @@ const docTemplate = `{
                         "name": "file",
                         "in": "formData",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Room ID",
+                        "name": "roomId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Candidate ID",
+                        "name": "candidateId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Video Question ID",
+                        "name": "videoQuestionId",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1461,10 +1584,13 @@ const docTemplate = `{
                 "operationId": "deleteVideoQuestionById",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
+                        "description": "Video question ID",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeleteVideoQuestionByIdBody"
+                        }
                     }
                 ],
                 "responses": {
@@ -1915,38 +2041,29 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "candidateId",
-                "dueDate",
-                "isCodingDone",
-                "isVideoDone",
-                "totalCodingQuestion",
-                "totalCodingTime",
-                "totalVideoQuestion",
-                "totalVideoTime"
+                "workspaceId"
             ],
             "properties": {
                 "candidateId": {
                     "type": "integer"
                 },
-                "dueDate": {
+                "workspaceId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "CreateRoomResponse": {
+            "type": "object",
+            "required": [
+                "candidateId",
+                "roomId"
+            ],
+            "properties": {
+                "candidateId": {
+                    "type": "integer"
+                },
+                "roomId": {
                     "type": "string"
-                },
-                "isCodingDone": {
-                    "type": "boolean"
-                },
-                "isVideoDone": {
-                    "type": "boolean"
-                },
-                "totalCodingQuestion": {
-                    "type": "integer"
-                },
-                "totalCodingTime": {
-                    "type": "integer"
-                },
-                "totalVideoQuestion": {
-                    "type": "integer"
-                },
-                "totalVideoTime": {
-                    "type": "integer"
                 }
             }
         },
@@ -2009,7 +2126,7 @@ const docTemplate = `{
         "CreateWorkspaceBody": {
             "type": "object",
             "required": [
-                "codingTime",
+                "codeQuestion",
                 "endDate",
                 "isCoding",
                 "isVideo",
@@ -2018,9 +2135,16 @@ const docTemplate = `{
                 "reqMicrophone",
                 "reqScreen",
                 "startDate",
-                "title"
+                "title",
+                "videoQuestion"
             ],
             "properties": {
+                "codeQuestion": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "codingTime": {
                     "type": "integer"
                 },
@@ -2050,6 +2174,15 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "videoQuestion": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "videoTime": {
+                    "type": "integer"
                 }
             }
         },
@@ -2114,6 +2247,17 @@ const docTemplate = `{
                 }
             }
         },
+        "DeleteVideoQuestionByIdBody": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
         "DeleteWorkspaceBody": {
             "type": "object",
             "required": [
@@ -2144,8 +2288,10 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "candidateId",
+                "candidateName",
                 "dueDate",
                 "isCodingDone",
+                "isOverdue",
                 "isVideoDone",
                 "roomId",
                 "totalCodingQuestion",
@@ -2157,10 +2303,16 @@ const docTemplate = `{
                 "candidateId": {
                     "type": "integer"
                 },
+                "candidateName": {
+                    "type": "string"
+                },
                 "dueDate": {
                     "type": "string"
                 },
                 "isCodingDone": {
+                    "type": "boolean"
+                },
+                "isOverdue": {
                     "type": "boolean"
                 },
                 "isVideoDone": {
@@ -2335,9 +2487,6 @@ const docTemplate = `{
                 "candidateId": {
                     "type": "integer"
                 },
-                "dueDate": {
-                    "type": "string"
-                },
                 "isCodingDone": {
                     "type": "boolean"
                 },
@@ -2346,18 +2495,6 @@ const docTemplate = `{
                 },
                 "roomId": {
                     "type": "string"
-                },
-                "totalCodingQuestion": {
-                    "type": "integer"
-                },
-                "totalCodingTime": {
-                    "type": "integer"
-                },
-                "totalVideoQuestion": {
-                    "type": "integer"
-                },
-                "totalVideoTime": {
-                    "type": "integer"
                 }
             }
         },
@@ -2530,6 +2667,37 @@ const docTemplate = `{
                 }
             }
         },
+        "VideoQuestionDetail": {
+            "type": "object",
+            "required": [
+                "id",
+                "portalId",
+                "timeToAnswer",
+                "timeToPrepare",
+                "title",
+                "totalAttempt"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "portalId": {
+                    "type": "integer"
+                },
+                "timeToAnswer": {
+                    "type": "integer"
+                },
+                "timeToPrepare": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "totalAttempt": {
+                    "type": "integer"
+                }
+            }
+        },
         "WorkspaceData": {
             "type": "object",
             "required": [
@@ -2553,6 +2721,9 @@ const docTemplate = `{
             "properties": {
                 "codingTime": {
                     "type": "integer"
+                },
+                "createAt": {
+                    "type": "string"
                 },
                 "endDate": {
                     "type": "string"
@@ -2586,6 +2757,15 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "videoQueston": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/VideoQuestionDetail"
+                    }
+                },
+                "videoTime": {
+                    "type": "integer"
                 }
             }
         },
@@ -2596,6 +2776,12 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domains.CodingQuestionInPortal"
+                    }
+                },
+                "coding_question_in_workspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionInWorkspace"
                     }
                 },
                 "createdAt": {
@@ -2671,6 +2857,35 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "domains.CodingQuestionInWorkspace": {
+            "type": "object",
+            "properties": {
+                "codingQuestion": {
+                    "$ref": "#/definitions/domains.CodingQuestion"
+                },
+                "codingQuestionID": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "workspace": {
+                    "$ref": "#/definitions/domains.Workspace"
+                },
+                "workspaceID": {
+                    "type": "integer"
                 }
             }
         },
@@ -2941,6 +3156,100 @@ const docTemplate = `{
                 }
             }
         },
+        "domains.VideoQuestion": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "portalID": {
+                    "type": "integer"
+                },
+                "timeToAnswer": {
+                    "type": "integer"
+                },
+                "timeToPrepare": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "totalAttempt": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "workspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.Workspace"
+                    }
+                }
+            }
+        },
+        "domains.Workspace": {
+            "type": "object",
+            "properties": {
+                "codingTime": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isCoding": {
+                    "type": "boolean"
+                },
+                "isVideo": {
+                    "type": "boolean"
+                },
+                "portalId": {
+                    "type": "integer"
+                },
+                "reqCamera": {
+                    "type": "boolean"
+                },
+                "reqMicrophone": {
+                    "type": "boolean"
+                },
+                "reqScreen": {
+                    "type": "boolean"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "videoQuestion": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.VideoQuestion"
+                    }
+                },
+                "videoTime": {
+                    "type": "integer"
+                }
+            }
+        },
         "gorm.DeletedAt": {
             "type": "object",
             "properties": {
@@ -2982,49 +3291,6 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.CreateRoomResponse": {
-            "type": "object",
-            "required": [
-                "candidateId",
-                "dueDate",
-                "isCodingDone",
-                "isVideoDone",
-                "roomId",
-                "totalCodingQuestion",
-                "totalCodingTime",
-                "totalVideoQuestion",
-                "totalVideoTime"
-            ],
-            "properties": {
-                "candidateId": {
-                    "type": "integer"
-                },
-                "dueDate": {
-                    "type": "string"
-                },
-                "isCodingDone": {
-                    "type": "boolean"
-                },
-                "isVideoDone": {
-                    "type": "boolean"
-                },
-                "roomId": {
-                    "type": "string"
-                },
-                "totalCodingQuestion": {
-                    "type": "integer"
-                },
-                "totalCodingTime": {
-                    "type": "integer"
-                },
-                "totalVideoQuestion": {
-                    "type": "integer"
-                },
-                "totalVideoTime": {
-                    "type": "integer"
-                }
-            }
-        },
         "handlers.ErrResponse": {
             "type": "object",
             "properties": {
@@ -3055,6 +3321,23 @@ const docTemplate = `{
             "properties": {
                 "code": {
                     "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-CreateRoomResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/CreateRoomResponse"
                 },
                 "message": {
                     "type": "string"
@@ -3385,6 +3668,26 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.Response-handlers_CodingInterviewGetQuestionsInWorkspaceResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestion"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.Response-handlers_CodingInterviewGetQuestionsResponse": {
             "type": "object",
             "properties": {
@@ -3396,23 +3699,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domains.CodingQuestionResponse"
                     }
-                },
-                "message": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.Response-handlers_CreateRoomResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/handlers.CreateRoomResponse"
                 },
                 "message": {
                     "type": "string"

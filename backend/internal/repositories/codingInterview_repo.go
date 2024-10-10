@@ -57,6 +57,17 @@ func (c *codingInterviewRepository) GetCodingQuestionListInPortal(portalID int) 
 	}
 	return codingQuestions, nil
 }
+
+func (c *codingInterviewRepository) GetCodingQuestionListInWorkspace(workspaceId int) ([]domains.CodingQuestion, error) {
+	var codingQuestions []domains.CodingQuestion
+	if err := c.DB.Joins("JOIN coding_question_in_workspaces ON coding_questions.id = coding_question_in_workspaces.coding_question_id").
+		Where("coding_question_in_workspaces.workspace_id = ?", workspaceId).
+		Find(&codingQuestions).Error; err != nil {
+		return nil, err
+	}
+	return codingQuestions, nil
+}
+
 func (c *codingInterviewRepository) GetCodingQuestionByTitle(title string) (domains.CodingQuestionResponse, error) {
 	var codingQuestion domains.CodingQuestion
 	decodedTitle, err := url.QueryUnescape(title)
@@ -93,6 +104,15 @@ func (c *codingInterviewRepository) GetCodingQuestionTestcaseByQuestionID(questi
 		return nil, err
 	}
 	return testCases, nil
+}
+
+func (c *codingInterviewRepository) GetCodingQuestionByWorkspaceID(workspaceID int) ([]domains.CodingQuestionInWorkspace, error) {
+	var codingQuestions []domains.CodingQuestionInWorkspace
+	if err := c.DB.Model(&domains.CodingQuestionInWorkspace{}).Preload("CodingQuestion", "id = ?", workspaceID).
+		Find(&codingQuestions).Error; err != nil {
+		return nil, err
+	}
+	return codingQuestions, nil
 }
 
 func (c *codingInterviewRepository) SaveCodingQuestion(question domains.CodingQuestion) (domains.CodingQuestion, error) {

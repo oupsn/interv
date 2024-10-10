@@ -21,6 +21,17 @@ export interface AdminCreateBody {
   username: string
 }
 
+export type CheckAuthCandidateData = HandlersResponseString
+
+export type CheckAuthCandidateError = HandlersErrResponse
+
+export interface CheckAuthCandidateParams {
+  /** room id */
+  roomId: string
+  /** room token */
+  rt: string
+}
+
 export interface CodingInterviewAddQuestionQuery {
   codingQuestionID: number
   target: string
@@ -70,18 +81,17 @@ export type CreateQuestionSnapshotPayload = DomainsCodingQuestionSnapshot[]
 
 export interface CreateRoomBody {
   candidateId: number
-  dueDate: string
-  isCodingDone: boolean
-  isVideoDone: boolean
-  totalCodingQuestion: number
-  totalCodingTime: number
-  totalVideoQuestion: number
-  totalVideoTime: number
+  workspaceId: number
 }
 
-export type CreateRoomData = HandlersResponseHandlersCreateRoomResponse
+export type CreateRoomData = HandlersResponseCreateRoomResponse
 
 export type CreateRoomError = HandlersErrResponse
+
+export interface CreateRoomResponse {
+  candidateId: number
+  roomId: string
+}
 
 export type CreateUserData = HandlersResponseUser
 
@@ -111,7 +121,8 @@ export interface CreateVideoQuestionResponse {
 }
 
 export interface CreateWorkspaceBody {
-  codingTime: number
+  codeQuestion: number[]
+  codingTime?: number
   endDate: string
   isCoding: boolean
   isVideo: boolean
@@ -121,6 +132,8 @@ export interface CreateWorkspaceBody {
   reqScreen: boolean
   startDate: string
   title: string
+  videoQuestion: number[]
+  videoTime?: number
 }
 
 export type CreateWorkspaceData = HandlersResponseWorkspaceDetail
@@ -162,13 +175,13 @@ export type DeleteUserFromWorkspaceData = HandlersResponseUserInWorkspace
 
 export type DeleteUserFromWorkspaceError = HandlersErrResponse
 
+export interface DeleteVideoQuestionByIdBody {
+  id: number
+}
+
 export type DeleteVideoQuestionByIdData = HandlersResponseString
 
 export type DeleteVideoQuestionByIdError = HandlersErrResponse
-
-export interface DeleteVideoQuestionByIdParams {
-  id: number
-}
 
 export interface DeleteWorkspaceBody {
   id: number
@@ -180,6 +193,7 @@ export type DeleteWorkspaceByIdError = HandlersErrResponse
 
 export interface DomainsCodingQuestion {
   coding_question_in_portal?: DomainsCodingQuestionInPortal[]
+  coding_question_in_workspace?: DomainsCodingQuestionInWorkspace[]
   createdAt?: string
   created_at?: string
   created_by?: string
@@ -205,6 +219,17 @@ export interface DomainsCodingQuestionInPortal {
   portal?: DomainsPortal
   portalID?: number
   updatedAt?: string
+}
+
+export interface DomainsCodingQuestionInWorkspace {
+  codingQuestion?: DomainsCodingQuestion
+  codingQuestionID?: number
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  id?: number
+  updatedAt?: string
+  workspace?: DomainsWorkspace
+  workspaceID?: number
 }
 
 export interface DomainsCodingQuestionResponse {
@@ -309,6 +334,38 @@ export interface DomainsUser {
   username?: string
 }
 
+export interface DomainsVideoQuestion {
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  id?: number
+  portalID?: number
+  timeToAnswer?: number
+  timeToPrepare?: number
+  title?: string
+  totalAttempt?: number
+  updatedAt?: string
+  workspace?: DomainsWorkspace[]
+}
+
+export interface DomainsWorkspace {
+  codingTime?: number
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  endDate?: string
+  id?: number
+  isCoding?: boolean
+  isVideo?: boolean
+  portalId?: number
+  reqCamera?: boolean
+  reqMicrophone?: boolean
+  reqScreen?: boolean
+  startDate?: string
+  title?: string
+  updatedAt?: string
+  videoQuestion?: DomainsVideoQuestion[]
+  videoTime?: number
+}
+
 export type GetCompileResultData = HandlersResponseHandlersCodingInterviewGetCompileResultResponse
 
 export type GetCompileResultError = HandlersErrResponse
@@ -346,18 +403,25 @@ export type GetQuestionsInPortalData = HandlersResponseHandlersCodingInterviewGe
 
 export type GetQuestionsInPortalError = HandlersErrResponse
 
+export type GetQuestionsInWorkspaceData = HandlersResponseHandlersCodingInterviewGetQuestionsInWorkspaceResponse
+
+export type GetQuestionsInWorkspaceError = HandlersErrResponse
+
 export type GetRoomContextData = HandlersResponseGetRoomContextResponse
 
 export type GetRoomContextError = HandlersErrResponse
 
 export interface GetRoomContextParams {
   roomId: string
+  rt: string
 }
 
 export interface GetRoomContextResponse {
   candidateId: number
+  candidateName: string
   dueDate: string
   isCodingDone: boolean
+  isOverdue: boolean
   isVideoDone: boolean
   roomId: string
   totalCodingQuestion: number
@@ -452,18 +516,6 @@ export interface HandlersCodingInterviewGetQuestionByTitleResponse {
   title?: string
 }
 
-export interface HandlersCreateRoomResponse {
-  candidateId: number
-  dueDate: string
-  isCodingDone: boolean
-  isVideoDone: boolean
-  roomId: string
-  totalCodingQuestion: number
-  totalCodingTime: number
-  totalVideoQuestion: number
-  totalVideoTime: number
-}
-
 export interface HandlersErrResponse {
   code?: number
   message?: string
@@ -498,6 +550,13 @@ export interface HandlersResponseArrayUserInWorkspace {
 export interface HandlersResponseArrayWorkspaceDetail {
   code?: number
   data?: WorkspaceDetail[]
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseCreateRoomResponse {
+  code?: number
+  data?: CreateRoomResponse
   message?: string
   timestamp?: string
 }
@@ -558,16 +617,16 @@ export interface HandlersResponseHandlersCodingInterviewGetQuestionsInPortalResp
   timestamp?: string
 }
 
-export interface HandlersResponseHandlersCodingInterviewGetQuestionsResponse {
+export interface HandlersResponseHandlersCodingInterviewGetQuestionsInWorkspaceResponse {
   code?: number
-  data?: DomainsCodingQuestionResponse[]
+  data?: DomainsCodingQuestion[]
   message?: string
   timestamp?: string
 }
 
-export interface HandlersResponseHandlersCreateRoomResponse {
+export interface HandlersResponseHandlersCodingInterviewGetQuestionsResponse {
   code?: number
-  data?: HandlersCreateRoomResponse
+  data?: DomainsCodingQuestionResponse[]
   message?: string
   timestamp?: string
 }
@@ -673,11 +732,17 @@ export type SubmitVideoInterviewData = HandlersResponseString
 export type SubmitVideoInterviewError = HandlersErrResponse
 
 export interface SubmitVideoInterviewPayload {
+  /** Candidate ID */
+  candidateId: number
   /**
    * Video Interview File
    * @format binary
    */
   file: File
+  /** Room ID */
+  roomId: string
+  /** Video Question ID */
+  videoQuestionId: number
 }
 
 export type UpdateQuestionData = HandlersResponseDomainsCodingQuestion
@@ -686,14 +751,9 @@ export type UpdateQuestionError = HandlersErrResponse
 
 export interface UpdateRoomContextBody {
   candidateId?: number
-  dueDate?: string
   isCodingDone?: boolean
   isVideoDone?: boolean
   roomId: string
-  totalCodingQuestion?: number
-  totalCodingTime?: number
-  totalVideoQuestion?: number
-  totalVideoTime?: number
 }
 
 export type UpdateRoomContextData = HandlersResponseString
@@ -791,6 +851,15 @@ export interface VideoInterviewQuestionSetting {
   totalAttempt: number
 }
 
+export interface VideoQuestionDetail {
+  id: number
+  portalId: number
+  timeToAnswer: number
+  timeToPrepare: number
+  title: string
+  totalAttempt: number
+}
+
 export interface WorkspaceData {
   individualUser: IndividualUser[]
   workspaceDetail: WorkspaceDetail
@@ -798,6 +867,7 @@ export interface WorkspaceData {
 
 export interface WorkspaceDetail {
   codingTime?: number
+  createAt?: string
   endDate?: string
   id?: number
   isCoding?: boolean
@@ -809,6 +879,8 @@ export interface WorkspaceDetail {
   reqScreen?: boolean
   startDate?: string
   title?: string
+  videoQueston?: VideoQuestionDetail[]
+  videoTime?: number
 }
 
 export namespace Authentication {
@@ -1036,6 +1108,27 @@ export namespace CodingInterview {
   }
 
   /**
+   * @description Get coding interview questions in a workspace
+   * @tags codingInterview
+   * @name GetQuestionsInWorkspace
+   * @summary Get coding interview questions in a workspace
+   * @request GET:/codingInterview.getQuestionsInWorkspace/{workspaceId}
+   * @response `200` `GetQuestionsInWorkspaceData` Successful response with the coding interview questions in a workspace
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetQuestionsInWorkspace {
+    export type RequestParams = {
+      /** Workspace ID */
+      workspaceId: number
+    }
+    export type RequestQuery = {}
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetQuestionsInWorkspaceData
+  }
+
+  /**
    * @description Update a coding interview question
    * @tags codingInterview
    * @name UpdateQuestion
@@ -1195,6 +1288,29 @@ export namespace Room {
   /**
    * No description
    * @tags room
+   * @name CheckAuthCandidate
+   * @summary Check authentication for candidate
+   * @request GET:/room.checkAuthCandidate
+   * @response `200` `CheckAuthCandidateData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CheckAuthCandidate {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      /** room id */
+      roomId: string
+      /** room token */
+      rt: string
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = CheckAuthCandidateData
+  }
+
+  /**
+   * No description
+   * @tags room
    * @name CreateRoom
    * @summary Create room
    * @request POST:/room.createRoom
@@ -1224,6 +1340,7 @@ export namespace Room {
     export type RequestParams = {}
     export type RequestQuery = {
       roomId: string
+      rt: string
     }
     export type RequestBody = never
     export type RequestHeaders = {}
@@ -1437,10 +1554,8 @@ export namespace VideoQuestion {
    */
   export namespace DeleteVideoQuestionById {
     export type RequestParams = {}
-    export type RequestQuery = {
-      id: number
-    }
-    export type RequestBody = never
+    export type RequestQuery = {}
+    export type RequestBody = DeleteVideoQuestionByIdBody
     export type RequestHeaders = {}
     export type ResponseBody = DeleteVideoQuestionByIdData
   }
@@ -1971,6 +2086,26 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
 
     /**
+     * @description Get coding interview questions in a workspace
+     *
+     * @tags codingInterview
+     * @name GetQuestionsInWorkspace
+     * @summary Get coding interview questions in a workspace
+     * @request GET:/codingInterview.getQuestionsInWorkspace/{workspaceId}
+     * @response `200` `GetQuestionsInWorkspaceData` Successful response with the coding interview questions in a workspace
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getQuestionsInWorkspace: (workspaceId: number, params: RequestParams = {}) =>
+      this.request<GetQuestionsInWorkspaceData, GetQuestionsInWorkspaceError>({
+        path: `/codingInterview.getQuestionsInWorkspace/${workspaceId}`,
+        method: "GET",
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Update a coding interview question
      *
      * @tags codingInterview
@@ -2142,6 +2277,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
   }
   room = {
+    /**
+     * No description
+     *
+     * @tags room
+     * @name CheckAuthCandidate
+     * @summary Check authentication for candidate
+     * @request GET:/room.checkAuthCandidate
+     * @response `200` `CheckAuthCandidateData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    checkAuthCandidate: (query: CheckAuthCandidateParams, params: RequestParams = {}) =>
+      this.request<CheckAuthCandidateData, CheckAuthCandidateError>({
+        path: `/room.checkAuthCandidate`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
     /**
      * No description
      *
@@ -2410,11 +2566,11 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * @response `404` `HandlersErrResponse` Not Found
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    deleteVideoQuestionById: (query: DeleteVideoQuestionByIdParams, params: RequestParams = {}) =>
+    deleteVideoQuestionById: (payload: DeleteVideoQuestionByIdBody, params: RequestParams = {}) =>
       this.request<DeleteVideoQuestionByIdData, DeleteVideoQuestionByIdError>({
         path: `/videoQuestion.deleteVideoQuestionById`,
         method: "POST",
-        query: query,
+        body: payload,
         type: ContentType.Json,
         format: "json",
         ...params,

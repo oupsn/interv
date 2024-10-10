@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom"
 import AppLayout from "@/components/layout/AppLayout.tsx"
-import MainLayout from "@/components/layout/MainLayout.tsx"
+import RoomMainLayout from "@/components/layout/RoomMainLayout.tsx"
 import LoginPage from "@/pages/login/Login.tsx"
 import RoomPage from "@/pages/room/Room.tsx"
 import Playground from "@/pages/playground/Playground.tsx"
@@ -19,6 +19,7 @@ import WorkspaceCandidateList from "@/pages/portal/workspace/WorkspaceCandidateL
 import QuestionBankVideoDetail from "@/pages/portal/questionBank/components/QuestionBankVideoDetail.tsx"
 import QuestionBankCodingEdit from "@/pages/portal/questionBank/components/QuestionBankCodingEdit"
 import QuestionBankEditVideoQuestionForm from "@/pages/portal/questionBank/components/QuestionBankEditVideoQuestionForm.tsx"
+import WorkspaceInterestPage from "@/pages/portal/workspace/WorkspaceInterestPage"
 
 export const router = createBrowserRouter([
   {
@@ -53,7 +54,29 @@ export const router = createBrowserRouter([
                   },
                   {
                     path: "candidateList",
-                    element: <WorkspaceCandidateList />,
+                    children: [
+                      {
+                        path: "",
+                        element: <WorkspaceCandidateList />,
+                      },
+                      {
+                        path: ":candidateId",
+                        element: <WorkspaceDetailPage />,
+                      },
+                    ],
+                  },
+                  {
+                    path: "interestList",
+                    children: [
+                      {
+                        path: "",
+                        element: <WorkspaceInterestPage />,
+                      },
+                      {
+                        path: ":candidateId",
+                        element: <WorkspaceDetailPage />,
+                      },
+                    ],
                   },
                 ],
               },
@@ -111,7 +134,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/room/:roomId",
-    element: <MainLayout />,
+    element: <RoomMainLayout />,
     children: [
       {
         path: "",

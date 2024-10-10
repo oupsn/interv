@@ -67,29 +67,21 @@ definitions:
     properties:
       candidateId:
         type: integer
-      dueDate:
-        type: string
-      isCodingDone:
-        type: boolean
-      isVideoDone:
-        type: boolean
-      totalCodingQuestion:
-        type: integer
-      totalCodingTime:
-        type: integer
-      totalVideoQuestion:
-        type: integer
-      totalVideoTime:
+      workspaceId:
         type: integer
     required:
     - candidateId
-    - dueDate
-    - isCodingDone
-    - isVideoDone
-    - totalCodingQuestion
-    - totalCodingTime
-    - totalVideoQuestion
-    - totalVideoTime
+    - workspaceId
+    type: object
+  CreateRoomResponse:
+    properties:
+      candidateId:
+        type: integer
+      roomId:
+        type: string
+    required:
+    - candidateId
+    - roomId
     type: object
   CreateVideoQuestionBody:
     properties:
@@ -131,6 +123,10 @@ definitions:
     type: object
   CreateWorkspaceBody:
     properties:
+      codeQuestion:
+        items:
+          type: integer
+        type: array
       codingTime:
         type: integer
       endDate:
@@ -151,8 +147,14 @@ definitions:
         type: string
       title:
         type: string
+      videoQuestion:
+        items:
+          type: integer
+        type: array
+      videoTime:
+        type: integer
     required:
-    - codingTime
+    - codeQuestion
     - endDate
     - isCoding
     - isVideo
@@ -162,6 +164,7 @@ definitions:
     - reqScreen
     - startDate
     - title
+    - videoQuestion
     type: object
   CurrentUserResponse:
     properties:
@@ -205,6 +208,13 @@ definitions:
     - userId
     - workspaceId
     type: object
+  DeleteVideoQuestionByIdBody:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
   DeleteWorkspaceBody:
     properties:
       id:
@@ -226,9 +236,13 @@ definitions:
     properties:
       candidateId:
         type: integer
+      candidateName:
+        type: string
       dueDate:
         type: string
       isCodingDone:
+        type: boolean
+      isOverdue:
         type: boolean
       isVideoDone:
         type: boolean
@@ -244,8 +258,10 @@ definitions:
         type: integer
     required:
     - candidateId
+    - candidateName
     - dueDate
     - isCodingDone
+    - isOverdue
     - isVideoDone
     - roomId
     - totalCodingQuestion
@@ -352,22 +368,12 @@ definitions:
     properties:
       candidateId:
         type: integer
-      dueDate:
-        type: string
       isCodingDone:
         type: boolean
       isVideoDone:
         type: boolean
       roomId:
         type: string
-      totalCodingQuestion:
-        type: integer
-      totalCodingTime:
-        type: integer
-      totalVideoQuestion:
-        type: integer
-      totalVideoTime:
-        type: integer
     required:
     - roomId
     type: object
@@ -485,6 +491,28 @@ definitions:
     - timeToPrepare
     - totalAttempt
     type: object
+  VideoQuestionDetail:
+    properties:
+      id:
+        type: integer
+      portalId:
+        type: integer
+      timeToAnswer:
+        type: integer
+      timeToPrepare:
+        type: integer
+      title:
+        type: string
+      totalAttempt:
+        type: integer
+    required:
+    - id
+    - portalId
+    - timeToAnswer
+    - timeToPrepare
+    - title
+    - totalAttempt
+    type: object
   WorkspaceData:
     properties:
       individualUser:
@@ -501,6 +529,8 @@ definitions:
     properties:
       codingTime:
         type: integer
+      createAt:
+        type: string
       endDate:
         type: string
       id:
@@ -523,12 +553,22 @@ definitions:
         type: string
       title:
         type: string
+      videoQueston:
+        items:
+          $ref: '#/definitions/VideoQuestionDetail'
+        type: array
+      videoTime:
+        type: integer
     type: object
   domains.CodingQuestion:
     properties:
       coding_question_in_portal:
         items:
           $ref: '#/definitions/domains.CodingQuestionInPortal'
+        type: array
+      coding_question_in_workspace:
+        items:
+          $ref: '#/definitions/domains.CodingQuestionInWorkspace'
         type: array
       created_at:
         type: string
@@ -579,6 +619,25 @@ definitions:
         type: integer
       updatedAt:
         type: string
+    type: object
+  domains.CodingQuestionInWorkspace:
+    properties:
+      codingQuestion:
+        $ref: '#/definitions/domains.CodingQuestion'
+      codingQuestionID:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      updatedAt:
+        type: string
+      workspace:
+        $ref: '#/definitions/domains.Workspace'
+      workspaceID:
+        type: integer
     type: object
   domains.CodingQuestionResponse:
     properties:
@@ -754,6 +813,68 @@ definitions:
       username:
         type: string
     type: object
+  domains.VideoQuestion:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      portalID:
+        type: integer
+      timeToAnswer:
+        type: integer
+      timeToPrepare:
+        type: integer
+      title:
+        type: string
+      totalAttempt:
+        type: integer
+      updatedAt:
+        type: string
+      workspace:
+        items:
+          $ref: '#/definitions/domains.Workspace'
+        type: array
+    type: object
+  domains.Workspace:
+    properties:
+      codingTime:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      endDate:
+        type: string
+      id:
+        type: integer
+      isCoding:
+        type: boolean
+      isVideo:
+        type: boolean
+      portalId:
+        type: integer
+      reqCamera:
+        type: boolean
+      reqMicrophone:
+        type: boolean
+      reqScreen:
+        type: boolean
+      startDate:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+      videoQuestion:
+        items:
+          $ref: '#/definitions/domains.VideoQuestion'
+        type: array
+      videoTime:
+        type: integer
+    type: object
   gorm.DeletedAt:
     properties:
       time:
@@ -781,37 +902,6 @@ definitions:
       title:
         type: string
     type: object
-  handlers.CreateRoomResponse:
-    properties:
-      candidateId:
-        type: integer
-      dueDate:
-        type: string
-      isCodingDone:
-        type: boolean
-      isVideoDone:
-        type: boolean
-      roomId:
-        type: string
-      totalCodingQuestion:
-        type: integer
-      totalCodingTime:
-        type: integer
-      totalVideoQuestion:
-        type: integer
-      totalVideoTime:
-        type: integer
-    required:
-    - candidateId
-    - dueDate
-    - isCodingDone
-    - isVideoDone
-    - roomId
-    - totalCodingQuestion
-    - totalCodingTime
-    - totalVideoQuestion
-    - totalVideoTime
-    type: object
   handlers.ErrResponse:
     properties:
       code:
@@ -833,6 +923,17 @@ definitions:
     properties:
       code:
         type: integer
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-CreateRoomResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/CreateRoomResponse'
       message:
         type: string
       timestamp:
@@ -1046,6 +1147,19 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.Response-handlers_CodingInterviewGetQuestionsInWorkspaceResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/domains.CodingQuestion'
+        type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
   handlers.Response-handlers_CodingInterviewGetQuestionsResponse:
     properties:
       code:
@@ -1054,17 +1168,6 @@ definitions:
         items:
           $ref: '#/definitions/domains.CodingQuestionResponse'
         type: array
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
-  handlers.Response-handlers_CreateRoomResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/handlers.CreateRoomResponse'
       message:
         type: string
       timestamp:
@@ -1421,6 +1524,37 @@ paths:
       summary: Get coding interview questions in a portal
       tags:
       - codingInterview
+  /codingInterview.getQuestionsInWorkspace/{workspaceId}:
+    get:
+      consumes:
+      - application/json
+      description: Get coding interview questions in a workspace
+      operationId: GetQuestionsInWorkspace
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: workspaceId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the coding interview questions in
+            a workspace
+          schema:
+            $ref: '#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionsInWorkspaceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get coding interview questions in a workspace
+      tags:
+      - codingInterview
   /codingInterview.updateQuestion/{codingQuestionID}:
     put:
       consumes:
@@ -1677,6 +1811,40 @@ paths:
       summary: Get portal
       tags:
       - portal
+  /room.checkAuthCandidate:
+    get:
+      consumes:
+      - application/json
+      operationId: checkAuthCandidate
+      parameters:
+      - description: room id
+        in: query
+        name: roomId
+        required: true
+        type: string
+      - description: room token
+        in: query
+        name: rt
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Check authentication for candidate
+      tags:
+      - room
   /room.createRoom:
     post:
       consumes:
@@ -1695,7 +1863,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.Response-handlers_CreateRoomResponse'
+            $ref: '#/definitions/handlers.Response-CreateRoomResponse'
         "400":
           description: Bad Request
           schema:
@@ -1715,6 +1883,10 @@ paths:
       parameters:
       - in: query
         name: roomId
+        required: true
+        type: string
+      - in: query
+        name: rt
         required: true
         type: string
       produces:
@@ -1980,6 +2152,21 @@ paths:
         name: file
         required: true
         type: file
+      - description: Room ID
+        in: formData
+        name: roomId
+        required: true
+        type: string
+      - description: Candidate ID
+        in: formData
+        name: candidateId
+        required: true
+        type: integer
+      - description: Video Question ID
+        in: formData
+        name: videoQuestionId
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -2034,10 +2221,12 @@ paths:
       - application/json
       operationId: deleteVideoQuestionById
       parameters:
-      - in: query
-        name: id
+      - description: Video question ID
+        in: body
+        name: payload
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/DeleteVideoQuestionByIdBody'
       produces:
       - application/json
       responses:

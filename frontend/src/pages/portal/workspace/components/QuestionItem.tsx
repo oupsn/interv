@@ -1,17 +1,13 @@
-import { DomainsCodingQuestion } from "@/api/server"
 import React from "react"
+import { QuestionType } from "./QuestionPicker"
 
 interface QuestionItemProps {
   id: number | undefined
   title: string | undefined
-  currentQuestion: DomainsCodingQuestion[] | undefined
-  setCurrentQuestion: React.Dispatch<
-    React.SetStateAction<DomainsCodingQuestion[] | undefined>
-  >
-  stockQuestion: DomainsCodingQuestion[] | undefined
-  setStockQuestion: React.Dispatch<
-    React.SetStateAction<DomainsCodingQuestion[] | undefined>
-  >
+  currentQuestion: QuestionType
+  setCurrentQuestion: React.Dispatch<React.SetStateAction<QuestionType>>
+  stockQuestion: QuestionType
+  setStockQuestion: React.Dispatch<React.SetStateAction<QuestionType>>
 }
 const QuestionItem: React.FC<QuestionItemProps> = ({
   id,
@@ -29,7 +25,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
           for (const asm of stockQuestion ?? []) {
             if (asm?.id == id) {
               setStockQuestion(
-                stockQuestion?.filter((question) => question.id != id),
+                stockQuestion?.filter((question) => question.id != id).sort(),
               )
               setCurrentQuestion((currentQuestion) =>
                 [...(currentQuestion ?? []), asm].sort(),
@@ -40,7 +36,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
           for (const asm of currentQuestion ?? []) {
             if (asm?.id == id) {
               setCurrentQuestion(
-                currentQuestion?.filter((question) => question.id != id),
+                currentQuestion?.filter((question) => question.id != id).sort(),
               )
               setStockQuestion((stockQuestion) =>
                 [...(stockQuestion ?? []), asm].sort(),

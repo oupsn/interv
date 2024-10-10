@@ -33,18 +33,19 @@ func SetupRoutes() {
 	var portalRepository = repositories.NewPortalRepository(*DB)
 	var userInPoratlRepository = repositories.NewUserInPortalRepository(*DB)
 	var lintRepository = repositories.NewLinterRepository(viper.GetString(EnvPythonLinterEndpoint), viper.GetString(EnvJavaLinterEndpoint), viper.GetString(EnvCLinterEndpoint))
+	var videoQuestionSnapshotRepositories = repositories.NewVideoQuestionSnapshotRepository(*DB)
 
 	// Services
 	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, userInPoratlRepository, workspaceRepositories)
-	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories)
+	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories, videoQuestionSnapshotRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
 	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, objectRepositories, lintRepository)
 	var mailServices = services.NewMailService(mailRepositories)
 	var questionServices = services.NewVideoQuestionService(videoQuestionRepositories)
-	var roomServices = services.NewRoomService(roomRepositories)
+	var roomServices = services.NewRoomService(roomRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories)
 	var portalService = services.NewPortalService(portalRepository)
 	var userInportalService = services.NewUserInPortalService(userInPoratlRepository)
-	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, userInportalService)
+	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, userInportalService, codingInterviewServices, questionServices, videoQuestionRepositories)
 	var authServices = services.NewAuthService(userRepositories, userInportalService)
 
 	// Handlers
@@ -90,6 +91,7 @@ func SetupRoutes() {
 	// codingInterview
 	public.Get("codingInterview.getQuestions", codingInterviewHandlers.GetQuestions)
 	public.Get("codingInterview.getQuestionsInPortal/:portalId", codingInterviewHandlers.GetQuestionsInPortal)
+	public.Get("codingInterview.getQuestionsInWorkspace/:workspaceId", codingInterviewHandlers.GetQuestionsInWorkspace)
 	public.Get("codingInterview.getQuestionByTitle/:title", codingInterviewHandlers.GetQuestionByTitle)
 	public.Post("codingInterview.getCompileResult", codingInterviewHandlers.GetCompileResult)
 	public.Post("codingInterview.createQuestion", codingInterviewHandlers.CreateQuestion)
@@ -104,12 +106,13 @@ func SetupRoutes() {
 	public.Get("videoQuestion.getVideoQuestionById", questionHandlers.GetVideoQuestionById)
 	public.Get("videoQuestion.getVideoQuestionByPortalId", questionHandlers.GetVideoQuestionByPortalId)
 	public.Post("videoQuestion.updateVideoQuestion", questionHandlers.UpdateVideoQuestion)
-	public.Post("videoQuestion.deleteVideoQuestion", questionHandlers.DeleteVideoQuestion)
+	public.Post("videoQuestion.deleteVideoQuestionById", questionHandlers.DeleteVideoQuestion)
 
 	// Room
 	public.Post("room.createRoom", roomHandlers.CreateRoom)
 	public.Get("room.getRoomContext", roomHandlers.GetRoomContext)
 	public.Post("room.updateRoomContext", roomHandlers.UpdateRoomContext)
+	public.Get("room.checkAuthCandidate", roomHandlers.CheckAuthCandidate)
 
 	// portal
 	public.Get("portal.get", portalHandler.GetPortalById)

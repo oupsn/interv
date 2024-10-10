@@ -19,17 +19,19 @@ const WorkspaceCard: React.FC<WorkspaceProps> = ({
   return (
     <div
       className={
-        "w-80 h-72 p-6 flex flex-col justify-between text-lg text-start text-wrap shadow-lg rounded-lg border-2 hover:bg-iWhiteHover cursor-pointer"
+        "size-80 p-6 flex flex-col justify-between text-lg text-start text-wrap shadow-lg rounded-lg border-2 hover:bg-iWhiteHover cursor-pointer"
       }
       onClick={() => navigate(workspaceId.toString())}
     >
-      <div className="w-52 grid gap-4">
-        <div className="text-primary text-3xl font-bold">{title}</div>
-        <div className="text-2xl font-semibold">
+      <div className="w-full grid gap-4">
+        <div className="text-primary text-2xl font-bold truncate ... text-nowrap">
+          {title}
+        </div>
+        <div className="text-xl font-semibold">
           {member > 1 ? member + " Candidates" : member + " Candidate"}
         </div>
       </div>
-      <div className="text-iGrey">
+      <div className="text-iGrey text-sm">
         Created on {dayjs(createAt).format("MM/DD/YYYY HH:mm A")}
       </div>
     </div>

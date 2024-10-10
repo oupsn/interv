@@ -14,7 +14,7 @@ const ListWorkspaceCard: React.FC<ListWorkspaceProps> = ({ workspace }) => {
             key={Workspace.id}
             workspaceId={Workspace.id ?? 0}
             title={Workspace.title ?? ""}
-            createAt={Workspace.startDate ?? ""}
+            createAt={Workspace.createAt ?? ""}
             member={Workspace.memberNum ?? 0}
           />
         )

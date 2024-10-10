@@ -42,6 +42,7 @@ import {
 import useCurrentUser from "@/hooks/UseCurrentUser"
 
 function CreateCodingQuestion() {
+  const { currentUser } = useCurrentUser()
   const formSchema = z.object({
     title: z.string().min(1),
     description: z.string().min(1),

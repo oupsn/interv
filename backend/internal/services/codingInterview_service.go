@@ -53,6 +53,14 @@ func (s *codingInterviewService) GetCodingInterviewQuestionsInPortal(portalID in
 	return questions, nil
 }
 
+func (s *codingInterviewService) GetCodingInterviewQuestionsInWorkspace(workspaceId int) ([]domains.CodingQuestion, error) {
+	questions, err := s.codingInterviewRepository.GetCodingQuestionListInWorkspace(workspaceId)
+	if err != nil {
+		return []domains.CodingQuestion{}, ErrorGetCodingInterviewQuestions
+	}
+	return questions, nil
+}
+
 func (s *codingInterviewService) GenerateCompileToken(req domains.CompilationRequest) (string, error) {
 	token, err := s.codeCompilationRepository.GenerateCompileToken(req, "")
 	if err != nil {
@@ -109,8 +117,12 @@ func (s *codingInterviewService) GetCompileResult(req domains.CompilationRequest
 	return compileResult, nil
 }
 
-func (s *codingInterviewService) CreateCodingQuestion(req domains.CodingQuestion) (domains.CreateCodingQuestionResponse, error) {
-	_, err := s.codingInterviewRepository.SaveCodingQuestion(req)
+func (s *codingInterviewService) CreateCodingQuestion(req domains.CodingQuestion, portalID uint) (domains.CreateCodingQuestionResponse, error) {
+	newQuestion, err := s.codingInterviewRepository.SaveCodingQuestion(req)
+	if err != nil {
+		return domains.CreateCodingQuestionResponse{}, ErrorCreateCodingQuestion
+	}
+	err = s.codingInterviewRepository.AddCodingQuestion(newQuestion.Id, "portal", uint(portalID))
 	if err != nil {
 		return domains.CreateCodingQuestionResponse{}, ErrorCreateCodingQuestion
 	}
