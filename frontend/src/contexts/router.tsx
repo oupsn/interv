@@ -19,6 +19,7 @@ import WorkspaceCandidateList from "@/pages/portal/workspace/WorkspaceCandidateL
 import QuestionBankVideoDetail from "@/pages/portal/questionBank/components/QuestionBankVideoDetail.tsx"
 import QuestionBankCodingEdit from "@/pages/portal/questionBank/components/QuestionBankCodingEdit"
 import QuestionBankEditVideoQuestionForm from "@/pages/portal/questionBank/components/QuestionBankEditVideoQuestionForm.tsx"
+import WorkspaceInterestPage from "@/pages/portal/workspace/WorkspaceInterestPage"
 
 export const router = createBrowserRouter([
   {
@@ -53,7 +54,29 @@ export const router = createBrowserRouter([
                   },
                   {
                     path: "candidateList",
-                    element: <WorkspaceCandidateList />,
+                    children: [
+                      {
+                        path: "",
+                        element: <WorkspaceCandidateList />,
+                      },
+                      {
+                        path: ":candidateId",
+                        element: <WorkspaceDetailPage />,
+                      },
+                    ],
+                  },
+                  {
+                    path: "interestList",
+                    children: [
+                      {
+                        path: "",
+                        element: <WorkspaceInterestPage />,
+                      },
+                      {
+                        path: ":candidateId",
+                        element: <WorkspaceDetailPage />,
+                      },
+                    ],
                   },
                 ],
               },

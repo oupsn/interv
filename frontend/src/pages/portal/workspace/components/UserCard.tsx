@@ -1,25 +1,41 @@
+import { Button } from "@/components/ui/button"
+import { TableRow, TableCell } from "@/components/ui/table"
 import * as React from "react"
+import { FaEye, FaEdit, FaTrash } from "react-icons/fa"
 
-export type UserCardProps = {
+export type NewUserCardProps = {
+  id: number
   name: string
   username: string
   status: string
 }
 
-const WorkspaceCard: React.FC<UserCardProps> = ({ name, username, status }) => {
+const NewUserCard: React.FC<NewUserCardProps> = ({
+  id,
+  name,
+  username,
+  status,
+}) => {
   return (
-    <div
-      className={
-        "w-80 h-72 p-6 flex flex-col justify-between text-lg text-start text-slate-600 text-wrap shadow-lg rounded-lg border-solid border-2 border-slate-200 hover:scale-105 cursor-pointer"
-      }
-    >
-      <div className="w-52 grid gap-3">
-        <div className="text-primary text-4xl font-bold">Name: {name}</div>
-        <div className="text-2xl font-semibold">UserName: {username}</div>
-      </div>
-      <div className="text-slate-400 font-normal">Status: {status}</div>
-    </div>
+    <TableRow key={id}>
+      <TableCell className="font-medium">{name}</TableCell>
+      <TableCell className="font-medium">{username}</TableCell>
+      <TableCell>
+        <td className="flex w-fit gap-2">
+          <Button onClick={() => {}}>
+            <FaEye />
+          </Button>
+          <Button onClick={() => {}}>
+            <FaEdit />
+          </Button>
+          <Button onClick={() => {}}>
+            <FaTrash />
+          </Button>
+        </td>
+        <TableCell className="font-medium">{status}</TableCell>
+      </TableCell>
+    </TableRow>
   )
 }
 
-export default WorkspaceCard
+export default NewUserCard

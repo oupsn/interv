@@ -8,6 +8,7 @@ type ICodingInterviewRepository interface {
 	GetCodingQuestionList() ([]domains.CodingQuestionResponse, error)
 	GetCodingQuestionByTitle(title string) (domains.CodingQuestionResponse, error)
 	GetCodingQuestionListInPortal(portalID int) ([]domains.CodingQuestion, error)
+	GetCodingQuestionListInWorkspace(workspaceId int) ([]domains.CodingQuestion, error)
 	GetCodingQuestionTestcaseByQuestionID(questionID int) ([]domains.CodingQuestionTestCase, error)
 	GetCodingQuestionByWorkspaceID(workspaceID int) ([]domains.CodingQuestionInWorkspace, error)
 	SaveCodingQuestion(question domains.CodingQuestion) (domains.CodingQuestion, error)

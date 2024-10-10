@@ -105,6 +105,29 @@ func (co CodingInterviewHandler) GetQuestionsInPortal(c *fiber.Ctx) error {
 	return Ok(c, questions)
 }
 
+// @Summary Get coding interview questions in a workspace
+// @Description Get coding interview questions in a workspace
+// @Tags codingInterview
+// @ID GetQuestionsInWorkspace
+// @Accept json
+// @Produce json
+// @Param workspaceId path int true "Workspace ID"
+// @Success 200 {object} Response[CodingInterviewGetQuestionsInWorkspaceResponse] "Successful response with the coding interview questions in a workspace"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.getQuestionsInWorkspace/{workspaceId} [get]
+func (co CodingInterviewHandler) GetQuestionsInWorkspace(c *fiber.Ctx) error {
+	workspaceId, err := strconv.Atoi(c.Params("workspaceId"))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	questions, err := co.codingInterviewService.GetCodingInterviewQuestionsInWorkspace(workspaceId)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+	return Ok(c, questions)
+}
+
 // @Summary Create a new coding interview question
 // @Description Create a new coding interview question
 // @Tags codingInterview
@@ -131,6 +154,7 @@ func (co CodingInterviewHandler) CreateQuestion(c *fiber.Ctx) error {
 			TestCases:         req.Body.TestCases,
 			Difficulty:        req.Body.Difficulty,
 		},
+		req.Body.PortalId,
 	)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())

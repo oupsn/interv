@@ -115,7 +115,8 @@ export interface CreateVideoQuestionResponse {
 }
 
 export interface CreateWorkspaceBody {
-  codingTime: number
+  codeQuestion: number[]
+  codingTime?: number
   endDate: string
   isCoding: boolean
   isVideo: boolean
@@ -125,6 +126,8 @@ export interface CreateWorkspaceBody {
   reqScreen: boolean
   startDate: string
   title: string
+  videoQuestion: number[]
+  videoTime?: number
 }
 
 export type CreateWorkspaceData = HandlersResponseWorkspaceDetail
@@ -299,6 +302,7 @@ export interface DomainsCreateCodingQuestionRequest {
   difficulty?: string
   input_description?: string
   output_description?: string
+  portal_id?: number
   test_cases?: DomainsCodingQuestionTestCase[]
   title?: string
 }
@@ -351,6 +355,7 @@ export interface DomainsWorkspace {
   title?: string
   updatedAt?: string
   videoQuestion?: DomainsVideoQuestion[]
+  videoTime?: number
 }
 
 export type GetCompileResultData = HandlersResponseHandlersCodingInterviewGetCompileResultResponse
@@ -389,6 +394,10 @@ export type GetQuestionsError = HandlersErrResponse
 export type GetQuestionsInPortalData = HandlersResponseHandlersCodingInterviewGetQuestionsInPortalResponse
 
 export type GetQuestionsInPortalError = HandlersErrResponse
+
+export type GetQuestionsInWorkspaceData = HandlersResponseHandlersCodingInterviewGetQuestionsInWorkspaceResponse
+
+export type GetQuestionsInWorkspaceError = HandlersErrResponse
 
 export type GetRoomContextData = HandlersResponseGetRoomContextResponse
 
@@ -594,6 +603,13 @@ export interface HandlersResponseHandlersCodingInterviewGetQuestionByTitleRespon
 }
 
 export interface HandlersResponseHandlersCodingInterviewGetQuestionsInPortalResponse {
+  code?: number
+  data?: DomainsCodingQuestion[]
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseHandlersCodingInterviewGetQuestionsInWorkspaceResponse {
   code?: number
   data?: DomainsCodingQuestion[]
   message?: string
@@ -808,6 +824,15 @@ export interface VideoInterviewQuestionSetting {
   totalAttempt: number
 }
 
+export interface VideoQuestionDetail {
+  id: number
+  portalId: number
+  timeToAnswer: number
+  timeToPrepare: number
+  title: string
+  totalAttempt: number
+}
+
 export interface WorkspaceData {
   individualUser: IndividualUser[]
   workspaceDetail: WorkspaceDetail
@@ -815,6 +840,7 @@ export interface WorkspaceData {
 
 export interface WorkspaceDetail {
   codingTime?: number
+  createAt?: string
   endDate?: string
   id?: number
   isCoding?: boolean
@@ -826,6 +852,8 @@ export interface WorkspaceDetail {
   reqScreen?: boolean
   startDate?: string
   title?: string
+  videoQueston?: VideoQuestionDetail[]
+  videoTime?: number
 }
 
 export namespace Authentication {
@@ -1032,6 +1060,27 @@ export namespace CodingInterview {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetQuestionsInPortalData
+  }
+
+  /**
+   * @description Get coding interview questions in a workspace
+   * @tags codingInterview
+   * @name GetQuestionsInWorkspace
+   * @summary Get coding interview questions in a workspace
+   * @request GET:/codingInterview.getQuestionsInWorkspace/{workspaceId}
+   * @response `200` `GetQuestionsInWorkspaceData` Successful response with the coding interview questions in a workspace
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetQuestionsInWorkspace {
+    export type RequestParams = {
+      /** Workspace ID */
+      workspaceId: number
+    }
+    export type RequestQuery = {}
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetQuestionsInWorkspaceData
   }
 
   /**
@@ -1946,6 +1995,26 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
     getQuestionsInPortal: (portalId: number, params: RequestParams = {}) =>
       this.request<GetQuestionsInPortalData, GetQuestionsInPortalError>({
         path: `/codingInterview.getQuestionsInPortal/${portalId}`,
+        method: "GET",
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Get coding interview questions in a workspace
+     *
+     * @tags codingInterview
+     * @name GetQuestionsInWorkspace
+     * @summary Get coding interview questions in a workspace
+     * @request GET:/codingInterview.getQuestionsInWorkspace/{workspaceId}
+     * @response `200` `GetQuestionsInWorkspaceData` Successful response with the coding interview questions in a workspace
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getQuestionsInWorkspace: (workspaceId: number, params: RequestParams = {}) =>
+      this.request<GetQuestionsInWorkspaceData, GetQuestionsInWorkspaceError>({
+        path: `/codingInterview.getQuestionsInWorkspace/${workspaceId}`,
         method: "GET",
         type: ContentType.Json,
         format: "json",

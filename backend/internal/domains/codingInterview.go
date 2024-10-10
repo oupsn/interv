@@ -86,6 +86,7 @@ type CreateCodingQuestionRequest struct {
 	OutputDescription string                   `json:"output_description"`
 	TestCases         []CodingQuestionTestCase `json:"test_cases"`
 	Difficulty        string                   `json:"difficulty"`
+	PortalId          uint                     `json:"portal_id"`
 }
 type CodingSnapshotQuestion struct {
 	QuestionID uint   `json:"question_id"`

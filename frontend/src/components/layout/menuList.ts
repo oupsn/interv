@@ -19,7 +19,10 @@ type Group = {
   menus: Menu[]
 }
 
-export function getMenuList(pathname: string): Group[] {
+export function getMenuList(
+  pathname: string,
+  workspaceId: string | undefined,
+): Group[] {
   return [
     {
       groupLabel: "",
@@ -29,8 +32,61 @@ export function getMenuList(pathname: string): Group[] {
           label: "Workspaces",
           active: pathname.includes("/portal/workspace"),
           icon: Layers,
-          submenus: [],
+          submenus: [
+            ...(workspaceId !== undefined
+              ? [
+                  {
+                    href: "/portal/workspace/" + workspaceId,
+                    label: "Home",
+                    active: pathname === "/portal/workspace/" + workspaceId,
+                  },
+                  {
+                    href: "/portal/workspace/" + workspaceId + "/candidateList",
+                    label: "Candidate List",
+                    active:
+                      pathname ===
+                      "/portal/workspace/" + workspaceId + "/candidateList",
+                  },
+                  {
+                    href: "/portal/workspace/" + workspaceId + "/interestList",
+                    label: "Interest List",
+                    active:
+                      pathname ===
+                      "/portal/workspace/" + workspaceId + "/interestList",
+                  },
+                ]
+              : []),
+          ],
         },
+        // ...(workspaceId !== undefined
+        //   ? [
+        //       {
+        //         href: "/portal/workspace/" + workspaceId,
+        //         label: "Home",
+        //         icon: House,
+        //         active: pathname === "/portal/workspace/" + workspaceId,
+        //         submenus: [],
+        //       },
+        //       {
+        //         href: "/portal/workspace/" + workspaceId + "/candidateList",
+        //         label: "Candidate List",
+        //         icon: Users,
+        //         active:
+        //           pathname ===
+        //           "/portal/workspace/" + workspaceId + "/candidateList",
+        //         submenus: [],
+        //       },
+        //       {
+        //         href: "/portal/workspace/" + workspaceId + "/interestList",
+        //         label: "Interest List",
+        //         icon: Star,
+        //         active:
+        //           pathname ===
+        //           "/portal/workspace/" + workspaceId + "/interestList",
+        //         submenus: [],
+        //       },
+        //     ]
+        //   : []),
       ],
     },
     // {

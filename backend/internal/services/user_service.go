@@ -28,7 +28,6 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 	var checkedUser []*domains.UserInWorkspace
 
 	for x, aImportUser := range importUser {
-		bytes, err := bcrypt.GenerateFromPassword([]byte(aImportUser.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return err
 		}
@@ -38,7 +37,6 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 				ID:       aImportUser.ID,
 				Name:     aImportUser.Name,
 				Username: aImportUser.Username,
-				Password: (strings.TrimSpace(string(bytes))),
 				Role:     aImportUser.Role,
 			})
 			if err != nil {

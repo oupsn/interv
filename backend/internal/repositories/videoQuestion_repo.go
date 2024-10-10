@@ -7,6 +7,7 @@ import (
 
 type IVideoQuestionRepository interface {
 	Create(question domains.VideoQuestion) (*domains.VideoQuestion, error)
+	AddQuestionToWorkspace(question *domains.VideoQuestion, workspaceId *domains.Workspace) error
 	GetById(id uint) (*domains.VideoQuestion, error)
 	GetByPortalId(id uint) ([]domains.VideoQuestion, error)
 	GetByWorkspaceId(id uint) (*domains.Workspace, error)
@@ -30,6 +31,15 @@ func (v videoQuestionRepository) Create(question domains.VideoQuestion) (*domain
 	}
 
 	return &question, nil
+}
+
+func (v videoQuestionRepository) AddQuestionToWorkspace(question *domains.VideoQuestion, workspace *domains.Workspace) error {
+	err := v.DB.Model(&domains.VideoQuestion{ID: question.ID}).Association("Workspace").Append(&domains.Workspace{Id: workspace.Id})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (v videoQuestionRepository) GetById(id uint) (*domains.VideoQuestion, error) {

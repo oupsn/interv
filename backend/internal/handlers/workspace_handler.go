@@ -33,6 +33,7 @@ func NewWorkspaceHandler(workspaceService services.IWorkspaceService, userInPort
 func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 	form := GetWorkspaceBody{}
 	var res []IndividualUser
+	var vidQ []VideoQuestionDetail
 
 	if err := c.QueryParser(&form); err != nil {
 		return err
@@ -42,6 +43,7 @@ func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	member := len(*userInWorkspace)
 	for index := range *userInWorkspace {
 		res = append(res, IndividualUser{
 			Id: index,
@@ -62,6 +64,18 @@ func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 			},
 		})
 	}
+
+	for _, question := range workspace.VideoQuestion {
+		vidQ = append(vidQ, VideoQuestionDetail{
+			ID:            question.ID,
+			PortalID:      question.PortalID,
+			Title:         question.Title,
+			TimeToPrepare: question.TimeToPrepare,
+			TimeToAnswer:  question.TimeToAnswer,
+			TotalAttempt:  question.TotalAttempt,
+		})
+	}
+
 	return Ok(c, WorkspaceData{
 		WorkspaceDetail: WorkspaceDetail{
 			Id:            workspace.Id,
@@ -70,11 +84,15 @@ func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 			EndDate:       workspace.EndDate,
 			IsVideo:       *workspace.IsVideo,
 			IsCoding:      *workspace.IsCoding,
+			VideoTime:     workspace.VideoTime,
 			CodingTime:    workspace.CodingTime,
 			ReqScreen:     *workspace.ReqScreen,
 			ReqMicrophone: *workspace.ReqScreen,
 			ReqCamera:     *workspace.ReqCamera,
-			MemberNum:     0,
+			PortalId:      workspace.PortalId,
+			MemberNum:     uint(member),
+			CreateAt:      workspace.CreatedAt,
+			VideoQueston:  vidQ,
 		},
 		IndividualUser: res,
 	})
@@ -119,6 +137,9 @@ func (w WorkspaceHandler) GetUserInWorkspace(c *fiber.Ctx) error {
 // @Router /workspace.getByPortal [get]
 func (w WorkspaceHandler) GetPortalWorkspace(c *fiber.Ctx) error {
 	userId, err := GetCurrentUser(c)
+	if err != nil {
+		return err
+	}
 	_, portalId, err := w.authService.Me(*userId)
 	if err != nil {
 		return err
@@ -137,14 +158,17 @@ func (w WorkspaceHandler) GetPortalWorkspace(c *fiber.Ctx) error {
 
 	for index, v := range *response {
 		res = append(res, WorkspaceDetail{
-			Id:        v.Id,
-			Title:     v.Title,
-			IsVideo:   *v.IsVideo,
-			IsCoding:  *v.IsCoding,
-			StartDate: v.StartDate,
-			EndDate:   v.EndDate,
-			PortalId:  v.PortalId,
-			MemberNum: member[index],
+			Id:         v.Id,
+			Title:      v.Title,
+			IsVideo:    *v.IsVideo,
+			IsCoding:   *v.IsCoding,
+			VideoTime:  v.VideoTime,
+			CodingTime: v.CodingTime,
+			StartDate:  v.StartDate,
+			EndDate:    v.EndDate,
+			PortalId:   v.PortalId,
+			MemberNum:  member[index],
+			CreateAt:   v.CreatedAt,
 		})
 	}
 
@@ -173,7 +197,7 @@ func (w WorkspaceHandler) CreateWorkspace(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := w.workspaceService.Create(form.Title, form.StartDate, form.EndDate, form.IsVideo, form.IsCoding, form.CodingTime, form.ReqScreen, form.ReqMicrophone, form.ReqCamera, form.PortalId)
+	response, err := w.workspaceService.Create(form.Title, form.StartDate, form.EndDate, form.IsVideo, form.IsCoding, form.VideoTime, form.CodingTime, form.ReqScreen, form.ReqMicrophone, form.ReqCamera, form.PortalId, form.CodeQuestion, form.VideoQuestion)
 	if err != nil {
 		return err
 	}
@@ -185,6 +209,7 @@ func (w WorkspaceHandler) CreateWorkspace(c *fiber.Ctx) error {
 		EndDate:    response.EndDate,
 		IsVideo:    *response.IsVideo,
 		IsCoding:   *response.IsCoding,
+		VideoTime:  response.VideoTime,
 		CodingTime: response.CodingTime,
 		PortalId:   response.PortalId,
 	})

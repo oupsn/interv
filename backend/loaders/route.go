@@ -44,7 +44,7 @@ func SetupRoutes() {
 	var roomServices = services.NewRoomService(roomRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories)
 	var portalService = services.NewPortalService(portalRepository)
 	var userInportalService = services.NewUserInPortalService(userInPoratlRepository)
-	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, userInportalService)
+	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, userInportalService, codingInterviewServices, questionServices, videoQuestionRepositories)
 	var authServices = services.NewAuthService(userRepositories, userInportalService)
 
 	// Handlers
@@ -90,6 +90,7 @@ func SetupRoutes() {
 	// codingInterview
 	public.Get("codingInterview.getQuestions", codingInterviewHandlers.GetQuestions)
 	public.Get("codingInterview.getQuestionsInPortal/:portalId", codingInterviewHandlers.GetQuestionsInPortal)
+	public.Get("codingInterview.getQuestionsInWorkspace/:workspaceId", codingInterviewHandlers.GetQuestionsInWorkspace)
 	public.Get("codingInterview.getQuestionByTitle/:title", codingInterviewHandlers.GetQuestionByTitle)
 	public.Post("codingInterview.getCompileResult", codingInterviewHandlers.GetCompileResult)
 	public.Post("codingInterview.createQuestion", codingInterviewHandlers.CreateQuestion)

@@ -39,8 +39,10 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select" // Import Select components
+import useCurrentUser from "@/hooks/UseCurrentUser"
 
 function CreateCodingQuestion() {
+  const { currentUser } = useCurrentUser()
   const formSchema = z.object({
     title: z.string().min(1),
     description: z.string().min(1),
@@ -84,6 +86,7 @@ function CreateCodingQuestion() {
           output: testCase.output.replace(/\n/g, "\\n"),
         })) || [],
       difficulty: values.difficulty,
+      portal_id: currentUser.portalId,
     }
 
     toast.promise(

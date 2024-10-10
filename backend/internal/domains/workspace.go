@@ -13,6 +13,7 @@ type Workspace struct {
 	EndDate       time.Time
 	IsVideo       *bool
 	IsCoding      *bool
+	VideoTime     uint
 	CodingTime    uint
 	ReqScreen     *bool
 	ReqMicrophone *bool
