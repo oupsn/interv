@@ -101,6 +101,7 @@ func SetupRoutes() {
 	public.Put("codingInterview.updateQuestion/:codingQuestionID", codingInterviewHandlers.UpdateQuestion)
 	public.Delete("codingInterview.deleteQuestion/:codingQuestionID", codingInterviewHandlers.DeleteQuestion)
 	public.Post("codingInterview.uploadVideo", codingInterviewHandlers.UploadCodingVideo)
+	public.Post("codingInterview.getSubmissionResultByUser", codingInterviewHandlers.GetSubmissionResultByUser)
 	// video question
 	public.Post("videoQuestion.createVideoQuestion", questionHandlers.CreateVideoQuestion)
 	public.Get("videoQuestion.getVideoQuestionById", questionHandlers.GetVideoQuestionById)

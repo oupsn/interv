@@ -128,6 +128,31 @@ func (co CodingInterviewHandler) GetQuestionsInWorkspace(c *fiber.Ctx) error {
 	return Ok(c, questions)
 }
 
+// @Summary Get coding interview submission result by user
+// @Description Get coding interview submission result by user
+// @Tags codingInterview
+// @ID GetSubmissionResultByUser
+// @Accept json
+// @Produce json
+// @Param body body CodingInterviewGetSubmissionResultByUserQuery true "Request body containing the user ID"
+// @Success 200 {object} Response[CodingInterviewGetSubmissionResultByUserResponse] "Successful response with the coding interview submission result by user"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.getSubmissionResultByUser [post]
+func (co CodingInterviewHandler) GetSubmissionResultByUser(c *fiber.Ctx) error {
+	var req CodingInterviewGetSubmissionResultByUserQuery
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	res, err := co.codingInterviewService.GetCodingSubmissionResultByUser(req.UserID)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, res)
+}
+
 // @Summary Create a new coding interview question
 // @Description Create a new coding interview question
 // @Tags codingInterview

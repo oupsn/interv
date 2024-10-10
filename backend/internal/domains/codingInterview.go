@@ -144,3 +144,9 @@ type AnalyzeResult struct {
 	Line        int    `json:"line"`
 	Description string `json:"description"`
 }
+
+type CodingQuestionSubmissionResult struct {
+	Result    []CodingQuestionSubmission `json:"result"`
+	ScreenURL string                     `json:"screen_url"`
+	VideoURL  string                     `json:"video_url"`
+}
