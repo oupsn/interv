@@ -61,6 +61,23 @@ func (s *codingInterviewService) GetCodingInterviewQuestionsInWorkspace(workspac
 	return questions, nil
 }
 
+func (s *codingInterviewService) GetCodingSubmissionResultByUser(userID string) (domains.CodingQuestionSubmissionResult, error) {
+	var result domains.CodingQuestionSubmissionResult
+	videoURL, videoErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%d-video", userID))
+	screenURL, screenErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%d-screen", userID))
+	if videoErr != nil || screenErr != nil {
+		return domains.CodingQuestionSubmissionResult{}, ErrorGetObjectSubmission
+	}
+	result.VideoURL = videoURL
+	result.ScreenURL = screenURL
+	submissions, err := s.codingInterviewRepository.GetCodingQuestionSubmissionByUserID(userID)
+	if err != nil {
+		return domains.CodingQuestionSubmissionResult{}, ErrorGetCodingSubmissionResultByUser
+	}
+	result.Result = submissions
+	return result, nil
+}
+
 func (s *codingInterviewService) GenerateCompileToken(req domains.CompilationRequest) (string, error) {
 	token, err := s.codeCompilationRepository.GenerateCompileToken(req, "")
 	if err != nil {

@@ -564,6 +564,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/codingInterview.getSubmissionResultByUser": {
+            "post": {
+                "description": "Get coding interview submission result by user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Get coding interview submission result by user",
+                "operationId": "GetSubmissionResultByUser",
+                "parameters": [
+                    {
+                        "description": "Request body containing the user ID",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CodingInterviewGetSubmissionResultByUserQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with the coding interview submission result by user",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-handlers_CodingInterviewGetSubmissionResultByUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/codingInterview.updateQuestion/{codingQuestionID}": {
             "put": {
                 "description": "Update a coding interview question",
@@ -2010,6 +2057,17 @@ const docTemplate = `{
                 }
             }
         },
+        "CodingInterviewGetSubmissionResultByUserQuery": {
+            "type": "object",
+            "required": [
+                "userID"
+            ],
+            "properties": {
+                "userID": {
+                    "type": "string"
+                }
+            }
+        },
         "CodingInterviewUpdateQuestionQuery": {
             "type": "object",
             "required": [
@@ -2946,6 +3004,85 @@ const docTemplate = `{
                 }
             }
         },
+        "domains.CodingQuestionSubmission": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "linter_result": {
+                    "type": "string"
+                },
+                "question": {
+                    "$ref": "#/definitions/domains.CodingQuestion"
+                },
+                "question_id": {
+                    "type": "integer"
+                },
+                "room_id": {
+                    "type": "string"
+                },
+                "test_cases_result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionSubmissionTestCaseResult"
+                    }
+                },
+                "time_taken": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "domains.CodingQuestionSubmissionTestCaseResult": {
+            "type": "object",
+            "properties": {
+                "compile_result": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_passed": {
+                    "type": "boolean"
+                },
+                "submission": {
+                    "$ref": "#/definitions/domains.CodingQuestionSubmission"
+                },
+                "submission_id": {
+                    "type": "integer"
+                },
+                "testCase": {
+                    "$ref": "#/definitions/domains.CodingQuestionTestCase"
+                },
+                "test_case_id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "domains.CodingQuestionTestCase": {
             "type": "object",
             "properties": {
@@ -3286,6 +3423,23 @@ const docTemplate = `{
                     }
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.CodingInterviewGetSubmissionResultByUserResponse": {
+            "type": "object",
+            "properties": {
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestionSubmission"
+                    }
+                },
+                "screen_url": {
+                    "type": "string"
+                },
+                "video_url": {
                     "type": "string"
                 }
             }
@@ -3698,6 +3852,23 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domains.CodingQuestionResponse"
                     }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-handlers_CodingInterviewGetSubmissionResultByUserResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/handlers.CodingInterviewGetSubmissionResultByUserResponse"
                 },
                 "message": {
                     "type": "string"
