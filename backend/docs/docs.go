@@ -1939,6 +1939,51 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/workspace.inviteAll": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workspace"
+                ],
+                "operationId": "inviteAllCandidate",
+                "parameters": [
+                    {
+                        "description": "InviteAllCandidateBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.InviteAllCandidateBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -3301,6 +3346,17 @@ const docTemplate = `{
                 },
                 "timestamp": {
                     "type": "string"
+                }
+            }
+        },
+        "handlers.InviteAllCandidateBody": {
+            "type": "object",
+            "required": [
+                "workspaceId"
+            ],
+            "properties": {
+                "workspaceId": {
+                    "type": "integer"
                 }
             }
         },
