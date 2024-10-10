@@ -13,6 +13,9 @@ type workspaceService struct {
 	userInWorkspaceRepository repositories.IUserInWorkspaceRepository
 	userRepository            repositories.IUserRepository
 	userInPortalService       IUserInPortalService
+	codingInterviewService    ICodingInterviewService
+	videoQuestionService      IVideoQuestionService
+	videoQuestionRepositories repositories.IVideoQuestionRepository
 }
 
 func NewWorkspaceService(
@@ -20,17 +23,23 @@ func NewWorkspaceService(
 	userInWorkspaceRepository repositories.IUserInWorkspaceRepository,
 	userRepository repositories.IUserRepository,
 	userInPortalService IUserInPortalService,
+	codingInterviewService ICodingInterviewService,
+	videoQuestionService IVideoQuestionService,
+	videoQuestionRepositories repositories.IVideoQuestionRepository,
 ) IWorkspaceService {
 	return &workspaceService{
 		userInWorkspaceRepository: userInWorkspaceRepository,
 		workspaceRepository:       workspaceRepository,
 		userRepository:            userRepository,
 		userInPortalService:       userInPortalService,
+		codingInterviewService:    codingInterviewService,
+		videoQuestionService:      videoQuestionService,
+		videoQuestionRepositories: videoQuestionRepositories,
 	}
 }
 
 func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspace, userInWorkspace *[]domains.UserInWorkspace, userData *[]domains.User, err error) {
-	workspace, err = w.workspaceRepository.FindById(id)
+	workspace, err = w.videoQuestionRepositories.GetByWorkspaceId(id)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -45,6 +54,9 @@ func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspa
 	}
 
 	userData, err = w.userRepository.FindAllByIds(ids)
+	if err != nil {
+		return nil, nil, nil, err
+	}
 
 	return workspace, userInWorkspace, userData, nil
 }
@@ -81,11 +93,14 @@ func (w *workspaceService) Create(
 	endDate string,
 	isVideo *bool,
 	isCoding *bool,
+	videoTime uint,
 	codingTime uint,
 	reqScreen *bool,
 	reqMicrophone *bool,
 	reqCamera *bool,
 	portalId uint,
+	codeQuestion []uint,
+	videoQuestion []uint,
 ) (workspace *domains.Workspace, err error) {
 	const layout = "2006-01-02T15:04:05Z07:00"
 	if _, err := w.workspaceRepository.FindByTitle(strings.TrimSpace(title)); err == nil {
@@ -99,19 +114,29 @@ func (w *workspaceService) Create(
 	if err != nil {
 		return nil, err
 	}
-
-	return w.workspaceRepository.Create(domains.Workspace{
+	newWorkspace, err := w.workspaceRepository.Create(domains.Workspace{
 		Title:         strings.TrimSpace(title),
 		StartDate:     startdate,
 		EndDate:       enddate,
 		IsVideo:       isVideo,
 		IsCoding:      isCoding,
+		VideoTime:     videoTime,
 		CodingTime:    codingTime,
 		ReqScreen:     reqScreen,
 		ReqMicrophone: reqMicrophone,
 		ReqCamera:     reqCamera,
 		PortalId:      portalId,
 	})
+	if len(codeQuestion) > 0 {
+		for index := range codeQuestion {
+			w.codingInterviewService.AddCodingQuestion(codeQuestion[index], "workspace", newWorkspace.Id)
+		}
+	}
+	if len(videoQuestion) > 0 {
+		w.videoQuestionService.AddVideoQuestion(videoQuestion, newWorkspace)
+	}
+
+	return newWorkspace, err
 }
 
 func (w *workspaceService) Delete(id uint) (err error) {

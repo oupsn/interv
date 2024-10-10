@@ -7,6 +7,7 @@ import (
 
 type IVideoQuestionService interface {
 	CreateVideoQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error)
+	AddVideoQuestion(questionId []uint, workspace *domains.Workspace) error
 	GetVideoQuestionById(id uint) (*domains.VideoQuestion, error)
 	GetVideoQuestionByPortalId(id uint) ([]domains.VideoQuestion, error)
 	UpdateVideoQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error)
@@ -30,6 +31,17 @@ func (v videoQuestionService) CreateVideoQuestion(question domains.VideoQuestion
 	}
 
 	return response, nil
+}
+
+func (v videoQuestionService) AddVideoQuestion(questionId []uint, workspace *domains.Workspace) error {
+	for _, questionId := range questionId {
+		question, err := v.questionRepo.GetById(questionId)
+		if err != nil {
+			return err
+		}
+		v.questionRepo.AddQuestionToWorkspace(question, workspace)
+	}
+	return nil
 }
 
 func (v videoQuestionService) GetVideoQuestionById(id uint) (*domains.VideoQuestion, error) {

@@ -469,6 +469,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/codingInterview.getQuestionsInWorkspace/{workspaceId}": {
+            "get": {
+                "description": "Get coding interview questions in a workspace",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Get coding interview questions in a workspace",
+                "operationId": "GetQuestionsInWorkspace",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Workspace ID",
+                        "name": "workspaceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with the coding interview questions in a workspace",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionsInWorkspaceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/codingInterview.updateQuestion/{codingQuestionID}": {
             "put": {
                 "description": "Update a coding interview question",
@@ -1971,7 +2016,7 @@ const docTemplate = `{
         "CreateWorkspaceBody": {
             "type": "object",
             "required": [
-                "codingTime",
+                "codeQuestion",
                 "endDate",
                 "isCoding",
                 "isVideo",
@@ -1980,9 +2025,16 @@ const docTemplate = `{
                 "reqMicrophone",
                 "reqScreen",
                 "startDate",
-                "title"
+                "title",
+                "videoQuestion"
             ],
             "properties": {
+                "codeQuestion": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "codingTime": {
                     "type": "integer"
                 },
@@ -2012,6 +2064,15 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "videoQuestion": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "videoTime": {
+                    "type": "integer"
                 }
             }
         },
@@ -2496,6 +2557,37 @@ const docTemplate = `{
                 }
             }
         },
+        "VideoQuestionDetail": {
+            "type": "object",
+            "required": [
+                "id",
+                "portalId",
+                "timeToAnswer",
+                "timeToPrepare",
+                "title",
+                "totalAttempt"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "portalId": {
+                    "type": "integer"
+                },
+                "timeToAnswer": {
+                    "type": "integer"
+                },
+                "timeToPrepare": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "totalAttempt": {
+                    "type": "integer"
+                }
+            }
+        },
         "WorkspaceData": {
             "type": "object",
             "required": [
@@ -2519,6 +2611,9 @@ const docTemplate = `{
             "properties": {
                 "codingTime": {
                     "type": "integer"
+                },
+                "createAt": {
+                    "type": "string"
                 },
                 "endDate": {
                     "type": "string"
@@ -2552,6 +2647,15 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "videoQueston": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/VideoQuestionDetail"
+                    }
+                },
+                "videoTime": {
+                    "type": "integer"
                 }
             }
         },
@@ -2877,6 +2981,9 @@ const docTemplate = `{
                 "output_description": {
                     "type": "string"
                 },
+                "portal_id": {
+                    "type": "integer"
+                },
                 "test_cases": {
                     "type": "array",
                     "items": {
@@ -3025,6 +3132,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/domains.VideoQuestion"
                     }
+                },
+                "videoTime": {
+                    "type": "integer"
                 }
             }
         },
@@ -3427,6 +3537,26 @@ const docTemplate = `{
             }
         },
         "handlers.Response-handlers_CodingInterviewGetQuestionsInPortalResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.CodingQuestion"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-handlers_CodingInterviewGetQuestionsInWorkspaceResponse": {
             "type": "object",
             "properties": {
                 "code": {

@@ -5,7 +5,7 @@ import React, { useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { server } from "@/contexts/swr"
 import { useGetWorkspace } from "@/hooks/useGetWorkspace"
-import ListUser from "./components/ListUser"
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,16 +16,21 @@ import {
 } from "@/components/ui/breadcrumb.tsx"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
+import Panigator from "./components/Panigator"
+import ListUser from "./components/ListUser"
+import { Spinner } from "@/components/ui/spinner"
+import saveAs from "file-saver"
 
 const WorkspaceCandidateList = () => {
   const [importUser, setImportUser] = useState<UserData[]>()
+  const [page, setPage] = useState(1)
+  const size = 10
   const { workspaceId } = useParams()
-  const { data, mutate } = useGetWorkspace(Number(workspaceId))
+  const { data, mutate, isLoading } = useGetWorkspace(Number(workspaceId))
 
   type UserData = {
     name: string
     username: string
-    password: string
     role: string
     createdAt: string
     updatedAt: string
@@ -38,19 +43,21 @@ const WorkspaceCandidateList = () => {
 
   function parseUserData(input: unknown[]): UserData[] {
     const currentTimestamp = new Date().toISOString() // or any timestamp logic
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     return input
+      .slice(1)
       .filter(
         (item): item is string[] =>
           Array.isArray(item) &&
-          item.length === 4 &&
-          item.every((i) => typeof i === "string"),
+          item.length === 2 &&
+          item.every((i) => typeof i === "string") &&
+          emailRegex.test(item[1]),
       )
-      .map(([name, username, password, role]) => ({
+      .map(([name, username]) => ({
         name,
         username,
-        password,
-        role,
+        role: "candidate",
         createdAt: currentTimestamp,
         updatedAt: currentTimestamp,
       }))
@@ -81,9 +88,23 @@ const WorkspaceCandidateList = () => {
     console.log(data?.data?.workspaceDetail)
   }
 
+  const handleExportFile = () => {
+    const csvRows = [["name", "username"]]
+    const csvContent = csvRows.map((row) => row.join(",")).join("\n")
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+    saveAs(blob, "candidate_import_template.csv")
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spinner size="lg" />
+      </div>
+    )
+  }
   return (
     <ContentLayout
-      title={"${Workspace name}"}
+      title={data?.data?.workspaceDetail.title ?? ""}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
@@ -94,35 +115,63 @@ const WorkspaceCandidateList = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Workspace name</BreadcrumbPage>
+              <BreadcrumbPage>Candidate List</BreadcrumbPage>
             </BreadcrumbItem>
+          </BreadcrumbList>
+          <BreadcrumbList>
+            <Button className="mr-5" onClick={() => {}}>
+              Invite All
+            </Button>
+            <div className="flex flex-row gap-2">
+              <Button
+                onClick={() => {
+                  handleExportFile()
+                }}
+              >
+                Import Template
+              </Button>
+              <Input
+                className="w-1/2"
+                type="file"
+                accept=".csv"
+                id="userMail"
+                onChange={(e) => {
+                  handleFileUpload(e)
+                }}
+              />
+
+              <Button
+                onClick={() => {
+                  handleSubmitFile()
+                }}
+              >
+                Submit
+              </Button>
+            </div>
           </BreadcrumbList>
         </Breadcrumb>
       }
     >
       <ContentPanel>
-        <Input
-          className="w-64"
-          type="file"
-          accept=".csv"
-          id="userMail"
-          onChange={(e) => {
-            handleFileUpload(e)
-          }}
-        />
-
-        <Button
-          className={
-            "w-52 h-14 text-center font-semibold text-xl rounded-xl disabled:opacity-100"
-          }
-          onClick={() => {
-            handleSubmitFile()
-          }}
-        >
-          Submit
-        </Button>
-
-        <ListUser listUser={data?.data?.individualUser ?? []} />
+        {data?.data?.individualUser ? (
+          <Panigator
+            dataLength={
+              data?.data?.individualUser ? data?.data?.individualUser.length : 0
+            }
+            children={
+              <ListUser
+                listUser={data?.data?.individualUser ?? []}
+                page={page}
+                size={size}
+              />
+            }
+            size={size}
+            page={page}
+            setPage={setPage}
+          />
+        ) : (
+          <></>
+        )}
       </ContentPanel>
     </ContentLayout>
   )

@@ -9,7 +9,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip"
 import { getMenuList } from "@/components/layout/menuList.ts"
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import { CollapseMenuButton } from "@/components/layout/CollapseMenuButton.tsx"
 import { toast } from "sonner"
 import { server } from "@/contexts/swr.tsx"
@@ -20,7 +20,8 @@ interface MenuProps {
 
 export function Menu({ isOpen }: MenuProps) {
   const location = useLocation()
-  const menuList = getMenuList(location.pathname)
+  const { workspaceId } = useParams()
+  const menuList = getMenuList(location.pathname, workspaceId)
   const navigate = useNavigate()
 
   const handleSignOut = () => {

@@ -123,6 +123,10 @@ definitions:
     type: object
   CreateWorkspaceBody:
     properties:
+      codeQuestion:
+        items:
+          type: integer
+        type: array
       codingTime:
         type: integer
       endDate:
@@ -143,8 +147,14 @@ definitions:
         type: string
       title:
         type: string
+      videoQuestion:
+        items:
+          type: integer
+        type: array
+      videoTime:
+        type: integer
     required:
-    - codingTime
+    - codeQuestion
     - endDate
     - isCoding
     - isVideo
@@ -154,6 +164,7 @@ definitions:
     - reqScreen
     - startDate
     - title
+    - videoQuestion
     type: object
   CurrentUserResponse:
     properties:
@@ -480,6 +491,28 @@ definitions:
     - timeToPrepare
     - totalAttempt
     type: object
+  VideoQuestionDetail:
+    properties:
+      id:
+        type: integer
+      portalId:
+        type: integer
+      timeToAnswer:
+        type: integer
+      timeToPrepare:
+        type: integer
+      title:
+        type: string
+      totalAttempt:
+        type: integer
+    required:
+    - id
+    - portalId
+    - timeToAnswer
+    - timeToPrepare
+    - title
+    - totalAttempt
+    type: object
   WorkspaceData:
     properties:
       individualUser:
@@ -496,6 +529,8 @@ definitions:
     properties:
       codingTime:
         type: integer
+      createAt:
+        type: string
       endDate:
         type: string
       id:
@@ -518,6 +553,12 @@ definitions:
         type: string
       title:
         type: string
+      videoQueston:
+        items:
+          $ref: '#/definitions/VideoQuestionDetail'
+        type: array
+      videoTime:
+        type: integer
     type: object
   domains.CodingQuestion:
     properties:
@@ -730,6 +771,8 @@ definitions:
         type: string
       output_description:
         type: string
+      portal_id:
+        type: integer
       test_cases:
         items:
           $ref: '#/definitions/domains.CodingQuestionTestCase'
@@ -828,6 +871,8 @@ definitions:
         items:
           $ref: '#/definitions/domains.VideoQuestion'
         type: array
+      videoTime:
+        type: integer
     type: object
   gorm.DeletedAt:
     properties:
@@ -1089,6 +1134,19 @@ definitions:
         type: string
     type: object
   handlers.Response-handlers_CodingInterviewGetQuestionsInPortalResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/domains.CodingQuestion'
+        type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-handlers_CodingInterviewGetQuestionsInWorkspaceResponse:
     properties:
       code:
         type: integer
@@ -1430,6 +1488,37 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get coding interview questions in a portal
+      tags:
+      - codingInterview
+  /codingInterview.getQuestionsInWorkspace/{workspaceId}:
+    get:
+      consumes:
+      - application/json
+      description: Get coding interview questions in a workspace
+      operationId: GetQuestionsInWorkspace
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: workspaceId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the coding interview questions in
+            a workspace
+          schema:
+            $ref: '#/definitions/handlers.Response-handlers_CodingInterviewGetQuestionsInWorkspaceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get coding interview questions in a workspace
       tags:
       - codingInterview
   /codingInterview.updateQuestion/{codingQuestionID}:

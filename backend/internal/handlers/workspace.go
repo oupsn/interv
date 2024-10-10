@@ -5,18 +5,21 @@ import (
 )
 
 type WorkspaceDetail struct {
-	Id            uint      `json:"id"`
-	Title         string    `json:"title"`
-	StartDate     time.Time `json:"startDate"`
-	EndDate       time.Time `json:"endDate"`
-	IsVideo       bool      `json:"isVideo"`
-	IsCoding      bool      `json:"isCoding"`
-	CodingTime    uint      `json:"codingTime"`
-	ReqScreen     bool      `json:"reqScreen"`
-	ReqMicrophone bool      `json:"reqMicrophone"`
-	ReqCamera     bool      `json:"reqCamera"`
-	PortalId      uint      `json:"portalId"`
-	MemberNum     uint      `json:"memberNum"`
+	Id            uint                  `json:"id"`
+	Title         string                `json:"title"`
+	StartDate     time.Time             `json:"startDate"`
+	EndDate       time.Time             `json:"endDate"`
+	IsVideo       bool                  `json:"isVideo"`
+	IsCoding      bool                  `json:"isCoding"`
+	VideoTime     uint                  `json:"videoTime"`
+	CodingTime    uint                  `json:"codingTime"`
+	ReqScreen     bool                  `json:"reqScreen"`
+	ReqMicrophone bool                  `json:"reqMicrophone"`
+	ReqCamera     bool                  `json:"reqCamera"`
+	PortalId      uint                  `json:"portalId"`
+	MemberNum     uint                  `json:"memberNum"`
+	CreateAt      time.Time             `json:"createAt"`
+	VideoQueston  []VideoQuestionDetail `json:"videoQueston"`
 } // @name WorkspaceDetail
 
 type CreateWorkspaceBody struct {
@@ -25,11 +28,14 @@ type CreateWorkspaceBody struct {
 	EndDate       string `json:"endDate" validate:"required"`
 	IsVideo       *bool  `json:"isVideo" validate:"required"`
 	IsCoding      *bool  `json:"isCoding" validate:"required"`
-	CodingTime    uint   `json:"codingTime" validate:"required"`
+	VideoTime     uint   `json:"videoTime"`
+	CodingTime    uint   `json:"codingTime"`
 	ReqScreen     *bool  `json:"reqScreen" validate:"required"`
 	ReqMicrophone *bool  `json:"reqMicrophone" validate:"required"`
 	ReqCamera     *bool  `json:"reqCamera" validate:"required"`
 	PortalId      uint   `json:"portalId" validate:"required"`
+	CodeQuestion  []uint `json:"codeQuestion" validate:"required"`
+	VideoQuestion []uint `json:"videoQuestion" validate:"required"`
 } // @name CreateWorkspaceBody
 
 type GetWorkspaceBody struct {
@@ -69,3 +75,12 @@ type IndividualUser struct {
 	UserInWorkspace UserInWorkspace `json:"userInWorkspace" validate:"required"`
 	UserData        UserData        `json:"userData" validate:"required"`
 } // @name IndividualUser
+
+type VideoQuestionDetail struct {
+	ID            uint   `json:"id" validate:"required"`
+	PortalID      uint   `json:"portalId" validate:"required"`
+	Title         string `json:"title" validate:"required"`
+	TimeToPrepare uint   `json:"timeToPrepare" validate:"required"`
+	TimeToAnswer  uint   `json:"timeToAnswer" validate:"required"`
+	TotalAttempt  uint   `json:"totalAttempt" validate:"required"`
+} // @name VideoQuestionDetail
