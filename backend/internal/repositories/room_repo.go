@@ -7,6 +7,7 @@ import (
 
 type IRoomRepository interface {
 	Create(question domains.Room) (*domains.Room, error)
+	CreateMultiple(questions []domains.Room) ([]domains.Room, error)
 	GetById(id string) (*domains.Room, error)
 	Update(question domains.Room) error
 	DeleteById(id string) error
@@ -28,6 +29,14 @@ func (l roomRepository) Create(room domains.Room) (*domains.Room, error) {
 	}
 
 	return &room, nil
+}
+
+func (l roomRepository) CreateMultiple(rooms []domains.Room) ([]domains.Room, error) {
+	if err := l.DB.Create(&rooms).Error; err != nil {
+		return nil, err
+	}
+
+	return rooms, nil
 }
 
 func (l roomRepository) GetById(id string) (*domains.Room, error) {
