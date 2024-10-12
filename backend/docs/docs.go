@@ -999,57 +999,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/room.checkAuthCandidate": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "room"
-                ],
-                "summary": "Check authentication for candidate",
-                "operationId": "checkAuthCandidate",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "room id",
-                        "name": "roomId",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "room token",
-                        "name": "rt",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response-string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/room.createRoom": {
             "post": {
                 "consumes": [
@@ -1113,12 +1062,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "roomId",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "name": "rt",
                         "in": "query",
                         "required": true
                     }

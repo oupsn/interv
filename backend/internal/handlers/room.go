@@ -14,7 +14,6 @@ type CreateRoomResponse struct {
 
 type GetRoomContextQuery struct {
 	RoomID string `json:"roomId"  validate:"required"`
-	Rt     string `json:"rt"  validate:"required"`
 } // @name GetRoomContextQuery
 
 type GetRoomContextResponse struct {

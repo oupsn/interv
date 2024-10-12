@@ -21,17 +21,6 @@ export interface AdminCreateBody {
   username: string
 }
 
-export type CheckAuthCandidateData = HandlersResponseString
-
-export type CheckAuthCandidateError = HandlersErrResponse
-
-export interface CheckAuthCandidateParams {
-  /** room id */
-  roomId: string
-  /** room token */
-  rt: string
-}
-
 export interface CodingInterviewAddQuestionQuery {
   codingQuestionID: number
   target: string
@@ -445,7 +434,6 @@ export type GetRoomContextError = HandlersErrResponse
 
 export interface GetRoomContextParams {
   roomId: string
-  rt: string
 }
 
 export interface GetRoomContextResponse {
@@ -1363,29 +1351,6 @@ export namespace Room {
   /**
    * No description
    * @tags room
-   * @name CheckAuthCandidate
-   * @summary Check authentication for candidate
-   * @request GET:/room.checkAuthCandidate
-   * @response `200` `CheckAuthCandidateData` OK
-   * @response `400` `HandlersErrResponse` Bad Request
-   * @response `500` `HandlersErrResponse` Internal Server Error
-   */
-  export namespace CheckAuthCandidate {
-    export type RequestParams = {}
-    export type RequestQuery = {
-      /** room id */
-      roomId: string
-      /** room token */
-      rt: string
-    }
-    export type RequestBody = never
-    export type RequestHeaders = {}
-    export type ResponseBody = CheckAuthCandidateData
-  }
-
-  /**
-   * No description
-   * @tags room
    * @name CreateRoom
    * @summary Create room
    * @request POST:/room.createRoom
@@ -1415,7 +1380,6 @@ export namespace Room {
     export type RequestParams = {}
     export type RequestQuery = {
       roomId: string
-      rt: string
     }
     export type RequestBody = never
     export type RequestHeaders = {}
@@ -2390,27 +2354,6 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
   }
   room = {
-    /**
-     * No description
-     *
-     * @tags room
-     * @name CheckAuthCandidate
-     * @summary Check authentication for candidate
-     * @request GET:/room.checkAuthCandidate
-     * @response `200` `CheckAuthCandidateData` OK
-     * @response `400` `HandlersErrResponse` Bad Request
-     * @response `500` `HandlersErrResponse` Internal Server Error
-     */
-    checkAuthCandidate: (query: CheckAuthCandidateParams, params: RequestParams = {}) =>
-      this.request<CheckAuthCandidateData, CheckAuthCandidateError>({
-        path: `/room.checkAuthCandidate`,
-        method: "GET",
-        query: query,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
     /**
      * No description
      *
