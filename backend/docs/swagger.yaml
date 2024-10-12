@@ -1931,40 +1931,6 @@ paths:
       summary: Get portal
       tags:
       - portal
-  /room.checkAuthCandidate:
-    get:
-      consumes:
-      - application/json
-      operationId: checkAuthCandidate
-      parameters:
-      - description: room id
-        in: query
-        name: roomId
-        required: true
-        type: string
-      - description: room token
-        in: query
-        name: rt
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response-string'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-      summary: Check authentication for candidate
-      tags:
-      - room
   /room.createRoom:
     post:
       consumes:
@@ -2003,10 +1969,6 @@ paths:
       parameters:
       - in: query
         name: roomId
-        required: true
-        type: string
-      - in: query
-        name: rt
         required: true
         type: string
       produces:
