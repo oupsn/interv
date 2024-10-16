@@ -1,5 +1,4 @@
-import React, { useContext, useEffect } from "react"
-import { LoadingContext } from "@/contexts/loading"
+import React from "react"
 import CodingInterviewDeviceSetup from "./CodingInterviewDeviceSetup"
 import { StatusMessages } from "react-media-recorder-2"
 import useCurrentUser from "@/hooks/UseCurrentUser"
@@ -39,14 +38,6 @@ const CodingInterviewInstruction: React.FC<CodingInterviewInstructionProps> = ({
   videoError,
   screenError,
 }) => {
-  const { setLoading } = useContext(LoadingContext)
-  useEffect(() => {
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-    }, 1000)
-  }, [setLoading])
-
   const { currentUser } = useCurrentUser()
   const { roomId } = useParams()
   return (
