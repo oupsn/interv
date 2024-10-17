@@ -746,16 +746,16 @@ definitions:
         $ref: '#/definitions/domains.CodingQuestionSubmission'
       submission_id:
         type: integer
+      test_case:
+        $ref: '#/definitions/domains.CodingQuestionTestCase'
       test_case_id:
         type: integer
-      testCase:
-        $ref: '#/definitions/domains.CodingQuestionTestCase'
       updatedAt:
         type: string
     type: object
   domains.CodingQuestionTestCase:
     properties:
-      codingQuestionID:
+      coding_question_id:
         type: integer
       createdAt:
         type: string
@@ -765,9 +765,9 @@ definitions:
         type: integer
       input:
         type: string
-      isExample:
+      is_example:
         type: boolean
-      isHidden:
+      is_hidden:
         type: boolean
       output:
         type: string

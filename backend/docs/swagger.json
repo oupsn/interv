@@ -3259,7 +3259,7 @@
                 "submission_id": {
                     "type": "integer"
                 },
-                "testCase": {
+                "test_case": {
                     "$ref": "#/definitions/domains.CodingQuestionTestCase"
                 },
                 "test_case_id": {
@@ -3273,7 +3273,7 @@
         "domains.CodingQuestionTestCase": {
             "type": "object",
             "properties": {
-                "codingQuestionID": {
+                "coding_question_id": {
                     "type": "integer"
                 },
                 "createdAt": {
@@ -3288,10 +3288,10 @@
                 "input": {
                     "type": "string"
                 },
-                "isExample": {
+                "is_example": {
                     "type": "boolean"
                 },
-                "isHidden": {
+                "is_hidden": {
                     "type": "boolean"
                 },
                 "output": {

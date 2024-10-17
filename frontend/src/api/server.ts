@@ -269,19 +269,19 @@ export interface DomainsCodingQuestionSubmissionTestCaseResult {
   is_passed?: boolean
   submission?: DomainsCodingQuestionSubmission
   submission_id?: number
-  testCase?: DomainsCodingQuestionTestCase
+  test_case?: DomainsCodingQuestionTestCase
   test_case_id?: number
   updatedAt?: string
 }
 
 export interface DomainsCodingQuestionTestCase {
-  codingQuestionID?: number
+  coding_question_id?: number
   createdAt?: string
   deletedAt?: GormDeletedAt
   id?: number
   input?: string
-  isExample?: boolean
-  isHidden?: boolean
+  is_example?: boolean
+  is_hidden?: boolean
   output?: string
   updatedAt?: string
 }
