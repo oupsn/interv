@@ -27,7 +27,7 @@ func SetupRoutes() {
 	var codingInterviewRepositories = repositories.NewCodingInterviewRepository(*DB)
 	var mailRepositories = repositories.NewMailRepository(*MAILJET)
 	var videoQuestionRepositories = repositories.NewVideoQuestionRepository(*DB)
-	var roomRepositories = repositories.NewRoomRepository(*DB)
+	var roomRepositories = repositories.NewRoomRepository(*DB, *REDIS)
 	var workspaceRepositories = repositories.NewWorkspaceRepository(*DB)
 	var userInWorkspaceRepositories = repositories.NewUserInWorkspaceRepository(*DB)
 	var portalRepository = repositories.NewPortalRepository(*DB)
@@ -113,7 +113,10 @@ func SetupRoutes() {
 	public.Post("room.createRoom", roomHandlers.CreateRoom)
 	public.Get("room.getRoomContext", roomHandlers.GetRoomContext)
 	public.Post("room.updateRoomContext", roomHandlers.UpdateRoomContext)
-	public.Get("room.checkAuthCandidate", roomHandlers.CheckAuthCandidate)
+	public.Post("room.revokeRoomSession", roomHandlers.RevokeRoomSession)
+	public.Post("room.extendRoomSession", roomHandlers.ExtendRoomSession)
+	public.Get("room.getRoomSession", roomHandlers.GetRoomSession)
+	public.Post("room.setRoomSession", roomHandlers.SetRoomSession)
 
 	// portal
 	public.Get("portal.get", portalHandler.GetPortalById)

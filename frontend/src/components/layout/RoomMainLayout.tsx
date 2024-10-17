@@ -1,61 +1,99 @@
-import { Outlet, useParams, useSearchParams } from "react-router-dom"
+import { Outlet, useParams } from "react-router-dom"
 import { isMobile } from "react-device-detect"
 import NotAllowMobile from "@/components/layout/NotAllowMobile.tsx"
 import { useEffect, useState } from "react"
-import MainPanel from "@/components/layout/MainPanel.tsx"
 import { server } from "@/contexts/swr.tsx"
-import Cookies from "js-cookie"
-import { Toaster } from "sonner"
-import LoadingWrapper from "@/components/shared/LoadingWrapper.tsx"
+import IntervLogo from "@/assets/interv-logo.png"
+import { nanoid } from "nanoid"
+import { Spinner } from "@/components/ui/spinner.tsx"
 
 export default function RoomMainLayout() {
-  const [isAllowMobile, setIsAllowMobile] = useState(false)
-  const [isAuthedCandidate, setIsAuthedCandidate] = useState(false)
-  const [isAuthLoading, setIsAuthLoading] = useState(true)
-  const [URLSearchParams] = useSearchParams()
   const { roomId } = useParams()
+  const [isSessionValid, setIsSessionValid] = useState(false)
+  const [isCheckingSession, setIsCheckingSession] = useState(true)
 
   useEffect(() => {
-    server.room
-      .checkAuthCandidate({
-        roomId: roomId!,
-        rt: Cookies.get("rt") ?? URLSearchParams.get("rt") ?? "",
-      })
-      .then(() => {
-        setIsAuthedCandidate(true)
-      })
-      .finally(() => {
-        setIsAuthLoading(false)
-      })
-  }, [roomId, URLSearchParams])
+    if (!window.name) {
+      const si = nanoid(10)
+      window.name = si
+      server.room
+        .getRoomSession({ roomId: roomId! })
+        .then((res) => {
+          if (res.data == si) {
+            server.room.extendRoomSession({
+              roomId: roomId!,
+              sessionIdentifier: si,
+            })
+          } else {
+            setIsSessionValid(false)
+          }
+        })
+        .catch(() => {
+          setIsSessionValid(true)
+        })
+        .finally(() => {
+          setIsCheckingSession(false)
+        })
+    } else {
+      server.room
+        .getRoomSession({ roomId: roomId! })
+        .then((res) => {
+          if (res.data == window.name) {
+            setIsSessionValid(true)
+          } else {
+            setIsSessionValid(false)
+          }
+        })
+        .catch(() => {
+          setIsSessionValid(true)
+        })
+        .finally(() => {
+          setIsCheckingSession(false)
+        })
+    }
 
+    const intervalId = setInterval(() => {
+      if (isSessionValid) {
+        server.room.extendRoomSession({
+          roomId: roomId!,
+          sessionIdentifier: window.name,
+        })
+      }
+    }, 5000)
+
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [isSessionValid, roomId])
+
+  const [isAllowMobile, setIsAllowMobile] = useState(false)
   if (isMobile && !isAllowMobile) {
     return <NotAllowMobile setIsAllowMobile={setIsAllowMobile} />
   }
 
-  if (isAuthLoading) {
-    return <LoadingWrapper isLoading={isAuthLoading} text={""}></LoadingWrapper>
-  } else {
-    if (!isAuthedCandidate) {
-      return (
-        <MainPanel
-          className={"h-dvh flex flex-col justify-center text-center space-y-4"}
+  return (
+    <main className="w-dvw h-dvh flex">
+      {isCheckingSession ? (
+        <div className={"flex w-full justify-center items-center"}>
+          <Spinner size="lg" />
+        </div>
+      ) : isSessionValid ? (
+        <Outlet />
+      ) : (
+        <div
+          className={
+            "flex flex-col p-4 space-y-4 w-full h-full items-center justify-center "
+          }
         >
-          <p>TODO: Might change wording someday</p>
+          <img src={IntervLogo} alt="Interv" className={"w-40"} />
+          <p>Multiple sessions are not allowed.</p>
           <p>
-            Please try to access this interview via email invitation again, or
-            contact the interview owner if you believe something seems wrong.
+            Please contact the interview owner if you believe something seems
+            wrong.
           </p>
           <p>Need more info? Email: help@interv.cc</p>
-        </MainPanel>
-      )
-    } else {
-      return (
-        <main className="w-dvw h-dvh flex">
-          <Toaster />
-          <Outlet />
-        </main>
-      )
-    }
-  }
+        </div>
+      )}
+    </main>
+  )
 }

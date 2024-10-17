@@ -2,7 +2,7 @@ import { Dispatch, FC, SetStateAction, useState } from "react"
 import { Button } from "@/components/ui/button.tsx"
 import { server } from "@/contexts/swr.tsx"
 import { cn } from "@/lib/utils.ts"
-import { useParams, useSearchParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
 import { toast } from "sonner"
 
@@ -23,8 +23,7 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
   questionId,
 }) => {
   const { roomId } = useParams()
-  const [URLSearchParams] = useSearchParams()
-  const { data } = useGetRoomContext(roomId!, URLSearchParams.get("rt")!)
+  const { data } = useGetRoomContext(roomId!)
   const [selectedVideo, setSelectedVideo] = useState("")
   const handleSubmitVideo = async () => {
     const videoBlob = await fetch(selectedVideo).then((response) =>

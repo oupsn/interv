@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button.tsx"
-import { useNavigate, useParams, useSearchParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import SideBarItem from "@/components/layout/SideBarItem.tsx"
 import SideBar from "@/components/layout/SideBar.tsx"
 import MainPanel from "@/components/layout/MainPanel.tsx"
@@ -9,12 +9,8 @@ import { Spinner } from "@/components/ui/spinner.tsx"
 
 const RoomPage = () => {
   const { roomId } = useParams()
-  const [URLSearchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { data, error, isLoading } = useGetRoomContext(
-    roomId!,
-    URLSearchParams.get("rt")!,
-  )
+  const { data, error, isLoading } = useGetRoomContext(roomId!)
   return (
     <>
       <SideBar>
@@ -24,33 +20,37 @@ const RoomPage = () => {
         {isLoading ? (
           <Spinner size="lg" />
         ) : error ? (
-          <div>Room not found</div>
+          <div className={"p-4 space-y-4 text-center"}>
+            <p>
+              Please contact the interview owner if you believe something seems
+              wrong.
+            </p>
+            <p>Need more info? Email: help@interv.cc</p>
+          </div>
         ) : data?.data?.isOverdue ? (
-          <>
-            <div className={"p-4 space-y-4 text-center"}>
-              <p className={"text-2xl font-semibold"}>
-                Hi {data?.data?.candidateName}
-              </p>
-              <p>
-                This interview was overdue on{" "}
-                <span className={"font-semibold"}>
-                  {dayjs(data?.data?.dueDate).format(
-                    "ddd, DD MMM YYYY HH:mm:ss Z",
-                  )}
-                </span>
-              </p>
+          <div className={"p-4 space-y-4 text-center"}>
+            <p className={"text-2xl font-semibold"}>
+              Hi {data?.data?.candidateName}
+            </p>
+            <p>
+              This interview was overdue on{" "}
+              <span className={"font-semibold"}>
+                {dayjs(data?.data?.dueDate).format(
+                  "ddd, DD MMM YYYY HH:mm:ss Z",
+                )}
+              </span>
+            </p>
 
-              <p>
-                Please contact the interview owner if you believe something
-                seems wrong.
-              </p>
-              <p>Need more info? Email: help@interv.cc</p>
-            </div>
-          </>
+            <p>
+              Please contact the interview owner if you believe something seems
+              wrong.
+            </p>
+            <p>Need more info? Email: help@interv.cc</p>
+          </div>
         ) : (
           <>
             <div className={"p-4 space-y-4 text-center"}>
-              <p className={"text-2xl font-semibold"}>
+              <p className={"text-2xl font-semibold mb-4"}>
                 Hi {data?.data?.candidateName}
               </p>
               <span>Please complete all the tasks before </span>

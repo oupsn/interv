@@ -229,6 +229,16 @@ definitions:
     required:
     - id
     type: object
+  ExtendRoomSessionBody:
+    properties:
+      roomId:
+        type: string
+      sessionIdentifier:
+        type: string
+    required:
+    - roomId
+    - sessionIdentifier
+    type: object
   GetObjectBody:
     properties:
       bucketName:
@@ -358,6 +368,13 @@ definitions:
         type: string
       id:
         type: integer
+    type: object
+  RevokeRoomSessionBody:
+    properties:
+      roomId:
+        type: string
+    required:
+    - roomId
     type: object
   SendMailBody:
     properties:
@@ -729,16 +746,16 @@ definitions:
         $ref: '#/definitions/domains.CodingQuestionSubmission'
       submission_id:
         type: integer
+      test_case:
+        $ref: '#/definitions/domains.CodingQuestionTestCase'
       test_case_id:
         type: integer
-      testCase:
-        $ref: '#/definitions/domains.CodingQuestionTestCase'
       updatedAt:
         type: string
     type: object
   domains.CodingQuestionTestCase:
     properties:
-      codingQuestionID:
+      coding_question_id:
         type: integer
       createdAt:
         type: string
@@ -748,9 +765,9 @@ definitions:
         type: integer
       input:
         type: string
-      isExample:
+      is_example:
         type: boolean
-      isHidden:
+      is_hidden:
         type: boolean
       output:
         type: string
@@ -1282,6 +1299,16 @@ definitions:
         type: string
       timestamp:
         type: string
+    type: object
+  handlers.SetRoomSessionBody:
+    properties:
+      roomId:
+        type: string
+      sessionIdentifier:
+        type: string
+    required:
+    - roomId
+    - sessionIdentifier
     type: object
 info:
   contact: {}
@@ -1942,40 +1969,6 @@ paths:
       summary: Get portal
       tags:
       - portal
-  /room.checkAuthCandidate:
-    get:
-      consumes:
-      - application/json
-      operationId: checkAuthCandidate
-      parameters:
-      - description: room id
-        in: query
-        name: roomId
-        required: true
-        type: string
-      - description: room token
-        in: query
-        name: rt
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response-string'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-      summary: Check authentication for candidate
-      tags:
-      - room
   /room.createRoom:
     post:
       consumes:
@@ -2006,6 +1999,36 @@ paths:
       summary: Create room
       tags:
       - room
+  /room.extendRoomSession:
+    post:
+      consumes:
+      - application/json
+      operationId: extendRoomSession
+      parameters:
+      - description: extend room session
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/ExtendRoomSessionBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Extend room session
+      tags:
+      - room
   /room.getRoomContext:
     get:
       consumes:
@@ -2014,10 +2037,6 @@ paths:
       parameters:
       - in: query
         name: roomId
-        required: true
-        type: string
-      - in: query
-        name: rt
         required: true
         type: string
       produces:
@@ -2036,6 +2055,94 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get room context
+      tags:
+      - room
+  /room.getRoomSession:
+    get:
+      consumes:
+      - application/json
+      operationId: getRoomSession
+      parameters:
+      - in: query
+        name: roomId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get room session
+      tags:
+      - room
+  /room.revokeRoomSession:
+    post:
+      consumes:
+      - application/json
+      operationId: revokeRoomSession
+      parameters:
+      - description: revoke room session
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/RevokeRoomSessionBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Revoke room session
+      tags:
+      - room
+  /room.setRoomSession:
+    post:
+      consumes:
+      - application/json
+      operationId: setRoomSession
+      parameters:
+      - description: set room session
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.SetRoomSessionBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Set room session
       tags:
       - room
   /room.updateRoomContext:

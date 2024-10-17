@@ -29,6 +29,7 @@ const (
 	EnvPythonLinterEndpoint = "PYTHON_LINTER_ENDPOINT"
 	EnvJavaLinterEndpoint   = "JAVA_LINTER_ENDPOINT"
 	EnvCLinterEndpoint      = "C_LINTER_ENDPOINT"
+	EnvRedisURL             = "REDIS_URL"
 )
 
 func init() {

@@ -15,8 +15,12 @@ var (
 
 type IRoomService interface {
 	CreateRoom(room domains.Room) (*domains.Room, string, error)
-	GetRoomContext(roomId string, rt string) (*domains.Room, *domains.User, uint, uint, uint, uint, string, *time.Time, error)
+	GetRoomContext(roomId string) (*domains.Room, *domains.User, uint, uint, uint, uint, *time.Time, error)
 	UpdateRoomContext(room domains.Room) error
+	RevokeRoomSession(roomId string) error
+	ExtendRoomSession(roomId string, sessionIdentifier string) error
+	GetRoomSession(roomId string) (string, error)
+	SetRoomSession(roomId string, sessionIdentifier string) error
 }
 
 type roomService struct {
@@ -51,21 +55,15 @@ func (l roomService) CreateRoom(room domains.Room) (*domains.Room, string, error
 	return createdRoom, token, nil
 }
 
-func (l roomService) GetRoomContext(roomId string, rt string) (*domains.Room, *domains.User, uint, uint, uint, uint, string, *time.Time, error) {
-	token, err := cryptone.DecryptAES([]byte(viper.GetString("RT")), rt)
-
-	if token != roomId {
-		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
-	}
-
+func (l roomService) GetRoomContext(roomId string) (*domains.Room, *domains.User, uint, uint, uint, uint, *time.Time, error) {
 	room, err := l.roomRepo.GetById(roomId)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, nil, ErrorGetRoomContext
 	}
 
 	workspace, err := l.videoQuestionRepo.GetByWorkspaceId(room.WorkspaceID)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, nil, ErrorGetRoomContext
 	}
 
 	var videoQuestion []domains.VideoQuestion
@@ -80,29 +78,57 @@ func (l roomService) GetRoomContext(roomId string, rt string) (*domains.Room, *d
 
 	codingQuestion, err := l.codingInterviewRepo.GetCodingQuestionByWorkspaceID(int(room.WorkspaceID))
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, nil, err
 	}
 
 	candidate, err := l.userRepo.FindById(room.CandidateID)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, nil, err
 	}
 
 	workspace, err = l.workspaceRepo.FindById(room.WorkspaceID)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, nil, err
 	}
 
-	rt, err = cryptone.EncryptAES([]byte(viper.GetString("RT")), roomId)
-	if err != nil {
-		return nil, nil, 0, 0, 0, 0, "", nil, ErrorGetRoomContext
-	}
-
-	return room, candidate, uint(len(videoQuestion)), videoQuestionTotalTime, uint(len(codingQuestion)), workspace.CodingTime, rt, &workspace.EndDate, nil
+	return room, candidate, uint(len(videoQuestion)), videoQuestionTotalTime, uint(len(codingQuestion)), workspace.CodingTime, &workspace.EndDate, nil
 }
 
 func (l roomService) UpdateRoomContext(room domains.Room) error {
 	if err := l.roomRepo.Update(room); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (l roomService) RevokeRoomSession(roomId string) error {
+	if err := l.roomRepo.RevokeRoomSession(roomId); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (l roomService) ExtendRoomSession(roomId string, sessionIdentifier string) error {
+	if err := l.roomRepo.SetRoomSession(roomId, sessionIdentifier); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (l roomService) GetRoomSession(roomId string) (string, error) {
+	session, err := l.roomRepo.GetRoomSession(roomId)
+	if err != nil {
+		return "", err
+	}
+
+	return session, nil
+}
+
+func (l roomService) SetRoomSession(roomId string, sessionIdentifier string) error {
+	if err := l.roomRepo.SetRoomSession(roomId, sessionIdentifier); err != nil {
 		return err
 	}
 
