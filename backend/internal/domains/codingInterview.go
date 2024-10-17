@@ -41,11 +41,11 @@ type CodingQuestionInWorkspace struct {
 
 type CodingQuestionTestCase struct {
 	gorm.Model
-	CodingQuestionID uint   `gorm:"index"`
-	Input            string `gorm:"type:text"`
-	Output           string `gorm:"type:text"`
-	IsHidden         bool   `gorm:"default:false"`
-	IsExample        bool   `gorm:"default:false"`
+	CodingQuestionID uint   `gorm:"index" json:"coding_question_id"`
+	Input            string `gorm:"type:text" json:"input"`
+	Output           string `gorm:"type:text" json:"output"`
+	IsHidden         bool   `gorm:"default:false" json:"is_hidden"`
+	IsExample        bool   `gorm:"default:false" json:"is_example"`
 }
 
 type CodingQuestionSnapshot struct {
@@ -66,7 +66,7 @@ type CodingQuestionSubmission struct {
 	TimeTaken       int64                                    `gorm:"type:bigint" json:"time_taken"`
 	LinterResult    string                                   `gorm:"type:text" json:"linter_result"`
 	TestCasesResult []CodingQuestionSubmissionTestCaseResult `gorm:"foreignKey:SubmissionId;references:Id" json:"test_cases_result"`
-	Question        CodingQuestion                           `gorm:"foreignKey:QuestionID"`
+	Question        CodingQuestion                           `gorm:"foreignKey:QuestionID" json:"question"`
 }
 type CodingQuestionSubmissionTestCaseResult struct {
 	gorm.Model
@@ -75,8 +75,8 @@ type CodingQuestionSubmissionTestCaseResult struct {
 	TestCaseId    uint                     `gorm:"type:integer" json:"test_case_id"`
 	IsPassed      bool                     `gorm:"type:boolean" json:"is_passed"`
 	CompileResult string                   `gorm:"type:text" json:"compile_result"`
-	TestCase      CodingQuestionTestCase   `gorm:"foreignKey:TestCaseId"`
-	Submission    CodingQuestionSubmission `gorm:"foreignKey:SubmissionId"`
+	TestCase      CodingQuestionTestCase   `gorm:"foreignKey:TestCaseId" json:"test_case"`
+	Submission    CodingQuestionSubmission `gorm:"foreignKey:SubmissionId" json:"submission"`
 }
 
 type CodingQuestionTestCaseResponse struct {

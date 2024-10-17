@@ -150,7 +150,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                   <div className="mb-2">
                     <strong>Output:</strong>
                     <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded-md">
-                      {output[index].compile_result?.stdout}
+                      {formatTestCase(
+                        output[index].compile_result?.stdout || "",
+                      )}
                     </pre>
                   </div>
                   <div
