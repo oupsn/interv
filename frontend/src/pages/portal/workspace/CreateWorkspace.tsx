@@ -88,10 +88,7 @@ const CreateWorkspace = () => {
     isCoding: z.boolean().default(false),
     codingTime: z
       .number()
-      .min(
-        isCoding ? 30 : 0,
-        isCoding ? { message: "Minimum Time is 30 mins" } : {},
-      ),
+      .min(isCoding ? 1 : 0, isCoding ? { message: "Required" } : {}),
     videoTime: z.number().min(0, isVideo ? { message: "Required" } : {}),
     reqScreen: z.boolean().default(false),
     reqMicrophone: z.boolean().default(false),
