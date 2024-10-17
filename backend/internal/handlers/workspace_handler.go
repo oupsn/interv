@@ -125,6 +125,42 @@ func (w WorkspaceHandler) GetUserInWorkspace(c *fiber.Ctx) error {
 	return Ok(c, response)
 }
 
+// GetIndividualUser
+// @ID GetIndividualUser
+// @Tags userInWorkspace
+// @Summary Get Individual User In Workspace
+// @Accept json
+// @Produce json
+// @Param payload query GetIndividualUserBody true "GetIndividualUserBody"
+// @Success 200 {object} Response[IndividualUser]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /userInWorkspace.getbyId [get]
+func (w WorkspaceHandler) GetIndividualUser(c *fiber.Ctx) error {
+	form := GetIndividualUserBody{}
+	if err := c.QueryParser(&form); err != nil {
+		return err
+	}
+	userInWorkspace, userData, err := w.workspaceService.GetIndividualUser(form.WorkspaceId, form.UserId)
+
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, IndividualUser{Id: 0, UserInWorkspace: UserInWorkspace{
+		Id:          userInWorkspace.Id,
+		UserId:      userInWorkspace.UserId,
+		WorkspaceId: userInWorkspace.WorkspaceId,
+		Status:      string(userInWorkspace.Status),
+		IsInterest:  *userInWorkspace.IsInterest,
+	}, UserData: UserData{
+		ID:       userData.ID,
+		Name:     userData.Name,
+		Username: userData.Username,
+		Role:     string(userData.Role),
+	}})
+}
+
 // InterestUser
 // @ID InterestUser
 // @Tags userInWorkspace

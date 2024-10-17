@@ -1060,6 +1060,17 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.Response-IndividualUser:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/IndividualUser'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
   handlers.Response-PortalData:
     properties:
       code:
@@ -2203,6 +2214,38 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get user In Workspace
+      tags:
+      - userInWorkspace
+  /userInWorkspace.getbyId:
+    get:
+      consumes:
+      - application/json
+      operationId: GetIndividualUser
+      parameters:
+      - in: query
+        name: userId
+        required: true
+        type: integer
+      - in: query
+        name: workspaceId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-IndividualUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get Individual User In Workspace
       tags:
       - userInWorkspace
   /userInWorkspace.interest:

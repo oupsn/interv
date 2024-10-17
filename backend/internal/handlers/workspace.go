@@ -93,3 +93,8 @@ type InterestUser struct {
 	UserId      uint `json:"userId" validate:"required"`
 	IsInterest  bool `json:"isInterest" validate:"required"`
 } // @name InterestUser
+
+type GetIndividualUserBody struct {
+	WorkspaceId uint `json:"workspaceId" validate:"required"`
+	UserId      uint `json:"userId" validate:"required"`
+} // @name GetIndividualUserBody

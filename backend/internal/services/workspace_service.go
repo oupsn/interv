@@ -97,6 +97,18 @@ func (w *workspaceService) GetUserNumInWorkspace(portalId *uint) (workspaceId []
 	return userWorkspace, nil
 }
 
+func (w *workspaceService) GetIndividualUser(workspaceId uint, userId uint) (userInworkspace *domains.UserInWorkspace, userData *domains.User, err error) {
+	userInworkspace, err = w.userInWorkspaceRepository.FindByUserIdAndWorkspaceId(userId, workspaceId)
+	if err != nil {
+		return nil, nil, err
+	}
+	userData, err = w.userRepository.FindById(userId)
+	if err != nil {
+		return nil, nil, err
+	}
+	return userInworkspace, userData, nil
+}
+
 func (w *workspaceService) Create(
 	title string,
 	startDate string,

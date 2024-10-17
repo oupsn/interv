@@ -227,26 +227,6 @@ const WorkspaceDetailPage = () => {
                 {workspaceData?.data?.workspaceDetail.videoTime?.toString()}{" "}
                 Seconds
               </Label>
-              <Label
-                className={cn(
-                  workspaceData?.data?.workspaceDetail.reqScreen
-                    ? "disabled:opacity-30"
-                    : "",
-                )}
-              >
-                Screen:
-                <span
-                  className={
-                    workspaceData?.data?.workspaceDetail.isVideo
-                      ? "text-red-500"
-                      : "text-gray-500"
-                  }
-                >
-                  {workspaceData?.data?.workspaceDetail.isVideo
-                    ? " Require"
-                    : " Not Require"}
-                </span>
-              </Label>
               <Label>
                 Microphone:
                 <span

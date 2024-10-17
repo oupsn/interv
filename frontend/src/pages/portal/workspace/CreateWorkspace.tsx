@@ -305,9 +305,17 @@ const CreateWorkspace = () => {
                         type="number"
                         {...field}
                         value={
-                          isCoding ? (field.value > 0 ? field.value : 0) : 0
-                        } // Ensure the field value doesn't start as undefined
-                        onChange={(e) => field.onChange(Number(e.target.value))} // Convert string to number
+                          isCoding ? (field.value > 0 ? field.value : "") : ""
+                        } // Start as empty when not coding
+                        onChange={(e) => {
+                          const value = e.target.value
+                          if (
+                            value === "" ||
+                            (value !== "0" && !value.startsWith("0"))
+                          ) {
+                            field.onChange(Number(value)) // Convert to number and update
+                          }
+                        }}
                         disabled={!isCoding}
                       />
                     </FormControl>
@@ -315,6 +323,7 @@ const CreateWorkspace = () => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="videoTime"

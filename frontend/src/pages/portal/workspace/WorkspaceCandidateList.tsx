@@ -87,9 +87,12 @@ const WorkspaceCandidateList = () => {
             // Regex to check for special characters (allows alphanumeric, space, comma, dot, dash, and @)
             const specialCharRegex = /^[a-zA-Z\s,.\-@]+$/
 
-            // Validate each row and cell for special characters
+            // Validate each row and cell for special characters and length
             const isValid = data.every((row: string[]) =>
-              row.every((cell: string) => specialCharRegex.test(cell)),
+              row.every(
+                (cell: string) =>
+                  specialCharRegex.test(cell) && cell.length <= 30, // Check special chars and length
+              ),
             )
 
             if (isValid) {
@@ -98,7 +101,7 @@ const WorkspaceCandidateList = () => {
             } else {
               reject(
                 new Error(
-                  "File contains special characters that are not allowed.",
+                  "File contains special characters that are not allowed, or some cells exceed 30 characters.",
                 ),
               )
             }
@@ -176,7 +179,7 @@ const WorkspaceCandidateList = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Candidate List</BreadcrumbPage>
+              <BreadcrumbPage>Applicant List</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>

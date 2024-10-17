@@ -402,6 +402,15 @@ export type GetCompileResultData = HandlersResponseHandlersCodingInterviewGetCom
 
 export type GetCompileResultError = HandlersErrResponse
 
+export type GetIndividualUserData = HandlersResponseIndividualUser
+
+export type GetIndividualUserError = HandlersErrResponse
+
+export interface GetIndividualUserParams {
+  userId: number
+  workspaceId: number
+}
+
 export interface GetObjectBody {
   bucketName: string
   objectName: string
@@ -680,6 +689,13 @@ export interface HandlersResponseHandlersCodingInterviewGetQuestionsResponse {
 export interface HandlersResponseHandlersCodingInterviewGetSubmissionResultByUserResponse {
   code?: number
   data?: HandlersCodingInterviewGetSubmissionResultByUserResponse
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseIndividualUser {
+  code?: number
+  data?: IndividualUser
   message?: string
   timestamp?: string
 }
@@ -1524,6 +1540,27 @@ export namespace UserInWorkspace {
     export type RequestBody = DeleteUserFromWorkspaceBody
     export type RequestHeaders = {}
     export type ResponseBody = DeleteUserFromWorkspaceData
+  }
+
+  /**
+   * No description
+   * @tags userInWorkspace
+   * @name GetIndividualUser
+   * @summary Get Individual User In Workspace
+   * @request GET:/userInWorkspace.getbyId
+   * @response `200` `GetIndividualUserData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetIndividualUser {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      userId: number
+      workspaceId: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetIndividualUserData
   }
 
   /**
@@ -2587,6 +2624,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         path: `/userInWorkspace.delete`,
         method: "DELETE",
         body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags userInWorkspace
+     * @name GetIndividualUser
+     * @summary Get Individual User In Workspace
+     * @request GET:/userInWorkspace.getbyId
+     * @response `200` `GetIndividualUserData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getIndividualUser: (query: GetIndividualUserParams, params: RequestParams = {}) =>
+      this.request<GetIndividualUserData, GetIndividualUserError>({
+        path: `/userInWorkspace.getbyId`,
+        method: "GET",
+        query: query,
         type: ContentType.Json,
         format: "json",
         ...params,

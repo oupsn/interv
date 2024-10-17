@@ -64,7 +64,7 @@ const WorkspaceInterestPage = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Interest List</BreadcrumbPage>
+              <BreadcrumbPage>Candidate List</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>

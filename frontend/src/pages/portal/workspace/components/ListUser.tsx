@@ -9,11 +9,12 @@ import {
   TableCell,
   Table,
 } from "@/components/ui/table"
-import { FaEdit, FaTrash, FaRegUser, FaStar, FaRegStar } from "react-icons/fa"
+import { FaTrash, FaRegUser, FaStar, FaRegStar, FaEye } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import { server } from "@/contexts/swr"
 import { useGetWorkspace } from "@/hooks/useGetWorkspace"
 import { toast } from "sonner"
+import { useNavigate } from "react-router-dom"
 
 export type ListWorkspaceProps = {
   listUser: IndividualUser[]
@@ -29,6 +30,7 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
   workspace,
 }) => {
   const { mutate } = useGetWorkspace(workspace)
+  const navigate = useNavigate()
   return (
     <Table>
       <TableHeader>
@@ -72,8 +74,8 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                             })
                             .then(() => mutate()),
                           {
-                            loading: "Adding interest candidate",
-                            success: "Adding successfully",
+                            loading: "Interest candidate",
+                            success: "Process successfully",
                             error: (err) => {
                               return err.response.data.message
                             },
@@ -87,10 +89,23 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                         <FaRegStar />
                       )}
                     </Button>
-                    <Button onClick={() => {}}>
-                      <FaEdit />
+                    <Button
+                      onClick={() => {
+                        navigate(user.userData.id?.toString() ?? "0")
+                      }}
+                    >
+                      <FaEye />
                     </Button>
-                    <Button onClick={() => {}}>
+                    <Button
+                      onClick={() => {
+                        server.userInWorkspace
+                          .deleteUserFromWorkspace({
+                            userId: user.userInWorkspace.userId,
+                            workspaceId: user.userInWorkspace.workspaceId,
+                          })
+                          .then(() => mutate())
+                      }}
+                    >
                       <FaTrash />
                     </Button>
                   </td>
