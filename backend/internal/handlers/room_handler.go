@@ -129,3 +129,107 @@ func (l RoomHandler) UpdateRoomContext(c *fiber.Ctx) error {
 
 	return Ok(c, "room context updated")
 }
+
+// RevokeRoomSession
+// @ID revokeRoomSession
+// @Tags room
+// @Summary Revoke room session
+// @Accept json
+// @Produce json
+// @Param payload body RevokeRoomSessionBody true "revoke room session"
+// @Success 200 {object} Response[string]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /room.revokeRoomSession [post]
+func (l RoomHandler) RevokeRoomSession(c *fiber.Ctx) error {
+	body := RevokeRoomSessionBody{}
+	if err := c.BodyParser(&body); err != nil {
+		return err
+	}
+
+	err := l.roomService.RevokeRoomSession(body.RoomID)
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, "room session revoked")
+}
+
+// ExtendRoomSession
+// @ID extendRoomSession
+// @Tags room
+// @Summary Extend room session
+// @Accept json
+// @Produce json
+// @Param payload body ExtendRoomSessionBody true "extend room session"
+// @Success 200 {object} Response[string]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /room.extendRoomSession [post]
+func (l RoomHandler) ExtendRoomSession(c *fiber.Ctx) error {
+	body := ExtendRoomSessionBody{}
+	if err := c.BodyParser(&body); err != nil {
+		return err
+	}
+
+	err := l.roomService.ExtendRoomSession(body.RoomID, body.SessionIdentifier)
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, "room session extended")
+}
+
+// GetRoomSession
+// @ID getRoomSession
+// @Tags room
+// @Summary Get room session
+// @Accept json
+// @Produce json
+// @Param payload query GetRoomSessionQuery true "room id"
+// @Success 200 {object} Response[string]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /room.getRoomSession [get]
+func (l RoomHandler) GetRoomSession(c *fiber.Ctx) error {
+	query := GetRoomSessionQuery{}
+	if err := c.QueryParser(&query); err != nil {
+		return err
+	}
+
+	if err := validate.Struct(query); err != nil {
+		return err
+	}
+
+	session, err := l.roomService.GetRoomSession(query.RoomID)
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, session)
+}
+
+// SetRoomSession
+// @ID setRoomSession
+// @Tags room
+// @Summary Set room session
+// @Accept json
+// @Produce json
+// @Param payload body SetRoomSessionBody true "set room session"
+// @Success 200 {object} Response[string]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /room.setRoomSession [post]
+func (l RoomHandler) SetRoomSession(c *fiber.Ctx) error {
+	body := SetRoomSessionBody{}
+	if err := c.BodyParser(&body); err != nil {
+		return err
+	}
+
+	err := l.roomService.SetRoomSession(body.RoomID, body.SessionIdentifier)
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, "room session set")
+}

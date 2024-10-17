@@ -10,6 +10,7 @@ import (
 func main() {
 	loaders.SetupDatabases()
 	loaders.SetupMinio()
+	loaders.SetupRedis()
 	loaders.SetupMailjet()
 	loaders.SetupRoutes()
 }

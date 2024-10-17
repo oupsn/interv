@@ -45,6 +45,7 @@
     "html-react-parser": "^5.1.16",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.417.0",
+    "nanoid": "^5.0.7",
     "papaparse": "^5.4.1",
     "prettier": "^3.3.3",
     "quill": "^2.0.2",

@@ -32,7 +32,7 @@ const NotAllowMobile: FC<NotAllowMobileProps> = ({ setIsAllowMobile }) => {
           }
         }}
       />
-      <p className={"text-center text-2xl"}>{randomReason}</p>
+      <p className={"text-center"}>{randomReason}</p>
     </div>
   )
 }
