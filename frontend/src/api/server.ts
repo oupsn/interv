@@ -387,6 +387,15 @@ export interface DomainsWorkspace {
   videoTime?: number
 }
 
+export interface ExtendRoomSessionBody {
+  roomId: string
+  sessionIdentifier: string
+}
+
+export type ExtendRoomSessionData = HandlersResponseString
+
+export type ExtendRoomSessionError = HandlersErrResponse
+
 export type GetCompileResultData = HandlersResponseHandlersCodingInterviewGetCompileResultResponse
 
 export type GetCompileResultError = HandlersErrResponse
@@ -448,6 +457,14 @@ export interface GetRoomContextResponse {
   totalCodingTime: number
   totalVideoQuestion: number
   totalVideoTime: number
+}
+
+export type GetRoomSessionData = HandlersResponseString
+
+export type GetRoomSessionError = HandlersErrResponse
+
+export interface GetRoomSessionParams {
+  roomId: string
 }
 
 export type GetSubmissionResultByUserData = HandlersResponseHandlersCodingInterviewGetSubmissionResultByUserResponse
@@ -728,6 +745,11 @@ export interface HandlersResponseWorkspaceDetail {
   timestamp?: string
 }
 
+export interface HandlersSetRoomSessionBody {
+  roomId: string
+  sessionIdentifier: string
+}
+
 export interface IndividualUser {
   id: number
   userData: User
@@ -763,6 +785,14 @@ export interface PortalData {
   id?: number
 }
 
+export interface RevokeRoomSessionBody {
+  roomId: string
+}
+
+export type RevokeRoomSessionData = HandlersResponseString
+
+export type RevokeRoomSessionError = HandlersErrResponse
+
 export interface SendMailBody {
   mailList: MailObject[]
   preset: HandlersMailPreset
@@ -771,6 +801,10 @@ export interface SendMailBody {
 export type SendMailData = HandlersResponseString
 
 export type SendMailError = HandlersErrResponse
+
+export type SetRoomSessionData = HandlersResponseString
+
+export type SetRoomSessionError = HandlersErrResponse
 
 export type SubmitVideoInterviewData = HandlersResponseString
 
@@ -1369,6 +1403,24 @@ export namespace Room {
   /**
    * No description
    * @tags room
+   * @name ExtendRoomSession
+   * @summary Extend room session
+   * @request POST:/room.extendRoomSession
+   * @response `200` `ExtendRoomSessionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace ExtendRoomSession {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = ExtendRoomSessionBody
+    export type RequestHeaders = {}
+    export type ResponseBody = ExtendRoomSessionData
+  }
+
+  /**
+   * No description
+   * @tags room
    * @name GetRoomContext
    * @summary Get room context
    * @request GET:/room.getRoomContext
@@ -1384,6 +1436,62 @@ export namespace Room {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetRoomContextData
+  }
+
+  /**
+   * No description
+   * @tags room
+   * @name GetRoomSession
+   * @summary Get room session
+   * @request GET:/room.getRoomSession
+   * @response `200` `GetRoomSessionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetRoomSession {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      roomId: string
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetRoomSessionData
+  }
+
+  /**
+   * No description
+   * @tags room
+   * @name RevokeRoomSession
+   * @summary Revoke room session
+   * @request POST:/room.revokeRoomSession
+   * @response `200` `RevokeRoomSessionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace RevokeRoomSession {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = RevokeRoomSessionBody
+    export type RequestHeaders = {}
+    export type ResponseBody = RevokeRoomSessionData
+  }
+
+  /**
+   * No description
+   * @tags room
+   * @name SetRoomSession
+   * @summary Set room session
+   * @request POST:/room.setRoomSession
+   * @response `200` `SetRoomSessionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace SetRoomSession {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = HandlersSetRoomSessionBody
+    export type RequestHeaders = {}
+    export type ResponseBody = SetRoomSessionData
   }
 
   /**
@@ -2379,6 +2487,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * No description
      *
      * @tags room
+     * @name ExtendRoomSession
+     * @summary Extend room session
+     * @request POST:/room.extendRoomSession
+     * @response `200` `ExtendRoomSessionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    extendRoomSession: (payload: ExtendRoomSessionBody, params: RequestParams = {}) =>
+      this.request<ExtendRoomSessionData, ExtendRoomSessionError>({
+        path: `/room.extendRoomSession`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
      * @name GetRoomContext
      * @summary Get room context
      * @request GET:/room.getRoomContext
@@ -2391,6 +2520,69 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         path: `/room.getRoomContext`,
         method: "GET",
         query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
+     * @name GetRoomSession
+     * @summary Get room session
+     * @request GET:/room.getRoomSession
+     * @response `200` `GetRoomSessionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getRoomSession: (query: GetRoomSessionParams, params: RequestParams = {}) =>
+      this.request<GetRoomSessionData, GetRoomSessionError>({
+        path: `/room.getRoomSession`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
+     * @name RevokeRoomSession
+     * @summary Revoke room session
+     * @request POST:/room.revokeRoomSession
+     * @response `200` `RevokeRoomSessionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    revokeRoomSession: (payload: RevokeRoomSessionBody, params: RequestParams = {}) =>
+      this.request<RevokeRoomSessionData, RevokeRoomSessionError>({
+        path: `/room.revokeRoomSession`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
+     * @name SetRoomSession
+     * @summary Set room session
+     * @request POST:/room.setRoomSession
+     * @response `200` `SetRoomSessionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    setRoomSession: (payload: HandlersSetRoomSessionBody, params: RequestParams = {}) =>
+      this.request<SetRoomSessionData, SetRoomSessionError>({
+        path: `/room.setRoomSession`,
+        method: "POST",
+        body: payload,
         type: ContentType.Json,
         format: "json",
         ...params,

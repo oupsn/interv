@@ -2,7 +2,10 @@ import { useEffect } from "react"
 
 const Playground = () => {
   useEffect(() => {
-    const handleClose = (e: { preventDefault: () => void }) => {
+    const handleClose = (e: {
+      preventDefault: () => void
+      returnValue: string
+    }) => {
       e.preventDefault()
     }
 

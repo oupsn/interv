@@ -2,6 +2,7 @@ package loaders
 
 import (
 	"fmt"
+	"github.com/redis/go-redis/v9"
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"github.com/mailjet/mailjet-apiv3-go/v4"
@@ -17,6 +18,8 @@ var DB *gorm.DB
 var MINIO *minio.Client
 
 var MAILJET *mailjet.Client
+
+var REDIS *redis.Client
 
 func SetupDatabases() {
 	CheckAndConnectDatabase()
@@ -105,4 +108,16 @@ func SetupMailjet() {
 	mailjetClient := mailjet.NewMailjetClient(viper.GetString(EnvMailjetApiKey), viper.GetString(EnvMailjetPrivateKey))
 
 	MAILJET = mailjetClient
+}
+
+func SetupRedis() {
+	fmt.Println(fmt.Sprintf("[REDIS] Initializing"))
+	opt, err := redis.ParseURL(viper.GetString(EnvRedisURL))
+	if err != nil {
+		panic(err)
+	}
+
+	client := redis.NewClient(opt)
+
+	REDIS = client
 }
