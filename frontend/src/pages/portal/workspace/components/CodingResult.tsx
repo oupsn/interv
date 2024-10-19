@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator"
 function CodingResult() {
   const params = useParams()
   const { data: result, isLoading } = useGetCodingSubmission(
-    Number(params.userId),
+    Number(params.candidateId),
   )
   const [questionNumber, setQuestionNumber] = useState<number>(0)
   const [questionPass, setQuestionPass] = useState<number>(0)
@@ -83,7 +83,11 @@ function CodingResult() {
                     question={question}
                     index={index}
                   />
-                  <Separator className="w-full" />
+                  {index + 1 == result.data?.result?.length ? (
+                    <></>
+                  ) : (
+                    <Separator className="w-full" />
+                  )}
                 </>
               ))}
             </div>

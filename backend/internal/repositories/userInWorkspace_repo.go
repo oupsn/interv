@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"fmt"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -31,6 +33,31 @@ func (uiw *userInWorkspaceRepository) GetUserNumberInWorkspace(workspaceId uint)
 	return userNum, nil
 }
 
+func (uiw *userInWorkspaceRepository) GetUnseenCandidate(workspaceId uint) (err error) {
+	foundUserInWorkspace := new([]domains.UserInWorkspace)
+	if err := uiw.DB.Find(&foundUserInWorkspace, "workspace_id = ?", workspaceId).Error; err != nil {
+		return err
+	}
+	for _, data := range *foundUserInWorkspace {
+
+		if err := uiw.DB.Model(domains.UserInWorkspace{}).Where("workspace_id = ? AND status = ?", data.WorkspaceId, "idle").Update("status", "unseen").Error; err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (uiw *userInWorkspaceRepository) InterestUser(workspaceId uint, candidateId uint, interest *bool) error {
+	foundUserInWorkspace := new(domains.UserInWorkspace)
+	result := uiw.DB.Model(&foundUserInWorkspace).Where("workspace_id = ? AND user_id = ?", workspaceId, candidateId).Update("is_interest", !*interest)
+	if result.Error != nil {
+
+		return result.Error
+	}
+	fmt.Print(interest)
+	return nil
+}
+
 func (uiw *userInWorkspaceRepository) FindByUserId(userId uint) (userInWorkspace *[]domains.UserInWorkspace, err error) {
 	foundUserInWorkspace := new([]domains.UserInWorkspace)
 	if err := uiw.DB.Find(&foundUserInWorkspace, "user_id = ?", userId).Error; err != nil {
@@ -41,7 +68,7 @@ func (uiw *userInWorkspaceRepository) FindByUserId(userId uint) (userInWorkspace
 
 func (uiw *userInWorkspaceRepository) FindByWorkspaceId(workspaceId uint) (userInWorkspace *[]domains.UserInWorkspace, err error) {
 	foundUserInWorkspace := new([]domains.UserInWorkspace)
-	if err := uiw.DB.Preload("User").Find(&foundUserInWorkspace, "workspace_id = ?", workspaceId).Error; err != nil {
+	if err := uiw.DB.Order("user_id").Find(&foundUserInWorkspace, "workspace_id = ?", workspaceId).Error; err != nil {
 		return nil, err
 	}
 	return foundUserInWorkspace, nil
@@ -49,7 +76,7 @@ func (uiw *userInWorkspaceRepository) FindByWorkspaceId(workspaceId uint) (userI
 
 func (uiw *userInWorkspaceRepository) FindByUserIdAndWorkspaceId(userId uint, workspaceId uint) (userInWorkspace *domains.UserInWorkspace, err error) {
 	foundUserInWorkspace := new(domains.UserInWorkspace)
-	if err := uiw.DB.First(&foundUserInWorkspace, "user_id = ? AND workspace_id", userId, workspaceId).Error; err != nil {
+	if err := uiw.DB.First(&foundUserInWorkspace, "user_id = ? AND workspace_id = ?", userId, workspaceId).Error; err != nil {
 		return nil, err
 	}
 	return foundUserInWorkspace, nil

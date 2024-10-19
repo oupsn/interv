@@ -20,6 +20,7 @@ import Panigator from "./components/Panigator"
 import ListUser from "./components/ListUser"
 import { Spinner } from "@/components/ui/spinner"
 import saveAs from "file-saver"
+import { toast } from "sonner"
 
 const WorkspaceCandidateList = () => {
   const [importUser, setImportUser] = useState<UserData[]>()
@@ -41,18 +42,18 @@ const WorkspaceCandidateList = () => {
     workspaceId: number
   }
 
-  function parseUserData(input: unknown[]): UserData[] {
-    const currentTimestamp = new Date().toISOString() // or any timestamp logic
+  function parseUserData(input: string[][]): UserData[] {
+    const currentTimestamp = new Date().toISOString() // Generate once for all entries
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     return input
-      .slice(1)
+      .slice(1) // Skip header
       .filter(
         (item): item is string[] =>
           Array.isArray(item) &&
           item.length === 2 &&
           item.every((i) => typeof i === "string") &&
-          emailRegex.test(item[1]),
+          emailRegex.test(item[1]), // Validate email format
       )
       .map(([name, username]) => ({
         name,
@@ -63,16 +64,68 @@ const WorkspaceCandidateList = () => {
       }))
   }
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0]
-    if (file) {
-      Papa.parse(file, {
-        skipEmptyLines: true,
-        complete: (results) => {
-          setImportUser(parseUserData(results.data))
-        },
-      })
+    const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB limit in bytes
+
+    // Early return if no file or the file exceeds size limit
+    if (!file) return
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("File too large. Maximum size is 2MB.")
+      return
     }
+
+    try {
+      const fileUploadPromise = new Promise<void>((resolve, reject) => {
+        Papa.parse(file, {
+          skipEmptyLines: true,
+          complete: (results: Papa.ParseResult<string[]>) => {
+            const data = results.data as string[][]
+
+            // Regex to check for special characters (allows alphanumeric, space, comma, dot, dash, and @)
+            const specialCharRegex = /^[a-zA-Z\s,.\-@]+$/
+
+            // Validate each row and cell for special characters and length
+            const isValid = data.every((row: string[]) =>
+              row.every(
+                (cell: string) =>
+                  specialCharRegex.test(cell) && cell.length <= 30, // Check special chars and length
+              ),
+            )
+
+            if (isValid) {
+              setImportUser(parseUserData(data))
+              resolve()
+            } else {
+              reject(
+                new Error(
+                  "File contains special characters that are not allowed, or some cells exceed 30 characters.",
+                ),
+              )
+            }
+          },
+          error: (error) => {
+            reject(error) // Handle parse errors
+          },
+        })
+      })
+
+      // Show a toast for promise
+      await toast.promise(fileUploadPromise, {
+        loading: "Processing file...",
+        success: "File processed successfully!",
+        error: (err) =>
+          err instanceof Error ? err.message : "Something went wrong",
+      })
+    } catch (error: unknown) {
+      // Narrow down the error type to access message
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      toast.error(errorMessage) // Display the error message
+    }
+    console.log(importUser)
   }
 
   const handleSubmitFile = () => {
@@ -80,12 +133,23 @@ const WorkspaceCandidateList = () => {
       listUser: importUser ?? [],
       workspaceId: Number(workspaceId),
     }
-    if (importUser) {
-      server.user.createUser(importData).finally(() => {
-        mutate()
-      })
+    if (importUser && importUser.length > 0) {
+      // Proceed with the toast promise if there are users
+      toast.promise(
+        server.user.createUser(importData).finally(() => {
+          mutate() // Refresh the data after the operation
+        }),
+        {
+          loading: "Processing file...",
+          success: "File processed successfully!",
+          error: (err) =>
+            err instanceof Error ? err.message : "Something went wrong",
+        },
+      )
+    } else {
+      // If importUser has no data, show an error message
+      toast.error("No Data or File might be invalid") // Notify user about the absence of data
     }
-    console.log(data?.data?.workspaceDetail)
   }
 
   const handleExportFile = () => {
@@ -115,20 +179,41 @@ const WorkspaceCandidateList = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Candidate List</BreadcrumbPage>
+              <BreadcrumbPage>Applicant List</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>
-            <Button className="mr-5" onClick={() => {}}>
+            <Button
+              className="mr-5"
+              onClick={() => {
+                toast.promise(
+                  server.workspace
+                    .inviteAllCandidate({
+                      workspaceId: data?.data?.workspaceDetail.id ?? 0,
+                    })
+                    .finally(() => {
+                      mutate() // Refresh the data after sending invitations
+                    }),
+                  {
+                    loading: "Sending invitation",
+                    success: "Invitation sent successfully",
+                    error: (err) => {
+                      return err.response.data.message
+                    },
+                  },
+                )
+              }}
+            >
               Invite All
             </Button>
+
             <div className="flex flex-row gap-2">
               <Button
                 onClick={() => {
                   handleExportFile()
                 }}
               >
-                Import Template
+                Download Template
               </Button>
               <Input
                 className="w-1/2"
@@ -163,6 +248,7 @@ const WorkspaceCandidateList = () => {
                 listUser={data?.data?.individualUser ?? []}
                 page={page}
                 size={size}
+                workspace={Number(data.data.workspaceDetail.id)}
               />
             }
             size={size}

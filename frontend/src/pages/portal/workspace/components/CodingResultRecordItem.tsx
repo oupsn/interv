@@ -9,7 +9,7 @@ function CodingResultRecordItem({
 }) {
   return (
     <>
-      <div className="flex flex-row gap-2 w-full">
+      <div className="flex flex-row justify-around w-full">
         <div className="flex flex-col gap-2 items-center">
           {videoUrl && (
             <video controls className="rounded-xl h-64">

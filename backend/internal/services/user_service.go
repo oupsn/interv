@@ -45,7 +45,7 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 			checkedUser = append(checkedUser, &domains.UserInWorkspace{
 				UserId:      user.ID,
 				WorkspaceId: workspaceId,
-				Status:      "unseen",
+				Status:      "idle",
 				IsInterest:  &defaultInterest,
 			})
 		} else {
@@ -54,7 +54,7 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 				checkedUser = append(checkedUser, &domains.UserInWorkspace{
 					UserId:      userFound.ID,
 					WorkspaceId: workspaceId,
-					Status:      "unseen",
+					Status:      "idle",
 					IsInterest:  &defaultInterest,
 				})
 			}

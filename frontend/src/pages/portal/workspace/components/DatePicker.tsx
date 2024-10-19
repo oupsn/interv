@@ -25,6 +25,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
   setDate,
   className,
 }) => {
+  const today = new Date() // Get today's date
+
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -60,6 +62,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
             selected={date}
             onSelect={setDate}
             numberOfMonths={2}
+            disabled={{ before: today }} // Disable dates before today
           />
         </PopoverContent>
       </Popover>

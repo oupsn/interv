@@ -37,6 +37,7 @@ import { useGetVideoInterviewQuestionByPortalId } from "@/hooks/useGetVideoInter
 import { Checkbox } from "@/components/ui/checkbox"
 import { Link, useNavigate } from "react-router-dom"
 import QuestionPicker from "./components/QuestionPicker"
+import { Spinner } from "@/components/ui/spinner"
 
 // Zod schema for form validation
 
@@ -87,10 +88,7 @@ const CreateWorkspace = () => {
     isCoding: z.boolean().default(false),
     codingTime: z
       .number()
-      .min(
-        isCoding ? 30 : 0,
-        isCoding ? { message: "Minimum Time is 30 mins" } : {},
-      ),
+      .min(isCoding ? 1 : 0, isCoding ? { message: "Required" } : {}),
     videoTime: z.number().min(0, isVideo ? { message: "Required" } : {}),
     reqScreen: z.boolean().default(false),
     reqMicrophone: z.boolean().default(false),
@@ -191,7 +189,11 @@ const CreateWorkspace = () => {
   }, [codeQuestion, videoQuestion, videoCurrentQuestion, firstTime])
 
   if (isCodeQuestionLoading || isVideoQuestionLoading) {
-    return <div className="h-full">...Loading</div>
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spinner size="lg" />
+      </div>
+    )
   }
   return (
     <ContentLayout
@@ -303,9 +305,17 @@ const CreateWorkspace = () => {
                         type="number"
                         {...field}
                         value={
-                          isCoding ? (field.value > 0 ? field.value : 0) : 0
-                        } // Ensure the field value doesn't start as undefined
-                        onChange={(e) => field.onChange(Number(e.target.value))} // Convert string to number
+                          isCoding ? (field.value > 0 ? field.value : "") : ""
+                        } // Start as empty when not coding
+                        onChange={(e) => {
+                          const value = e.target.value
+                          if (
+                            value === "" ||
+                            (value !== "0" && !value.startsWith("0"))
+                          ) {
+                            field.onChange(Number(value)) // Convert to number and update
+                          }
+                        }}
                         disabled={!isCoding}
                       />
                     </FormControl>
@@ -313,6 +323,7 @@ const CreateWorkspace = () => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="videoTime"
