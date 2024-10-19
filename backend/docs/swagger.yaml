@@ -1077,6 +1077,17 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.Response-IndividualUser:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/IndividualUser'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
   handlers.Response-PortalData:
     properties:
       code:
@@ -2312,6 +2323,74 @@ paths:
       summary: Get user In Workspace
       tags:
       - userInWorkspace
+  /userInWorkspace.getbyId:
+    get:
+      consumes:
+      - application/json
+      operationId: GetIndividualUser
+      parameters:
+      - in: query
+        name: userId
+        required: true
+        type: integer
+      - in: query
+        name: workspaceId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-IndividualUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get Individual User In Workspace
+      tags:
+      - userInWorkspace
+  /userInWorkspace.interest:
+    patch:
+      consumes:
+      - application/json
+      operationId: InterestUser
+      parameters:
+      - in: query
+        name: isInterest
+        required: true
+        type: boolean
+      - in: query
+        name: userId
+        required: true
+        type: integer
+      - in: query
+        name: workspaceId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-UserInWorkspace'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Interest User In Workspace
+      tags:
+      - userInWorkspace
   /videoInterview.getVideoInterviewContext:
     get:
       consumes:
@@ -2685,7 +2764,7 @@ paths:
       summary: Get List of workspace
       tags:
       - workspace
-  /workspace.inviteAll:
+  /workspace.inviteAllCandidate:
     post:
       consumes:
       - application/json

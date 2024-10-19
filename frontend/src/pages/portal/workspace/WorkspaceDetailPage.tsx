@@ -169,7 +169,10 @@ const WorkspaceDetailPage = () => {
             <div className="w-1/2 flex flex-col gap-7">
               <Label>
                 Coding Time :{" "}
-                {workspaceData?.data?.workspaceDetail.codingTime?.toString()}{" "}
+                {(workspaceData?.data?.workspaceDetail.codingTime
+                  ? workspaceData?.data?.workspaceDetail.codingTime / 60
+                  : 0
+                ).toString()}{" "}
                 Minutes
               </Label>
               <Label
@@ -226,26 +229,6 @@ const WorkspaceDetailPage = () => {
                 Video Time :{" "}
                 {workspaceData?.data?.workspaceDetail.videoTime?.toString()}{" "}
                 Seconds
-              </Label>
-              <Label
-                className={cn(
-                  workspaceData?.data?.workspaceDetail.reqScreen
-                    ? "disabled:opacity-30"
-                    : "",
-                )}
-              >
-                Screen:
-                <span
-                  className={
-                    workspaceData?.data?.workspaceDetail.isVideo
-                      ? "text-red-500"
-                      : "text-gray-500"
-                  }
-                >
-                  {workspaceData?.data?.workspaceDetail.isVideo
-                    ? " Require"
-                    : " Not Require"}
-                </span>
               </Label>
               <Label>
                 Microphone:

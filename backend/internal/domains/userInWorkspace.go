@@ -8,6 +8,7 @@ import (
 type StatusType string
 
 const (
+	StatusIdle    = "idle"
 	StatusUnseen  = "unseen"
 	StatusPending = "pending"
 	StatusSuccess = "success"
@@ -25,11 +26,11 @@ type UserInWorkspace struct {
 }
 
 func (UserInWorkspace *UserInWorkspace) BeforeCreate(tx *gorm.DB) (err error) {
-	validModes := []StatusType{StatusUnseen, StatusPending, StatusSuccess}
+	validModes := []StatusType{StatusIdle, StatusUnseen, StatusPending, StatusSuccess}
 	for _, validMode := range validModes {
 		if UserInWorkspace.Status == validMode {
 			return nil
 		}
 	}
-	return fiber.NewError(fiber.StatusBadRequest, "invalid status , must be one of: "+StatusUnseen+", "+StatusPending+", "+StatusSuccess)
+	return fiber.NewError(fiber.StatusBadRequest, "invalid status , must be one of: "+StatusIdle+StatusUnseen+", "+StatusPending+", "+StatusSuccess)
 }

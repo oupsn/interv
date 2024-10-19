@@ -400,6 +400,15 @@ export type GetCompileResultData = HandlersResponseHandlersCodingInterviewGetCom
 
 export type GetCompileResultError = HandlersErrResponse
 
+export type GetIndividualUserData = HandlersResponseIndividualUser
+
+export type GetIndividualUserError = HandlersErrResponse
+
+export interface GetIndividualUserParams {
+  userId: number
+  workspaceId: number
+}
+
 export interface GetObjectBody {
   bucketName: string
   objectName: string
@@ -689,6 +698,13 @@ export interface HandlersResponseHandlersCodingInterviewGetSubmissionResultByUse
   timestamp?: string
 }
 
+export interface HandlersResponseIndividualUser {
+  code?: number
+  data?: IndividualUser
+  message?: string
+  timestamp?: string
+}
+
 export interface HandlersResponsePortalData {
   code?: number
   data?: PortalData
@@ -754,6 +770,16 @@ export interface IndividualUser {
   id: number
   userData: User
   userInWorkspace: UserInWorkspace
+}
+
+export type InterestUserData = HandlersResponseUserInWorkspace
+
+export type InterestUserError = HandlersErrResponse
+
+export interface InterestUserParams {
+  isInterest: boolean
+  userId: number
+  workspaceId: number
 }
 
 export type InviteAllCandidateData = HandlersResponseString
@@ -1591,6 +1617,27 @@ export namespace UserInWorkspace {
   /**
    * No description
    * @tags userInWorkspace
+   * @name GetIndividualUser
+   * @summary Get Individual User In Workspace
+   * @request GET:/userInWorkspace.getbyId
+   * @response `200` `GetIndividualUserData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetIndividualUser {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      userId: number
+      workspaceId: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetIndividualUserData
+  }
+
+  /**
+   * No description
+   * @tags userInWorkspace
    * @name GetUserInWorkspace
    * @summary Get user In Workspace
    * @request GET:/userInWorkspace.get
@@ -1606,6 +1653,28 @@ export namespace UserInWorkspace {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetUserInWorkspaceData
+  }
+
+  /**
+   * No description
+   * @tags userInWorkspace
+   * @name InterestUser
+   * @summary Interest User In Workspace
+   * @request PATCH:/userInWorkspace.interest
+   * @response `200` `InterestUserData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace InterestUser {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      isInterest: boolean
+      userId: number
+      workspaceId: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = InterestUserData
   }
 }
 
@@ -1848,7 +1917,7 @@ export namespace Workspace {
    * No description
    * @tags workspace
    * @name InviteAllCandidate
-   * @request POST:/workspace.inviteAll
+   * @request POST:/workspace.inviteAllCandidate
    * @response `200` `InviteAllCandidateData` OK
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `500` `HandlersErrResponse` Internal Server Error
@@ -2699,6 +2768,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * No description
      *
      * @tags userInWorkspace
+     * @name GetIndividualUser
+     * @summary Get Individual User In Workspace
+     * @request GET:/userInWorkspace.getbyId
+     * @response `200` `GetIndividualUserData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getIndividualUser: (query: GetIndividualUserParams, params: RequestParams = {}) =>
+      this.request<GetIndividualUserData, GetIndividualUserError>({
+        path: `/userInWorkspace.getbyId`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags userInWorkspace
      * @name GetUserInWorkspace
      * @summary Get user In Workspace
      * @request GET:/userInWorkspace.get
@@ -2710,6 +2800,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       this.request<GetUserInWorkspaceData, GetUserInWorkspaceError>({
         path: `/userInWorkspace.get`,
         method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags userInWorkspace
+     * @name InterestUser
+     * @summary Interest User In Workspace
+     * @request PATCH:/userInWorkspace.interest
+     * @response `200` `InterestUserData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    interestUser: (query: InterestUserParams, params: RequestParams = {}) =>
+      this.request<InterestUserData, InterestUserError>({
+        path: `/userInWorkspace.interest`,
+        method: "PATCH",
         query: query,
         type: ContentType.Json,
         format: "json",
@@ -2979,14 +3090,14 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      *
      * @tags workspace
      * @name InviteAllCandidate
-     * @request POST:/workspace.inviteAll
+     * @request POST:/workspace.inviteAllCandidate
      * @response `200` `InviteAllCandidateData` OK
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
     inviteAllCandidate: (payload: HandlersInviteAllCandidateBody, params: RequestParams = {}) =>
       this.request<InviteAllCandidateData, InviteAllCandidateError>({
-        path: `/workspace.inviteAll`,
+        path: `/workspace.inviteAllCandidate`,
         method: "POST",
         body: payload,
         type: ContentType.Json,

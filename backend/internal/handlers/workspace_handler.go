@@ -125,6 +125,69 @@ func (w WorkspaceHandler) GetUserInWorkspace(c *fiber.Ctx) error {
 	return Ok(c, response)
 }
 
+// GetIndividualUser
+// @ID GetIndividualUser
+// @Tags userInWorkspace
+// @Summary Get Individual User In Workspace
+// @Accept json
+// @Produce json
+// @Param payload query GetIndividualUserBody true "GetIndividualUserBody"
+// @Success 200 {object} Response[IndividualUser]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /userInWorkspace.getbyId [get]
+func (w WorkspaceHandler) GetIndividualUser(c *fiber.Ctx) error {
+	form := GetIndividualUserBody{}
+	if err := c.QueryParser(&form); err != nil {
+		return err
+	}
+	userInWorkspace, userData, err := w.workspaceService.GetIndividualUser(form.WorkspaceId, form.UserId)
+
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, IndividualUser{Id: 0, UserInWorkspace: UserInWorkspace{
+		Id:          userInWorkspace.Id,
+		UserId:      userInWorkspace.UserId,
+		WorkspaceId: userInWorkspace.WorkspaceId,
+		Status:      string(userInWorkspace.Status),
+		IsInterest:  *userInWorkspace.IsInterest,
+	}, UserData: UserData{
+		ID:       userData.ID,
+		Name:     userData.Name,
+		Username: userData.Username,
+		Role:     string(userData.Role),
+	}})
+}
+
+// InterestUser
+// @ID InterestUser
+// @Tags userInWorkspace
+// @Summary Interest User In Workspace
+// @Accept json
+// @Produce json
+// @Param payload query InterestUser true "InterestUser"
+// @Success 200 {object} Response[UserInWorkspace]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /userInWorkspace.interest [patch]
+func (w WorkspaceHandler) InterestUser(c *fiber.Ctx) error {
+	form := InterestUser{}
+
+	if err := c.QueryParser(&form); err != nil {
+		return err
+	}
+
+	err := w.workspaceService.InterestUser(form.WorkspaceId, form.UserId, &form.IsInterest)
+
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, err)
+}
+
 // GetPortalWorkspace
 // @ID GetPortalWorkspace
 // @Tags workspace
@@ -274,7 +337,7 @@ func (w WorkspaceHandler) DeleteUserFromWorkspace(c *fiber.Ctx) error {
 // @Success 200 {object} Response[string]
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /workspace.inviteAll [post]
+// @Router /workspace.inviteAllCandidate [post]
 func (w WorkspaceHandler) InviteAllCandidate(c *fiber.Ctx) error {
 	body := InviteAllCandidateBody{}
 
@@ -283,6 +346,9 @@ func (w WorkspaceHandler) InviteAllCandidate(c *fiber.Ctx) error {
 	}
 
 	if err := w.workspaceService.InviteAllCandidate(body.WorkspaceId); err != nil {
+		return err
+	}
+	if err := w.workspaceService.GetUnseenCandidate(body.WorkspaceId); err != nil {
 		return err
 	}
 

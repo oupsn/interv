@@ -9,16 +9,28 @@ import {
   TableCell,
   Table,
 } from "@/components/ui/table"
-import { FaEye, FaEdit, FaTrash, FaRegUser } from "react-icons/fa"
+import { FaTrash, FaRegUser, FaStar, FaRegStar, FaEye } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
+import { server } from "@/contexts/swr"
+import { useGetWorkspace } from "@/hooks/useGetWorkspace"
+import { toast } from "sonner"
+import { useNavigate } from "react-router-dom"
 
 export type ListWorkspaceProps = {
   listUser: IndividualUser[]
   page: number
   size: number
+  workspace: number
 }
 
-const ListUser: React.FC<ListWorkspaceProps> = ({ listUser, page, size }) => {
+const ListUser: React.FC<ListWorkspaceProps> = ({
+  listUser,
+  page,
+  size,
+  workspace,
+}) => {
+  const { mutate } = useGetWorkspace(workspace)
+  const navigate = useNavigate()
   return (
     <Table>
       <TableHeader>
@@ -26,7 +38,6 @@ const ListUser: React.FC<ListWorkspaceProps> = ({ listUser, page, size }) => {
           <TableHead className={"w-2/6"}>Name</TableHead>
           <TableHead className={"w-2/6"}>Username</TableHead>
           <TableHead className={"w-1/6"}>Actions</TableHead>
-          <TableHead className={"w-1/6"}>Score</TableHead>
           <TableHead className={"w-1/6"}>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -34,7 +45,7 @@ const ListUser: React.FC<ListWorkspaceProps> = ({ listUser, page, size }) => {
         {listUser?.map((user, index) => {
           if (index >= (page - 1) * size && index <= page * size - 1)
             return (
-              <TableRow key={user.id} className="">
+              <TableRow key={user.userInWorkspace.userId}>
                 <TableCell className="font-medium ">
                   <div className="flex flex-row gap-1">
                     <FaRegUser className="text-primary text-lg" />
@@ -47,16 +58,52 @@ const ListUser: React.FC<ListWorkspaceProps> = ({ listUser, page, size }) => {
                 <TableCell className="font-medium">
                   {user.userInWorkspace.status}
                 </TableCell>
-                <TableCell className="font-medium">0/20</TableCell>
                 <TableCell>
                   <td className="flex w-fit gap-2">
-                    <Button onClick={() => {}}>
+                    <Button
+                      onClick={() => {
+                        console.log(user.userData.id)
+                        toast.promise(
+                          server.userInWorkspace
+                            .interestUser({
+                              workspaceId: user.userInWorkspace.workspaceId,
+                              userId: user.userData.id ?? 0,
+                              isInterest: user.userInWorkspace.isInterest,
+                            })
+                            .then(() => mutate()),
+                          {
+                            loading: "Interest candidate",
+                            success: "Process successfully",
+                            error: (err) => {
+                              return err.response.data.message
+                            },
+                          },
+                        )
+                      }}
+                    >
+                      {user.userInWorkspace.isInterest ? (
+                        <FaStar />
+                      ) : (
+                        <FaRegStar />
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        navigate(user.userData.id?.toString() ?? "0")
+                      }}
+                    >
                       <FaEye />
                     </Button>
-                    <Button onClick={() => {}}>
-                      <FaEdit />
-                    </Button>
-                    <Button onClick={() => {}}>
+                    <Button
+                      onClick={() => {
+                        server.userInWorkspace
+                          .deleteUserFromWorkspace({
+                            userId: user.userInWorkspace.userId,
+                            workspaceId: user.userInWorkspace.workspaceId,
+                          })
+                          .then(() => mutate())
+                      }}
+                    >
                       <FaTrash />
                     </Button>
                   </td>

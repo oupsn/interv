@@ -42,14 +42,14 @@ export function getMenuList(
                   },
                   {
                     href: "/portal/workspace/" + workspaceId + "/candidateList",
-                    label: "Candidate List",
+                    label: "Applicant List",
                     active:
                       pathname ===
                       "/portal/workspace/" + workspaceId + "/candidateList",
                   },
                   {
                     href: "/portal/workspace/" + workspaceId + "/interestList",
-                    label: "Interest List",
+                    label: "Candidate List",
                     active:
                       pathname ===
                       "/portal/workspace/" + workspaceId + "/interestList",

@@ -1,9 +1,10 @@
 package services
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"strings"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/v"
 
@@ -69,7 +70,9 @@ func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspa
 
 	return workspace, userInWorkspace, userData, nil
 }
-
+func (w *workspaceService) InterestUser(workspaceId uint, candidateId uint, interest *bool) error {
+	return w.userInWorkspaceRepository.InterestUser(workspaceId, candidateId, interest)
+}
 func (w *workspaceService) GetUserInWorkspace(id uint) (workspace *[]domains.UserInWorkspace, err error) {
 	return w.userInWorkspaceRepository.FindByWorkspaceId(id)
 }
@@ -94,6 +97,18 @@ func (w *workspaceService) GetUserNumInWorkspace(portalId *uint) (workspaceId []
 	}
 
 	return userWorkspace, nil
+}
+
+func (w *workspaceService) GetIndividualUser(workspaceId uint, userId uint) (userInworkspace *domains.UserInWorkspace, userData *domains.User, err error) {
+	userInworkspace, err = w.userInWorkspaceRepository.FindByUserIdAndWorkspaceId(userId, workspaceId)
+	if err != nil {
+		return nil, nil, err
+	}
+	userData, err = w.userRepository.FindById(userId)
+	if err != nil {
+		return nil, nil, err
+	}
+	return userInworkspace, userData, nil
 }
 
 func (w *workspaceService) Create(
@@ -205,5 +220,13 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 		return err
 	}
 
+	return nil
+}
+
+func (w *workspaceService) GetUnseenCandidate(workspaceId uint) (err error) {
+	err = w.userInWorkspaceRepository.GetUnseenCandidate(workspaceId)
+	if err != nil {
+		return err
+	}
 	return nil
 }

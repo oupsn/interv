@@ -57,7 +57,7 @@ func (u *userRepository) FindById(id uint) (user *domains.User, err error) {
 func (u *userRepository) FindAllByIds(ids []uint) (user *[]domains.User, err error) {
 	foundUser := new([]domains.User)
 
-	if err := u.DB.Where("id IN ?", ids).Find(&foundUser).Error; err != nil {
+	if err := u.DB.Order("id").Where("id IN ?", ids).Find(&foundUser).Error; err != nil {
 		return nil, err
 	}
 
