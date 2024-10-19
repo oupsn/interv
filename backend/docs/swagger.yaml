@@ -515,6 +515,16 @@ definitions:
     - timeToPrepare
     - totalAttempt
     type: object
+  VideoInterviewResultResponse:
+    properties:
+      question:
+        type: string
+      videoPath:
+        type: string
+    required:
+    - question
+    - videoPath
+    type: object
   VideoQuestionDetail:
     properties:
       id:
@@ -1185,6 +1195,19 @@ definitions:
       data:
         items:
           $ref: '#/definitions/UserInWorkspace'
+        type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-array_VideoInterviewResultResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/VideoInterviewResultResponse'
         type: array
       message:
         type: string
@@ -2445,6 +2468,34 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get video interview question
+      tags:
+      - videoInterview
+  /videoInterview.getVideoInterviewResult:
+    get:
+      consumes:
+      - application/json
+      operationId: getVideoInterviewResult
+      parameters:
+      - in: query
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-array_VideoInterviewResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get video interview result
       tags:
       - videoInterview
   /videoInterview.submitVideoInterview:

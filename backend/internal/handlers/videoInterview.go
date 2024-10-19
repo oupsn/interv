@@ -26,3 +26,12 @@ type VideoInterviewQuestionSetting struct {
 	TimeToAnswer  uint `json:"timeToAnswer"  validate:"required"`
 	IsLast        bool `json:"isLast"  validate:"required"`
 } // @name VideoInterviewQuestionSetting
+
+type VideoInterviewResultQuery struct {
+	UserID uint `json:"userId"  validate:"required"`
+} // @name VideoInterviewResultQuery
+
+type VideoInterviewResultResponse struct {
+	Question  string `json:"question"  validate:"required"`
+	VideoPath string `json:"videoPath"  validate:"required"`
+} // @name VideoInterviewResultResponse

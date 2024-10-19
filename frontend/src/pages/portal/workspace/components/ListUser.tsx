@@ -37,8 +37,8 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
         <TableRow>
           <TableHead className={"w-2/6"}>Name</TableHead>
           <TableHead className={"w-2/6"}>Username</TableHead>
-          <TableHead className={"w-1/6"}>Actions</TableHead>
-          <TableHead className={"w-1/6"}>Actions</TableHead>
+          <TableHead>Actions</TableHead>
+          <TableHead className={"w-[100px]"}>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -61,6 +61,7 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                 <TableCell>
                   <td className="flex w-fit gap-2">
                     <Button
+                      size="icon"
                       onClick={() => {
                         console.log(user.userData.id)
                         toast.promise(
@@ -88,6 +89,7 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                       )}
                     </Button>
                     <Button
+                      size="icon"
                       onClick={() => {
                         navigate(user.userData.id?.toString() ?? "0")
                       }}
@@ -95,6 +97,7 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                       <FaEye />
                     </Button>
                     <Button
+                      size="icon"
                       onClick={() => {
                         server.userInWorkspace
                           .deleteUserFromWorkspace({

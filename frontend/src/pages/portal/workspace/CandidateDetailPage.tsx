@@ -12,8 +12,13 @@ import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import { useGetIndividualUser } from "@/hooks/userGetIndividualUser"
 import { Spinner } from "@/components/ui/spinner"
 import CodingResult from "./components/CodingResult"
-import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs"
+import VideoResult from "@/pages/portal/workspace/components/VideoResult.tsx"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs.tsx"
 
 const CandidateDetailPage = () => {
   const { workspaceId, candidateId } = useParams()
@@ -59,21 +64,16 @@ const CandidateDetailPage = () => {
         }
       >
         <ContentPanel>
-          <Tabs defaultValue="account" className="w-full">
+          <Tabs defaultValue="coding" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="coding">Coding</TabsTrigger>
               <TabsTrigger value="video">Video</TabsTrigger>
             </TabsList>
             <TabsContent value="coding">
-              <Card>
-                <CardContent className="space-y-2"></CardContent>
-                <CodingResult />
-              </Card>
+              <CodingResult />
             </TabsContent>
             <TabsContent value="video">
-              <Card>
-                <CardContent className="space-y-2"></CardContent>
-              </Card>
+              <VideoResult />
             </TabsContent>
           </Tabs>
         </ContentPanel>
