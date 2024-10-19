@@ -1724,6 +1724,49 @@
                 }
             }
         },
+        "/videoInterview.getVideoInterviewResult": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "videoInterview"
+                ],
+                "summary": "Get video interview result",
+                "operationId": "getVideoInterviewResult",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "userId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-array_VideoInterviewResultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/videoInterview.submitVideoInterview": {
             "post": {
                 "consumes": [
@@ -3015,6 +3058,21 @@
                 }
             }
         },
+        "VideoInterviewResultResponse": {
+            "type": "object",
+            "required": [
+                "question",
+                "videoPath"
+            ],
+            "properties": {
+                "question": {
+                    "type": "string"
+                },
+                "videoPath": {
+                    "type": "string"
+                }
+            }
+        },
         "VideoQuestionDetail": {
             "type": "object",
             "required": [
@@ -4036,6 +4094,26 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/UserInWorkspace"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-array_VideoInterviewResultResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/VideoInterviewResultResponse"
                     }
                 },
                 "message": {

@@ -116,7 +116,7 @@ const QuestionBankVideoListPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="">Title</TableHead>
+                <TableHead>Title</TableHead>
                 <TableHead className={"w-[100px]"}>Actions</TableHead>
               </TableRow>
             </TableHeader>

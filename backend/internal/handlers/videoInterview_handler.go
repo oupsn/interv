@@ -134,3 +134,41 @@ func (v VideoInterviewHandler) SubmitVideoInterview(c *fiber.Ctx) error {
 
 	return Ok(c, "Submit video interview successfully")
 }
+
+// GetVideoInterviewResult
+// @ID getVideoInterviewResult
+// @Tags videoInterview
+// @Summary Get video interview result
+// @Accept json
+// @Produce json
+// @Param payload query VideoInterviewResultQuery true "query params for video interview result"
+// @Success 200 {object} Response[[]VideoInterviewResultResponse]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /videoInterview.getVideoInterviewResult [get]
+func (v VideoInterviewHandler) GetVideoInterviewResult(c *fiber.Ctx) error {
+	query := VideoInterviewResultQuery{}
+	if err := c.QueryParser(&query); err != nil {
+		return err
+	}
+
+	if err := validate.Struct(query); err !=
+		nil {
+		return err
+	}
+
+	result, err := v.videoInterviewService.GetVideoInterviewResult(query.UserID)
+	if err != nil {
+		return err
+	}
+
+	var response []VideoInterviewResultResponse
+	for _, v := range result {
+		response = append(response, VideoInterviewResultResponse{
+			Question:  v.VideoQuestion.Title,
+			VideoPath: v.FileName,
+		})
+	}
+
+	return Ok(c, response)
+}

@@ -504,6 +504,14 @@ export interface GetVideoInterviewQuestionParams {
   questionId: number
 }
 
+export type GetVideoInterviewResultData = HandlersResponseArrayVideoInterviewResultResponse
+
+export type GetVideoInterviewResultError = HandlersErrResponse
+
+export interface GetVideoInterviewResultParams {
+  userId: number
+}
+
 export type GetVideoQuestionByIdData = HandlersResponseGetVideoQuestionByIdResponse
 
 export type GetVideoQuestionByIdError = HandlersErrResponse
@@ -603,6 +611,13 @@ export interface HandlersResponseArrayGetVideoQuestionByPortalIdResponse {
 export interface HandlersResponseArrayUserInWorkspace {
   code?: number
   data?: UserInWorkspace[]
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseArrayVideoInterviewResultResponse {
+  code?: number
+  data?: VideoInterviewResultResponse[]
   message?: string
   timestamp?: string
 }
@@ -954,6 +969,11 @@ export interface VideoInterviewQuestionSetting {
   timeToAnswer: number
   timeToPrepare: number
   totalAttempt: number
+}
+
+export interface VideoInterviewResultResponse {
+  question: string
+  videoPath: string
 }
 
 export interface VideoQuestionDetail {
@@ -1717,6 +1737,26 @@ export namespace VideoInterview {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetVideoInterviewQuestionData
+  }
+
+  /**
+   * No description
+   * @tags videoInterview
+   * @name GetVideoInterviewResult
+   * @summary Get video interview result
+   * @request GET:/videoInterview.getVideoInterviewResult
+   * @response `200` `GetVideoInterviewResultData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetVideoInterviewResult {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      userId: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetVideoInterviewResultData
   }
 
   /**
@@ -2863,6 +2903,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
     getVideoInterviewQuestion: (query: GetVideoInterviewQuestionParams, params: RequestParams = {}) =>
       this.request<GetVideoInterviewQuestionData, GetVideoInterviewQuestionError>({
         path: `/videoInterview.getVideoInterviewQuestion`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags videoInterview
+     * @name GetVideoInterviewResult
+     * @summary Get video interview result
+     * @request GET:/videoInterview.getVideoInterviewResult
+     * @response `200` `GetVideoInterviewResultData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getVideoInterviewResult: (query: GetVideoInterviewResultParams, params: RequestParams = {}) =>
+      this.request<GetVideoInterviewResultData, GetVideoInterviewResultError>({
+        path: `/videoInterview.getVideoInterviewResult`,
         method: "GET",
         query: query,
         type: ContentType.Json,

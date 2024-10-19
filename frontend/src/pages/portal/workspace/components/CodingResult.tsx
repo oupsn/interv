@@ -34,7 +34,7 @@ function CodingResult() {
   }
   useEffect(() => {
     if (result) {
-      console.log(result)
+      // console.log(result)
       calculateQuestionPass()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -44,7 +44,7 @@ function CodingResult() {
       {isLoading ? (
         <p>Loading...</p>
       ) : result ? (
-        <div className="flex flex-col gap-6 w-full  p-4 overflow-y-auto items-center">
+        <div className="flex flex-col gap-6 w-full items-center mt-6">
           <div className="flex flex-col gap-2 w-full items-center">
             <h2 className="text-3xl font-bold text-primary">
               Coding Submission Result

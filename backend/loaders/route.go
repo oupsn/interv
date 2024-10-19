@@ -87,6 +87,7 @@ func SetupRoutes() {
 	public.Get("videoInterview.getVideoInterviewContext", videoInterviewHandlers.GetVideoInterviewContext)
 	public.Get("videoInterview.getVideoInterviewQuestion", videoInterviewHandlers.GetVideoInterviewQuestion)
 	public.Post("videoInterview.submitVideoInterview", videoInterviewHandlers.SubmitVideoInterview)
+	public.Get("videoInterview.getVideoInterviewResult", videoInterviewHandlers.GetVideoInterviewResult)
 
 	// codingInterview
 	public.Get("codingInterview.getQuestions", codingInterviewHandlers.GetQuestions)
@@ -102,6 +103,7 @@ func SetupRoutes() {
 	public.Delete("codingInterview.deleteQuestion/:codingQuestionID", codingInterviewHandlers.DeleteQuestion)
 	public.Post("codingInterview.uploadVideo", codingInterviewHandlers.UploadCodingVideo)
 	public.Post("codingInterview.getSubmissionResultByUser", codingInterviewHandlers.GetSubmissionResultByUser)
+
 	// video question
 	public.Post("videoQuestion.createVideoQuestion", questionHandlers.CreateVideoQuestion)
 	public.Get("videoQuestion.getVideoQuestionById", questionHandlers.GetVideoQuestionById)
@@ -142,7 +144,7 @@ func SetupRoutes() {
 	private.Delete("workspace.delete", workspaceHandlers.DeleteWorkspaceById)
 	private.Post("workspace.inviteAllCandidate", workspaceHandlers.InviteAllCandidate)
 
-	//// UserInWorkspace
+	// UserInWorkspace
 	private.Get("userInWorkspace.get", workspaceHandlers.GetUserInWorkspace)
 	private.Delete("userInWorkspace.delete", workspaceHandlers.DeleteUserFromWorkspace)
 	private.Patch("userInWorkspace.interest", workspaceHandlers.InterestUser)
