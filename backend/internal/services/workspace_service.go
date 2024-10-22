@@ -243,8 +243,8 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 	return nil
 }
 
-func (w *workspaceService) GetUnseenCandidate(workspaceId uint) (err error) {
-	err = w.userInWorkspaceRepository.GetUnseenCandidate(workspaceId)
+func (w *workspaceService) UpdateStatusCandidate(workspaceId uint, status string) (err error) {
+	err = w.userInWorkspaceRepository.UpdateStatusCandidate(workspaceId, status)
 	if err != nil {
 		return err
 	}

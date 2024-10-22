@@ -61,8 +61,8 @@ func (w *workspaceRepository) FindById(id uint) (workspace *domains.Workspace, e
 func (w *workspaceRepository) FindByPortalId(portal_id *uint) (workspace *[]domains.Workspace, err error) {
 	foundWorkspace := new([]domains.Workspace)
 	if err := w.DB.Distinct("workspaces.*").
-		Joins("JOIN user_in_workspaces ON workspaces.id = user_in_workspaces.workspace_id").
 		Where("workspaces.portal_id = ?", portal_id).
+		Joins("LEFT JOIN user_in_workspaces ON workspaces.id = user_in_workspaces.workspace_id").
 		Preload("UserInWorkspace").
 		Find(&foundWorkspace).Error; err != nil {
 		return nil, err

@@ -14,7 +14,7 @@ type IWorkspaceService interface {
 	GetWorkspaceById(id uint) (workspace *domains.Workspace, candidate *[]domains.UserInWorkspace, err error)
 	GetPortalWorkspace(portalId *uint) (workspace *[]domains.Workspace, err error)
 	GetIndividualUser(workspaceId uint, userId uint) (userInworkspace *domains.UserInWorkspace, err error)
-	GetUnseenCandidate(workspaceId uint) (err error)
+	UpdateStatusCandidate(workspaceId uint, status string) (err error)
 	Create(title string, startDate string, endDate string, isVideo *bool, isCoding *bool, videoTime uint, codingTime uint, reqScreen *bool, reqMicrophone *bool, reqCamera *bool, portalId uint, codeQuestion []uint, videoQuestion []uint) (workspace *domains.Workspace, err error)
 	Update(id uint, title string, startDate string, endDate string, isVideo *bool, isCoding *bool, videoTime uint, codingTime uint, reqScreen *bool, reqMicrophone *bool, reqCamera *bool, portalId uint, codeQuestion []uint, videoQuestion []uint) (workspace *domains.Workspace, err error)
 	Delete(id uint) (err error)

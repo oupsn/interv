@@ -358,7 +358,7 @@ func (w WorkspaceHandler) InviteAllCandidate(c *fiber.Ctx) error {
 	if err := w.workspaceService.InviteAllCandidate(body.WorkspaceId); err != nil {
 		return err
 	}
-	if err := w.workspaceService.GetUnseenCandidate(body.WorkspaceId); err != nil {
+	if err := w.workspaceService.UpdateStatusCandidate(body.WorkspaceId, "unseen"); err != nil {
 		return err
 	}
 

@@ -1,12 +1,13 @@
 package services
 
 import (
+	"time"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/cryptone"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
-	"time"
 )
 
 var (
@@ -29,9 +30,10 @@ type roomService struct {
 	videoQuestionRepo   repositories.IVideoQuestionRepository
 	codingInterviewRepo repositories.ICodingInterviewRepository
 	workspaceRepo       repositories.IWorkspaceRepository
+	userInWorkspace     repositories.IUserInWorkspaceRepository
 }
 
-func NewRoomService(roomRepo repositories.IRoomRepository, userRepo repositories.IUserRepository, videoQuestionRepo repositories.IVideoQuestionRepository, codingInterviewRepo repositories.ICodingInterviewRepository, workspaceRepo repositories.IWorkspaceRepository) IRoomService {
+func NewRoomService(roomRepo repositories.IRoomRepository, userRepo repositories.IUserRepository, videoQuestionRepo repositories.IVideoQuestionRepository, codingInterviewRepo repositories.ICodingInterviewRepository, workspaceRepo repositories.IWorkspaceRepository, userInWorkspace repositories.IUserInWorkspaceRepository) IRoomService {
 	return &roomService{
 		roomRepo:            roomRepo,
 		userRepo:            userRepo,
@@ -88,6 +90,10 @@ func (l roomService) GetRoomContext(roomId string) (*domains.Room, *domains.User
 
 	workspace, err = l.workspaceRepo.FindById(room.WorkspaceID)
 	if err != nil {
+		return nil, nil, 0, 0, 0, 0, nil, err
+	}
+
+	if err := l.userInWorkspace.UpdateStatusCandidate(room.WorkspaceID, "pending"); err != nil {
 		return nil, nil, 0, 0, 0, 0, nil, err
 	}
 
