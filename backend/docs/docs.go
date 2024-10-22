@@ -1499,49 +1499,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/userInWorkspace.get": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "userInWorkspace"
-                ],
-                "summary": "Get user In Workspace",
-                "operationId": "GetUserInWorkspace",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response-array_UserInWorkspace"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/userInWorkspace.getbyId": {
             "get": {
                 "consumes": [
@@ -1573,7 +1530,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.Response-IndividualUser"
+                            "$ref": "#/definitions/handlers.Response-UserInWorkspace"
                         }
                     },
                     "400": {
@@ -2205,7 +2162,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.Response-WorkspaceData"
+                            "$ref": "#/definitions/handlers.Response-WorkspaceDetail"
                         }
                     },
                     "400": {
@@ -2781,25 +2738,6 @@ const docTemplate = `{
                 }
             }
         },
-        "IndividualUser": {
-            "type": "object",
-            "required": [
-                "id",
-                "userData",
-                "userInWorkspace"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "userData": {
-                    "$ref": "#/definitions/User"
-                },
-                "userInWorkspace": {
-                    "$ref": "#/definitions/UserInWorkspace"
-                }
-            }
-        },
         "LoginBody": {
             "type": "object",
             "required": [
@@ -2980,8 +2918,11 @@ const docTemplate = `{
             "required": [
                 "id",
                 "isInterest",
+                "name",
+                "role",
                 "status",
                 "userId",
+                "username",
                 "workspaceId"
             ],
             "properties": {
@@ -2991,11 +2932,20 @@ const docTemplate = `{
                 "isInterest": {
                     "type": "boolean"
                 },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
                 "status": {
                     "type": "string"
                 },
                 "userId": {
                     "type": "integer"
+                },
+                "username": {
+                    "type": "string"
                 },
                 "workspaceId": {
                     "type": "integer"
@@ -3112,24 +3062,6 @@ const docTemplate = `{
                 }
             }
         },
-        "WorkspaceData": {
-            "type": "object",
-            "required": [
-                "individualUser",
-                "workspaceDetail"
-            ],
-            "properties": {
-                "individualUser": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/IndividualUser"
-                    }
-                },
-                "workspaceDetail": {
-                    "$ref": "#/definitions/WorkspaceDetail"
-                }
-            }
-        },
         "WorkspaceDetail": {
             "type": "object",
             "properties": {
@@ -3171,6 +3103,12 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "userInWorkspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserInWorkspace"
+                    }
                 },
                 "videoQueston": {
                     "type": "array",
@@ -3617,6 +3555,18 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                },
+                "userInPortal": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.User"
+                    }
+                },
+                "workspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.Workspace"
+                    }
                 }
             }
         },
@@ -3632,11 +3582,23 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "inWorkspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.UserInWorkspace"
+                    }
+                },
                 "name": {
                     "type": "string"
                 },
                 "password": {
                     "type": "string"
+                },
+                "portal": {
+                    "$ref": "#/definitions/domains.Portal"
+                },
+                "portalId": {
+                    "type": "integer"
                 },
                 "role": {
                     "type": "string"
@@ -3646,6 +3608,41 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "domains.UserInWorkspace": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isInterest": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/domains.User"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "workspace": {
+                    "$ref": "#/definitions/domains.Workspace"
+                },
+                "workspaceId": {
+                    "type": "integer"
                 }
             }
         },
@@ -3711,6 +3708,9 @@ const docTemplate = `{
                 "isVideo": {
                     "type": "boolean"
                 },
+                "portal": {
+                    "$ref": "#/definitions/domains.Portal"
+                },
                 "portalId": {
                     "type": "integer"
                 },
@@ -3731,6 +3731,12 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                },
+                "userInWorkspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.UserInWorkspace"
+                    }
                 },
                 "videoQuestion": {
                     "type": "array",
@@ -3936,23 +3942,6 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.Response-IndividualUser": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/IndividualUser"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
         "handlers.Response-PortalData": {
             "type": "object",
             "properties": {
@@ -4038,23 +4027,6 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.Response-WorkspaceData": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/WorkspaceData"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
         "handlers.Response-WorkspaceDetail": {
             "type": "object",
             "properties": {
@@ -4082,26 +4054,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/GetVideoQuestionByPortalIdResponse"
-                    }
-                },
-                "message": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.Response-array_UserInWorkspace": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/UserInWorkspace"
                     }
                 },
                 "message": {

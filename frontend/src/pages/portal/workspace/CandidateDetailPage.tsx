@@ -36,7 +36,7 @@ const CandidateDetailPage = () => {
   return (
     <>
       <ContentLayout
-        title={data?.data?.userData.name ?? ""}
+        title={data?.data?.name ?? ""}
         breadcrumb={
           <Breadcrumb>
             <BreadcrumbList>
@@ -55,9 +55,7 @@ const CandidateDetailPage = () => {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>
-                  {data?.data?.userData.name ?? ""}
-                </BreadcrumbPage>
+                <BreadcrumbPage>{data?.data?.name ?? ""}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>

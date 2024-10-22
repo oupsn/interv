@@ -342,17 +342,35 @@ export interface DomainsPortal {
   deletedAt?: GormDeletedAt
   id?: number
   updatedAt?: string
+  userInPortal?: DomainsUser[]
+  workspace?: DomainsWorkspace[]
 }
 
 export interface DomainsUser {
   createdAt?: string
   deletedAt?: GormDeletedAt
   id?: number
+  inWorkspace?: DomainsUserInWorkspace[]
   name?: string
   password?: string
+  portal?: DomainsPortal
+  portalId?: number
   role?: string
   updatedAt?: string
   username?: string
+}
+
+export interface DomainsUserInWorkspace {
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  id?: number
+  isInterest?: boolean
+  status?: string
+  updatedAt?: string
+  user?: DomainsUser
+  userId?: number
+  workspace?: DomainsWorkspace
+  workspaceId?: number
 }
 
 export interface DomainsVideoQuestion {
@@ -376,6 +394,7 @@ export interface DomainsWorkspace {
   id?: number
   isCoding?: boolean
   isVideo?: boolean
+  portal?: DomainsPortal
   portalId?: number
   reqCamera?: boolean
   reqMicrophone?: boolean
@@ -383,6 +402,7 @@ export interface DomainsWorkspace {
   startDate?: string
   title?: string
   updatedAt?: string
+  userInWorkspace?: DomainsUserInWorkspace[]
   videoQuestion?: DomainsVideoQuestion[]
   videoTime?: number
 }
@@ -400,7 +420,7 @@ export type GetCompileResultData = HandlersResponseHandlersCodingInterviewGetCom
 
 export type GetCompileResultError = HandlersErrResponse
 
-export type GetIndividualUserData = HandlersResponseIndividualUser
+export type GetIndividualUserData = HandlersResponseUserInWorkspace
 
 export type GetIndividualUserError = HandlersErrResponse
 
@@ -480,14 +500,6 @@ export type GetSubmissionResultByUserData = HandlersResponseHandlersCodingInterv
 
 export type GetSubmissionResultByUserError = HandlersErrResponse
 
-export type GetUserInWorkspaceData = HandlersResponseArrayUserInWorkspace
-
-export type GetUserInWorkspaceError = HandlersErrResponse
-
-export interface GetUserInWorkspaceParams {
-  id: number
-}
-
 export type GetVideoInterviewContextData = HandlersResponseVideoInterviewContextResponse
 
 export type GetVideoInterviewContextError = HandlersErrResponse
@@ -550,7 +562,7 @@ export interface GetVideoQuestionByPortalIdResponse {
   updatedAt?: string
 }
 
-export type GetWorkspaceData = HandlersResponseWorkspaceData
+export type GetWorkspaceData = HandlersResponseWorkspaceDetail
 
 export type GetWorkspaceError = HandlersErrResponse
 
@@ -604,13 +616,6 @@ export interface HandlersOkResponse {
 export interface HandlersResponseArrayGetVideoQuestionByPortalIdResponse {
   code?: number
   data?: GetVideoQuestionByPortalIdResponse[]
-  message?: string
-  timestamp?: string
-}
-
-export interface HandlersResponseArrayUserInWorkspace {
-  code?: number
-  data?: UserInWorkspace[]
   message?: string
   timestamp?: string
 }
@@ -713,13 +718,6 @@ export interface HandlersResponseHandlersCodingInterviewGetSubmissionResultByUse
   timestamp?: string
 }
 
-export interface HandlersResponseIndividualUser {
-  code?: number
-  data?: IndividualUser
-  message?: string
-  timestamp?: string
-}
-
 export interface HandlersResponsePortalData {
   code?: number
   data?: PortalData
@@ -762,13 +760,6 @@ export interface HandlersResponseVideoInterviewQuestionResponse {
   timestamp?: string
 }
 
-export interface HandlersResponseWorkspaceData {
-  code?: number
-  data?: WorkspaceData
-  message?: string
-  timestamp?: string
-}
-
 export interface HandlersResponseWorkspaceDetail {
   code?: number
   data?: WorkspaceDetail
@@ -779,12 +770,6 @@ export interface HandlersResponseWorkspaceDetail {
 export interface HandlersSetRoomSessionBody {
   roomId: string
   sessionIdentifier: string
-}
-
-export interface IndividualUser {
-  id: number
-  userData: User
-  userInWorkspace: UserInWorkspace
 }
 
 export type InterestUserData = HandlersResponseUserInWorkspace
@@ -947,8 +932,11 @@ export interface UserDeleteBody {
 export interface UserInWorkspace {
   id: number
   isInterest: boolean
+  name: string
+  role: string
   status: string
   userId: number
+  username: string
   workspaceId: number
 }
 
@@ -985,11 +973,6 @@ export interface VideoQuestionDetail {
   totalAttempt: number
 }
 
-export interface WorkspaceData {
-  individualUser: IndividualUser[]
-  workspaceDetail: WorkspaceDetail
-}
-
 export interface WorkspaceDetail {
   codingTime?: number
   createAt?: string
@@ -1004,6 +987,7 @@ export interface WorkspaceDetail {
   reqScreen?: boolean
   startDate?: string
   title?: string
+  userInWorkspace?: UserInWorkspace[]
   videoQueston?: VideoQuestionDetail[]
   videoTime?: number
 }
@@ -1653,26 +1637,6 @@ export namespace UserInWorkspace {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetIndividualUserData
-  }
-
-  /**
-   * No description
-   * @tags userInWorkspace
-   * @name GetUserInWorkspace
-   * @summary Get user In Workspace
-   * @request GET:/userInWorkspace.get
-   * @response `200` `GetUserInWorkspaceData` OK
-   * @response `400` `HandlersErrResponse` Bad Request
-   * @response `500` `HandlersErrResponse` Internal Server Error
-   */
-  export namespace GetUserInWorkspace {
-    export type RequestParams = {}
-    export type RequestQuery = {
-      id: number
-    }
-    export type RequestBody = never
-    export type RequestHeaders = {}
-    export type ResponseBody = GetUserInWorkspaceData
   }
 
   /**
@@ -2818,27 +2782,6 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
     getIndividualUser: (query: GetIndividualUserParams, params: RequestParams = {}) =>
       this.request<GetIndividualUserData, GetIndividualUserError>({
         path: `/userInWorkspace.getbyId`,
-        method: "GET",
-        query: query,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags userInWorkspace
-     * @name GetUserInWorkspace
-     * @summary Get user In Workspace
-     * @request GET:/userInWorkspace.get
-     * @response `200` `GetUserInWorkspaceData` OK
-     * @response `400` `HandlersErrResponse` Bad Request
-     * @response `500` `HandlersErrResponse` Internal Server Error
-     */
-    getUserInWorkspace: (query: GetUserInWorkspaceParams, params: RequestParams = {}) =>
-      this.request<GetUserInWorkspaceData, GetUserInWorkspaceError>({
-        path: `/userInWorkspace.get`,
         method: "GET",
         query: query,
         type: ContentType.Json,

@@ -91,7 +91,7 @@ const WorkspaceCandidateList = () => {
             const isValid = data.every((row: string[]) =>
               row.every(
                 (cell: string) =>
-                  specialCharRegex.test(cell) && cell.length <= 30, // Check special chars and length
+                  specialCharRegex.test(cell) && cell.length <= 40, // Check special chars and length
               ),
             )
 
@@ -168,7 +168,7 @@ const WorkspaceCandidateList = () => {
   }
   return (
     <ContentLayout
-      title={data?.data?.workspaceDetail.title ?? ""}
+      title={data?.data?.title ?? ""}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
@@ -189,7 +189,7 @@ const WorkspaceCandidateList = () => {
                 toast.promise(
                   server.workspace
                     .inviteAllCandidate({
-                      workspaceId: data?.data?.workspaceDetail.id ?? 0,
+                      workspaceId: data?.data?.id ?? 0,
                     })
                     .finally(() => {
                       mutate() // Refresh the data after sending invitations
@@ -238,17 +238,19 @@ const WorkspaceCandidateList = () => {
       }
     >
       <ContentPanel>
-        {data?.data?.individualUser ? (
+        {data?.data?.userInWorkspace ? (
           <Panigator
             dataLength={
-              data?.data?.individualUser ? data?.data?.individualUser.length : 0
+              data?.data?.userInWorkspace
+                ? data?.data?.userInWorkspace.length
+                : 0
             }
             children={
               <ListUser
-                listUser={data?.data?.individualUser ?? []}
+                listUser={data?.data?.userInWorkspace ?? []}
                 page={page}
                 size={size}
-                workspace={Number(data.data.workspaceDetail.id)}
+                workspace={Number(data.data.id)}
               />
             }
             size={size}

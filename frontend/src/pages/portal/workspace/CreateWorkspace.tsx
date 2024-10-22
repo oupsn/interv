@@ -142,9 +142,9 @@ const CreateWorkspace = () => {
         server.workspace.createWorkspace({
           ...values,
           reqScreen: isCoding ? values.reqScreen : false,
-          reqMicrophone: isCoding ? values.reqScreen : false,
+          reqMicrophone: isCoding ? values.reqMicrophone : false,
           reqCamera: isCoding ? values.reqCamera : false,
-          codingTime: isCoding ? values.codingTime : 0,
+          codingTime: isCoding ? values.codingTime * 60 : 0,
           videoTime: vidTime,
           endDate: eD.toISOString(),
           startDate: sD.toISOString(),

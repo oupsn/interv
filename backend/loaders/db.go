@@ -50,7 +50,6 @@ func CheckAutoMigrate() {
 			&domains.Workspace{},
 			&domains.UserInWorkspace{},
 			&domains.Portal{},
-			&domains.UserInPortal{},
 			&domains.VideoQuestion{},
 			&domains.CodingQuestion{},
 			&domains.CodingQuestionTestCase{},

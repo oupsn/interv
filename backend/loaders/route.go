@@ -31,12 +31,11 @@ func SetupRoutes() {
 	var workspaceRepositories = repositories.NewWorkspaceRepository(*DB)
 	var userInWorkspaceRepositories = repositories.NewUserInWorkspaceRepository(*DB)
 	var portalRepository = repositories.NewPortalRepository(*DB)
-	var userInPoratlRepository = repositories.NewUserInPortalRepository(*DB)
 	var lintRepository = repositories.NewLinterRepository(viper.GetString(EnvPythonLinterEndpoint), viper.GetString(EnvJavaLinterEndpoint), viper.GetString(EnvCLinterEndpoint))
 	var videoQuestionSnapshotRepositories = repositories.NewVideoQuestionSnapshotRepository(*DB)
 
 	// Services
-	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, userInPoratlRepository, workspaceRepositories)
+	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, workspaceRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories, videoQuestionSnapshotRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
 	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, objectRepositories, lintRepository)
@@ -44,9 +43,8 @@ func SetupRoutes() {
 	var questionServices = services.NewVideoQuestionService(videoQuestionRepositories)
 	var roomServices = services.NewRoomService(roomRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories)
 	var portalService = services.NewPortalService(portalRepository)
-	var userInportalService = services.NewUserInPortalService(userInPoratlRepository)
-	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, userInportalService, mailServices, roomServices, codingInterviewServices, questionServices, videoQuestionRepositories)
-	var authServices = services.NewAuthService(userRepositories, userInportalService)
+	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, mailServices, roomServices, codingInterviewServices, questionServices, videoQuestionRepositories)
+	var authServices = services.NewAuthService(userRepositories)
 
 	// Handlers
 	var userHandlers = handlers.NewUserHandler(userServices)
@@ -57,7 +55,7 @@ func SetupRoutes() {
 	var mailHandlers = handlers.NewMailHandler(mailServices)
 	var questionHandlers = handlers.NewVideoQuestionHandler(questionServices)
 	var roomHandlers = handlers.NewRoomHandler(roomServices)
-	var workspaceHandlers = handlers.NewWorkspaceHandler(workspaceService, userInportalService, authServices)
+	var workspaceHandlers = handlers.NewWorkspaceHandler(workspaceService, authServices)
 	var portalHandler = handlers.NewPortalHandler(portalService)
 
 	// Fiber App
@@ -145,7 +143,6 @@ func SetupRoutes() {
 	private.Post("workspace.inviteAllCandidate", workspaceHandlers.InviteAllCandidate)
 
 	// UserInWorkspace
-	private.Get("userInWorkspace.get", workspaceHandlers.GetUserInWorkspace)
 	private.Delete("userInWorkspace.delete", workspaceHandlers.DeleteUserFromWorkspace)
 	private.Patch("userInWorkspace.interest", workspaceHandlers.InterestUser)
 	private.Get("/userInWorkspace.getbyId", workspaceHandlers.GetIndividualUser)
