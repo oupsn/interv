@@ -46,6 +46,10 @@ type ExtendRoomSessionBody struct {
 	SessionIdentifier string `json:"sessionIdentifier"  validate:"required"`
 } // @name ExtendRoomSessionBody
 
+type PendingInterviewBody struct {
+	RoomID string `json:"roomId"  validate:"required"`
+} // @name ExtendRoomSessionBody
+
 type GetRoomSessionQuery struct {
 	RoomID string `json:"roomId"  validate:"required"`
 }

@@ -12,14 +12,12 @@ import (
 )
 
 type authService struct {
-	userRepository      repositories.IUserRepository
-	userInPortalService IUserInPortalService
+	userRepository repositories.IUserRepository
 }
 
-func NewAuthService(userRepository repositories.IUserRepository, userInPortalService IUserInPortalService) IAuthService {
+func NewAuthService(userRepository repositories.IUserRepository) IAuthService {
 	return &authService{
-		userRepository:      userRepository,
-		userInPortalService: userInPortalService,
+		userRepository: userRepository,
 	}
 }
 
@@ -57,7 +55,7 @@ func (a *authService) GenerateJwtToken(userId uint, username string, expiration 
 
 func (a *authService) Me(userId uint) (user *domains.User, portalId *uint, err error) {
 	user, err = a.userRepository.FindById(userId)
-	portalId, err = a.userInPortalService.GetPortalByUserId(&userId)
+	portalId = &user.PortalId
 
 	if err != nil {
 		return nil, nil, ErrorUserNotFound

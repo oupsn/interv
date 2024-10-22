@@ -13,11 +13,14 @@ const (
 )
 
 type User struct {
-	ID       uint `gorm:"primaryKey"`
-	Name     string
-	Username string `gorm:"unique"`
-	Password string
-	Role     UserType `gorm:"default:'general_user'"`
+	ID          uint `gorm:"primaryKey"`
+	Name        string
+	Username    string `gorm:"unique"`
+	Password    string
+	Role        UserType `gorm:"default:'general_user'"`
+	PortalId    uint
+	Portal      Portal             `gorm:"foreignKey:PortalId"`
+	InWorkspace []*UserInWorkspace `gorm:"foreignKey:UserId"`
 	gorm.Model
 }
 

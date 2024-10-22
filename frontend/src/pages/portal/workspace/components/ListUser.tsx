@@ -1,5 +1,5 @@
 import * as React from "react"
-import { IndividualUser } from "@/api/server"
+import { UserInWorkspace } from "@/api/server"
 
 import {
   TableHeader,
@@ -17,7 +17,7 @@ import { toast } from "sonner"
 import { useNavigate } from "react-router-dom"
 
 export type ListWorkspaceProps = {
-  listUser: IndividualUser[]
+  listUser: UserInWorkspace[]
   page: number
   size: number
   workspace: number
@@ -45,31 +45,27 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
         {listUser?.map((user, index) => {
           if (index >= (page - 1) * size && index <= page * size - 1)
             return (
-              <TableRow key={user.userInWorkspace.userId}>
+              <TableRow key={user.userId}>
                 <TableCell className="font-medium ">
                   <div className="flex flex-row gap-1">
                     <FaRegUser className="text-primary text-lg" />
-                    {user.userData?.name}
+                    {user.name}
                   </div>
                 </TableCell>
-                <TableCell className="font-medium">
-                  {user.userData?.username}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {user.userInWorkspace.status}
-                </TableCell>
+                <TableCell className="font-medium">{user.username}</TableCell>
+                <TableCell className="font-medium">{user.status}</TableCell>
                 <TableCell>
                   <td className="flex w-fit gap-2">
                     <Button
                       size="icon"
                       onClick={() => {
-                        console.log(user.userData.id)
+                        console.log(user.userId)
                         toast.promise(
                           server.userInWorkspace
                             .interestUser({
-                              workspaceId: user.userInWorkspace.workspaceId,
-                              userId: user.userData.id ?? 0,
-                              isInterest: user.userInWorkspace.isInterest,
+                              workspaceId: user.workspaceId,
+                              userId: user.userId,
+                              isInterest: user.isInterest,
                             })
                             .then(() => mutate()),
                           {
@@ -82,16 +78,12 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                         )
                       }}
                     >
-                      {user.userInWorkspace.isInterest ? (
-                        <FaStar />
-                      ) : (
-                        <FaRegStar />
-                      )}
+                      {user.isInterest ? <FaStar /> : <FaRegStar />}
                     </Button>
                     <Button
                       size="icon"
                       onClick={() => {
-                        navigate(user.userData.id?.toString() ?? "0")
+                        navigate(user.userId?.toString() ?? "0")
                       }}
                     >
                       <FaEye />
@@ -101,8 +93,8 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                       onClick={() => {
                         server.userInWorkspace
                           .deleteUserFromWorkspace({
-                            userId: user.userInWorkspace.userId,
-                            workspaceId: user.userInWorkspace.workspaceId,
+                            userId: user.userId,
+                            workspaceId: user.workspaceId,
                           })
                           .then(() => mutate())
                       }}

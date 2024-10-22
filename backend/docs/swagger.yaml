@@ -324,19 +324,6 @@ definitions:
       updatedAt:
         type: string
     type: object
-  IndividualUser:
-    properties:
-      id:
-        type: integer
-      userData:
-        $ref: '#/definitions/User'
-      userInWorkspace:
-        $ref: '#/definitions/UserInWorkspace'
-    required:
-    - id
-    - userData
-    - userInWorkspace
-    type: object
   LoginBody:
     properties:
       password:
@@ -458,17 +445,26 @@ definitions:
         type: integer
       isInterest:
         type: boolean
+      name:
+        type: string
+      role:
+        type: string
       status:
         type: string
       userId:
         type: integer
+      username:
+        type: string
       workspaceId:
         type: integer
     required:
     - id
     - isInterest
+    - name
+    - role
     - status
     - userId
+    - username
     - workspaceId
     type: object
   VideoInterviewContextResponse:
@@ -547,18 +543,6 @@ definitions:
     - title
     - totalAttempt
     type: object
-  WorkspaceData:
-    properties:
-      individualUser:
-        items:
-          $ref: '#/definitions/IndividualUser'
-        type: array
-      workspaceDetail:
-        $ref: '#/definitions/WorkspaceDetail'
-    required:
-    - individualUser
-    - workspaceDetail
-    type: object
   WorkspaceDetail:
     properties:
       codingTime:
@@ -587,6 +571,10 @@ definitions:
         type: string
       title:
         type: string
+      userInWorkspace:
+        items:
+          $ref: '#/definitions/UserInWorkspace'
+        type: array
       videoQueston:
         items:
           $ref: '#/definitions/VideoQuestionDetail'
@@ -879,6 +867,14 @@ definitions:
         type: integer
       updatedAt:
         type: string
+      userInPortal:
+        items:
+          $ref: '#/definitions/domains.User'
+        type: array
+      workspace:
+        items:
+          $ref: '#/definitions/domains.Workspace'
+        type: array
     type: object
   domains.User:
     properties:
@@ -888,16 +884,47 @@ definitions:
         $ref: '#/definitions/gorm.DeletedAt'
       id:
         type: integer
+      inWorkspace:
+        items:
+          $ref: '#/definitions/domains.UserInWorkspace'
+        type: array
       name:
         type: string
       password:
         type: string
+      portal:
+        $ref: '#/definitions/domains.Portal'
+      portalId:
+        type: integer
       role:
         type: string
       updatedAt:
         type: string
       username:
         type: string
+    type: object
+  domains.UserInWorkspace:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      isInterest:
+        type: boolean
+      status:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/domains.User'
+      userId:
+        type: integer
+      workspace:
+        $ref: '#/definitions/domains.Workspace'
+      workspaceId:
+        type: integer
     type: object
   domains.VideoQuestion:
     properties:
@@ -940,6 +967,8 @@ definitions:
         type: boolean
       isVideo:
         type: boolean
+      portal:
+        $ref: '#/definitions/domains.Portal'
       portalId:
         type: integer
       reqCamera:
@@ -954,6 +983,10 @@ definitions:
         type: string
       updatedAt:
         type: string
+      userInWorkspace:
+        items:
+          $ref: '#/definitions/domains.UserInWorkspace'
+        type: array
       videoQuestion:
         items:
           $ref: '#/definitions/domains.VideoQuestion'
@@ -1087,17 +1120,6 @@ definitions:
       timestamp:
         type: string
     type: object
-  handlers.Response-IndividualUser:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/IndividualUser'
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
   handlers.Response-PortalData:
     properties:
       code:
@@ -1153,17 +1175,6 @@ definitions:
       timestamp:
         type: string
     type: object
-  handlers.Response-WorkspaceData:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/WorkspaceData'
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
   handlers.Response-WorkspaceDetail:
     properties:
       code:
@@ -1182,19 +1193,6 @@ definitions:
       data:
         items:
           $ref: '#/definitions/GetVideoQuestionByPortalIdResponse'
-        type: array
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
-  handlers.Response-array_UserInWorkspace:
-    properties:
-      code:
-        type: integer
-      data:
-        items:
-          $ref: '#/definitions/UserInWorkspace'
         type: array
       message:
         type: string
@@ -2318,34 +2316,6 @@ paths:
       summary: Delete User From Workspace
       tags:
       - userInWorkspace
-  /userInWorkspace.get:
-    get:
-      consumes:
-      - application/json
-      operationId: GetUserInWorkspace
-      parameters:
-      - in: query
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response-array_UserInWorkspace'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-      summary: Get user In Workspace
-      tags:
-      - userInWorkspace
   /userInWorkspace.getbyId:
     get:
       consumes:
@@ -2366,7 +2336,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.Response-IndividualUser'
+            $ref: '#/definitions/handlers.Response-UserInWorkspace'
         "400":
           description: Bad Request
           schema:
@@ -2780,7 +2750,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.Response-WorkspaceData'
+            $ref: '#/definitions/handlers.Response-WorkspaceDetail'
         "400":
           description: Bad Request
           schema:

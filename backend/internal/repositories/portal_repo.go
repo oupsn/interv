@@ -25,6 +25,22 @@ func (p *portalRepository) Create(portal domains.Portal) (newPortal *domains.Por
 	return &portal, nil
 }
 
+func (p *portalRepository) AddUserToPortal(user domains.User, portal domains.Portal) (err error) {
+	err = p.DB.Model(&domains.User{ID: user.ID}).Association("Portal").Append(&domains.Portal{Id: portal.Id})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *portalRepository) FindUserByPortal(portalId uint) (userInportal []*domains.User, err error) {
+	foundPortal := new(domains.Portal)
+	if err := p.DB.Find(&foundPortal, "id = ? ", portalId).Error; err != nil {
+		return nil, err
+	}
+	return foundPortal.UserInPortal, nil
+}
+
 func (p *portalRepository) FindByTitle(title string) (portal *domains.Portal, err error) {
 	foundportal := new(domains.Portal)
 	if err := p.DB.First(&foundportal, "company_name = ? ", title).Error; err != nil {

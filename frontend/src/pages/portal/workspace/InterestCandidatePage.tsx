@@ -26,7 +26,7 @@ const CandidateDetailPage = () => {
   }
   return (
     <ContentLayout
-      title={data?.data?.workspaceDetail.title ?? ""}
+      title={data?.data?.title ?? ""}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
@@ -39,41 +39,30 @@ const CandidateDetailPage = () => {
     >
       <ContentPanel>
         <div className="text-xl mt-5 flex flex-col">
-          <Label>Workspace title: {data?.data?.workspaceDetail.title}</Label>
+          <Label>Workspace title: {data?.data?.title}</Label>
           <Label>
-            Start Date:{" "}
-            {dayjs(data?.data?.workspaceDetail.startDate).format("MM/DD/YYYY")}
+            Start Date: {dayjs(data?.data?.startDate).format("MM/DD/YYYY")}
           </Label>
           <Label>
-            End Date:{" "}
-            {dayjs(data?.data?.workspaceDetail.endDate).format("MM/DD/YYYY")}
+            End Date: {dayjs(data?.data?.endDate).format("MM/DD/YYYY")}
           </Label>
           <Label>
             Have Video Question:
-            {data?.data?.workspaceDetail.isVideo?.toString()}
+            {data?.data?.isVideo?.toString()}
           </Label>
           <Label>
             Have Coding Question:
-            {data?.data?.workspaceDetail.isCoding?.toString()}
+            {data?.data?.isCoding?.toString()}
           </Label>
-          <Label>
-            Coding Time: {data?.data?.workspaceDetail.codingTime?.toString()}{" "}
-            mins
-          </Label>
-          <Label>Portal Id: {data?.data?.workspaceDetail.portalId}</Label>
-          <Label>
-            Require Camera: {data?.data?.workspaceDetail.reqScreen?.toString()}
-          </Label>
+          <Label>Coding Time: {data?.data?.codingTime?.toString()} mins</Label>
+          <Label>Portal Id: {data?.data?.portalId}</Label>
+          <Label>Require Camera: {data?.data?.reqScreen?.toString()}</Label>
           <Label>
             Require Microphone:
-            {data?.data?.workspaceDetail.reqMicrophone?.toString()}
+            {data?.data?.reqMicrophone?.toString()}
           </Label>
-          <Label>
-            Require Camera: {data?.data?.workspaceDetail.reqCamera?.toString()}
-          </Label>
-          <Label>
-            Number of candidate:{data?.data?.workspaceDetail.memberNum}
-          </Label>
+          <Label>Require Camera: {data?.data?.reqCamera?.toString()}</Label>
+          <Label>Number of candidate:{data?.data?.memberNum}</Label>
         </div>
       </ContentPanel>
     </ContentLayout>
