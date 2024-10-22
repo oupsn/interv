@@ -6,8 +6,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/v"
-
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 )
@@ -203,13 +201,15 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 	}
 
 	var mailList []MailObject
+	var IsCodingDone = !*workspace.IsCoding
+	var IsVideoDone = !*workspace.IsVideo
 
 	for _, u := range workspace.UserInWorkspace {
 		if err != nil {
 			return err
 		}
 		if u.Status == "idle" {
-			room, rt, err := w.roomService.CreateRoom(domains.Room{CandidateID: u.UserId, WorkspaceID: workspaceId, IsCodingDone: v.Ptr(false), IsVideoDone: v.Ptr(false)})
+			room, rt, err := w.roomService.CreateRoom(domains.Room{CandidateID: u.UserId, WorkspaceID: workspaceId, IsCodingDone: &IsCodingDone, IsVideoDone: &IsVideoDone})
 			if err != nil {
 				return err
 			}

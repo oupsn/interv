@@ -104,6 +104,12 @@ func (l roomService) UpdateRoomContext(room domains.Room) error {
 	if err := l.roomRepo.Update(room); err != nil {
 		return err
 	}
+	if room.IsCodingDone != nil && room.IsVideoDone != nil && *room.IsCodingDone && *room.IsVideoDone {
+		err := l.userInWorkspace.UpdateStatusCandidate(room.WorkspaceID, "success")
+		if err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
