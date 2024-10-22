@@ -6,6 +6,7 @@ import (
 
 type IWorkspaceRepository interface {
 	Create(workspace domains.Workspace) (newWorkspace *domains.Workspace, err error)
+	Update(workspace domains.Workspace) (newWorkspace *domains.Workspace, err error)
 	FindByTitle(title string) (workspace *domains.Workspace, err error)
 	FindById(id uint) (workspace *domains.Workspace, err error)
 	FindByPortalId(portal_id *uint) (workspace *[]domains.Workspace, err error)

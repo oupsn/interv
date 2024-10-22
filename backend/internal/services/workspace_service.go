@@ -125,6 +125,69 @@ func (w *workspaceService) Create(
 	return newWorkspace, err
 }
 
+func (w *workspaceService) Update(
+	id uint,
+	title string,
+	startDate string,
+	endDate string,
+	isVideo *bool,
+	isCoding *bool,
+	videoTime uint,
+	codingTime uint,
+	reqScreen *bool,
+	reqMicrophone *bool,
+	reqCamera *bool,
+	portalId uint,
+	codeQuestion []uint,
+	videoQuestion []uint,
+) (workspace *domains.Workspace, err error) {
+	const layout = "2006-01-02T15:04:05Z07:00"
+	startdate, err := time.Parse(layout, startDate)
+	if err != nil {
+		return nil, err
+	}
+	enddate, err := time.Parse(layout, endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	w.videoQuestionRepositories.DeleteByWorkspaceId(id)
+	w.codingInterviewService.DeleteCodingQuestionInWorkspace(id)
+
+	workspace, err = w.workspaceRepository.Update(domains.Workspace{
+		Id:            id,
+		Title:         title,
+		StartDate:     startdate,
+		EndDate:       enddate,
+		IsVideo:       isVideo,
+		IsCoding:      isCoding,
+		VideoTime:     videoTime,
+		CodingTime:    codingTime,
+		ReqScreen:     reqScreen,
+		ReqMicrophone: reqMicrophone,
+		ReqCamera:     reqCamera,
+		PortalId:      portalId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if len(codeQuestion) > 0 {
+		for index := range codeQuestion {
+			w.codingInterviewService.AddCodingQuestion(codeQuestion[index], "workspace", workspace.Id)
+		}
+	}
+	if len(videoQuestion) > 0 {
+		w.videoQuestionService.AddVideoQuestion(videoQuestion, workspace)
+	}
+
+	response, err := w.workspaceRepository.FindById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
 func (w *workspaceService) Delete(id uint) (err error) {
 	return w.workspaceRepository.DeleteById(id)
 }

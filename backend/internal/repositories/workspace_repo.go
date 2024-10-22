@@ -25,6 +25,15 @@ func (w *workspaceRepository) Create(workspace domains.Workspace) (newWorkspace 
 	return &workspace, nil
 }
 
+func (w *workspaceRepository) Update(workspace domains.Workspace) (newWorkspace *domains.Workspace, err error) {
+
+	if err := w.DB.Updates(&workspace).Error; err != nil {
+		return nil, err
+	}
+
+	return &workspace, nil
+}
+
 func (w *workspaceRepository) FindByTitle(title string) (workspace *domains.Workspace, err error) {
 	foundWorkspace := new(domains.Workspace)
 	if err := w.DB.First(&foundWorkspace, "title = ? ", title).Error; err != nil {

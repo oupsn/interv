@@ -139,6 +139,7 @@ func SetupRoutes() {
 	private.Get("workspace.get", workspaceHandlers.GetWorkspaceById)
 	private.Get("workspace.getByPortal", workspaceHandlers.GetPortalWorkspace)
 	private.Post("workspace.create", workspaceHandlers.CreateWorkspace)
+	private.Put("workspace.update", workspaceHandlers.UpdateWorkspace)
 	private.Delete("workspace.delete", workspaceHandlers.DeleteWorkspaceById)
 	private.Post("workspace.inviteAllCandidate", workspaceHandlers.InviteAllCandidate)
 

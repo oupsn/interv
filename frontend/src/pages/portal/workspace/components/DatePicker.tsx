@@ -18,14 +18,16 @@ interface DatePickerProps {
   date: DateRange | undefined
   setDate: (date: DateRange | undefined) => void
   className?: string
+  start?: string
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({
   date,
   setDate,
   className,
+  start,
 }) => {
-  const today = new Date() // Get today's date
+  const today = start ? new Date(start) : new Date() // Get today's date
 
   return (
     <div className={cn("grid gap-2", className)}>

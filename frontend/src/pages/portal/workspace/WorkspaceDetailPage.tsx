@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { useGetWorkspace } from "@/hooks/useGetWorkspace"
 
 import {
@@ -25,11 +25,13 @@ import { useGetVideoInterviewQuestionByPortalId } from "@/hooks/useGetVideoInter
 import { useGetCodingInterviewQuestionByWorpsaceId } from "@/hooks/useGetCodingInterviewQuestionByWorkspaceId"
 import { cn } from "@/lib/utils"
 import { Spinner } from "@/components/ui/spinner"
+import { FaEdit } from "react-icons/fa"
 
 const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams()
   const { currentUser } = useCurrentUser()
   const disablePage = true
+  const navigate = useNavigate()
 
   const { data: workspaceData } = useGetWorkspace(Number(workspaceId))
   const { data: codeQuestion, isLoading: isCodeQuestionLoading } =
@@ -100,7 +102,7 @@ const WorkspaceDetailPage = () => {
   }
   return (
     <ContentLayout
-      title={workspaceData?.data?.title ?? ""}
+      title={"Workspace"}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
@@ -126,9 +128,18 @@ const WorkspaceDetailPage = () => {
             disablePage ? "gap-8" : "gap-4",
           )}
         >
-          <Label className="text-3xl font-bold text-primary">
-            Title : {workspaceData?.data?.title}
-          </Label>
+          <div className="flex items-center gap-5">
+            <Label className="text-3xl font-bold text-primary">
+              Title : {workspaceData?.data?.title}
+            </Label>
+
+            <FaEdit
+              className="hover:cursor-pointer text-iGreen"
+              onClick={() => {
+                navigate("edit")
+              }}
+            />
+          </div>
           <Label>Number of candidate : {workspaceData?.data?.memberNum}</Label>
           <Label>
             Time period :{" "}

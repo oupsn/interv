@@ -13,6 +13,7 @@ type IVideoQuestionRepository interface {
 	GetByWorkspaceId(id uint) (*domains.Workspace, error)
 	Update(question domains.VideoQuestion) error
 	DeleteById(id uint) error
+	DeleteByWorkspaceId(workspaceId uint) error
 }
 
 type videoQuestionRepository struct {
@@ -84,3 +85,12 @@ func (v videoQuestionRepository) DeleteById(id uint) error {
 
 	return nil
 }
+
+func (v videoQuestionRepository) DeleteByWorkspaceId(workspaceId uint) error {
+	if err := v.DB.Delete(&domains.VideoQuestion{}, "workspace_id = ?", workspaceId).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
