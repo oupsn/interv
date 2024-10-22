@@ -26,13 +26,6 @@ func (uiw *userInWorkspaceRepository) Create(userInWorkspace []*domains.UserInWo
 	return userInWorkspace, nil
 }
 
-func (uiw *userInWorkspaceRepository) GetUserNumberInWorkspace(workspaceId uint) (userNum int64, err error) {
-	if err := uiw.DB.Model(&domains.UserInWorkspace{}).Where("workspace_id = ?", workspaceId).Count(&userNum).Error; err != nil {
-		return 0, err
-	}
-	return userNum, nil
-}
-
 func (uiw *userInWorkspaceRepository) GetUnseenCandidate(workspaceId uint) (err error) {
 	foundUserInWorkspace := new([]domains.UserInWorkspace)
 	if err := uiw.DB.Find(&foundUserInWorkspace, "workspace_id = ?", workspaceId).Error; err != nil {
@@ -68,7 +61,11 @@ func (uiw *userInWorkspaceRepository) FindByUserId(userId uint) (userInWorkspace
 
 func (uiw *userInWorkspaceRepository) FindByWorkspaceId(workspaceId uint) (userInWorkspace *[]domains.UserInWorkspace, err error) {
 	foundUserInWorkspace := new([]domains.UserInWorkspace)
-	if err := uiw.DB.Order("user_id").Find(&foundUserInWorkspace, "workspace_id = ?", workspaceId).Error; err != nil {
+	if err := uiw.DB.Distinct("user_in_workspaces.*").
+		Joins("JOIN users ON user_in_workspaces.user_id = users.id").
+		Order("user_id").
+		Preload("User").
+		Find(&foundUserInWorkspace, "workspace_id = ?", workspaceId).Error; err != nil {
 		return nil, err
 	}
 	return foundUserInWorkspace, nil
@@ -76,7 +73,10 @@ func (uiw *userInWorkspaceRepository) FindByWorkspaceId(workspaceId uint) (userI
 
 func (uiw *userInWorkspaceRepository) FindByUserIdAndWorkspaceId(userId uint, workspaceId uint) (userInWorkspace *domains.UserInWorkspace, err error) {
 	foundUserInWorkspace := new(domains.UserInWorkspace)
-	if err := uiw.DB.First(&foundUserInWorkspace, "user_id = ? AND workspace_id = ?", userId, workspaceId).Error; err != nil {
+	if err := uiw.DB.Distinct("user_in_workspaces.*").
+		Joins("JOIN users ON user_in_workspaces.user_id = users.id").
+		Preload("User").
+		First(&foundUserInWorkspace, "user_id = ? AND workspace_id = ?", userId, workspaceId).Error; err != nil {
 		return nil, err
 	}
 	return foundUserInWorkspace, nil

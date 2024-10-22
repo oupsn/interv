@@ -35,7 +35,11 @@ func (w *workspaceRepository) FindByTitle(title string) (workspace *domains.Work
 
 func (w *workspaceRepository) FindById(id uint) (workspace *domains.Workspace, err error) {
 	foundWorkspace := new(domains.Workspace)
-	if err := w.DB.First(&foundWorkspace, "id = ?", id).Error; err != nil {
+	if err := w.DB.Distinct("workspaces.*").
+		Joins("JOIN user_in_workspaces ON workspaces.id = user_in_workspaces.workspace_id").
+		Where("workspaces.id = ?", id).
+		Preload("UserInWorkspace").
+		First(&foundWorkspace).Error; err != nil {
 		return nil, err
 	}
 	if err := w.DB.Preload("VideoQuestion").First(&foundWorkspace, "id = ?", id).Error; err != nil {
@@ -47,18 +51,14 @@ func (w *workspaceRepository) FindById(id uint) (workspace *domains.Workspace, e
 
 func (w *workspaceRepository) FindByPortalId(portal_id *uint) (workspace *[]domains.Workspace, err error) {
 	foundWorkspace := new([]domains.Workspace)
-	if err := w.DB.Find(&foundWorkspace, "portal_id = ? ", portal_id).Error; err != nil {
+	if err := w.DB.Distinct("workspaces.*").
+		Joins("JOIN user_in_workspaces ON workspaces.id = user_in_workspaces.workspace_id").
+		Where("workspaces.portal_id = ?", portal_id).
+		Preload("UserInWorkspace").
+		Find(&foundWorkspace).Error; err != nil {
 		return nil, err
 	}
 	return foundWorkspace, nil
-}
-
-func (w *workspaceRepository) FindWorkspaceIdByPortalId(portal_id *uint) (workspace *[]uint, err error) {
-	workspaceIds := new([]uint)
-	if err := w.DB.Model(&domains.Workspace{}).Where("portal_id = ?", portal_id).Pluck("id", workspaceIds).Error; err != nil {
-		return nil, err
-	}
-	return workspaceIds, nil
 }
 
 func (w *workspaceRepository) DeleteById(id uint) (err error) {
