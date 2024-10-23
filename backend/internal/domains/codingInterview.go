@@ -150,3 +150,9 @@ type CodingQuestionSubmissionResult struct {
 	ScreenURL string                     `json:"screen_url"`
 	VideoURL  string                     `json:"video_url"`
 }
+
+type CodingQuestionRoomContext struct {
+	CodingTime uint      `json:"coding_time"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+}

@@ -5,7 +5,8 @@ import (
 )
 
 type ICodingInterviewRepository interface {
-	GetCodingQuestionList() ([]domains.CodingQuestionResponse, error)
+	GetCodingQuestionRoomContext(roomID string) (domains.CodingQuestionRoomContext, error)
+	GetCodingQuestionList(roomID string) ([]domains.CodingQuestionResponse, error)
 	GetCodingQuestionByTitle(title string) (domains.CodingQuestionResponse, error)
 	GetCodingQuestionListInPortal(portalID int) ([]domains.CodingQuestion, error)
 	GetCodingQuestionListInWorkspace(workspaceId int) ([]domains.CodingQuestion, error)

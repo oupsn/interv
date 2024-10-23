@@ -1,4 +1,9 @@
 function CodingResultQuestionLint({ lint }: { lint: string }) {
+  const sortedResults = JSON.parse(lint)?.results.sort(
+    (a: { line: string }, b: { line: string }) =>
+      parseInt(a.line) - parseInt(b.line),
+  )
+
   return (
     <div className="flex flex-col gap-2">
       <table className="min-w-full border-collapse border border-gray-300">
@@ -9,7 +14,7 @@ function CodingResultQuestionLint({ lint }: { lint: string }) {
           </tr>
         </thead>
         <tbody>
-          {JSON.parse(lint)?.results.map(
+          {sortedResults.map(
             (result: { line: string; description: string }, index: number) => (
               <tr key={index} className="border-b">
                 <td className="border border-gray-300 p-2 text-center">

@@ -28,9 +28,12 @@ func NewCodingInterviewService(codeCompilationRepository repositories.ICompilati
 	}
 }
 
-// TODO: Add roomId to filter coding question by room
-func (s *codingInterviewService) GetCodingInterviewQuestions() ([]domains.CodingQuestionResponse, error) {
-	questions, err := s.codingInterviewRepository.GetCodingQuestionList()
+func (s *codingInterviewService) GetCodingInterviewQuestionRoomContext(roomID string) (domains.CodingQuestionRoomContext, error) {
+	return s.codingInterviewRepository.GetCodingQuestionRoomContext(roomID)
+}
+
+func (s *codingInterviewService) GetCodingInterviewQuestions(roomID string) ([]domains.CodingQuestionResponse, error) {
+	questions, err := s.codingInterviewRepository.GetCodingQuestionList(roomID)
 	if err != nil {
 		return []domains.CodingQuestionResponse{}, ErrorGetCodingInterviewQuestions
 	}

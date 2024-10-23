@@ -4,6 +4,7 @@ import { StatusMessages } from "react-media-recorder-2"
 import useCurrentUser from "@/hooks/UseCurrentUser"
 import { Link, useParams } from "react-router-dom"
 import { ArrowLeftIcon } from "lucide-react"
+import { server } from "@/contexts/swr"
 
 interface CodingInterviewInstructionProps {
   title: string
@@ -101,6 +102,14 @@ const CodingInterviewInstruction: React.FC<CodingInterviewInstructionProps> = ({
           <CodingInterviewDeviceSetup
             handleClickStart={() => {
               clickStart()
+              server.codingInterview.createQuestionSnapshot([
+                {
+                  room_id: roomId,
+                  coding_question_id: 0,
+                  language: "",
+                  code: "",
+                },
+              ])
             }}
             previewVideoStream={previewVideoStream}
             previewScreenStream={previewScreenStream}
