@@ -21,6 +21,7 @@ import QuestionBankCodingEdit from "@/pages/portal/questionBank/components/Quest
 import QuestionBankEditVideoQuestionForm from "@/pages/portal/questionBank/components/QuestionBankEditVideoQuestionForm.tsx"
 import WorkspaceInterestPage from "@/pages/portal/workspace/WorkspaceInterestPage"
 import CodingResult from "@/pages/portal/workspace/components/CodingResult"
+import QuestionTutorial from "@/pages/room/questionTutorial/QuestionTutorial"
 
 export const router = createBrowserRouter([
   {
@@ -148,6 +149,10 @@ export const router = createBrowserRouter([
       {
         path: "video",
         element: <VideoInterviewPage />,
+      },
+      {
+        path: "tutorial",
+        element: <QuestionTutorial />,
       },
     ],
   },

@@ -13,6 +13,7 @@ import { useReactMediaRecorder } from "react-media-recorder-2"
 import { DeviceContext } from "@/contexts/device"
 import { server } from "@/contexts/swr"
 import { LoadingContext } from "@/contexts/loading"
+import TopBar from "@/components/layout/TopBar"
 
 interface Question {
   index: number
@@ -204,6 +205,7 @@ const CodingInterviewPage = () => {
   }, [isStart, isFinish])
   return (
     <>
+      <TopBar></TopBar>
       <div className={"w-dvw h-dvh flex max-h-sr z-0"}>
         {isStart ? (
           isFinish ? (

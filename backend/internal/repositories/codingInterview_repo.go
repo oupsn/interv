@@ -53,6 +53,7 @@ func (c *codingInterviewRepository) GetCodingQuestionListInPortal(portalID int) 
 	if err := c.DB.Distinct("coding_questions.*").
 		Joins("JOIN coding_question_in_portals ON coding_questions.id = coding_question_in_portals.coding_question_id").
 		Where("coding_question_in_portals.portal_id = ?", portalID).
+		Order("coding_questions.updated_at DESC").
 		Find(&codingQuestions).Error; err != nil {
 		return nil, err
 	}

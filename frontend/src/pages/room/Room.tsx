@@ -1,21 +1,52 @@
 import { Button } from "@/components/ui/button.tsx"
-import { useNavigate, useParams } from "react-router-dom"
-import SideBarItem from "@/components/layout/SideBarItem.tsx"
-import SideBar from "@/components/layout/SideBar.tsx"
+import { useNavigate, useParams, useLocation } from "react-router-dom"
 import MainPanel from "@/components/layout/MainPanel.tsx"
 import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
 import dayjs from "dayjs"
 import { Spinner } from "@/components/ui/spinner.tsx"
+import { useEffect, useState } from "react"
+import TermsModal from "@/components/ui/term-modal"
+import TopBar from "@/components/layout/TopBar"
+import TopBarItem from "@/components/layout/TopBarItem"
 
 const RoomPage = () => {
   const { roomId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const { data, error, isLoading } = useGetRoomContext(roomId!)
+
+  const [termsAccepted, setTermsAccepted] = useState(false)
+
+  useEffect(() => {
+    const hasAcceptedTerms = localStorage.getItem("termsAccepted")
+    if (!hasAcceptedTerms) {
+      setTermsAccepted(false)
+    } else {
+      setTermsAccepted(true)
+    }
+  }, [])
+
+  const handleAcceptTerms = () => {
+    localStorage.setItem("termsAccepted", "true")
+    setTermsAccepted(true)
+  }
+
+  const handleDeclineTerms = () => {
+    window.location.reload()
+  }
+
   return (
     <>
-      <SideBar>
-        <SideBarItem title={"Welcome"} isActive={true} />
-      </SideBar>
+      <TopBar>
+        <TopBarItem
+          title={`Home`}
+          onClick={() => navigate(location.pathname)}
+        />
+        <TopBarItem
+          title={`Tutorial`}
+          onClick={() => navigate(location.pathname + "/tutorial")}
+        />
+      </TopBar>
       <MainPanel className={"flex flex-col justify-center items-center gap-8"}>
         {isLoading ? (
           <Spinner size="lg" />
@@ -91,6 +122,13 @@ const RoomPage = () => {
           </>
         )}
       </MainPanel>
+
+      {!error && !termsAccepted && (
+        <TermsModal
+          onAccept={handleAcceptTerms}
+          onDecline={handleDeclineTerms}
+        />
+      )}
     </>
   )
 }
