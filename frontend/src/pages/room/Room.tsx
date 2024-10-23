@@ -36,7 +36,7 @@ const RoomPage = () => {
   }
 
   return (
-    <>
+    <div className="flex flex-col w-dvw h-dvh">
       <TopBar>
         <TopBarItem
           title={`Home`}
@@ -129,7 +129,7 @@ const RoomPage = () => {
           onDecline={handleDeclineTerms}
         />
       )}
-    </>
+    </div>
   )
 }
 

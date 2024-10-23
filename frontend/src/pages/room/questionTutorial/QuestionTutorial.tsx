@@ -13,7 +13,7 @@ function QuestionTutorial() {
   const navigate = useNavigate()
   const location = useLocation()
   return (
-    <>
+    <div className="flex flex-col w-dvw h-dvh">
       <TopBar>
         <TopBarItem
           title={`Home`}
@@ -50,7 +50,7 @@ function QuestionTutorial() {
           </AccordionItem>
         </Accordion>
       </div>
-    </>
+    </div>
   )
 }
 

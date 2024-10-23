@@ -204,7 +204,7 @@ const CodingInterviewPage = () => {
     }
   }, [isStart, isFinish])
   return (
-    <>
+    <div className="flex flex-col w-dvw h-dvh">
       <TopBar></TopBar>
       <div className={"w-dvw h-dvh flex max-h-sr z-0"}>
         {isStart ? (
@@ -254,7 +254,7 @@ const CodingInterviewPage = () => {
           />
         )}
       </div>
-    </>
+    </div>
   )
 }
 
