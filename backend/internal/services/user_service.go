@@ -11,14 +11,13 @@ import (
 type userService struct {
 	userRepository            repositories.IUserRepository
 	userInWorkspaceRepository repositories.IUserInWorkspaceRepository
-	userInPortalRepository    repositories.IUserInPortalRepository
+	portalRepository          repositories.IPortalRepository
 }
 
-func NewUserService(userRepository repositories.IUserRepository, userInWorkspaceRepository repositories.IUserInWorkspaceRepository, userInPortalRepository repositories.IUserInPortalRepository, workspaceRepository repositories.IWorkspaceRepository) IUserService {
+func NewUserService(userRepository repositories.IUserRepository, userInWorkspaceRepository repositories.IUserInWorkspaceRepository, workspaceRepository repositories.IWorkspaceRepository) IUserService {
 	return &userService{
 		userRepository:            userRepository,
 		userInWorkspaceRepository: userInWorkspaceRepository,
-		userInPortalRepository:    userInPortalRepository,
 	}
 }
 
@@ -45,7 +44,7 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 			checkedUser = append(checkedUser, &domains.UserInWorkspace{
 				UserId:      user.ID,
 				WorkspaceId: workspaceId,
-				Status:      "unseen",
+				Status:      "idle",
 				IsInterest:  &defaultInterest,
 			})
 		} else {
@@ -54,7 +53,7 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 				checkedUser = append(checkedUser, &domains.UserInWorkspace{
 					UserId:      userFound.ID,
 					WorkspaceId: workspaceId,
-					Status:      "unseen",
+					Status:      "idle",
 					IsInterest:  &defaultInterest,
 				})
 			}
@@ -87,7 +86,15 @@ func (u *userService) CreateAdmin(user domains.User, portalId uint) (err error) 
 		if err != nil {
 			return err
 		}
-		u.userInPortalRepository.Create(domains.UserInPortal{UserId: newUser.ID, PortalId: portalId})
+		// Find the portal by portalId
+		portal, err := u.portalRepository.FindById(portalId)
+		if err != nil {
+			return err
+		}
+		err = u.portalRepository.AddUserToPortal(*newUser, *portal)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

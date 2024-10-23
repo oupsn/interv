@@ -36,3 +36,25 @@ type UpdateRoomContextBody struct {
 	IsVideoDone  *bool  `json:"isVideoDone"`
 	IsCodingDone *bool  `json:"isCodingDone"`
 } // @name UpdateRoomContextBody
+
+type RevokeRoomSessionBody struct {
+	RoomID string `json:"roomId"  validate:"required"`
+} // @name RevokeRoomSessionBody
+
+type ExtendRoomSessionBody struct {
+	RoomID            string `json:"roomId"  validate:"required"`
+	SessionIdentifier string `json:"sessionIdentifier"  validate:"required"`
+} // @name ExtendRoomSessionBody
+
+type PendingInterviewBody struct {
+	RoomID string `json:"roomId"  validate:"required"`
+} // @name ExtendRoomSessionBody
+
+type GetRoomSessionQuery struct {
+	RoomID string `json:"roomId"  validate:"required"`
+}
+
+type SetRoomSessionBody struct {
+	RoomID            string `json:"roomId"  validate:"required"`
+	SessionIdentifier string `json:"sessionIdentifier"  validate:"required"`
+}

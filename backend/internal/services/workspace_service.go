@@ -1,9 +1,10 @@
 package services
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"strings"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/v"
 
@@ -15,7 +16,6 @@ type workspaceService struct {
 	workspaceRepository       repositories.IWorkspaceRepository
 	userInWorkspaceRepository repositories.IUserInWorkspaceRepository
 	userRepository            repositories.IUserRepository
-	userInPortalService       IUserInPortalService
 	mailService               IMailService
 	roomService               IRoomService
 	codingInterviewService    ICodingInterviewService
@@ -27,7 +27,6 @@ func NewWorkspaceService(
 	workspaceRepository repositories.IWorkspaceRepository,
 	userInWorkspaceRepository repositories.IUserInWorkspaceRepository,
 	userRepository repositories.IUserRepository,
-	userInPortalService IUserInPortalService,
 	mailService IMailService,
 	roomService IRoomService,
 	codingInterviewService ICodingInterviewService,
@@ -38,7 +37,6 @@ func NewWorkspaceService(
 		userInWorkspaceRepository: userInWorkspaceRepository,
 		workspaceRepository:       workspaceRepository,
 		userRepository:            userRepository,
-		userInPortalService:       userInPortalService,
 		mailService:               mailService,
 		roomService:               roomService,
 		codingInterviewService:    codingInterviewService,
@@ -47,53 +45,32 @@ func NewWorkspaceService(
 	}
 }
 
-func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspace, userInWorkspace *[]domains.UserInWorkspace, userData *[]domains.User, err error) {
+func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspace, candidate *[]domains.UserInWorkspace, err error) {
 	workspace, err = w.videoQuestionRepositories.GetByWorkspaceId(id)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
-	userInWorkspace, err = w.userInWorkspaceRepository.FindByWorkspaceId(id)
+	candidate, err = w.userInWorkspaceRepository.FindByWorkspaceId(id)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
-
-	ids := make([]uint, len(*userInWorkspace))
-	for i, user := range *userInWorkspace {
-		ids[i] = user.UserId
-	}
-
-	userData, err = w.userRepository.FindAllByIds(ids)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	return workspace, userInWorkspace, userData, nil
+	return workspace, candidate, nil
 }
 
-func (w *workspaceService) GetUserInWorkspace(id uint) (workspace *[]domains.UserInWorkspace, err error) {
-	return w.userInWorkspaceRepository.FindByWorkspaceId(id)
+func (w *workspaceService) InterestUser(workspaceId uint, candidateId uint, interest *bool) error {
+	return w.userInWorkspaceRepository.InterestUser(workspaceId, candidateId, interest)
 }
 
 func (w *workspaceService) GetPortalWorkspace(portalId *uint) (workspace *[]domains.Workspace, err error) {
 	return w.workspaceRepository.FindByPortalId(portalId)
 }
 
-func (w *workspaceService) GetUserNumInWorkspace(portalId *uint) (workspaceId []uint, err error) {
-	listOfWorkspace, err := w.workspaceRepository.FindWorkspaceIdByPortalId(portalId)
+func (w *workspaceService) GetIndividualUser(workspaceId uint, userId uint) (userInworkspace *domains.UserInWorkspace, err error) {
+	userInworkspace, err = w.userInWorkspaceRepository.FindByUserIdAndWorkspaceId(userId, workspaceId)
 	if err != nil {
 		return nil, err
 	}
-
-	var userWorkspace []uint
-	for _, uw := range *listOfWorkspace {
-		numberOfUser, err := w.userInWorkspaceRepository.GetUserNumberInWorkspace(uw)
-		if err != nil {
-			return nil, err
-		}
-		userWorkspace = append(userWorkspace, uint(numberOfUser))
-	}
-
-	return userWorkspace, nil
+	return userInworkspace, nil
 }
 
 func (w *workspaceService) Create(
@@ -162,14 +139,9 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 		return err
 	}
 
-	userInWorkspace, err := w.userInWorkspaceRepository.FindByWorkspaceId(workspaceId)
-	if err != nil {
-		return err
-	}
-
 	var mailList []MailObject
 
-	for _, u := range *userInWorkspace {
+	for _, u := range workspace.UserInWorkspace {
 		if err != nil {
 			return err
 		}
@@ -205,5 +177,13 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 		return err
 	}
 
+	return nil
+}
+
+func (w *workspaceService) GetUnseenCandidate(workspaceId uint) (err error) {
+	err = w.userInWorkspaceRepository.GetUnseenCandidate(workspaceId)
+	if err != nil {
+		return err
+	}
 	return nil
 }

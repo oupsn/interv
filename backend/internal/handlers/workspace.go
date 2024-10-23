@@ -5,21 +5,22 @@ import (
 )
 
 type WorkspaceDetail struct {
-	Id            uint                  `json:"id"`
-	Title         string                `json:"title"`
-	StartDate     time.Time             `json:"startDate"`
-	EndDate       time.Time             `json:"endDate"`
-	IsVideo       bool                  `json:"isVideo"`
-	IsCoding      bool                  `json:"isCoding"`
-	VideoTime     uint                  `json:"videoTime"`
-	CodingTime    uint                  `json:"codingTime"`
-	ReqScreen     bool                  `json:"reqScreen"`
-	ReqMicrophone bool                  `json:"reqMicrophone"`
-	ReqCamera     bool                  `json:"reqCamera"`
-	PortalId      uint                  `json:"portalId"`
-	MemberNum     uint                  `json:"memberNum"`
-	CreateAt      time.Time             `json:"createAt"`
-	VideoQueston  []VideoQuestionDetail `json:"videoQueston"`
+	Id              uint                  `json:"id"`
+	Title           string                `json:"title"`
+	StartDate       time.Time             `json:"startDate"`
+	EndDate         time.Time             `json:"endDate"`
+	IsVideo         bool                  `json:"isVideo"`
+	IsCoding        bool                  `json:"isCoding"`
+	VideoTime       uint                  `json:"videoTime"`
+	CodingTime      uint                  `json:"codingTime"`
+	ReqScreen       bool                  `json:"reqScreen"`
+	ReqMicrophone   bool                  `json:"reqMicrophone"`
+	ReqCamera       bool                  `json:"reqCamera"`
+	PortalId        uint                  `json:"portalId"`
+	MemberNum       uint                  `json:"memberNum"`
+	CreateAt        time.Time             `json:"createAt"`
+	VideoQueston    []VideoQuestionDetail `json:"videoQueston"`
+	UserInWorkspace []UserInWorkspace     `json:"userInWorkspace"`
 } // @name WorkspaceDetail
 
 type CreateWorkspaceBody struct {
@@ -50,6 +51,9 @@ type UserInWorkspace struct {
 	Id          uint   `json:"id" validate:"required"`
 	UserId      uint   `json:"userId" validate:"required"`
 	WorkspaceId uint   `json:"workspaceId" validate:"required"`
+	Name        string `json:"name" validate:"required"`
+	Username    string `json:"username" validate:"required"`
+	Role        string `json:"role" validate:"required"`
 	Status      string `json:"status" validate:"required"`
 	IsInterest  bool   `json:"isInterest" validate:"required"`
 } // @name UserInWorkspace
@@ -67,14 +71,8 @@ type DeleteUserFromWorkspaceBody struct {
 
 type WorkspaceData struct {
 	WorkspaceDetail WorkspaceDetail  `json:"workspaceDetail" validate:"required"`
-	IndividualUser  []IndividualUser `json:"individualUser" validate:"required"`
+	IndividualUser  []UserInWorkspace `json:"individualUser" validate:"required"`
 } // @name WorkspaceData
-
-type IndividualUser struct {
-	Id              int             `json:"id" validate:"required"`
-	UserInWorkspace UserInWorkspace `json:"userInWorkspace" validate:"required"`
-	UserData        UserData        `json:"userData" validate:"required"`
-} // @name IndividualUser
 
 type InviteAllCandidateBody struct {
 	WorkspaceId uint `json:"workspaceId" validate:"required"`
@@ -87,3 +85,14 @@ type VideoQuestionDetail struct {
 	TimeToAnswer  uint   `json:"timeToAnswer" validate:"required"`
 	TotalAttempt  uint   `json:"totalAttempt" validate:"required"`
 } // @name VideoQuestionDetail
+
+type InterestUser struct {
+	WorkspaceId uint `json:"workspaceId" validate:"required"`
+	UserId      uint `json:"userId" validate:"required"`
+	IsInterest  bool `json:"isInterest" validate:"required"`
+} // @name InterestUser
+
+type GetIndividualUserBody struct {
+	WorkspaceId uint `json:"workspaceId" validate:"required"`
+	UserId      uint `json:"userId" validate:"required"`
+} // @name GetIndividualUserBody

@@ -1,22 +1,31 @@
-import { useParams } from "react-router-dom"
-import { useGetWorkspace } from "@/hooks/useGetWorkspace"
-
+import { Link, useParams } from "react-router-dom"
 import {
   Breadcrumb,
   BreadcrumbItem,
+  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb.tsx"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
-import { Label } from "@radix-ui/react-label"
-import dayjs from "dayjs"
+import { useGetIndividualUser } from "@/hooks/userGetIndividualUser"
 import { Spinner } from "@/components/ui/spinner"
+import CodingResult from "./components/CodingResult"
+import VideoResult from "@/pages/portal/workspace/components/VideoResult.tsx"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs.tsx"
 
 const CandidateDetailPage = () => {
-  const { workspaceId } = useParams()
-  const { data, isLoading } = useGetWorkspace(Number(workspaceId))
-
+  const { workspaceId, candidateId } = useParams()
+  const { data, isLoading } = useGetIndividualUser(
+    Number(candidateId),
+    Number(workspaceId),
+  )
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -25,58 +34,49 @@ const CandidateDetailPage = () => {
     )
   }
   return (
-    <ContentLayout
-      title={data?.data?.workspaceDetail.title ?? ""}
-      breadcrumb={
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage>Create Workspace</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      }
-    >
-      <ContentPanel>
-        <div className="text-xl mt-5 flex flex-col">
-          <Label>Workspace title: {data?.data?.workspaceDetail.title}</Label>
-          <Label>
-            Start Date:{" "}
-            {dayjs(data?.data?.workspaceDetail.startDate).format("MM/DD/YYYY")}
-          </Label>
-          <Label>
-            End Date:{" "}
-            {dayjs(data?.data?.workspaceDetail.endDate).format("MM/DD/YYYY")}
-          </Label>
-          <Label>
-            Have Video Question:
-            {data?.data?.workspaceDetail.isVideo?.toString()}
-          </Label>
-          <Label>
-            Have Coding Question:
-            {data?.data?.workspaceDetail.isCoding?.toString()}
-          </Label>
-          <Label>
-            Coding Time: {data?.data?.workspaceDetail.codingTime?.toString()}{" "}
-            mins
-          </Label>
-          <Label>Portal Id: {data?.data?.workspaceDetail.portalId}</Label>
-          <Label>
-            Require Camera: {data?.data?.workspaceDetail.reqScreen?.toString()}
-          </Label>
-          <Label>
-            Require Microphone:
-            {data?.data?.workspaceDetail.reqMicrophone?.toString()}
-          </Label>
-          <Label>
-            Require Camera: {data?.data?.workspaceDetail.reqCamera?.toString()}
-          </Label>
-          <Label>
-            Number of candidate:{data?.data?.workspaceDetail.memberNum}
-          </Label>
-        </div>
-      </ContentPanel>
-    </ContentLayout>
+    <>
+      <ContentLayout
+        title={data?.data?.name ?? ""}
+        breadcrumb={
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to="/portal/workspace">Workspaces</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <Link
+                  to={"/portal/workspace/" + workspaceId + "/candidateList"}
+                >
+                  Applicant List
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{data?.data?.name ?? ""}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        }
+      >
+        <ContentPanel>
+          <Tabs defaultValue="coding" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="coding">Coding</TabsTrigger>
+              <TabsTrigger value="video">Video</TabsTrigger>
+            </TabsList>
+            <TabsContent value="coding">
+              <CodingResult />
+            </TabsContent>
+            <TabsContent value="video">
+              <VideoResult />
+            </TabsContent>
+          </Tabs>
+        </ContentPanel>
+      </ContentLayout>
+    </>
   )
 }
 

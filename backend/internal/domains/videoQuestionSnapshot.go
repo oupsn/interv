@@ -10,5 +10,6 @@ type VideoQuestionSnapshot struct {
 	CandidateID     uint
 	VideoQuestionID uint
 	FileName        string
+	VideoQuestion   VideoQuestion `gorm:"foreignKey:VideoQuestionID"`
 	gorm.Model
 }

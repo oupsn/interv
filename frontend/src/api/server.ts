@@ -269,19 +269,19 @@ export interface DomainsCodingQuestionSubmissionTestCaseResult {
   is_passed?: boolean
   submission?: DomainsCodingQuestionSubmission
   submission_id?: number
-  testCase?: DomainsCodingQuestionTestCase
+  test_case?: DomainsCodingQuestionTestCase
   test_case_id?: number
   updatedAt?: string
 }
 
 export interface DomainsCodingQuestionTestCase {
-  codingQuestionID?: number
+  coding_question_id?: number
   createdAt?: string
   deletedAt?: GormDeletedAt
   id?: number
   input?: string
-  isExample?: boolean
-  isHidden?: boolean
+  is_example?: boolean
+  is_hidden?: boolean
   output?: string
   updatedAt?: string
 }
@@ -342,17 +342,35 @@ export interface DomainsPortal {
   deletedAt?: GormDeletedAt
   id?: number
   updatedAt?: string
+  userInPortal?: DomainsUser[]
+  workspace?: DomainsWorkspace[]
 }
 
 export interface DomainsUser {
   createdAt?: string
   deletedAt?: GormDeletedAt
   id?: number
+  inWorkspace?: DomainsUserInWorkspace[]
   name?: string
   password?: string
+  portal?: DomainsPortal
+  portalId?: number
   role?: string
   updatedAt?: string
   username?: string
+}
+
+export interface DomainsUserInWorkspace {
+  createdAt?: string
+  deletedAt?: GormDeletedAt
+  id?: number
+  isInterest?: boolean
+  status?: string
+  updatedAt?: string
+  user?: DomainsUser
+  userId?: number
+  workspace?: DomainsWorkspace
+  workspaceId?: number
 }
 
 export interface DomainsVideoQuestion {
@@ -376,6 +394,7 @@ export interface DomainsWorkspace {
   id?: number
   isCoding?: boolean
   isVideo?: boolean
+  portal?: DomainsPortal
   portalId?: number
   reqCamera?: boolean
   reqMicrophone?: boolean
@@ -383,13 +402,32 @@ export interface DomainsWorkspace {
   startDate?: string
   title?: string
   updatedAt?: string
+  userInWorkspace?: DomainsUserInWorkspace[]
   videoQuestion?: DomainsVideoQuestion[]
   videoTime?: number
 }
 
+export interface ExtendRoomSessionBody {
+  roomId: string
+  sessionIdentifier: string
+}
+
+export type ExtendRoomSessionData = HandlersResponseString
+
+export type ExtendRoomSessionError = HandlersErrResponse
+
 export type GetCompileResultData = HandlersResponseHandlersCodingInterviewGetCompileResultResponse
 
 export type GetCompileResultError = HandlersErrResponse
+
+export type GetIndividualUserData = HandlersResponseUserInWorkspace
+
+export type GetIndividualUserError = HandlersErrResponse
+
+export interface GetIndividualUserParams {
+  userId: number
+  workspaceId: number
+}
 
 export interface GetObjectBody {
   bucketName: string
@@ -450,17 +488,17 @@ export interface GetRoomContextResponse {
   totalVideoTime: number
 }
 
+export type GetRoomSessionData = HandlersResponseString
+
+export type GetRoomSessionError = HandlersErrResponse
+
+export interface GetRoomSessionParams {
+  roomId: string
+}
+
 export type GetSubmissionResultByUserData = HandlersResponseHandlersCodingInterviewGetSubmissionResultByUserResponse
 
 export type GetSubmissionResultByUserError = HandlersErrResponse
-
-export type GetUserInWorkspaceData = HandlersResponseArrayUserInWorkspace
-
-export type GetUserInWorkspaceError = HandlersErrResponse
-
-export interface GetUserInWorkspaceParams {
-  id: number
-}
 
 export type GetVideoInterviewContextData = HandlersResponseVideoInterviewContextResponse
 
@@ -476,6 +514,14 @@ export type GetVideoInterviewQuestionError = HandlersErrResponse
 
 export interface GetVideoInterviewQuestionParams {
   questionId: number
+}
+
+export type GetVideoInterviewResultData = HandlersResponseArrayVideoInterviewResultResponse
+
+export type GetVideoInterviewResultError = HandlersErrResponse
+
+export interface GetVideoInterviewResultParams {
+  userId: number
 }
 
 export type GetVideoQuestionByIdData = HandlersResponseGetVideoQuestionByIdResponse
@@ -516,7 +562,7 @@ export interface GetVideoQuestionByPortalIdResponse {
   updatedAt?: string
 }
 
-export type GetWorkspaceData = HandlersResponseWorkspaceData
+export type GetWorkspaceData = HandlersResponseWorkspaceDetail
 
 export type GetWorkspaceError = HandlersErrResponse
 
@@ -574,9 +620,9 @@ export interface HandlersResponseArrayGetVideoQuestionByPortalIdResponse {
   timestamp?: string
 }
 
-export interface HandlersResponseArrayUserInWorkspace {
+export interface HandlersResponseArrayVideoInterviewResultResponse {
   code?: number
-  data?: UserInWorkspace[]
+  data?: VideoInterviewResultResponse[]
   message?: string
   timestamp?: string
 }
@@ -714,13 +760,6 @@ export interface HandlersResponseVideoInterviewQuestionResponse {
   timestamp?: string
 }
 
-export interface HandlersResponseWorkspaceData {
-  code?: number
-  data?: WorkspaceData
-  message?: string
-  timestamp?: string
-}
-
 export interface HandlersResponseWorkspaceDetail {
   code?: number
   data?: WorkspaceDetail
@@ -728,10 +767,19 @@ export interface HandlersResponseWorkspaceDetail {
   timestamp?: string
 }
 
-export interface IndividualUser {
-  id: number
-  userData: User
-  userInWorkspace: UserInWorkspace
+export interface HandlersSetRoomSessionBody {
+  roomId: string
+  sessionIdentifier: string
+}
+
+export type InterestUserData = HandlersResponseUserInWorkspace
+
+export type InterestUserError = HandlersErrResponse
+
+export interface InterestUserParams {
+  isInterest: boolean
+  userId: number
+  workspaceId: number
 }
 
 export type InviteAllCandidateData = HandlersResponseString
@@ -763,6 +811,14 @@ export interface PortalData {
   id?: number
 }
 
+export interface RevokeRoomSessionBody {
+  roomId: string
+}
+
+export type RevokeRoomSessionData = HandlersResponseString
+
+export type RevokeRoomSessionError = HandlersErrResponse
+
 export interface SendMailBody {
   mailList: MailObject[]
   preset: HandlersMailPreset
@@ -771,6 +827,10 @@ export interface SendMailBody {
 export type SendMailData = HandlersResponseString
 
 export type SendMailError = HandlersErrResponse
+
+export type SetRoomSessionData = HandlersResponseString
+
+export type SetRoomSessionError = HandlersErrResponse
 
 export type SubmitVideoInterviewData = HandlersResponseString
 
@@ -872,8 +932,11 @@ export interface UserDeleteBody {
 export interface UserInWorkspace {
   id: number
   isInterest: boolean
+  name: string
+  role: string
   status: string
   userId: number
+  username: string
   workspaceId: number
 }
 
@@ -896,6 +959,11 @@ export interface VideoInterviewQuestionSetting {
   totalAttempt: number
 }
 
+export interface VideoInterviewResultResponse {
+  question: string
+  videoPath: string
+}
+
 export interface VideoQuestionDetail {
   id: number
   portalId: number
@@ -903,11 +971,6 @@ export interface VideoQuestionDetail {
   timeToPrepare: number
   title: string
   totalAttempt: number
-}
-
-export interface WorkspaceData {
-  individualUser: IndividualUser[]
-  workspaceDetail: WorkspaceDetail
 }
 
 export interface WorkspaceDetail {
@@ -924,6 +987,7 @@ export interface WorkspaceDetail {
   reqScreen?: boolean
   startDate?: string
   title?: string
+  userInWorkspace?: UserInWorkspace[]
   videoQueston?: VideoQuestionDetail[]
   videoTime?: number
 }
@@ -1369,6 +1433,24 @@ export namespace Room {
   /**
    * No description
    * @tags room
+   * @name ExtendRoomSession
+   * @summary Extend room session
+   * @request POST:/room.extendRoomSession
+   * @response `200` `ExtendRoomSessionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace ExtendRoomSession {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = ExtendRoomSessionBody
+    export type RequestHeaders = {}
+    export type ResponseBody = ExtendRoomSessionData
+  }
+
+  /**
+   * No description
+   * @tags room
    * @name GetRoomContext
    * @summary Get room context
    * @request GET:/room.getRoomContext
@@ -1384,6 +1466,62 @@ export namespace Room {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetRoomContextData
+  }
+
+  /**
+   * No description
+   * @tags room
+   * @name GetRoomSession
+   * @summary Get room session
+   * @request GET:/room.getRoomSession
+   * @response `200` `GetRoomSessionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetRoomSession {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      roomId: string
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetRoomSessionData
+  }
+
+  /**
+   * No description
+   * @tags room
+   * @name RevokeRoomSession
+   * @summary Revoke room session
+   * @request POST:/room.revokeRoomSession
+   * @response `200` `RevokeRoomSessionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace RevokeRoomSession {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = RevokeRoomSessionBody
+    export type RequestHeaders = {}
+    export type ResponseBody = RevokeRoomSessionData
+  }
+
+  /**
+   * No description
+   * @tags room
+   * @name SetRoomSession
+   * @summary Set room session
+   * @request POST:/room.setRoomSession
+   * @response `200` `SetRoomSessionData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace SetRoomSession {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = HandlersSetRoomSessionBody
+    export type RequestHeaders = {}
+    export type ResponseBody = SetRoomSessionData
   }
 
   /**
@@ -1483,21 +1621,44 @@ export namespace UserInWorkspace {
   /**
    * No description
    * @tags userInWorkspace
-   * @name GetUserInWorkspace
-   * @summary Get user In Workspace
-   * @request GET:/userInWorkspace.get
-   * @response `200` `GetUserInWorkspaceData` OK
+   * @name GetIndividualUser
+   * @summary Get Individual User In Workspace
+   * @request GET:/userInWorkspace.getbyId
+   * @response `200` `GetIndividualUserData` OK
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
-  export namespace GetUserInWorkspace {
+  export namespace GetIndividualUser {
     export type RequestParams = {}
     export type RequestQuery = {
-      id: number
+      userId: number
+      workspaceId: number
     }
     export type RequestBody = never
     export type RequestHeaders = {}
-    export type ResponseBody = GetUserInWorkspaceData
+    export type ResponseBody = GetIndividualUserData
+  }
+
+  /**
+   * No description
+   * @tags userInWorkspace
+   * @name InterestUser
+   * @summary Interest User In Workspace
+   * @request PATCH:/userInWorkspace.interest
+   * @response `200` `InterestUserData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace InterestUser {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      isInterest: boolean
+      userId: number
+      workspaceId: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = InterestUserData
   }
 }
 
@@ -1540,6 +1701,26 @@ export namespace VideoInterview {
     export type RequestBody = never
     export type RequestHeaders = {}
     export type ResponseBody = GetVideoInterviewQuestionData
+  }
+
+  /**
+   * No description
+   * @tags videoInterview
+   * @name GetVideoInterviewResult
+   * @summary Get video interview result
+   * @request GET:/videoInterview.getVideoInterviewResult
+   * @response `200` `GetVideoInterviewResultData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetVideoInterviewResult {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      userId: number
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetVideoInterviewResultData
   }
 
   /**
@@ -1740,7 +1921,7 @@ export namespace Workspace {
    * No description
    * @tags workspace
    * @name InviteAllCandidate
-   * @request POST:/workspace.inviteAll
+   * @request POST:/workspace.inviteAllCandidate
    * @response `200` `InviteAllCandidateData` OK
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `500` `HandlersErrResponse` Internal Server Error
@@ -2379,6 +2560,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * No description
      *
      * @tags room
+     * @name ExtendRoomSession
+     * @summary Extend room session
+     * @request POST:/room.extendRoomSession
+     * @response `200` `ExtendRoomSessionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    extendRoomSession: (payload: ExtendRoomSessionBody, params: RequestParams = {}) =>
+      this.request<ExtendRoomSessionData, ExtendRoomSessionError>({
+        path: `/room.extendRoomSession`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
      * @name GetRoomContext
      * @summary Get room context
      * @request GET:/room.getRoomContext
@@ -2391,6 +2593,69 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         path: `/room.getRoomContext`,
         method: "GET",
         query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
+     * @name GetRoomSession
+     * @summary Get room session
+     * @request GET:/room.getRoomSession
+     * @response `200` `GetRoomSessionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getRoomSession: (query: GetRoomSessionParams, params: RequestParams = {}) =>
+      this.request<GetRoomSessionData, GetRoomSessionError>({
+        path: `/room.getRoomSession`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
+     * @name RevokeRoomSession
+     * @summary Revoke room session
+     * @request POST:/room.revokeRoomSession
+     * @response `200` `RevokeRoomSessionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    revokeRoomSession: (payload: RevokeRoomSessionBody, params: RequestParams = {}) =>
+      this.request<RevokeRoomSessionData, RevokeRoomSessionError>({
+        path: `/room.revokeRoomSession`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
+     * @name SetRoomSession
+     * @summary Set room session
+     * @request POST:/room.setRoomSession
+     * @response `200` `SetRoomSessionData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    setRoomSession: (payload: HandlersSetRoomSessionBody, params: RequestParams = {}) =>
+      this.request<SetRoomSessionData, SetRoomSessionError>({
+        path: `/room.setRoomSession`,
+        method: "POST",
+        body: payload,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -2507,17 +2772,38 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * No description
      *
      * @tags userInWorkspace
-     * @name GetUserInWorkspace
-     * @summary Get user In Workspace
-     * @request GET:/userInWorkspace.get
-     * @response `200` `GetUserInWorkspaceData` OK
+     * @name GetIndividualUser
+     * @summary Get Individual User In Workspace
+     * @request GET:/userInWorkspace.getbyId
+     * @response `200` `GetIndividualUserData` OK
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    getUserInWorkspace: (query: GetUserInWorkspaceParams, params: RequestParams = {}) =>
-      this.request<GetUserInWorkspaceData, GetUserInWorkspaceError>({
-        path: `/userInWorkspace.get`,
+    getIndividualUser: (query: GetIndividualUserParams, params: RequestParams = {}) =>
+      this.request<GetIndividualUserData, GetIndividualUserError>({
+        path: `/userInWorkspace.getbyId`,
         method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags userInWorkspace
+     * @name InterestUser
+     * @summary Interest User In Workspace
+     * @request PATCH:/userInWorkspace.interest
+     * @response `200` `InterestUserData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    interestUser: (query: InterestUserParams, params: RequestParams = {}) =>
+      this.request<InterestUserData, InterestUserError>({
+        path: `/userInWorkspace.interest`,
+        method: "PATCH",
         query: query,
         type: ContentType.Json,
         format: "json",
@@ -2560,6 +2846,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
     getVideoInterviewQuestion: (query: GetVideoInterviewQuestionParams, params: RequestParams = {}) =>
       this.request<GetVideoInterviewQuestionData, GetVideoInterviewQuestionError>({
         path: `/videoInterview.getVideoInterviewQuestion`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags videoInterview
+     * @name GetVideoInterviewResult
+     * @summary Get video interview result
+     * @request GET:/videoInterview.getVideoInterviewResult
+     * @response `200` `GetVideoInterviewResultData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getVideoInterviewResult: (query: GetVideoInterviewResultParams, params: RequestParams = {}) =>
+      this.request<GetVideoInterviewResultData, GetVideoInterviewResultError>({
+        path: `/videoInterview.getVideoInterviewResult`,
         method: "GET",
         query: query,
         type: ContentType.Json,
@@ -2787,14 +3094,14 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      *
      * @tags workspace
      * @name InviteAllCandidate
-     * @request POST:/workspace.inviteAll
+     * @request POST:/workspace.inviteAllCandidate
      * @response `200` `InviteAllCandidateData` OK
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
     inviteAllCandidate: (payload: HandlersInviteAllCandidateBody, params: RequestParams = {}) =>
       this.request<InviteAllCandidateData, InviteAllCandidateError>({
-        path: `/workspace.inviteAll`,
+        path: `/workspace.inviteAllCandidate`,
         method: "POST",
         body: payload,
         type: ContentType.Json,

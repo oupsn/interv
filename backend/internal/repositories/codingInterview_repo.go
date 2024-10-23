@@ -139,6 +139,14 @@ func (c *codingInterviewRepository) GetCodingQuestionSubmissionByUserID(userID u
 		if err := c.DB.Where("id = ?", codingQuestionSubmission.QuestionID).Find(&codingQuestion).Error; err != nil {
 			return nil, err
 		}
+		for ind, testCaseResult := range testCaseResults {
+			var testCase domains.CodingQuestionTestCase
+			if err := c.DB.Where("id = ?", testCaseResult.TestCaseId).Find(&testCase).Error; err != nil {
+				return nil, err
+			}
+			testCaseResults[ind].TestCase = testCase
+		}
+
 		codingQuestionSubmission.Question = codingQuestion
 		codingQuestionSubmission.TestCasesResult = testCaseResults
 		response = append(response, codingQuestionSubmission)

@@ -1045,6 +1045,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/room.extendRoomSession": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "room"
+                ],
+                "summary": "Extend room session",
+                "operationId": "extendRoomSession",
+                "parameters": [
+                    {
+                        "description": "extend room session",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ExtendRoomSessionBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/room.getRoomContext": {
             "get": {
                 "consumes": [
@@ -1071,6 +1117,141 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handlers.Response-GetRoomContextResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/room.getRoomSession": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "room"
+                ],
+                "summary": "Get room session",
+                "operationId": "getRoomSession",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/room.revokeRoomSession": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "room"
+                ],
+                "summary": "Revoke room session",
+                "operationId": "revokeRoomSession",
+                "parameters": [
+                    {
+                        "description": "revoke room session",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/RevokeRoomSessionBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/room.setRoomSession": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "room"
+                ],
+                "summary": "Set room session",
+                "operationId": "setRoomSession",
+                "parameters": [
+                    {
+                        "description": "set room session",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.SetRoomSessionBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
                         }
                     },
                     "400": {
@@ -1318,7 +1499,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/userInWorkspace.get": {
+        "/userInWorkspace.getbyId": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -1329,12 +1510,18 @@ const docTemplate = `{
                 "tags": [
                     "userInWorkspace"
                 ],
-                "summary": "Get user In Workspace",
-                "operationId": "GetUserInWorkspace",
+                "summary": "Get Individual User In Workspace",
+                "operationId": "GetIndividualUser",
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "id",
+                        "name": "userId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "workspaceId",
                         "in": "query",
                         "required": true
                     }
@@ -1343,7 +1530,62 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.Response-array_UserInWorkspace"
+                            "$ref": "#/definitions/handlers.Response-UserInWorkspace"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/userInWorkspace.interest": {
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userInWorkspace"
+                ],
+                "summary": "Interest User In Workspace",
+                "operationId": "InterestUser",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "isInterest",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "userId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "workspaceId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-UserInWorkspace"
                         }
                     },
                     "400": {
@@ -1430,6 +1672,49 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handlers.Response-VideoInterviewQuestionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/videoInterview.getVideoInterviewResult": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "videoInterview"
+                ],
+                "summary": "Get video interview result",
+                "operationId": "getVideoInterviewResult",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "userId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-array_VideoInterviewResultResponse"
                         }
                     },
                     "400": {
@@ -1877,7 +2162,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.Response-WorkspaceData"
+                            "$ref": "#/definitions/handlers.Response-WorkspaceDetail"
                         }
                     },
                     "400": {
@@ -1930,7 +2215,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/workspace.inviteAll": {
+        "/workspace.inviteAllCandidate": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -2314,6 +2599,21 @@ const docTemplate = `{
                 }
             }
         },
+        "ExtendRoomSessionBody": {
+            "type": "object",
+            "required": [
+                "roomId",
+                "sessionIdentifier"
+            ],
+            "properties": {
+                "roomId": {
+                    "type": "string"
+                },
+                "sessionIdentifier": {
+                    "type": "string"
+                }
+            }
+        },
         "GetObjectBody": {
             "type": "object",
             "required": [
@@ -2438,25 +2738,6 @@ const docTemplate = `{
                 }
             }
         },
-        "IndividualUser": {
-            "type": "object",
-            "required": [
-                "id",
-                "userData",
-                "userInWorkspace"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "userData": {
-                    "$ref": "#/definitions/User"
-                },
-                "userInWorkspace": {
-                    "$ref": "#/definitions/UserInWorkspace"
-                }
-            }
-        },
         "LoginBody": {
             "type": "object",
             "required": [
@@ -2502,6 +2783,17 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                }
+            }
+        },
+        "RevokeRoomSessionBody": {
+            "type": "object",
+            "required": [
+                "roomId"
+            ],
+            "properties": {
+                "roomId": {
+                    "type": "string"
                 }
             }
         },
@@ -2626,8 +2918,11 @@ const docTemplate = `{
             "required": [
                 "id",
                 "isInterest",
+                "name",
+                "role",
                 "status",
                 "userId",
+                "username",
                 "workspaceId"
             ],
             "properties": {
@@ -2637,11 +2932,20 @@ const docTemplate = `{
                 "isInterest": {
                     "type": "boolean"
                 },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
                 "status": {
                     "type": "string"
                 },
                 "userId": {
                     "type": "integer"
+                },
+                "username": {
+                    "type": "string"
                 },
                 "workspaceId": {
                     "type": "integer"
@@ -2712,6 +3016,21 @@ const docTemplate = `{
                 }
             }
         },
+        "VideoInterviewResultResponse": {
+            "type": "object",
+            "required": [
+                "question",
+                "videoPath"
+            ],
+            "properties": {
+                "question": {
+                    "type": "string"
+                },
+                "videoPath": {
+                    "type": "string"
+                }
+            }
+        },
         "VideoQuestionDetail": {
             "type": "object",
             "required": [
@@ -2740,24 +3059,6 @@ const docTemplate = `{
                 },
                 "totalAttempt": {
                     "type": "integer"
-                }
-            }
-        },
-        "WorkspaceData": {
-            "type": "object",
-            "required": [
-                "individualUser",
-                "workspaceDetail"
-            ],
-            "properties": {
-                "individualUser": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/IndividualUser"
-                    }
-                },
-                "workspaceDetail": {
-                    "$ref": "#/definitions/WorkspaceDetail"
                 }
             }
         },
@@ -2802,6 +3103,12 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "userInWorkspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserInWorkspace"
+                    }
                 },
                 "videoQueston": {
                     "type": "array",
@@ -3060,7 +3367,7 @@ const docTemplate = `{
                 "submission_id": {
                     "type": "integer"
                 },
-                "testCase": {
+                "test_case": {
                     "$ref": "#/definitions/domains.CodingQuestionTestCase"
                 },
                 "test_case_id": {
@@ -3074,7 +3381,7 @@ const docTemplate = `{
         "domains.CodingQuestionTestCase": {
             "type": "object",
             "properties": {
-                "codingQuestionID": {
+                "coding_question_id": {
                     "type": "integer"
                 },
                 "createdAt": {
@@ -3089,10 +3396,10 @@ const docTemplate = `{
                 "input": {
                     "type": "string"
                 },
-                "isExample": {
+                "is_example": {
                     "type": "boolean"
                 },
-                "isHidden": {
+                "is_hidden": {
                     "type": "boolean"
                 },
                 "output": {
@@ -3248,6 +3555,18 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                },
+                "userInPortal": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.User"
+                    }
+                },
+                "workspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.Workspace"
+                    }
                 }
             }
         },
@@ -3263,11 +3582,23 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "inWorkspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.UserInWorkspace"
+                    }
+                },
                 "name": {
                     "type": "string"
                 },
                 "password": {
                     "type": "string"
+                },
+                "portal": {
+                    "$ref": "#/definitions/domains.Portal"
+                },
+                "portalId": {
+                    "type": "integer"
                 },
                 "role": {
                     "type": "string"
@@ -3277,6 +3608,41 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "domains.UserInWorkspace": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isInterest": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/domains.User"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "workspace": {
+                    "$ref": "#/definitions/domains.Workspace"
+                },
+                "workspaceId": {
+                    "type": "integer"
                 }
             }
         },
@@ -3342,6 +3708,9 @@ const docTemplate = `{
                 "isVideo": {
                     "type": "boolean"
                 },
+                "portal": {
+                    "$ref": "#/definitions/domains.Portal"
+                },
                 "portalId": {
                     "type": "integer"
                 },
@@ -3362,6 +3731,12 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                },
+                "userInWorkspace": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.UserInWorkspace"
+                    }
                 },
                 "videoQuestion": {
                     "type": "array",
@@ -3652,23 +4027,6 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.Response-WorkspaceData": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/WorkspaceData"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
         "handlers.Response-WorkspaceDetail": {
             "type": "object",
             "properties": {
@@ -3706,7 +4064,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.Response-array_UserInWorkspace": {
+        "handlers.Response-array_VideoInterviewResultResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -3715,7 +4073,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/UserInWorkspace"
+                        "$ref": "#/definitions/VideoInterviewResultResponse"
                     }
                 },
                 "message": {
@@ -3890,6 +4248,21 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.SetRoomSessionBody": {
+            "type": "object",
+            "required": [
+                "roomId",
+                "sessionIdentifier"
+            ],
+            "properties": {
+                "roomId": {
+                    "type": "string"
+                },
+                "sessionIdentifier": {
                     "type": "string"
                 }
             }

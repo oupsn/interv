@@ -22,17 +22,15 @@ const WorkspaceInterestPage = () => {
   const size = 4
   const { workspaceId } = useParams()
   const { data, isLoading } = useGetWorkspace(Number(workspaceId))
-  const interest = data?.data?.individualUser
-    ? data?.data?.individualUser.filter(
-        (candidate) => candidate.userInWorkspace.isInterest,
-      )
+  const interest = data?.data
+    ? data?.data?.userInWorkspace?.filter((candidate) => candidate.isInterest)
     : []
 
   const handleExportFile = () => {
     const interestedUsers =
       interest?.map((candidate) => ({
-        name: candidate.userData?.name,
-        username: candidate.userData?.username,
+        name: candidate.name,
+        username: candidate.username,
       })) ?? []
 
     const csvRows = [
@@ -42,7 +40,7 @@ const WorkspaceInterestPage = () => {
 
     const csvContent = csvRows.map((row) => row.join(",")).join("\n")
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-    saveAs(blob, data?.data?.workspaceDetail.title + "interested_users.csv")
+    saveAs(blob, data?.data?.title + "interested_users.csv")
   }
   if (isLoading) {
     return (
@@ -53,7 +51,7 @@ const WorkspaceInterestPage = () => {
   }
   return (
     <ContentLayout
-      title={data?.data?.workspaceDetail.title ?? ""}
+      title={data?.data?.title ?? ""}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
@@ -64,7 +62,7 @@ const WorkspaceInterestPage = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Interest List</BreadcrumbPage>
+              <BreadcrumbPage>Candidate List</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>
@@ -84,7 +82,12 @@ const WorkspaceInterestPage = () => {
           <Panigator
             dataLength={interest ? interest.length : 0}
             children={
-              <ListUser listUser={interest ?? []} page={page} size={size} />
+              <ListUser
+                listUser={interest ?? []}
+                page={page}
+                size={size}
+                workspace={Number(workspaceId)}
+              />
             }
             size={size}
             page={page}

@@ -52,13 +52,13 @@ const WorkspaceDetailPage = () => {
 
   const [videoCurrentQuestion, setVideoCurrentQuestion] = useState<
     GetVideoQuestionByPortalIdResponse[] | undefined
-  >(workspaceData?.data?.workspaceDetail.videoQueston)
+  >(workspaceData?.data?.videoQueston)
   const [videoStockQuestion, setVideoStockQuestion] = useState<
     GetVideoQuestionByPortalIdResponse[] | undefined
   >(
     videoQuestion?.data
       ? videoQuestion.data.filter((question) =>
-          workspaceData?.data?.workspaceDetail?.videoQueston?.some(
+          workspaceData?.data?.videoQueston?.some(
             (workspaceQ) => question.id == workspaceQ.id,
           ),
         )
@@ -73,11 +73,11 @@ const WorkspaceDetailPage = () => {
       ),
     )
 
-    setVideoCurrentQuestion(workspaceData?.data?.workspaceDetail.videoQueston)
+    setVideoCurrentQuestion(workspaceData?.data?.videoQueston)
     setVideoStockQuestion(
       videoQuestion?.data?.filter((question) =>
-        workspaceData?.data?.workspaceDetail?.videoQueston
-          ? workspaceData.data.workspaceDetail.videoQueston.some(
+        workspaceData?.data?.videoQueston
+          ? workspaceData.data.videoQueston.some(
               (workspaceQ) => question.id == workspaceQ.id,
             )
           : true,
@@ -100,7 +100,7 @@ const WorkspaceDetailPage = () => {
   }
   return (
     <ContentLayout
-      title={workspaceData?.data?.workspaceDetail.title ?? ""}
+      title={workspaceData?.data?.title ?? ""}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
@@ -112,7 +112,7 @@ const WorkspaceDetailPage = () => {
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage>
-                {workspaceData?.data?.workspaceDetail.title ?? ""}
+                {workspaceData?.data?.title ?? ""}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -127,21 +127,13 @@ const WorkspaceDetailPage = () => {
           )}
         >
           <Label className="text-3xl font-bold text-primary">
-            Title : {workspaceData?.data?.workspaceDetail.title}
+            Title : {workspaceData?.data?.title}
           </Label>
-          <Label>
-            Number of candidate :{" "}
-            {workspaceData?.data?.workspaceDetail.memberNum}
-          </Label>
+          <Label>Number of candidate : {workspaceData?.data?.memberNum}</Label>
           <Label>
             Time period :{" "}
-            {dayjs(workspaceData?.data?.workspaceDetail.startDate).format(
-              "MM/DD/YYYY",
-            )}{" "}
-            -{" "}
-            {dayjs(workspaceData?.data?.workspaceDetail.endDate).format(
-              "MM/DD/YYYY",
-            )}
+            {dayjs(workspaceData?.data?.startDate).format("MM/DD/YYYY")} -{" "}
+            {dayjs(workspaceData?.data?.endDate).format("MM/DD/YYYY")}
           </Label>
           <div className="flex w-full gap-5">
             <div className="w-1/2">
@@ -169,39 +161,40 @@ const WorkspaceDetailPage = () => {
             <div className="w-1/2 flex flex-col gap-7">
               <Label>
                 Coding Time :{" "}
-                {workspaceData?.data?.workspaceDetail.codingTime?.toString()}{" "}
+                {(workspaceData?.data?.codingTime
+                  ? Math.round(workspaceData?.data?.codingTime / 60) > 0
+                    ? Math.round(workspaceData?.data?.codingTime / 60)
+                    : 1
+                  : 0
+                ).toString()}{" "}
                 Minutes
               </Label>
               <Label
                 className={cn(
-                  workspaceData?.data?.workspaceDetail.reqScreen
-                    ? "disabled:opacity-30"
-                    : "",
+                  workspaceData?.data?.reqScreen ? "disabled:opacity-30" : "",
                 )}
               >
                 Screen:
                 <span
                   className={
-                    workspaceData?.data?.workspaceDetail.reqScreen
+                    workspaceData?.data?.reqScreen
                       ? "text-red-500"
                       : "text-gray-500"
                   }
                 >
-                  {workspaceData?.data?.workspaceDetail.reqScreen
-                    ? " Require"
-                    : " Not Require"}
+                  {workspaceData?.data?.reqScreen ? " Require" : " Not Require"}
                 </span>
               </Label>
               <Label>
                 Microphone:
                 <span
                   className={
-                    workspaceData?.data?.workspaceDetail.reqMicrophone
+                    workspaceData?.data?.reqMicrophone
                       ? "text-red-500"
                       : "text-gray-500"
                   }
                 >
-                  {workspaceData?.data?.workspaceDetail.reqMicrophone
+                  {workspaceData?.data?.reqMicrophone
                     ? " Require"
                     : " Not Require"}
                 </span>
@@ -210,69 +203,42 @@ const WorkspaceDetailPage = () => {
                 Camera:
                 <span
                   className={
-                    workspaceData?.data?.workspaceDetail.reqCamera
+                    workspaceData?.data?.reqCamera
                       ? "text-red-500"
                       : "text-gray-500"
                   }
                 >
-                  {workspaceData?.data?.workspaceDetail.reqCamera
-                    ? " Require"
-                    : " Not Require"}
+                  {workspaceData?.data?.reqCamera ? " Require" : " Not Require"}
                 </span>
               </Label>
             </div>
             <div className="w-1/2 flex flex-col gap-7">
               <Label className="w-1/2">
-                Video Time :{" "}
-                {workspaceData?.data?.workspaceDetail.videoTime?.toString()}{" "}
+                Video Time : {workspaceData?.data?.videoTime?.toString()}{" "}
                 Seconds
-              </Label>
-              <Label
-                className={cn(
-                  workspaceData?.data?.workspaceDetail.reqScreen
-                    ? "disabled:opacity-30"
-                    : "",
-                )}
-              >
-                Screen:
-                <span
-                  className={
-                    workspaceData?.data?.workspaceDetail.isVideo
-                      ? "text-red-500"
-                      : "text-gray-500"
-                  }
-                >
-                  {workspaceData?.data?.workspaceDetail.isVideo
-                    ? " Require"
-                    : " Not Require"}
-                </span>
               </Label>
               <Label>
                 Microphone:
                 <span
                   className={
-                    workspaceData?.data?.workspaceDetail.isVideo
+                    workspaceData?.data?.isVideo
                       ? "text-red-500"
                       : "text-gray-500"
                   }
                 >
-                  {workspaceData?.data?.workspaceDetail.isVideo
-                    ? " Require"
-                    : " Not Require"}
+                  {workspaceData?.data?.isVideo ? " Require" : " Not Require"}
                 </span>
               </Label>
               <Label>
                 Camera:
                 <span
                   className={
-                    workspaceData?.data?.workspaceDetail.isVideo
+                    workspaceData?.data?.isVideo
                       ? "text-red-500"
                       : "text-gray-500"
                   }
                 >
-                  {workspaceData?.data?.workspaceDetail.isVideo
-                    ? " Require"
-                    : " Not Require"}
+                  {workspaceData?.data?.isVideo ? " Require" : " Not Require"}
                 </span>
               </Label>
             </div>

@@ -229,6 +229,16 @@ definitions:
     required:
     - id
     type: object
+  ExtendRoomSessionBody:
+    properties:
+      roomId:
+        type: string
+      sessionIdentifier:
+        type: string
+    required:
+    - roomId
+    - sessionIdentifier
+    type: object
   GetObjectBody:
     properties:
       bucketName:
@@ -314,19 +324,6 @@ definitions:
       updatedAt:
         type: string
     type: object
-  IndividualUser:
-    properties:
-      id:
-        type: integer
-      userData:
-        $ref: '#/definitions/User'
-      userInWorkspace:
-        $ref: '#/definitions/UserInWorkspace'
-    required:
-    - id
-    - userData
-    - userInWorkspace
-    type: object
   LoginBody:
     properties:
       password:
@@ -358,6 +355,13 @@ definitions:
         type: string
       id:
         type: integer
+    type: object
+  RevokeRoomSessionBody:
+    properties:
+      roomId:
+        type: string
+    required:
+    - roomId
     type: object
   SendMailBody:
     properties:
@@ -441,17 +445,26 @@ definitions:
         type: integer
       isInterest:
         type: boolean
+      name:
+        type: string
+      role:
+        type: string
       status:
         type: string
       userId:
         type: integer
+      username:
+        type: string
       workspaceId:
         type: integer
     required:
     - id
     - isInterest
+    - name
+    - role
     - status
     - userId
+    - username
     - workspaceId
     type: object
   VideoInterviewContextResponse:
@@ -498,6 +511,16 @@ definitions:
     - timeToPrepare
     - totalAttempt
     type: object
+  VideoInterviewResultResponse:
+    properties:
+      question:
+        type: string
+      videoPath:
+        type: string
+    required:
+    - question
+    - videoPath
+    type: object
   VideoQuestionDetail:
     properties:
       id:
@@ -519,18 +542,6 @@ definitions:
     - timeToPrepare
     - title
     - totalAttempt
-    type: object
-  WorkspaceData:
-    properties:
-      individualUser:
-        items:
-          $ref: '#/definitions/IndividualUser'
-        type: array
-      workspaceDetail:
-        $ref: '#/definitions/WorkspaceDetail'
-    required:
-    - individualUser
-    - workspaceDetail
     type: object
   WorkspaceDetail:
     properties:
@@ -560,6 +571,10 @@ definitions:
         type: string
       title:
         type: string
+      userInWorkspace:
+        items:
+          $ref: '#/definitions/UserInWorkspace'
+        type: array
       videoQueston:
         items:
           $ref: '#/definitions/VideoQuestionDetail'
@@ -729,16 +744,16 @@ definitions:
         $ref: '#/definitions/domains.CodingQuestionSubmission'
       submission_id:
         type: integer
+      test_case:
+        $ref: '#/definitions/domains.CodingQuestionTestCase'
       test_case_id:
         type: integer
-      testCase:
-        $ref: '#/definitions/domains.CodingQuestionTestCase'
       updatedAt:
         type: string
     type: object
   domains.CodingQuestionTestCase:
     properties:
-      codingQuestionID:
+      coding_question_id:
         type: integer
       createdAt:
         type: string
@@ -748,9 +763,9 @@ definitions:
         type: integer
       input:
         type: string
-      isExample:
+      is_example:
         type: boolean
-      isHidden:
+      is_hidden:
         type: boolean
       output:
         type: string
@@ -852,6 +867,14 @@ definitions:
         type: integer
       updatedAt:
         type: string
+      userInPortal:
+        items:
+          $ref: '#/definitions/domains.User'
+        type: array
+      workspace:
+        items:
+          $ref: '#/definitions/domains.Workspace'
+        type: array
     type: object
   domains.User:
     properties:
@@ -861,16 +884,47 @@ definitions:
         $ref: '#/definitions/gorm.DeletedAt'
       id:
         type: integer
+      inWorkspace:
+        items:
+          $ref: '#/definitions/domains.UserInWorkspace'
+        type: array
       name:
         type: string
       password:
         type: string
+      portal:
+        $ref: '#/definitions/domains.Portal'
+      portalId:
+        type: integer
       role:
         type: string
       updatedAt:
         type: string
       username:
         type: string
+    type: object
+  domains.UserInWorkspace:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      isInterest:
+        type: boolean
+      status:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/domains.User'
+      userId:
+        type: integer
+      workspace:
+        $ref: '#/definitions/domains.Workspace'
+      workspaceId:
+        type: integer
     type: object
   domains.VideoQuestion:
     properties:
@@ -913,6 +967,8 @@ definitions:
         type: boolean
       isVideo:
         type: boolean
+      portal:
+        $ref: '#/definitions/domains.Portal'
       portalId:
         type: integer
       reqCamera:
@@ -927,6 +983,10 @@ definitions:
         type: string
       updatedAt:
         type: string
+      userInWorkspace:
+        items:
+          $ref: '#/definitions/domains.UserInWorkspace'
+        type: array
       videoQuestion:
         items:
           $ref: '#/definitions/domains.VideoQuestion'
@@ -1115,17 +1175,6 @@ definitions:
       timestamp:
         type: string
     type: object
-  handlers.Response-WorkspaceData:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/WorkspaceData'
-      message:
-        type: string
-      timestamp:
-        type: string
-    type: object
   handlers.Response-WorkspaceDetail:
     properties:
       code:
@@ -1150,13 +1199,13 @@ definitions:
       timestamp:
         type: string
     type: object
-  handlers.Response-array_UserInWorkspace:
+  handlers.Response-array_VideoInterviewResultResponse:
     properties:
       code:
         type: integer
       data:
         items:
-          $ref: '#/definitions/UserInWorkspace'
+          $ref: '#/definitions/VideoInterviewResultResponse'
         type: array
       message:
         type: string
@@ -1271,6 +1320,16 @@ definitions:
         type: string
       timestamp:
         type: string
+    type: object
+  handlers.SetRoomSessionBody:
+    properties:
+      roomId:
+        type: string
+      sessionIdentifier:
+        type: string
+    required:
+    - roomId
+    - sessionIdentifier
     type: object
 info:
   contact: {}
@@ -1961,6 +2020,36 @@ paths:
       summary: Create room
       tags:
       - room
+  /room.extendRoomSession:
+    post:
+      consumes:
+      - application/json
+      operationId: extendRoomSession
+      parameters:
+      - description: extend room session
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/ExtendRoomSessionBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Extend room session
+      tags:
+      - room
   /room.getRoomContext:
     get:
       consumes:
@@ -1987,6 +2076,94 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get room context
+      tags:
+      - room
+  /room.getRoomSession:
+    get:
+      consumes:
+      - application/json
+      operationId: getRoomSession
+      parameters:
+      - in: query
+        name: roomId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get room session
+      tags:
+      - room
+  /room.revokeRoomSession:
+    post:
+      consumes:
+      - application/json
+      operationId: revokeRoomSession
+      parameters:
+      - description: revoke room session
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/RevokeRoomSessionBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Revoke room session
+      tags:
+      - room
+  /room.setRoomSession:
+    post:
+      consumes:
+      - application/json
+      operationId: setRoomSession
+      parameters:
+      - description: set room session
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.SetRoomSessionBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Set room session
       tags:
       - room
   /room.updateRoomContext:
@@ -2139,14 +2316,18 @@ paths:
       summary: Delete User From Workspace
       tags:
       - userInWorkspace
-  /userInWorkspace.get:
+  /userInWorkspace.getbyId:
     get:
       consumes:
       - application/json
-      operationId: GetUserInWorkspace
+      operationId: GetIndividualUser
       parameters:
       - in: query
-        name: id
+        name: userId
+        required: true
+        type: integer
+      - in: query
+        name: workspaceId
         required: true
         type: integer
       produces:
@@ -2155,7 +2336,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.Response-array_UserInWorkspace'
+            $ref: '#/definitions/handlers.Response-UserInWorkspace'
         "400":
           description: Bad Request
           schema:
@@ -2164,7 +2345,43 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
-      summary: Get user In Workspace
+      summary: Get Individual User In Workspace
+      tags:
+      - userInWorkspace
+  /userInWorkspace.interest:
+    patch:
+      consumes:
+      - application/json
+      operationId: InterestUser
+      parameters:
+      - in: query
+        name: isInterest
+        required: true
+        type: boolean
+      - in: query
+        name: userId
+        required: true
+        type: integer
+      - in: query
+        name: workspaceId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-UserInWorkspace'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Interest User In Workspace
       tags:
       - userInWorkspace
   /videoInterview.getVideoInterviewContext:
@@ -2221,6 +2438,34 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get video interview question
+      tags:
+      - videoInterview
+  /videoInterview.getVideoInterviewResult:
+    get:
+      consumes:
+      - application/json
+      operationId: getVideoInterviewResult
+      parameters:
+      - in: query
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-array_VideoInterviewResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get video interview result
       tags:
       - videoInterview
   /videoInterview.submitVideoInterview:
@@ -2505,7 +2750,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.Response-WorkspaceData'
+            $ref: '#/definitions/handlers.Response-WorkspaceDetail'
         "400":
           description: Bad Request
           schema:
@@ -2540,7 +2785,7 @@ paths:
       summary: Get List of workspace
       tags:
       - workspace
-  /workspace.inviteAll:
+  /workspace.inviteAllCandidate:
     post:
       consumes:
       - application/json

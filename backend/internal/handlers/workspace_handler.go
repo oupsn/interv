@@ -6,16 +6,14 @@ import (
 )
 
 type WorkspaceHandler struct {
-	workspaceService    services.IWorkspaceService
-	userInPortalService services.IUserInPortalService
-	authService         services.IAuthService
+	workspaceService services.IWorkspaceService
+	authService      services.IAuthService
 }
 
-func NewWorkspaceHandler(workspaceService services.IWorkspaceService, userInPortalService services.IUserInPortalService, authService services.IAuthService) WorkspaceHandler {
+func NewWorkspaceHandler(workspaceService services.IWorkspaceService, authService services.IAuthService) WorkspaceHandler {
 	return WorkspaceHandler{
-		workspaceService:    workspaceService,
-		userInPortalService: userInPortalService,
-		authService:         authService,
+		workspaceService: workspaceService,
+		authService:      authService,
 	}
 }
 
@@ -26,42 +24,34 @@ func NewWorkspaceHandler(workspaceService services.IWorkspaceService, userInPort
 // @Accept json
 // @Produce json
 // @Param payload query GetWorkspaceBody true "GetWorkspaceBody"
-// @Success 200 {object} Response[WorkspaceData]
+// @Success 200 {object} Response[WorkspaceDetail]
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
 // @Router /workspace.get [get]
 func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 	form := GetWorkspaceBody{}
-	var res []IndividualUser
+	var res []UserInWorkspace
 	var vidQ []VideoQuestionDetail
 
 	if err := c.QueryParser(&form); err != nil {
 		return err
 	}
 
-	workspace, userInWorkspace, userData, err := w.workspaceService.GetWorkspaceById(form.Id)
+	workspace, candidate, err := w.workspaceService.GetWorkspaceById(form.Id)
 	if err != nil {
 		return err
 	}
-	member := len(*userInWorkspace)
-	for index := range *userInWorkspace {
-		res = append(res, IndividualUser{
-			Id: index,
-			UserInWorkspace: UserInWorkspace{
-				Id:          (*userInWorkspace)[index].Id,
-				UserId:      (*userInWorkspace)[index].UserId,
-				WorkspaceId: (*userInWorkspace)[index].WorkspaceId,
-				Status:      string((*userInWorkspace)[index].Status),
-				IsInterest:  *(*userInWorkspace)[index].IsInterest,
-			},
-			UserData: UserData{
-				ID:        (*userData)[index].ID,
-				Name:      (*userData)[index].Name,
-				Username:  (*userData)[index].Username,
-				Role:      string((*userData)[index].Role),
-				CreatedAt: (*userData)[index].CreatedAt,
-				UpdatedAt: (*userData)[index].UpdatedAt,
-			},
+	member := len(*candidate)
+	for index := range *candidate {
+		res = append(res, UserInWorkspace{
+			Id:          (*candidate)[index].Id,
+			UserId:      (*candidate)[index].UserId,
+			WorkspaceId: (*candidate)[index].WorkspaceId,
+			Name:        (*candidate)[index].User.Name,
+			Username:    (*candidate)[index].User.Username,
+			Role:        string((*candidate)[index].User.Role),
+			Status:      string((*candidate)[index].Status),
+			IsInterest:  *(*candidate)[index].IsInterest,
 		})
 	}
 
@@ -76,53 +66,85 @@ func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 		})
 	}
 
-	return Ok(c, WorkspaceData{
-		WorkspaceDetail: WorkspaceDetail{
-			Id:            workspace.Id,
-			Title:         workspace.Title,
-			StartDate:     workspace.StartDate,
-			EndDate:       workspace.EndDate,
-			IsVideo:       *workspace.IsVideo,
-			IsCoding:      *workspace.IsCoding,
-			VideoTime:     workspace.VideoTime,
-			CodingTime:    workspace.CodingTime,
-			ReqScreen:     *workspace.ReqScreen,
-			ReqMicrophone: *workspace.ReqScreen,
-			ReqCamera:     *workspace.ReqCamera,
-			PortalId:      workspace.PortalId,
-			MemberNum:     uint(member),
-			CreateAt:      workspace.CreatedAt,
-			VideoQueston:  vidQ,
-		},
-		IndividualUser: res,
+	return Ok(c, WorkspaceDetail{
+		Id:              workspace.Id,
+		Title:           workspace.Title,
+		StartDate:       workspace.StartDate,
+		EndDate:         workspace.EndDate,
+		IsVideo:         *workspace.IsVideo,
+		IsCoding:        *workspace.IsCoding,
+		VideoTime:       workspace.VideoTime,
+		CodingTime:      workspace.CodingTime,
+		ReqScreen:       *workspace.ReqScreen,
+		ReqMicrophone:   *workspace.ReqScreen,
+		ReqCamera:       *workspace.ReqCamera,
+		PortalId:        workspace.PortalId,
+		MemberNum:       uint(member),
+		CreateAt:        workspace.CreatedAt,
+		VideoQueston:    vidQ,
+		UserInWorkspace: res,
 	})
 }
 
-// GetUserInWorkspace
-// @ID GetUserInWorkspace
+// GetIndividualUser
+// @ID GetIndividualUser
 // @Tags userInWorkspace
-// @Summary Get user In Workspace
+// @Summary Get Individual User In Workspace
 // @Accept json
 // @Produce json
-// @Param payload query GetWorkspaceBody true "GetWorkspaceBody"
-// @Success 200 {object} Response[[]UserInWorkspace]
+// @Param payload query GetIndividualUserBody true "GetIndividualUserBody"
+// @Success 200 {object} Response[UserInWorkspace]
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /userInWorkspace.get [get]
-func (w WorkspaceHandler) GetUserInWorkspace(c *fiber.Ctx) error {
-	form := GetWorkspaceBody{}
-
+// @Router /userInWorkspace.getbyId [get]
+func (w WorkspaceHandler) GetIndividualUser(c *fiber.Ctx) error {
+	form := GetIndividualUserBody{}
 	if err := c.QueryParser(&form); err != nil {
 		return err
 	}
-
-	response, err := w.workspaceService.GetUserInWorkspace(form.Id)
+	userInWorkspace, err := w.workspaceService.GetIndividualUser(form.WorkspaceId, form.UserId)
 
 	if err != nil {
 		return err
 	}
 
-	return Ok(c, response)
+	return Ok(c, UserInWorkspace{
+		Id:          userInWorkspace.Id,
+		UserId:      userInWorkspace.UserId,
+		WorkspaceId: userInWorkspace.WorkspaceId,
+		Name:        userInWorkspace.User.Name,
+		Username:    userInWorkspace.User.Username,
+		Role:        string(userInWorkspace.User.Role),
+		Status:      string(userInWorkspace.Status),
+		IsInterest:  *userInWorkspace.IsInterest,
+	})
+}
+
+// InterestUser
+// @ID InterestUser
+// @Tags userInWorkspace
+// @Summary Interest User In Workspace
+// @Accept json
+// @Produce json
+// @Param payload query InterestUser true "InterestUser"
+// @Success 200 {object} Response[UserInWorkspace]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /userInWorkspace.interest [patch]
+func (w WorkspaceHandler) InterestUser(c *fiber.Ctx) error {
+	form := InterestUser{}
+
+	if err := c.QueryParser(&form); err != nil {
+		return err
+	}
+
+	err := w.workspaceService.InterestUser(form.WorkspaceId, form.UserId, &form.IsInterest)
+
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, err)
 }
 
 // GetPortalWorkspace
@@ -150,26 +172,37 @@ func (w WorkspaceHandler) GetPortalWorkspace(c *fiber.Ctx) error {
 		return err
 	}
 
-	member, err := w.workspaceService.GetUserNumInWorkspace(portalId)
-	if err != nil {
-		return err
-	}
 	var res []WorkspaceDetail
+	var user []UserInWorkspace
 
-	for index, v := range *response {
+	for _, x := range *response {
+		for _, y := range x.UserInWorkspace {
+			user = append(user, UserInWorkspace{
+				Id:          y.Id,
+				UserId:      y.UserId,
+				WorkspaceId: y.WorkspaceId,
+				Name:        y.User.Name,
+				Username:    y.User.Username,
+				Role:        string(y.User.Role),
+				Status:      string(y.Status),
+				IsInterest:  *y.IsInterest,
+			})
+		}
 		res = append(res, WorkspaceDetail{
-			Id:         v.Id,
-			Title:      v.Title,
-			IsVideo:    *v.IsVideo,
-			IsCoding:   *v.IsCoding,
-			VideoTime:  v.VideoTime,
-			CodingTime: v.CodingTime,
-			StartDate:  v.StartDate,
-			EndDate:    v.EndDate,
-			PortalId:   v.PortalId,
-			MemberNum:  member[index],
-			CreateAt:   v.CreatedAt,
+			Id:              x.Id,
+			Title:           x.Title,
+			IsVideo:         *x.IsVideo,
+			IsCoding:        *x.IsCoding,
+			VideoTime:       x.VideoTime,
+			CodingTime:      x.CodingTime,
+			StartDate:       x.StartDate,
+			EndDate:         x.EndDate,
+			PortalId:        x.PortalId,
+			MemberNum:       uint(len(x.UserInWorkspace)),
+			CreateAt:        x.CreatedAt,
+			UserInWorkspace: user,
 		})
+		user = []UserInWorkspace{}
 	}
 
 	return Ok(c, res)
@@ -274,7 +307,7 @@ func (w WorkspaceHandler) DeleteUserFromWorkspace(c *fiber.Ctx) error {
 // @Success 200 {object} Response[string]
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /workspace.inviteAll [post]
+// @Router /workspace.inviteAllCandidate [post]
 func (w WorkspaceHandler) InviteAllCandidate(c *fiber.Ctx) error {
 	body := InviteAllCandidateBody{}
 
@@ -283,6 +316,9 @@ func (w WorkspaceHandler) InviteAllCandidate(c *fiber.Ctx) error {
 	}
 
 	if err := w.workspaceService.InviteAllCandidate(body.WorkspaceId); err != nil {
+		return err
+	}
+	if err := w.workspaceService.GetUnseenCandidate(body.WorkspaceId); err != nil {
 		return err
 	}
 

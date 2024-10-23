@@ -67,8 +67,8 @@ func (s *codingInterviewService) GetCodingSubmissionResultByUser(userID uint) (d
 	if err != nil {
 		return domains.CodingQuestionSubmissionResult{}, ErrorGetRoomIDByUserID
 	}
-	videoURL, videoErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%s-video", roomID))
-	screenURL, screenErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%s-screen", roomID))
+	videoURL, videoErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%s-video.mp4", roomID))
+	screenURL, screenErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%s-screen.mp4", roomID))
 	if videoErr != nil || screenErr != nil {
 		return domains.CodingQuestionSubmissionResult{}, ErrorGetObjectSubmission
 	}
