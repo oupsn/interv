@@ -21,9 +21,8 @@ import QuestionBankCodingEdit from "@/pages/portal/questionBank/components/Quest
 import QuestionBankEditVideoQuestionForm from "@/pages/portal/questionBank/components/QuestionBankEditVideoQuestionForm.tsx"
 import WorkspaceInterestPage from "@/pages/portal/workspace/WorkspaceInterestPage"
 import CodingResult from "@/pages/portal/workspace/components/CodingResult"
-import QuestionTutorial from "@/pages/room/questionTutorial/QuestionTutorial"
 import CandidateDetailPage from "@/pages/portal/workspace/CandidateDetailPage"
-
+import QuestionGuideline from "@/pages/room/questionGuideline/QuestionGuideline"
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -152,8 +151,8 @@ export const router = createBrowserRouter([
         element: <VideoInterviewPage />,
       },
       {
-        path: "tutorial",
-        element: <QuestionTutorial />,
+        path: "guideline",
+        element: <QuestionGuideline />,
       },
     ],
   },
