@@ -13,7 +13,7 @@ import { useReactMediaRecorder } from "react-media-recorder-2"
 import { DeviceContext } from "@/contexts/device"
 import { server } from "@/contexts/swr"
 import { LoadingContext } from "@/contexts/loading"
-
+import { useGetCodingInterviewContext } from "@/hooks/useGetCodginInterviewContext"
 interface Question {
   index: number
   id: number
@@ -30,7 +30,10 @@ const CodingInterviewPage = () => {
   const [timeRemain, setTimeRemain] = useState(mockData.timeRemain)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [questionList, setQuestionList] = useState<Question[]>([])
-  const { data: fetchedQuestions, mutate } = useGetCodingInterviewQuestion()
+  const { data: fetchedQuestions, mutate } = useGetCodingInterviewQuestion(
+    roomId ?? "",
+  )
+  const { data: fetchedContext } = useGetCodingInterviewContext(roomId ?? "")
   const [isFinish, setIsFinish] = useState(false)
   const [isRecordingSaved, setIsRecordingSaved] = useState(false)
   const [questionsLoaded, setQuestionsLoaded] = useState(false)
@@ -143,6 +146,7 @@ const CodingInterviewPage = () => {
    */
   useEffect(() => {
     if (fetchedQuestions) {
+      console.log(fetchedQuestions)
       const newQuestions: Question[] =
         fetchedQuestions?.data?.map(
           (question: DomainsCodingQuestionResponse, index: number) => ({
@@ -202,6 +206,29 @@ const CodingInterviewPage = () => {
       }
     }
   }, [isStart, isFinish])
+
+  useEffect(() => {
+    if (fetchedContext?.data) {
+      const createdAt = new Date(fetchedContext.data.created_at ?? "")
+      const currentTime = new Date()
+
+      if (fetchedContext.data.updated_at === fetchedContext.data.created_at) {
+        setTimeRemain(fetchedContext.data?.coding_time ?? 0)
+      } else if (
+        currentTime > createdAt &&
+        fetchedContext.data.updated_at !== fetchedContext.data.created_at
+      ) {
+        const timeDifferenceInSeconds = Math.floor(
+          (currentTime.getTime() - createdAt.getTime()) / 1000,
+        )
+        const remainingTime = Math.max(
+          (fetchedContext.data?.coding_time ?? 0) - timeDifferenceInSeconds,
+          0,
+        )
+        setTimeRemain(remainingTime)
+      }
+    }
+  }, [fetchedContext])
   return (
     <>
       <div className={"w-dvw h-dvh flex max-h-sr z-0"}>
@@ -236,7 +263,7 @@ const CodingInterviewPage = () => {
           <CodingInterviewInstruction
             title={mockData.title}
             description={mockData.instuction}
-            timeRemain={mockData.timeRemain}
+            timeRemain={timeRemain}
             questionLength={questionList.length}
             clickStart={() => {
               startRecording()

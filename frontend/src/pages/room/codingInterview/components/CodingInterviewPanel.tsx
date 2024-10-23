@@ -74,9 +74,15 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
       setCountdown((prevCountdown) => prevCountdown - 1)
     }, 1000)
 
+    const snapshotInterval = setInterval(() => {
+      createQuestionSnapshot()
+    }, 30000)
+
     return () => {
       clearInterval(timer)
+      clearInterval(snapshotInterval)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -190,6 +196,22 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
     }
     setIsFinish(true)
     setLoading(false)
+  }
+
+  const createQuestionSnapshot = async () => {
+    try {
+      const snapshotData = questions.map((question, index) => ({
+        room_id: roomId,
+        coding_question_id: question.id,
+        language: editorStates[index].language,
+        code: editorStates[index].content,
+      }))
+
+      await server.codingInterview.createQuestionSnapshot(snapshotData)
+      console.log("Question snapshot created successfully")
+    } catch (error) {
+      console.error("Failed to create question snapshot:", error)
+    }
   }
 
   return (

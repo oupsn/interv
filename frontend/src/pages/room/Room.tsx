@@ -84,7 +84,13 @@ const RoomPage = () => {
                 {data?.data?.isCodingDone ? (
                   <p className={"text-iGreen font-semibold"}>Done</p>
                 ) : (
-                  <Button onClick={() => navigate("coding")}>Start</Button>
+                  <Button
+                    onClick={() => {
+                      navigate("coding")
+                    }}
+                  >
+                    Start
+                  </Button>
                 )}
               </div>
             </div>
