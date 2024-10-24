@@ -3,6 +3,7 @@ package services
 import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/mail"
+	"github.com/getsentry/sentry-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/mailjet/mailjet-apiv3-go/v4"
 )
@@ -54,6 +55,7 @@ func (m *mailService) SendMail(mailListPayload MailListPayload) error {
 
 	messages := mailjet.MessagesV31{Info: messagesInfo}
 	if err := m.mailRepository.Send(messages); err != nil {
+		sentry.CaptureException(err)
 		return ErrorSendMail
 	}
 
