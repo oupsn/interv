@@ -255,6 +255,8 @@ definitions:
         type: integer
       candidateName:
         type: string
+      companyName:
+        type: string
       dueDate:
         type: string
       isCodingDone:
@@ -276,6 +278,7 @@ definitions:
     required:
     - candidateId
     - candidateName
+    - companyName
     - dueDate
     - isCodingDone
     - isOverdue

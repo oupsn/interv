@@ -2679,6 +2679,7 @@ const docTemplate = `{
             "required": [
                 "candidateId",
                 "candidateName",
+                "companyName",
                 "dueDate",
                 "isCodingDone",
                 "isOverdue",
@@ -2694,6 +2695,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "candidateName": {
+                    "type": "string"
+                },
+                "companyName": {
                     "type": "string"
                 },
                 "dueDate": {

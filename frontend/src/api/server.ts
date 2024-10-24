@@ -487,6 +487,7 @@ export interface GetRoomContextParams {
 export interface GetRoomContextResponse {
   candidateId: number
   candidateName: string
+  companyName: string
   dueDate: string
   isCodingDone: boolean
   isOverdue: boolean

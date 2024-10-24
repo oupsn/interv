@@ -18,6 +18,7 @@ type GetRoomContextQuery struct {
 
 type GetRoomContextResponse struct {
 	RoomID              string    `json:"roomId"  validate:"required"`
+	CompanyName         string    `json:"companyName"  validate:"required"`
 	CandidateID         uint      `json:"candidateId"  validate:"required"`
 	CandidateName       string    `json:"candidateName"  validate:"required"`
 	TotalVideoTime      uint      `json:"totalVideoTime"  validate:"required"`

@@ -6,7 +6,7 @@ import { server } from "@/contexts/swr.tsx"
 import IntervLogo from "@/assets/interv-logo.png"
 import { nanoid } from "nanoid"
 import { Spinner } from "@/components/ui/spinner.tsx"
-
+import TermsModal from "@/components/ui/term-modal.tsx"
 export default function RoomMainLayout() {
   const { roomId } = useParams()
   const [isSessionValid, setIsSessionValid] = useState(false)
@@ -70,7 +70,19 @@ export default function RoomMainLayout() {
   if (isMobile && !isAllowMobile) {
     return <NotAllowMobile setIsAllowMobile={setIsAllowMobile} />
   }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [termsAccepted, setTermsAccepted] = useState(false)
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const hasAcceptedTerms = localStorage.getItem("termsAccepted")
+    setTermsAccepted(!!hasAcceptedTerms)
+  }, [])
+
+  const handleAcceptTerms = () => {
+    localStorage.setItem("termsAccepted", "true")
+    setTermsAccepted(true)
+  }
   return (
     <main className="w-dvw h-dvh flex">
       {isCheckingSession ? (
@@ -94,6 +106,7 @@ export default function RoomMainLayout() {
           <p>Need more info? Email: help@interv.cc</p>
         </div>
       )}
+      {!termsAccepted && <TermsModal onAccept={handleAcceptTerms} />}
     </main>
   )
 }

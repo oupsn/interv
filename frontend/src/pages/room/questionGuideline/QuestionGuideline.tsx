@@ -1,5 +1,6 @@
 import TopBar from "@/components/layout/TopBar"
 import TopBarItem from "@/components/layout/TopBarItem"
+
 import {
   Accordion,
   AccordionContent,
@@ -102,8 +103,13 @@ function QuestionGuideline() {
         <TopBarItem
           title="Home"
           onClick={() => navigate(location.pathname.split("/guideline")[0])}
+          isActive={!location.pathname.includes("guideline")}
         />
-        <TopBarItem title="Guideline" />
+        <TopBarItem
+          title="Guideline"
+          onClick={() => navigate(location.pathname)}
+          isActive={location.pathname.includes("guideline")}
+        />
       </TopBar>
 
       <div className="flex flex-col items-start justify-start h-dvh px-16 py-8 max-w-5xl mx-auto overflow-y-auto">

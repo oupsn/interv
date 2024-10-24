@@ -4,8 +4,6 @@ import MainPanel from "@/components/layout/MainPanel"
 import { useGetRoomContext } from "@/hooks/useGetRoomContext"
 import dayjs from "dayjs"
 import { Spinner } from "@/components/ui/spinner"
-import { useEffect, useState } from "react"
-import TermsModal from "@/components/ui/term-modal"
 import TopBar from "@/components/layout/TopBar"
 import TopBarItem from "@/components/layout/TopBarItem"
 import { Clock, Video, Code, Info } from "lucide-react"
@@ -16,21 +14,6 @@ const RoomPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { data, error, isLoading } = useGetRoomContext(roomId!)
-  const [termsAccepted, setTermsAccepted] = useState(false)
-
-  useEffect(() => {
-    const hasAcceptedTerms = localStorage.getItem("termsAccepted")
-    setTermsAccepted(!!hasAcceptedTerms)
-  }, [])
-
-  const handleAcceptTerms = () => {
-    localStorage.setItem("termsAccepted", "true")
-    setTermsAccepted(true)
-  }
-
-  const handleDeclineTerms = () => {
-    window.location.reload()
-  }
 
   /*   const timeRemaining = data?.data?.dueDate
     ? dayjs(data.data.dueDate).diff(dayjs(), "hour")
@@ -39,13 +22,18 @@ const RoomPage = () => {
   return (
     <div className="flex flex-col w-dvw h-dvh">
       <TopBar>
-        <TopBarItem title="Home" onClick={() => navigate(location.pathname)} />
+        <TopBarItem
+          title="Home"
+          onClick={() => navigate(location.pathname)}
+          isActive={!location.pathname.includes("guideline")}
+        />
         <TopBarItem
           title="Guideline"
           onClick={() => navigate(location.pathname + "/guideline")}
+          isActive={location.pathname.includes("guideline")}
         />
       </TopBar>
-      <MainPanel className="flex flex-col justify-center items-center gap-8">
+      <MainPanel className="flex flex-col justify-center items-center gap-2">
         {isLoading ? (
           <Spinner size="lg" />
         ) : error ? (
@@ -82,6 +70,10 @@ const RoomPage = () => {
               <p className="text-3xl font-semibold mb-4">
                 Welcome, {data?.data?.candidateName}!
               </p>
+              <p className="text-gray-500">
+                You are invited to complete the interview by{" "}
+                {data?.data?.companyName}
+              </p>
 
               <Alert className="mb-6">
                 <AlertDescription>
@@ -97,7 +89,7 @@ const RoomPage = () => {
                 </AlertDescription>
               </Alert>
 
-              <div className="bg-gray-50 p-4 rounded-lg mb-6">
+              {/* <div className="bg-gray-50 p-4 rounded-lg mb-6">
                 <h2 className="text-lg font-medium mb-2">
                   Interview Instructions
                 </h2>
@@ -109,7 +101,7 @@ const RoomPage = () => {
                   <li>• You can take breaks between sections</li>
                   <li>• Guidelines are available in the Guideline tab</li>
                 </ul>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex gap-12">
@@ -184,13 +176,6 @@ const RoomPage = () => {
           </>
         )}
       </MainPanel>
-
-      {!error && !termsAccepted && (
-        <TermsModal
-          onAccept={handleAcceptTerms}
-          onDecline={handleDeclineTerms}
-        />
-      )}
     </div>
   )
 }
