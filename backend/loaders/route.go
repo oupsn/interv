@@ -41,7 +41,7 @@ func SetupRoutes() {
 	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, objectRepositories, lintRepository)
 	var mailServices = services.NewMailService(mailRepositories)
 	var questionServices = services.NewVideoQuestionService(videoQuestionRepositories)
-	var roomServices = services.NewRoomService(roomRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories, portalRepository)
+	var roomServices = services.NewRoomService(roomRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories, portalRepository, userInWorkspaceRepositories)
 	var portalService = services.NewPortalService(portalRepository)
 	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, mailServices, roomServices, codingInterviewServices, questionServices, videoQuestionRepositories)
 	var authServices = services.NewAuthService(userRepositories)
@@ -140,6 +140,7 @@ func SetupRoutes() {
 	private.Get("workspace.get", workspaceHandlers.GetWorkspaceById)
 	private.Get("workspace.getByPortal", workspaceHandlers.GetPortalWorkspace)
 	private.Post("workspace.create", workspaceHandlers.CreateWorkspace)
+	private.Put("workspace.update", workspaceHandlers.UpdateWorkspace)
 	private.Delete("workspace.delete", workspaceHandlers.DeleteWorkspaceById)
 	private.Post("workspace.inviteAllCandidate", workspaceHandlers.InviteAllCandidate)
 

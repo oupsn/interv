@@ -22,4 +22,5 @@ type ICodingInterviewRepository interface {
 	UpdateCodingQuestion(codingQuestionID uint, question domains.CodingQuestion) (domains.CodingQuestion, error)
 	UpdateCodingDoneInRoom(roomID string, isDone bool) error
 	DeleteCodingQuestion(codingQuestionID uint) error
+	DeleteCodingQuestionInWorkspace(workspaceID uint) error
 }

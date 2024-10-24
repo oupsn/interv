@@ -39,6 +39,23 @@ type CreateWorkspaceBody struct {
 	VideoQuestion []uint `json:"videoQuestion" validate:"required"`
 } // @name CreateWorkspaceBody
 
+type UpdateWorkspaceBody struct {
+	Id            uint   `json:"id" validate:"required"`
+	Title         string `json:"title" validate:"required"`
+	StartDate     string `json:"startDate" validate:"required"`
+	EndDate       string `json:"endDate" validate:"required"`
+	IsVideo       *bool  `json:"isVideo" validate:"required"`
+	IsCoding      *bool  `json:"isCoding" validate:"required"`
+	VideoTime     uint   `json:"videoTime"`
+	CodingTime    uint   `json:"codingTime"`
+	ReqScreen     *bool  `json:"reqScreen" validate:"required"`
+	ReqMicrophone *bool  `json:"reqMicrophone" validate:"required"`
+	ReqCamera     *bool  `json:"reqCamera" validate:"required"`
+	PortalId      uint   `json:"portalId" validate:"required"`
+	CodeQuestion  []uint `json:"codeQuestion" validate:"required"`
+	VideoQuestion []uint `json:"videoQuestion" validate:"required"`
+} // @name UpdateWorkspaceBody
+
 type GetWorkspaceBody struct {
 	Id uint `json:"id" validate:"required"`
 } // @name GetWorkspaceBody
@@ -70,7 +87,7 @@ type DeleteUserFromWorkspaceBody struct {
 } // @name DeleteUserFromWorkspaceBody
 
 type WorkspaceData struct {
-	WorkspaceDetail WorkspaceDetail  `json:"workspaceDetail" validate:"required"`
+	WorkspaceDetail WorkspaceDetail   `json:"workspaceDetail" validate:"required"`
 	IndividualUser  []UserInWorkspace `json:"individualUser" validate:"required"`
 } // @name WorkspaceData
 

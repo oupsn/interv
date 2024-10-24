@@ -2304,6 +2304,52 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/workspace.update": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workspace"
+                ],
+                "summary": "Update workspace",
+                "operationId": "UpdateWorkspace",
+                "parameters": [
+                    {
+                        "description": "UpdateWorkspaceBody",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateWorkspaceBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-WorkspaceDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2906,6 +2952,73 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "totalAttempt": {
+                    "type": "integer"
+                }
+            }
+        },
+        "UpdateWorkspaceBody": {
+            "type": "object",
+            "required": [
+                "codeQuestion",
+                "endDate",
+                "id",
+                "isCoding",
+                "isVideo",
+                "portalId",
+                "reqCamera",
+                "reqMicrophone",
+                "reqScreen",
+                "startDate",
+                "title",
+                "videoQuestion"
+            ],
+            "properties": {
+                "codeQuestion": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "codingTime": {
+                    "type": "integer"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isCoding": {
+                    "type": "boolean"
+                },
+                "isVideo": {
+                    "type": "boolean"
+                },
+                "portalId": {
+                    "type": "integer"
+                },
+                "reqCamera": {
+                    "type": "boolean"
+                },
+                "reqMicrophone": {
+                    "type": "boolean"
+                },
+                "reqScreen": {
+                    "type": "boolean"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "videoQuestion": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "videoTime": {
                     "type": "integer"
                 }
             }

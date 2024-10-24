@@ -12,6 +12,7 @@ type IVideoQuestionService interface {
 	GetVideoQuestionByPortalId(id uint) ([]domains.VideoQuestion, error)
 	UpdateVideoQuestion(question domains.VideoQuestion) (*domains.VideoQuestion, error)
 	DeleteVideoQuestionById(id uint) error
+	DeleteVideoQuestionByWorkspaceId(workspaceId uint) error
 }
 
 type videoQuestionService struct {
@@ -78,6 +79,15 @@ func (v videoQuestionService) UpdateVideoQuestion(question domains.VideoQuestion
 
 func (v videoQuestionService) DeleteVideoQuestionById(id uint) error {
 	err := v.questionRepo.DeleteById(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (v videoQuestionService) DeleteVideoQuestionByWorkspaceId(workspaceId uint) error {
+	err := v.questionRepo.DeleteByWorkspaceId(workspaceId)
 	if err != nil {
 		return err
 	}

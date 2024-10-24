@@ -248,6 +248,46 @@ func (w WorkspaceHandler) CreateWorkspace(c *fiber.Ctx) error {
 	})
 }
 
+// UpdateWorkspace
+// @ID UpdateWorkspace
+// @Tags workspace
+// @Summary Update workspace
+// @Accept json
+// @Produce json
+// @Param payload body UpdateWorkspaceBody true "UpdateWorkspaceBody"
+// @Success 200 {object} Response[WorkspaceDetail]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /workspace.update [put]
+func (w WorkspaceHandler) UpdateWorkspace(c *fiber.Ctx) error {
+	form := new(UpdateWorkspaceBody)
+
+	if err := c.BodyParser(form); err != nil {
+		return err
+	}
+
+	if err := validate.Struct(form); err != nil {
+		return err
+	}
+
+	response, err := w.workspaceService.Update(form.Id, form.Title, form.StartDate, form.EndDate, form.IsVideo, form.IsCoding, form.VideoTime, form.CodingTime, form.ReqScreen, form.ReqMicrophone, form.ReqCamera, form.PortalId, form.CodeQuestion, form.VideoQuestion)
+	if err != nil {
+		return err
+	}
+
+	return Created(c, WorkspaceDetail{
+		Id:         response.Id,
+		Title:      response.Title,
+		StartDate:  response.StartDate,
+		EndDate:    response.EndDate,
+		IsVideo:    *response.IsVideo,
+		IsCoding:   *response.IsCoding,
+		VideoTime:  response.VideoTime,
+		CodingTime: response.CodingTime,
+		PortalId:   response.PortalId,
+	})
+}
+
 // DeleteWorkspaceById
 // @ID DeleteWorkspaceById
 // @Tags workspace
@@ -318,7 +358,7 @@ func (w WorkspaceHandler) InviteAllCandidate(c *fiber.Ctx) error {
 	if err := w.workspaceService.InviteAllCandidate(body.WorkspaceId); err != nil {
 		return err
 	}
-	if err := w.workspaceService.GetUnseenCandidate(body.WorkspaceId); err != nil {
+	if err := w.workspaceService.UpdateStatusCandidate(body.WorkspaceId, "unseen"); err != nil {
 		return err
 	}
 
