@@ -110,7 +110,7 @@ func (c *codingInterviewRepository) GetCodingQuestionTestcaseByQuestionID(questi
 
 func (c *codingInterviewRepository) GetCodingQuestionByWorkspaceID(workspaceID int) ([]domains.CodingQuestionInWorkspace, error) {
 	var codingQuestions []domains.CodingQuestionInWorkspace
-	if err := c.DB.Model(&domains.CodingQuestionInWorkspace{}).Preload("CodingQuestion", "id = ?", workspaceID).
+	if err := c.DB.Model(&domains.CodingQuestionInWorkspace{}).Where("workspace_id = ?", workspaceID).Preload("CodingQuestion").
 		Find(&codingQuestions).Error; err != nil {
 		return nil, err
 	}
