@@ -146,7 +146,7 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 			return err
 		}
 		if u.Status == "idle" {
-			room, rt, err := w.roomService.CreateRoom(domains.Room{CandidateID: u.UserId, WorkspaceID: workspaceId, IsCodingDone: v.Ptr(false), IsVideoDone: v.Ptr(false)})
+			room, _, err := w.roomService.CreateRoom(domains.Room{CandidateID: u.UserId, WorkspaceID: workspaceId, IsCodingDone: v.Ptr(false), IsVideoDone: v.Ptr(false)})
 			if err != nil {
 				return err
 			}
@@ -158,7 +158,7 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 				To:      user.Username,
 				Name:    user.Name,
 				DueDate: workspace.EndDate,
-				RoomId:  room.ID + "?rt=" + rt,
+				RoomId:  room.ID,
 			})
 		}
 
