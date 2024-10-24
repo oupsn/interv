@@ -61,7 +61,7 @@ func (c *codingInterviewRepository) GetCodingQuestionListInPortal(portalID int) 
 
 func (c *codingInterviewRepository) GetCodingQuestionListInWorkspace(workspaceId int) ([]domains.CodingQuestion, error) {
 	var codingQuestions []domains.CodingQuestion
-	if err := c.DB.Distinct("coding_questions.*").
+	if err := c.DB.Distinct("coding_questions_in_workspaces.*").
 		Joins("JOIN coding_question_in_workspaces ON coding_questions.id = coding_question_in_workspaces.coding_question_id").
 		Where("coding_question_in_workspaces.workspace_id = ?", workspaceId).
 		Find(&codingQuestions).Error; err != nil {
@@ -268,6 +268,15 @@ func (c *codingInterviewRepository) UpdateCodingDoneInRoom(roomID string, isDone
 
 func (c *codingInterviewRepository) DeleteCodingQuestion(codingQuestionID uint) error {
 	if err := c.DB.Delete(&domains.CodingQuestion{}, codingQuestionID).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *codingInterviewRepository) DeleteCodingQuestionInWorkspace(workspaceID uint) error {
+	if err := c.DB.
+		Where("workspace_id = ?", workspaceID).
+		Delete(&domains.CodingQuestionInWorkspace{}).Error; err != nil {
 		return err
 	}
 	return nil

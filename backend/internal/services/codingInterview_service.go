@@ -249,6 +249,10 @@ func (s *codingInterviewService) DeleteCodingQuestion(codingQuestionID uint) err
 	return s.codingInterviewRepository.DeleteCodingQuestion(codingQuestionID)
 }
 
+func (s *codingInterviewService) DeleteCodingQuestionInWorkspace(workspaceID uint) error {
+	return s.codingInterviewRepository.DeleteCodingQuestionInWorkspace(workspaceID)
+}
+
 func (s *codingInterviewService) UploadCodingVideo(roomID string, screenFile *multipart.FileHeader, videoFile *multipart.FileHeader) error {
 	filename := fmt.Sprintf("%s-%s", roomID, screenFile.Filename)
 	err := s.objectRepository.Upload(screenFile, "coding-interview", filename)

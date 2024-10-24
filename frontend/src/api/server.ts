@@ -878,6 +878,27 @@ export type UpdateVideoQuestionData = HandlersResponseCreateVideoQuestionRespons
 
 export type UpdateVideoQuestionError = HandlersErrResponse
 
+export interface UpdateWorkspaceBody {
+  codeQuestion: number[]
+  codingTime?: number
+  endDate: string
+  id: number
+  isCoding: boolean
+  isVideo: boolean
+  portalId: number
+  reqCamera: boolean
+  reqMicrophone: boolean
+  reqScreen: boolean
+  startDate: string
+  title: string
+  videoQuestion: number[]
+  videoTime?: number
+}
+
+export type UpdateWorkspaceData = HandlersResponseWorkspaceDetail
+
+export type UpdateWorkspaceError = HandlersErrResponse
+
 export type UploadObjectData = HandlersResponseString
 
 export type UploadObjectError = HandlersErrResponse
@@ -1932,6 +1953,24 @@ export namespace Workspace {
     export type RequestBody = HandlersInviteAllCandidateBody
     export type RequestHeaders = {}
     export type ResponseBody = InviteAllCandidateData
+  }
+
+  /**
+   * No description
+   * @tags workspace
+   * @name UpdateWorkspace
+   * @summary Update workspace
+   * @request PUT:/workspace.update
+   * @response `200` `UpdateWorkspaceData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace UpdateWorkspace {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = UpdateWorkspaceBody
+    export type RequestHeaders = {}
+    export type ResponseBody = UpdateWorkspaceData
   }
 }
 
@@ -3103,6 +3142,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       this.request<InviteAllCandidateData, InviteAllCandidateError>({
         path: `/workspace.inviteAllCandidate`,
         method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags workspace
+     * @name UpdateWorkspace
+     * @summary Update workspace
+     * @request PUT:/workspace.update
+     * @response `200` `UpdateWorkspaceData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    updateWorkspace: (payload: UpdateWorkspaceBody, params: RequestParams = {}) =>
+      this.request<UpdateWorkspaceData, UpdateWorkspaceError>({
+        path: `/workspace.update`,
+        method: "PUT",
         body: payload,
         type: ContentType.Json,
         format: "json",
