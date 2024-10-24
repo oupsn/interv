@@ -27,13 +27,14 @@ func (uiw *userInWorkspaceRepository) Create(userInWorkspace []*domains.UserInWo
 }
 
 func (uiw *userInWorkspaceRepository) UpdateStatusCandidate(workspaceId uint, status string) (err error) {
+	print("key")
 	foundUserInWorkspace := new([]domains.UserInWorkspace)
 	if err := uiw.DB.Find(&foundUserInWorkspace, "workspace_id = ?", workspaceId).Error; err != nil {
 		return err
 	}
 	for _, data := range *foundUserInWorkspace {
 
-		if err := uiw.DB.Model(domains.UserInWorkspace{}).Where("workspace_id = ? AND status = ?", data.WorkspaceId, "idle").Update("status", status).Error; err != nil {
+		if err := uiw.DB.Model(domains.UserInWorkspace{}).Where("workspace_id = ? AND status <> ?", data.WorkspaceId, "success").Update("status", status).Error; err != nil {
 			return err
 		}
 	}
