@@ -66,6 +66,7 @@ function QuestionBankCodingEdit() {
     testCases: z
       .array(
         z.object({
+          id: z.number().optional(),
           input: z.string().min(1),
           output: z.string().min(1),
           isHidden: z.boolean().default(false),

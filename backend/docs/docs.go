@@ -438,7 +438,52 @@ const docTemplate = `{
                 }
             }
         },
-        "/codingInterview.getQuestions": {
+        "/codingInterview.getQuestionRoomContext/{roomID}": {
+            "get": {
+                "description": "Get coding interview question room context",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Get coding interview question room context",
+                "operationId": "GetQuestionRoomContext",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Room ID",
+                        "name": "roomID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with the coding interview question room context",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-domains_CodingQuestionRoomContext"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/codingInterview.getQuestions/{roomID}": {
             "get": {
                 "description": "Get coding interview questions",
                 "consumes": [
@@ -2680,6 +2725,7 @@ const docTemplate = `{
             "required": [
                 "candidateId",
                 "candidateName",
+                "companyName",
                 "dueDate",
                 "isCodingDone",
                 "isOverdue",
@@ -2695,6 +2741,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "candidateName": {
+                    "type": "string"
+                },
+                "companyName": {
                     "type": "string"
                 },
                 "dueDate": {
@@ -3379,6 +3428,20 @@ const docTemplate = `{
                     }
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domains.CodingQuestionRoomContext": {
+            "type": "object",
+            "properties": {
+                "coding_time": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -4225,6 +4288,23 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/domains.CodingQuestion"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-domains_CodingQuestionRoomContext": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/domains.CodingQuestionRoomContext"
                 },
                 "message": {
                     "type": "string"

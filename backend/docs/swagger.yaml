@@ -255,6 +255,8 @@ definitions:
         type: integer
       candidateName:
         type: string
+      companyName:
+        type: string
       dueDate:
         type: string
       isCodingDone:
@@ -276,6 +278,7 @@ definitions:
     required:
     - candidateId
     - candidateName
+    - companyName
     - dueDate
     - isCodingDone
     - isOverdue
@@ -726,6 +729,15 @@ definitions:
           $ref: '#/definitions/domains.CodingQuestionTestCaseResponse'
         type: array
       title:
+        type: string
+    type: object
+  domains.CodingQuestionRoomContext:
+    properties:
+      coding_time:
+        type: integer
+      created_at:
+        type: string
+      updated_at:
         type: string
     type: object
   domains.CodingQuestionSnapshot:
@@ -1284,6 +1296,17 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.Response-domains_CodingQuestionRoomContext:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/domains.CodingQuestionRoomContext'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
   handlers.Response-handlers_CodingInterviewGetCompileResultResponse:
     properties:
       code:
@@ -1664,7 +1687,38 @@ paths:
       summary: Get coding interview question by title
       tags:
       - codingInterview
-  /codingInterview.getQuestions:
+  /codingInterview.getQuestionRoomContext/{roomID}:
+    get:
+      consumes:
+      - application/json
+      description: Get coding interview question room context
+      operationId: GetQuestionRoomContext
+      parameters:
+      - description: Room ID
+        in: path
+        name: roomID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the coding interview question room
+            context
+          schema:
+            $ref: '#/definitions/handlers.Response-domains_CodingQuestionRoomContext'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get coding interview question room context
+      tags:
+      - codingInterview
+  /codingInterview.getQuestions/{roomID}:
     get:
       consumes:
       - application/json

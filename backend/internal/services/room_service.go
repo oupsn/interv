@@ -16,7 +16,7 @@ var (
 
 type IRoomService interface {
 	CreateRoom(room domains.Room) (*domains.Room, string, error)
-	GetRoomContext(roomId string) (*domains.Room, *domains.User, uint, uint, uint, uint, *time.Time, error)
+	GetRoomContext(roomId string) (*domains.Room, *domains.User, uint, uint, uint, uint, *time.Time, string, error)
 	UpdateRoomContext(room domains.Room) error
 	RevokeRoomSession(roomId string) error
 	ExtendRoomSession(roomId string, sessionIdentifier string) error
@@ -30,16 +30,18 @@ type roomService struct {
 	videoQuestionRepo   repositories.IVideoQuestionRepository
 	codingInterviewRepo repositories.ICodingInterviewRepository
 	workspaceRepo       repositories.IWorkspaceRepository
+	portalRepo          repositories.IPortalRepository
 	userInWorkspace     repositories.IUserInWorkspaceRepository
 }
 
-func NewRoomService(roomRepo repositories.IRoomRepository, userRepo repositories.IUserRepository, videoQuestionRepo repositories.IVideoQuestionRepository, codingInterviewRepo repositories.ICodingInterviewRepository, workspaceRepo repositories.IWorkspaceRepository, userInWorkspace repositories.IUserInWorkspaceRepository) IRoomService {
+func NewRoomService(roomRepo repositories.IRoomRepository, userRepo repositories.IUserRepository, videoQuestionRepo repositories.IVideoQuestionRepository, codingInterviewRepo repositories.ICodingInterviewRepository, workspaceRepo repositories.IWorkspaceRepository, portalRepo repositories.IPortalRepository, userInWorkspace repositories.IUserInWorkspaceRepository) IRoomService {
 	return &roomService{
 		roomRepo:            roomRepo,
 		userRepo:            userRepo,
 		videoQuestionRepo:   videoQuestionRepo,
 		codingInterviewRepo: codingInterviewRepo,
 		workspaceRepo:       workspaceRepo,
+		portalRepo:          portalRepo,
 		userInWorkspace:     userInWorkspace,
 	}
 }
@@ -58,15 +60,15 @@ func (l roomService) CreateRoom(room domains.Room) (*domains.Room, string, error
 	return createdRoom, token, nil
 }
 
-func (l roomService) GetRoomContext(roomId string) (*domains.Room, *domains.User, uint, uint, uint, uint, *time.Time, error) {
+func (l roomService) GetRoomContext(roomId string) (*domains.Room, *domains.User, uint, uint, uint, uint, *time.Time, string, error) {
 	room, err := l.roomRepo.GetById(roomId)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, nil, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, nil, "", err
 	}
 
 	workspace, err := l.videoQuestionRepo.GetByWorkspaceId(room.WorkspaceID)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, nil, ErrorGetRoomContext
+		return nil, nil, 0, 0, 0, 0, nil, "", err
 	}
 
 	var videoQuestion []domains.VideoQuestion
@@ -81,31 +83,35 @@ func (l roomService) GetRoomContext(roomId string) (*domains.Room, *domains.User
 
 	codingQuestion, err := l.codingInterviewRepo.GetCodingQuestionByWorkspaceID(int(room.WorkspaceID))
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, nil, err
+		return nil, nil, 0, 0, 0, 0, nil, "", err
 	}
 
 	candidate, err := l.userRepo.FindById(room.CandidateID)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, nil, err
+		return nil, nil, 0, 0, 0, 0, nil, "", err
 	}
 
 	workspace, err = l.workspaceRepo.FindById(room.WorkspaceID)
 	if err != nil {
-		return nil, nil, 0, 0, 0, 0, nil, err
+		return nil, nil, 0, 0, 0, 0, nil, "", err
+	}
+	portal, err := l.portalRepo.FindById(workspace.PortalId)
+	if err != nil {
+		return nil, nil, 0, 0, 0, 0, nil, "", err
 	}
 	_ = room.WorkspaceID
 
 	if err = l.userInWorkspace.UpdateStatusCandidate(room.WorkspaceID, "pending"); err != nil {
-		return nil, nil, 0, 0, 0, 0, nil, err
+		return nil, nil, 0, 0, 0, 0, nil, "", err
 	}
 	if room.IsCodingDone != nil && room.IsVideoDone != nil && *room.IsCodingDone && *room.IsVideoDone {
 		err := l.userInWorkspace.UpdateStatusCandidate(room.WorkspaceID, "success")
 		if err != nil {
-			return nil, nil, 0, 0, 0, 0, nil, err
+			return nil, nil, 0, 0, 0, 0, nil, "", err
 		}
 	}
 
-	return room, candidate, uint(len(videoQuestion)), videoQuestionTotalTime, uint(len(codingQuestion)), workspace.CodingTime, &workspace.EndDate, nil
+	return room, candidate, uint(len(videoQuestion)), videoQuestionTotalTime, uint(len(codingQuestion)), workspace.CodingTime, &workspace.EndDate, portal.CompanyName, nil
 }
 
 func (l roomService) UpdateRoomContext(room domains.Room) error {

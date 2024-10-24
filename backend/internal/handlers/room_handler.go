@@ -1,11 +1,12 @@
 package handlers
 
 import (
+	"time"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/v"
 	"github.com/gofiber/fiber/v2"
-	"time"
 )
 
 type RoomHandler struct {
@@ -76,7 +77,7 @@ func (l RoomHandler) GetRoomContext(c *fiber.Ctx) error {
 		return err
 	}
 
-	room, candidate, videoLength, videoQuestionTotalTime, codingLength, codingQuestionTotalTime, dueDate, err := l.roomService.GetRoomContext(query.RoomID)
+	room, candidate, videoLength, videoQuestionTotalTime, codingLength, codingQuestionTotalTime, dueDate, companyName, err := l.roomService.GetRoomContext(query.RoomID)
 	if err != nil {
 		return err
 	}
@@ -93,6 +94,7 @@ func (l RoomHandler) GetRoomContext(c *fiber.Ctx) error {
 		IsCodingDone:        *room.IsCodingDone,
 		DueDate:             *dueDate,
 		IsOverdue:           (*dueDate).Before(time.Now()),
+		CompanyName:         companyName,
 	})
 }
 

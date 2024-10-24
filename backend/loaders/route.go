@@ -41,7 +41,7 @@ func SetupRoutes() {
 	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, objectRepositories, lintRepository)
 	var mailServices = services.NewMailService(mailRepositories)
 	var questionServices = services.NewVideoQuestionService(videoQuestionRepositories)
-	var roomServices = services.NewRoomService(roomRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories, userInWorkspaceRepositories)
+	var roomServices = services.NewRoomService(roomRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories, portalRepository, userInWorkspaceRepositories)
 	var portalService = services.NewPortalService(portalRepository)
 	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, mailServices, roomServices, codingInterviewServices, questionServices, videoQuestionRepositories)
 	var authServices = services.NewAuthService(userRepositories)
@@ -88,7 +88,8 @@ func SetupRoutes() {
 	public.Get("videoInterview.getVideoInterviewResult", videoInterviewHandlers.GetVideoInterviewResult)
 
 	// codingInterview
-	public.Get("codingInterview.getQuestions", codingInterviewHandlers.GetQuestions)
+	public.Get("codingInterview.getQuestionRoomContext/:roomID", codingInterviewHandlers.GetQuestionRoomContext)
+	public.Get("codingInterview.getQuestions/:roomID", codingInterviewHandlers.GetQuestions)
 	public.Get("codingInterview.getQuestionsInPortal/:portalId", codingInterviewHandlers.GetQuestionsInPortal)
 	public.Get("codingInterview.getQuestionsInWorkspace/:workspaceId", codingInterviewHandlers.GetQuestionsInWorkspace)
 	public.Get("codingInterview.getQuestionByTitle/:title", codingInterviewHandlers.GetQuestionByTitle)
