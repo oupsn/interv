@@ -235,6 +235,12 @@ export interface DomainsCodingQuestionResponse {
   title?: string
 }
 
+export interface DomainsCodingQuestionRoomContext {
+  coding_time?: number
+  created_at?: string
+  updated_at?: string
+}
+
 export interface DomainsCodingQuestionSnapshot {
   code?: string
   coding_question_id?: number
@@ -454,6 +460,10 @@ export type GetQuestionByTitleData = HandlersResponseHandlersCodingInterviewGetQ
 
 export type GetQuestionByTitleError = HandlersErrResponse
 
+export type GetQuestionRoomContextData = HandlersResponseDomainsCodingQuestionRoomContext
+
+export type GetQuestionRoomContextError = HandlersErrResponse
+
 export type GetQuestionsData = HandlersResponseHandlersCodingInterviewGetQuestionsResponse
 
 export type GetQuestionsError = HandlersErrResponse
@@ -477,6 +487,7 @@ export interface GetRoomContextParams {
 export interface GetRoomContextResponse {
   candidateId: number
   candidateName: string
+  companyName: string
   dueDate: string
   isCodingDone: boolean
   isOverdue: boolean
@@ -658,6 +669,13 @@ export interface HandlersResponseCurrentUserResponse {
 export interface HandlersResponseDomainsCodingQuestion {
   code?: number
   data?: DomainsCodingQuestion
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseDomainsCodingQuestionRoomContext {
+  code?: number
+  data?: DomainsCodingQuestionRoomContext
   message?: string
   timestamp?: string
 }
@@ -1199,17 +1217,40 @@ export namespace CodingInterview {
   }
 
   /**
+   * @description Get coding interview question room context
+   * @tags codingInterview
+   * @name GetQuestionRoomContext
+   * @summary Get coding interview question room context
+   * @request GET:/codingInterview.getQuestionRoomContext/{roomID}
+   * @response `200` `GetQuestionRoomContextData` Successful response with the coding interview question room context
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetQuestionRoomContext {
+    export type RequestParams = {
+      /** Room ID */
+      roomId: string
+    }
+    export type RequestQuery = {}
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetQuestionRoomContextData
+  }
+
+  /**
    * @description Get coding interview questions
    * @tags codingInterview
    * @name GetQuestions
    * @summary Get coding interview questions
-   * @request GET:/codingInterview.getQuestions
+   * @request GET:/codingInterview.getQuestions/{roomID}
    * @response `200` `GetQuestionsData` Successful response with the coding interview questions
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `500` `HandlersErrResponse` Internal Server Error
    */
   export namespace GetQuestions {
-    export type RequestParams = {}
+    export type RequestParams = {
+      roomId: string
+    }
     export type RequestQuery = {}
     export type RequestBody = never
     export type RequestHeaders = {}
@@ -2322,19 +2363,39 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
 
     /**
+     * @description Get coding interview question room context
+     *
+     * @tags codingInterview
+     * @name GetQuestionRoomContext
+     * @summary Get coding interview question room context
+     * @request GET:/codingInterview.getQuestionRoomContext/{roomID}
+     * @response `200` `GetQuestionRoomContextData` Successful response with the coding interview question room context
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getQuestionRoomContext: (roomId: string, params: RequestParams = {}) =>
+      this.request<GetQuestionRoomContextData, GetQuestionRoomContextError>({
+        path: `/codingInterview.getQuestionRoomContext/${roomId}`,
+        method: "GET",
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Get coding interview questions
      *
      * @tags codingInterview
      * @name GetQuestions
      * @summary Get coding interview questions
-     * @request GET:/codingInterview.getQuestions
+     * @request GET:/codingInterview.getQuestions/{roomID}
      * @response `200` `GetQuestionsData` Successful response with the coding interview questions
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    getQuestions: (params: RequestParams = {}) =>
+    getQuestions: (roomId: string, params: RequestParams = {}) =>
       this.request<GetQuestionsData, GetQuestionsError>({
-        path: `/codingInterview.getQuestions`,
+        path: `/codingInterview.getQuestions/${roomId}`,
         method: "GET",
         type: ContentType.Json,
         format: "json",

@@ -3,6 +3,7 @@ package repositories
 import (
 	"fmt"
 	"net/url"
+	"time"
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"gorm.io/gorm"
@@ -18,11 +19,44 @@ func NewCodingInterviewRepository(db gorm.DB) ICodingInterviewRepository {
 	}
 }
 
-// TODO: Add roomId to filter coding question by room
-func (c *codingInterviewRepository) GetCodingQuestionList() ([]domains.CodingQuestionResponse, error) {
-	var codingQuestions []domains.CodingQuestion
+func (c *codingInterviewRepository) GetCodingQuestionRoomContext(roomID string) (domains.CodingQuestionRoomContext, error) {
+	var snapshot domains.CodingQuestionSnapshot
+	var createdAt, updatedAt time.Time
 
-	if err := c.DB.Preload("TestCases", "is_example = ?", true).Find(&codingQuestions).Error; err != nil {
+	if err := c.DB.Where("room_id = ?", roomID).First(&snapshot).Error; err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return domains.CodingQuestionRoomContext{}, err
+		}
+	} else {
+		createdAt = snapshot.CreatedAt
+		updatedAt = snapshot.UpdatedAt
+	}
+
+	var workspace domains.Workspace
+	if err := c.DB.Joins("JOIN rooms ON rooms.workspace_id = workspaces.id").
+		Where("rooms.id = ?", roomID).
+		First(&workspace).Error; err != nil {
+		return domains.CodingQuestionRoomContext{}, err
+	}
+
+	return domains.CodingQuestionRoomContext{
+		CreatedAt:  createdAt,
+		UpdatedAt:  updatedAt,
+		CodingTime: workspace.CodingTime,
+	}, nil
+}
+
+// TODO: Add roomId to filter coding question by room
+func (c *codingInterviewRepository) GetCodingQuestionList(roomID string) ([]domains.CodingQuestionResponse, error) {
+	var codingQuestions []domains.CodingQuestion
+	//get workspace by room
+	var workspace domains.Workspace
+	if err := c.DB.Joins("JOIN rooms ON rooms.workspace_id = workspaces.id").
+		Where("rooms.id = ?", roomID).
+		First(&workspace).Error; err != nil {
+		return nil, err
+	}
+	if err := c.DB.Joins("JOIN coding_question_in_workspaces ON coding_question_in_workspaces.coding_question_id = coding_questions.id").Where("coding_question_in_workspaces.workspace_id = ?", workspace.Id).Preload("TestCases", "is_example = ?", true).Find(&codingQuestions).Error; err != nil {
 		return nil, err
 	}
 
@@ -53,6 +87,7 @@ func (c *codingInterviewRepository) GetCodingQuestionListInPortal(portalID int) 
 	if err := c.DB.Distinct("coding_questions.*").
 		Joins("JOIN coding_question_in_portals ON coding_questions.id = coding_question_in_portals.coding_question_id").
 		Where("coding_question_in_portals.portal_id = ?", portalID).
+		Order("coding_questions.updated_at DESC").
 		Find(&codingQuestions).Error; err != nil {
 		return nil, err
 	}
@@ -81,6 +116,7 @@ func (c *codingInterviewRepository) GetCodingQuestionByTitle(title string) (doma
 		return domains.CodingQuestionResponse{}, err
 	}
 	var testCaseResponses []domains.CodingQuestionTestCaseResponse
+	fmt.Println(codingQuestion.TestCases)
 	for _, testCase := range codingQuestion.TestCases {
 		testCaseResponses = append(testCaseResponses, domains.CodingQuestionTestCaseResponse{
 			Input:     testCase.Input,
@@ -170,9 +206,16 @@ func (c *codingInterviewRepository) GetRoomIDByUserID(userID uint) (string, erro
 }
 
 func (c *codingInterviewRepository) SaveCodingSnapshot(snapshot domains.CodingQuestionSnapshot) (domains.CodingQuestionSnapshot, error) {
-	if err := c.DB.Create(&snapshot).Error; err != nil {
-		return domains.CodingQuestionSnapshot{}, err
+	if snapshot.CodingQuestionID == 0 {
+		if err := c.DB.Create(&snapshot).Error; err != nil {
+			return domains.CodingQuestionSnapshot{}, err
+		}
+	} else {
+		if err := c.DB.Model(&domains.CodingQuestionSnapshot{}).Where("room_id = ?", snapshot.RoomID).Updates(snapshot).Error; err != nil {
+			return domains.CodingQuestionSnapshot{}, err
+		}
 	}
+
 	return snapshot, nil
 }
 

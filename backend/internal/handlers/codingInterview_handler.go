@@ -18,6 +18,26 @@ func NewCodingInterviewHandler(codingInterviewService services.ICodingInterviewS
 	}
 }
 
+// @Summary Get coding interview question room context
+// @Description Get coding interview question room context
+// @Tags codingInterview
+// @ID GetQuestionRoomContext
+// @Accept json
+// @Produce json
+// @Param roomID path string true "Room ID"
+// @Success 200 {object} Response[domains.CodingQuestionRoomContext] "Successful response with the coding interview question room context"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.getQuestionRoomContext/{roomID} [get]
+func (co CodingInterviewHandler) GetQuestionRoomContext(c *fiber.Ctx) error {
+	roomID := c.Params("roomID")
+	roomContext, err := co.codingInterviewService.GetCodingInterviewQuestionRoomContext(roomID)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+	return Ok(c, roomContext)
+}
+
 // @Summary Get compile result for a coding interview
 // @Description Get compile result for a coding interview
 // @Tags codingInterview
@@ -52,9 +72,10 @@ func (co CodingInterviewHandler) GetCompileResult(c *fiber.Ctx) error {
 // @Success 200 {object} Response[CodingInterviewGetQuestionsResponse] "Successful response with the coding interview questions"
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /codingInterview.getQuestions [get]
+// @Router /codingInterview.getQuestions/{roomID} [get]
 func (co CodingInterviewHandler) GetQuestions(c *fiber.Ctx) error {
-	questions, err := co.codingInterviewService.GetCodingInterviewQuestions()
+	roomID := c.Params("roomID")
+	questions, err := co.codingInterviewService.GetCodingInterviewQuestions(roomID)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}

@@ -1,10 +1,10 @@
 import useSWR from "swr"
 import { server } from "@/contexts/swr.tsx"
 
-export const useGetCodingInterviewQuestion = () => {
+export const useGetCodingInterviewQuestion = (roomId: string) => {
   const { data, error, isLoading, mutate } = useSWR(
-    ["codingInterview", "getCodingInterviewQuestion"],
-    () => server.codingInterview.getQuestions(),
+    ["codingInterview", "getCodingInterviewQuestion", roomId],
+    () => server.codingInterview.getQuestions(roomId),
   )
   return {
     data,
