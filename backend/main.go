@@ -12,5 +12,6 @@ func main() {
 	loaders.SetupMinio()
 	loaders.SetupRedis()
 	loaders.SetupMailjet()
+	loaders.SetupSentry()
 	loaders.SetupRoutes()
 }

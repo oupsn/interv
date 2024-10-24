@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/getsentry/sentry-go"
 	"strings"
 	"time"
 
@@ -205,16 +206,15 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 	var IsVideoDone = !*workspace.IsVideo
 
 	for _, u := range workspace.UserInWorkspace {
-		if err != nil {
-			return err
-		}
 		if u.Status == "idle" {
 			room, _, err := w.roomService.CreateRoom(domains.Room{CandidateID: u.UserId, WorkspaceID: workspaceId, IsCodingDone: &IsCodingDone, IsVideoDone: &IsVideoDone})
 			if err != nil {
+				sentry.CaptureException(err)
 				return err
 			}
 			user, err := w.userRepository.FindById(u.UserId)
 			if err != nil {
+				sentry.CaptureException(err)
 				return err
 			}
 			mailList = append(mailList, MailObject{
@@ -237,6 +237,7 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 	}
 
 	if err := w.mailService.SendMail(mailPayload); err != nil {
+		sentry.CaptureException(err)
 		return err
 	}
 
