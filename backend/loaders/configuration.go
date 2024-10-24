@@ -30,6 +30,7 @@ const (
 	EnvJavaLinterEndpoint   = "JAVA_LINTER_ENDPOINT"
 	EnvCLinterEndpoint      = "C_LINTER_ENDPOINT"
 	EnvRedisURL             = "REDIS_URL"
+	SENTRY_DSN              = "SENTRY_DSN"
 )
 
 func init() {
