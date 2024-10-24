@@ -22,6 +22,7 @@ import QuestionBankEditVideoQuestionForm from "@/pages/portal/questionBank/compo
 import WorkspaceInterestPage from "@/pages/portal/workspace/WorkspaceInterestPage"
 import CodingResult from "@/pages/portal/workspace/components/CodingResult"
 import CandidateDetailPage from "@/pages/portal/workspace/CandidateDetailPage"
+import EditWorkspacePage from "@/pages/portal/workspace/EditWorkspacePage"
 
 export const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ export const router = createBrowserRouter([
                   {
                     path: "",
                     element: <WorkspaceDetailPage />,
+                  },
+                  {
+                    path: "edit",
+                    element: <EditWorkspacePage />,
                   },
                   {
                     path: "candidateList",

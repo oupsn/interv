@@ -1,12 +1,13 @@
 package services
 
 import (
+	"time"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/utils/cryptone"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
-	"time"
 )
 
 var (
@@ -29,15 +30,17 @@ type roomService struct {
 	videoQuestionRepo   repositories.IVideoQuestionRepository
 	codingInterviewRepo repositories.ICodingInterviewRepository
 	workspaceRepo       repositories.IWorkspaceRepository
+	userInWorkspace     repositories.IUserInWorkspaceRepository
 }
 
-func NewRoomService(roomRepo repositories.IRoomRepository, userRepo repositories.IUserRepository, videoQuestionRepo repositories.IVideoQuestionRepository, codingInterviewRepo repositories.ICodingInterviewRepository, workspaceRepo repositories.IWorkspaceRepository) IRoomService {
+func NewRoomService(roomRepo repositories.IRoomRepository, userRepo repositories.IUserRepository, videoQuestionRepo repositories.IVideoQuestionRepository, codingInterviewRepo repositories.ICodingInterviewRepository, workspaceRepo repositories.IWorkspaceRepository, userInWorkspace repositories.IUserInWorkspaceRepository) IRoomService {
 	return &roomService{
 		roomRepo:            roomRepo,
 		userRepo:            userRepo,
 		videoQuestionRepo:   videoQuestionRepo,
 		codingInterviewRepo: codingInterviewRepo,
 		workspaceRepo:       workspaceRepo,
+		userInWorkspace:     userInWorkspace,
 	}
 }
 
@@ -90,6 +93,17 @@ func (l roomService) GetRoomContext(roomId string) (*domains.Room, *domains.User
 	if err != nil {
 		return nil, nil, 0, 0, 0, 0, nil, err
 	}
+	_ = room.WorkspaceID
+
+	if err = l.userInWorkspace.UpdateStatusCandidate(room.WorkspaceID, "pending"); err != nil {
+		return nil, nil, 0, 0, 0, 0, nil, err
+	}
+	if room.IsCodingDone != nil && room.IsVideoDone != nil && *room.IsCodingDone && *room.IsVideoDone {
+		err := l.userInWorkspace.UpdateStatusCandidate(room.WorkspaceID, "success")
+		if err != nil {
+			return nil, nil, 0, 0, 0, 0, nil, err
+		}
+	}
 
 	return room, candidate, uint(len(videoQuestion)), videoQuestionTotalTime, uint(len(codingQuestion)), workspace.CodingTime, &workspace.EndDate, nil
 }
@@ -98,7 +112,6 @@ func (l roomService) UpdateRoomContext(room domains.Room) error {
 	if err := l.roomRepo.Update(room); err != nil {
 		return err
 	}
-
 	return nil
 }
 
