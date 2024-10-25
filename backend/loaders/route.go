@@ -3,6 +3,7 @@ package loaders
 import (
 	"errors"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 	"time"
 
 	swagger "github.com/arsmn/fiber-swagger/v2"
@@ -163,6 +164,7 @@ func NewFiberApp() *fiber.App {
 	fiberConfig := fiber.Config{
 		AppName: "🕊️",
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
+			sentry.CaptureException(err)
 			// Status code defaults to 500
 			code := fiber.StatusInternalServerError
 			Message := ""
