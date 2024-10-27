@@ -1,9 +1,10 @@
 package services
 
 import (
-	"github.com/getsentry/sentry-go"
 	"strings"
 	"time"
+
+	"github.com/getsentry/sentry-go"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -244,8 +245,16 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 	return nil
 }
 
-func (w *workspaceService) UpdateStatusCandidate(workspaceId uint, status string) (err error) {
-	err = w.userInWorkspaceRepository.UpdateStatusCandidate(workspaceId, status)
+func (w *workspaceService) UpdateStatusAllCandidate(workspaceId uint, status string) (err error) {
+	err = w.userInWorkspaceRepository.UpdateStatusAllCandidate(workspaceId, status)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (w *workspaceService) UpdateStatusIndividualCandidate(userId uint, workspaceId uint, status string) (err error) {
+	err = w.userInWorkspaceRepository.UpdateStatusIndividualCandidate(userId, workspaceId, status)
 	if err != nil {
 		return err
 	}
