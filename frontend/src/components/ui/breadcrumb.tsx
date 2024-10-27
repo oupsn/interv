@@ -14,7 +14,7 @@ const Breadcrumb = React.forwardRef<
     ref={ref}
     aria-label="breadcrumb"
     className={
-      "container max-w-[1200px] flex items-start justify-between pt-8 "
+      "container max-w-[1200px] flex items-start justify-between pt-8 items-center"
     }
     {...props}
   />

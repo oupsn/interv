@@ -89,10 +89,8 @@ const EditWorkspacePage = () => {
 
   const [vidTime, setVidTime] = useState<number>(0)
 
-  const isVideo =
-    videoCurrentQuestion === undefined ? false : videoCurrentQuestion.length > 0
-  const isCoding =
-    codeCurrentQuestion === undefined ? false : codeCurrentQuestion.length > 0
+  const isVideo = workspaceData?.data?.isVideo
+  const isCoding = workspaceData?.data?.isCoding
 
   const formSchema = z.object({
     title: z.string().min(1, { message: "Required" }),
@@ -132,8 +130,8 @@ const EditWorkspacePage = () => {
     },
   })
   const { setValue, watch } = form
-  setValue("isVideo", isVideo)
-  setValue("isCoding", isCoding)
+  setValue("isVideo", isVideo ? true : true)
+  setValue("isCoding", isCoding ? true : true)
   const startDate = watch("date.startDate")
   const endDate = watch("date.endDate")
   const handleDateChange = (range: DateRange | undefined) => {
@@ -185,7 +183,11 @@ const EditWorkspacePage = () => {
       )
     navigate("/portal/workspace")
   }
-
+  const truncatedTitle = workspaceData?.data?.title
+    ? workspaceData.data.title.length > 30
+      ? `${workspaceData.data.title.slice(0, 30)}...`
+      : workspaceData.data.title
+    : ""
   useEffect(() => {
     if (firstTime) {
       setCodeCurrentQuestion(codeWorkspaceQuestion?.data?.sort())
@@ -260,7 +262,7 @@ const EditWorkspacePage = () => {
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link to={"/portal/workspace/" + workspaceId}>
-                  {workspaceData?.data?.title}
+                  {truncatedTitle}
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>

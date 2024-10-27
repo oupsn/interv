@@ -61,7 +61,7 @@ export const router = createBrowserRouter([
                     element: <EditWorkspacePage />,
                   },
                   {
-                    path: "candidateList",
+                    path: "applicantList",
                     children: [
                       {
                         path: "",
@@ -74,7 +74,7 @@ export const router = createBrowserRouter([
                     ],
                   },
                   {
-                    path: "interestList",
+                    path: "candidateList",
                     children: [
                       {
                         path: "",

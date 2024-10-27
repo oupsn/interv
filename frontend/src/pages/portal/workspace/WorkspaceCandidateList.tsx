@@ -29,6 +29,11 @@ const WorkspaceCandidateList = () => {
   const { workspaceId } = useParams()
   const { data, mutate, isLoading } = useGetWorkspace(Number(workspaceId))
 
+  const truncatedTitle = data?.data?.title
+    ? data.data.title.length > 15
+      ? `${data.data.title.slice(0, 15)}...`
+      : data.data.title
+    : ""
   type UserData = {
     name: string
     username: string
@@ -85,25 +90,26 @@ const WorkspaceCandidateList = () => {
             const data = results.data as string[][]
 
             // Regex to check for special characters (allows alphanumeric, space, comma, dot, dash, and @)
-            const specialCharRegex = /^[a-zA-Z\s,.\-@]+$/
+            const specialCharRegex = /^[a-zA-Z0-9\s,.\-@]+$/
 
             // Validate each row and cell for special characters and length
-            const isValid = data.every((row: string[]) =>
-              row.every(
-                (cell: string) =>
-                  specialCharRegex.test(cell) && cell.length <= 40, // Check special chars and length
-              ),
+            const isValid = data.every((row: string[], rowIndex: number) =>
+              row.every((cell: string, cellIndex: number) => {
+                const valid = specialCharRegex.test(cell) && cell.length <= 40
+                if (!valid) {
+                  console.error(
+                    `Validation error in row ${rowIndex + 1}, cell ${cellIndex + 1}: "${cell}"`,
+                  )
+                }
+                return valid
+              }),
             )
 
             if (isValid) {
               setImportUser(parseUserData(data))
               resolve()
             } else {
-              reject(
-                new Error(
-                  "File contains special characters that are not allowed, or some cells exceed 30 characters.",
-                ),
-              )
+              reject(console.log(Error))
             }
           },
           error: (error) => {
@@ -125,7 +131,6 @@ const WorkspaceCandidateList = () => {
         error instanceof Error ? error.message : "An unexpected error occurred"
       toast.error(errorMessage) // Display the error message
     }
-    console.log(importUser)
   }
 
   const handleSubmitFile = () => {
@@ -153,7 +158,7 @@ const WorkspaceCandidateList = () => {
   }
 
   const handleExportFile = () => {
-    const csvRows = [["name", "username"]]
+    const csvRows = [["name", "email"]]
     const csvContent = csvRows.map((row) => row.join(",")).join("\n")
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
     saveAs(blob, "candidate_import_template.csv")
@@ -168,13 +173,21 @@ const WorkspaceCandidateList = () => {
   }
   return (
     <ContentLayout
-      title={data?.data?.title ?? ""}
+      title="Applicant List"
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link to="/portal/workspace">Workspaces</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to={"/portal/workspace/" + workspaceId}>
+                  {truncatedTitle}
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -186,6 +199,13 @@ const WorkspaceCandidateList = () => {
             <Button
               className="mr-5"
               onClick={() => {
+                if (!data?.data?.isCoding && !data?.data?.isVideo) {
+                  toast.error(
+                    "Please add a question before sending invitations",
+                  )
+                  return
+                }
+
                 toast.promise(
                   server.workspace
                     .inviteAllCandidate({
@@ -197,9 +217,7 @@ const WorkspaceCandidateList = () => {
                   {
                     loading: "Sending invitation",
                     success: "Invitation sent successfully",
-                    error: (err) => {
-                      return err.response.data.message
-                    },
+                    error: (err) => err.response.data.message,
                   },
                 )
               }}
@@ -207,7 +225,7 @@ const WorkspaceCandidateList = () => {
               Invite All
             </Button>
 
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row gap-2 justify-between">
               <Button
                 onClick={() => {
                   handleExportFile()
@@ -238,7 +256,7 @@ const WorkspaceCandidateList = () => {
       }
     >
       <ContentPanel>
-        {data?.data?.userInWorkspace ? (
+        {data?.data?.userInWorkspace?.length ? (
           <Panigator
             dataLength={
               data?.data?.userInWorkspace

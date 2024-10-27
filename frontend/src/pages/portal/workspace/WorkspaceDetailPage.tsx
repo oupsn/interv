@@ -66,6 +66,14 @@ const WorkspaceDetailPage = () => {
         )
       : videoQuestion?.data,
   )
+  const workspaceActive = workspaceData?.data?.userInWorkspace?.every(
+    (user) => user.status === "idle",
+  )
+  const truncatedTitle = workspaceData?.data?.title
+    ? workspaceData.data.title.length > 30
+      ? `${workspaceData.data.title.slice(0, 30)}...`
+      : workspaceData.data.title
+    : ""
 
   useEffect(() => {
     setCodeCurrentQuestion(codeWorkspaceQuestion?.data?.sort())
@@ -113,9 +121,7 @@ const WorkspaceDetailPage = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>
-                {workspaceData?.data?.title ?? ""}
-              </BreadcrumbPage>
+              <BreadcrumbPage>{truncatedTitle}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -130,15 +136,19 @@ const WorkspaceDetailPage = () => {
         >
           <div className="flex items-center gap-5">
             <Label className="text-3xl font-bold text-primary">
-              Title : {workspaceData?.data?.title}
+              Title: {truncatedTitle}
             </Label>
 
-            <FaEdit
-              className="hover:cursor-pointer text-iGreen"
-              onClick={() => {
-                navigate("edit")
-              }}
-            />
+            {workspaceActive || workspaceData?.data?.userInWorkspace == null ? (
+              <FaEdit
+                className="hover:cursor-pointer text-iGreen"
+                onClick={() => {
+                  navigate("edit")
+                }}
+              />
+            ) : (
+              <></>
+            )}
           </div>
           <Label>Number of candidate : {workspaceData?.data?.memberNum}</Label>
           <Label>
@@ -180,11 +190,7 @@ const WorkspaceDetailPage = () => {
                 ).toString()}{" "}
                 Minutes
               </Label>
-              <Label
-                className={cn(
-                  workspaceData?.data?.reqScreen ? "disabled:opacity-30" : "",
-                )}
-              >
+              <Label>
                 Screen:
                 <span
                   className={

@@ -48,7 +48,7 @@ const CandidateDetailPage = () => {
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <Link
-                  to={"/portal/workspace/" + workspaceId + "/candidateList"}
+                  to={"/portal/workspace/" + workspaceId + "/applicantList"}
                 >
                   Applicant List
                 </Link>
