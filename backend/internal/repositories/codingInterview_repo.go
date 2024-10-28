@@ -205,6 +205,14 @@ func (c *codingInterviewRepository) GetRoomIDByUserID(userID uint) (string, erro
 	return roomID, nil
 }
 
+func (c *codingInterviewRepository) GetRoomIDByUserIDAndWorkspaceID(userID uint, workspaceID int) (string, error) {
+	var roomID string
+	if err := c.DB.Model(&domains.Room{}).Where("candidate_id = ? AND workspace_id = ?", userID, workspaceID).Pluck("id", &roomID).Error; err != nil {
+		return "", err
+	}
+	return roomID, nil
+}
+
 func (c *codingInterviewRepository) SaveCodingSnapshot(snapshot domains.CodingQuestionSnapshot) (domains.CodingQuestionSnapshot, error) {
 	if snapshot.CodingQuestionID == 0 {
 		if err := c.DB.Create(&snapshot).Error; err != nil {

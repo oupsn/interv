@@ -14,6 +14,7 @@ type ICodingInterviewRepository interface {
 	GetCodingQuestionSubmissionByUserID(userID uint) ([]domains.CodingQuestionSubmission, error)
 	GetCodingQuestionByWorkspaceID(workspaceID int) ([]domains.CodingQuestionInWorkspace, error)
 	GetRoomIDByUserID(userID uint) (string, error)
+	GetRoomIDByUserIDAndWorkspaceID(userID uint, workspaceID int) (string, error)
 	SaveCodingQuestion(question domains.CodingQuestion) (domains.CodingQuestion, error)
 	SaveCodingSnapshot(snapshot domains.CodingQuestionSnapshot) (domains.CodingQuestionSnapshot, error)
 	SaveCodingSubmission(submission domains.CodingQuestionSubmission) (domains.CodingQuestionSubmission, error)
