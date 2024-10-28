@@ -65,7 +65,7 @@ const LoginPage = () => {
         />
         {/*<p className={"text-2xl font-semibold"}>Sign in</p>*/}
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 relative">
             <FormField
               control={form.control}
               name="username"
