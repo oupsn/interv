@@ -1,19 +1,26 @@
-import { ContentLayout } from "@/components/layout/ContentLayout"
-import ContentPanel from "@/components/layout/ContentPanel"
+import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import {
   Breadcrumb,
-  BreadcrumbList,
   BreadcrumbItem,
+  BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Link, useNavigate, useParams } from "react-router-dom"
+} from "@/components/ui/breadcrumb.tsx"
+import ContentPanel from "@/components/layout/ContentPanel.tsx"
+import { FaEdit, FaEye, FaTrash } from "react-icons/fa"
 import { Button } from "@/components/ui/button.tsx"
-import { FaEdit, FaTrash } from "react-icons/fa"
+import useCurrentUser from "@/hooks/UseCurrentUser.ts"
+import { useNavigate } from "react-router-dom"
+import { useGetVideoInterviewQuestionByPortalId } from "@/hooks/useGetVideoInterviewQuestionByPortalId.ts"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table.tsx"
+import { Plus } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner.tsx"
-import { useGetVideoQuestionDetail } from "@/hooks/useGetVideoQuestionDetail.ts"
-import { textTruncate } from "@/pages/portal/questionBank/utils/utils.ts"
 import {
   Dialog,
   DialogContent,
@@ -23,25 +30,36 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog.tsx"
+import { useState } from "react"
 import { toast } from "sonner"
 import { server } from "@/contexts/swr.tsx"
-import { useState } from "react"
-
-function QuestionBankVideoDetail() {
+import { textTruncate } from "@/pages/portal/questionBank/utils/utils.ts"
+import Panigator from "../workspace/components/Panigator"
+const QuestionBankVideoListPage = () => {
+  const { currentUser } = useCurrentUser()
+  const [page, setPage] = useState(1)
+  const size = 10
+  const {
+    data: videoQuestionList,
+    error,
+    mutate,
+    isLoading,
+  } = useGetVideoInterviewQuestionByPortalId(currentUser.portalId)
   const [selectedItemToDelete, setSelectedItemToDelete] = useState<
     number | null
   >(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const { videoQuestionId } = useParams()
   const navigate = useNavigate()
+  const handleAdd = () => {
+    navigate("/portal/question/video/create")
+  }
+  const handleView = (id: number) => {
+    navigate(`/portal/question/video/${encodeURIComponent(id)}`)
+  }
+
   const handleEdit = (id: number) => {
     navigate(`/portal/question/video/${encodeURIComponent(id)}/edit`)
   }
-  const {
-    data: videoQuestion,
-    isLoading,
-    error,
-  } = useGetVideoQuestionDetail(parseInt(videoQuestionId!))
 
   const handleDelete = (id: number) => {
     setSelectedItemToDelete(id)
@@ -53,9 +71,7 @@ function QuestionBankVideoDetail() {
       toast.promise(
         server.videoQuestion
           .deleteVideoQuestionById({ id: selectedItemToDelete })
-          .then(() => {
-            navigate("/portal/question/video")
-          }),
+          .then(() => mutate()),
         {
           loading: "Deleting...",
           success: "Deleted successfully",
@@ -69,63 +85,23 @@ function QuestionBankVideoDetail() {
 
   return (
     <ContentLayout
-      title={"Video Question"}
+      title={"Video Questions"}
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/portal/question/video">Video Questions</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>
-                {textTruncate(videoQuestion?.data?.title ?? "", 50)}
-              </BreadcrumbPage>
+              <BreadcrumbPage>Video Questions</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>
             <Button
               variant="outline"
-              onClick={() => handleEdit(parseInt(videoQuestionId!))}
-              size="icon"
+              onClick={() => handleAdd()}
+              className="flex flex-row items-center gap-2"
             >
-              <FaEdit />
+              <Plus />
+              Create new
             </Button>
-            <Dialog
-              open={isDeleteDialogOpen}
-              onOpenChange={setIsDeleteDialogOpen}
-            >
-              <DialogTrigger asChild>
-                <Button
-                  onClick={() => handleDelete(videoQuestion?.data?.id ?? 0)}
-                  size="icon"
-                >
-                  <FaTrash />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-white">
-                <DialogHeader>
-                  <DialogTitle>Delete Video Question</DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to delete this video question? This
-                    action cannot be undone.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsDeleteDialogOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button variant="destructive" onClick={confirmDelete}>
-                    Delete
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
           </BreadcrumbList>
         </Breadcrumb>
       }
@@ -140,28 +116,89 @@ function QuestionBankVideoDetail() {
             <div>Error: {error.message}</div>
           </div>
         ) : (
-          <div className={"space-y-6"}>
-            <div>
-              <p className="text-lg font-semibold mb-2">Question Title</p>
-              <div>{videoQuestion?.data?.title}</div>
-            </div>
-            <div>
-              <p className="text-lg font-semibold mb-2">Time To Prepare</p>
-              <div>{videoQuestion?.data?.timeToPrepare}</div>
-            </div>
-            <div>
-              <p className="text-lg font-semibold mb-2">Time To Answer</p>
-              <div>{videoQuestion?.data?.timeToAnswer}</div>
-            </div>
-            <div>
-              <p className="text-lg font-semibold mb-2">Max Attempt</p>
-              <div>{videoQuestion?.data?.totalAttempt}</div>
-            </div>
-          </div>
+          <Panigator
+            dataLength={
+              videoQuestionList?.data ? videoQuestionList?.data?.length : 0
+            }
+            children={
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead className={"w-[100px]"}>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {videoQuestionList?.data?.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">
+                        {textTruncate(item.title ?? "", 120)}
+                      </TableCell>
+                      <TableCell>
+                        <td className="flex w-fit gap-2">
+                          <Button
+                            onClick={() => handleView(item.id!)}
+                            size="icon"
+                          >
+                            <FaEye />
+                          </Button>
+                          <Button
+                            onClick={() => handleEdit(item.id ?? 0)}
+                            size="icon"
+                          >
+                            <FaEdit />
+                          </Button>
+                          <Dialog
+                            open={isDeleteDialogOpen}
+                            onOpenChange={setIsDeleteDialogOpen}
+                          >
+                            <DialogTrigger asChild>
+                              <Button
+                                onClick={() => handleDelete(item.id ?? 0)}
+                                size="icon"
+                              >
+                                <FaTrash />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="bg-white">
+                              <DialogHeader>
+                                <DialogTitle>Delete Video Question</DialogTitle>
+                                <DialogDescription>
+                                  Are you sure you want to delete this video
+                                  question? This action cannot be undone.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <DialogFooter>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => setIsDeleteDialogOpen(false)}
+                                >
+                                  Cancel
+                                </Button>
+                                <Button
+                                  variant="destructive"
+                                  onClick={confirmDelete}
+                                >
+                                  Delete
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                        </td>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            }
+            size={size}
+            page={page}
+            setPage={setPage}
+          />
         )}
       </ContentPanel>
     </ContentLayout>
   )
 }
 
-export default QuestionBankVideoDetail
+export default QuestionBankVideoListPage
