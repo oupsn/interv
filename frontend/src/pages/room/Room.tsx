@@ -140,7 +140,7 @@ const RoomPage = () => {
                         onClick={() => navigate("video")}
                         className="w-full"
                       >
-                        Start Video Question{" "}
+                        Start Video Question
                         {data?.data?.totalVideoQuestion > 1 ? "s" : ""}
                       </Button>
                     )}
@@ -173,7 +173,7 @@ const RoomPage = () => {
                         onClick={() => navigate("coding")}
                         className="w-full"
                       >
-                        Start Coding Question{" "}
+                        Start Coding Question
                         {data?.data?.totalCodingQuestion > 1 ? "s" : ""}
                       </Button>
                     )}

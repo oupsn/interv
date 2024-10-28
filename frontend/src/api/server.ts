@@ -37,6 +37,7 @@ export interface CodingInterviewGetCompileResultQuery {
 
 export interface CodingInterviewGetSubmissionResultByUserQuery {
   userID: number
+  workspaceID: number
 }
 
 export interface CodingInterviewUpdateQuestionQuery {

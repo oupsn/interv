@@ -154,6 +154,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                       {formatTestCase(
                         output[index].compile_result?.stdout || "",
                       )}
+                      {output[index].compile_result?.stderr && (
+                        <span>{output[index].compile_result?.stderr}</span>
+                      )}
                     </pre>
                   </div>
                   <div

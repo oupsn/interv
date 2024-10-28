@@ -85,7 +85,7 @@ const VideoInterviewSetupDeviceSetup: FC<
           </Select>
         </div>
       </div>
-      <div className={"space-y-4"}>
+      <div className={"flex flex-row items-center justify-center gap-8"}>
         <VideoInterviewStatusBox
           title={"Camera"}
           error={mediaError}

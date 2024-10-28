@@ -40,10 +40,12 @@ const CodingInterviewPage = () => {
   const [isFinish, setIsFinish] = useState(false)
   const [isRecordingSaved, setIsRecordingSaved] = useState(false)
   const [questionsLoaded, setQuestionsLoaded] = useState(false)
+  const [wasStarted, setWasStarted] = useState(false)
+  const [isTimeUp, setIsTimeUp] = useState(false)
   const [timeRemainText, setTimeRemainText] = useState("")
   const { selectedCameraId, selectedMicrophoneId, fetchDevice } =
     useContext(DeviceContext)
-  const { setLoading, setText } = useContext(LoadingContext)
+  const { setLoading, setText, setTransparent } = useContext(LoadingContext)
   const formatTime = (time: number): string => {
     const hours = Math.floor(time / 3600)
     const minutes = Math.floor((time % 3600) / 60)
@@ -126,6 +128,7 @@ const CodingInterviewPage = () => {
     videoBlobUrl: string,
     screenBlobUrl: string,
   ) => {
+    setTransparent(false)
     setLoading(true)
     if (videoBlobUrl === "" && screenBlobUrl === "") {
       setIsRecordingSaved(true)
@@ -163,6 +166,7 @@ const CodingInterviewPage = () => {
         setIsRecordingSaved(true)
         setLoading(false)
         setText("")
+        setTransparent(true)
       })
   }
 
@@ -237,17 +241,20 @@ const CodingInterviewPage = () => {
     }
   }, [isStart, isFinish])
   useEffect(() => {
-    if (timeRemain <= 0) {
+    if (timeRemain <= 0 && fetchedContext?.data?.is_done) {
       setIsStart(true)
       setIsRecordingSaved(true)
       setIsFinish(true)
+    } else if (timeRemain <= 0 && !fetchedContext?.data?.is_done) {
+      setIsTimeUp(true)
     }
-  }, [timeRemain])
+  }, [fetchedContext?.data?.is_done, timeRemain])
   useEffect(() => {
     if (fetchedContext?.data) {
       if (fetchedContext.data.is_done) {
         setIsStart(true)
         setIsFinish(true)
+        setWasStarted(true)
         return
       }
       const createdAt = new Date(fetchedContext.data.created_at ?? "")
@@ -259,6 +266,7 @@ const CodingInterviewPage = () => {
         currentTime > createdAt &&
         fetchedContext.data.updated_at !== fetchedContext.data.created_at
       ) {
+        setWasStarted(true)
         const timeDifferenceInSeconds = Math.floor(
           (currentTime.getTime() - createdAt.getTime()) / 1000,
         )
@@ -299,6 +307,7 @@ const CodingInterviewPage = () => {
             />
           ) : questionsLoaded && questionList.length > 0 && !isFinish ? (
             <CodingInterviewPanel
+              isTimeUp={isTimeUp}
               timeTaken={calculateTimeTaken()}
               roomId={roomId ?? ""}
               timeRemain={timeRemain}
@@ -320,6 +329,8 @@ const CodingInterviewPage = () => {
           )
         ) : (
           <CodingInterviewInstruction
+            wasStarted={wasStarted}
+            isTimeUp={isTimeUp}
             isCameraRequired={fetchedContext?.data?.is_camera_required ?? false}
             isScreenShareRequired={
               fetchedContext?.data?.is_screen_share_required ?? false

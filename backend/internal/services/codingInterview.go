@@ -32,7 +32,7 @@ type ICodingInterviewService interface {
 	GetCodingInterviewQuestionByTitle(title string) (domains.CodingQuestionResponse, error)
 	GetCodingInterviewQuestionsInPortal(portalID int) ([]domains.CodingQuestion, error)
 	GetCodingInterviewQuestionsInWorkspace(workspaceId int) ([]domains.CodingQuestion, error)
-	GetCodingSubmissionResultByUser(userID uint) (domains.CodingQuestionSubmissionResult, error)
+	GetCodingSubmissionResultByUserWorkspace(userID uint, workspaceID uint) (domains.CodingQuestionSubmissionResult, error)
 	GenerateCompileToken(req domains.CompilationRequest) (string, error)
 	GetCompileResult(req domains.CompilationRequest) ([]domains.CompilationResultResponse, error)
 	CreateCodingQuestion(req domains.CodingQuestion, portalID uint) (domains.CreateCodingQuestionResponse, error)

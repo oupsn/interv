@@ -2424,10 +2424,14 @@ const docTemplate = `{
         "CodingInterviewGetSubmissionResultByUserQuery": {
             "type": "object",
             "required": [
-                "userID"
+                "userID",
+                "workspaceID"
             ],
             "properties": {
                 "userID": {
+                    "type": "integer"
+                },
+                "workspaceID": {
                     "type": "integer"
                 }
             }

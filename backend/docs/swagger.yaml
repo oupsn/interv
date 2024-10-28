@@ -50,8 +50,11 @@ definitions:
     properties:
       userID:
         type: integer
+      workspaceID:
+        type: integer
     required:
     - userID
+    - workspaceID
     type: object
   CodingInterviewUpdateQuestionQuery:
     properties:
