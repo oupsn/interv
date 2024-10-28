@@ -14,8 +14,24 @@ import { FaEdit, FaTrash } from "react-icons/fa"
 import { Spinner } from "@/components/ui/spinner.tsx"
 import { useGetVideoQuestionDetail } from "@/hooks/useGetVideoQuestionDetail.ts"
 import { textTruncate } from "@/pages/portal/questionBank/utils/utils.ts"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog.tsx"
+import { toast } from "sonner"
+import { server } from "@/contexts/swr.tsx"
+import { useState } from "react"
 
 function QuestionBankVideoDetail() {
+  const [selectedItemToDelete, setSelectedItemToDelete] = useState<
+    number | null
+  >(null)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const { videoQuestionId } = useParams()
   const navigate = useNavigate()
   const handleEdit = (id: number) => {
@@ -28,7 +44,27 @@ function QuestionBankVideoDetail() {
   } = useGetVideoQuestionDetail(parseInt(videoQuestionId!))
 
   const handleDelete = (id: number) => {
-    console.log("delete", id)
+    setSelectedItemToDelete(id)
+    setIsDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = () => {
+    if (selectedItemToDelete) {
+      toast.promise(
+        server.videoQuestion
+          .deleteVideoQuestionById({ id: selectedItemToDelete })
+          .then(() => {
+            navigate("/portal/question/video")
+          }),
+        {
+          loading: "Deleting...",
+          success: "Deleted successfully",
+          error: "Failed to delete",
+        },
+      )
+    }
+    setIsDeleteDialogOpen(false)
+    setSelectedItemToDelete(null)
   }
 
   return (
@@ -57,13 +93,39 @@ function QuestionBankVideoDetail() {
             >
               <FaEdit />
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleDelete(parseInt(videoQuestionId!))}
-              size="icon"
+            <Dialog
+              open={isDeleteDialogOpen}
+              onOpenChange={setIsDeleteDialogOpen}
             >
-              <FaTrash />
-            </Button>
+              <DialogTrigger asChild>
+                <Button
+                  onClick={() => handleDelete(videoQuestion?.data?.id ?? 0)}
+                  size="icon"
+                >
+                  <FaTrash />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-white">
+                <DialogHeader>
+                  <DialogTitle>Delete Video Question</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this video question? This
+                    action cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsDeleteDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button variant="destructive" onClick={confirmDelete}>
+                    Delete
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </BreadcrumbList>
         </Breadcrumb>
       }
