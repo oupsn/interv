@@ -33,6 +33,7 @@ import {
 import { useState } from "react"
 import { toast } from "sonner"
 import { server } from "@/contexts/swr.tsx"
+import { textTruncate } from "@/pages/portal/questionBank/utils/utils.ts"
 
 const QuestionBankVideoListPage = () => {
   const { currentUser } = useCurrentUser()
@@ -123,7 +124,9 @@ const QuestionBankVideoListPage = () => {
             <TableBody>
               {videoQuestionList?.data?.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.title}</TableCell>
+                  <TableCell className="font-medium">
+                    {textTruncate(item.title ?? "", 120)}
+                  </TableCell>
                   <TableCell>
                     <td className="flex w-fit gap-2">
                       <Button onClick={() => handleView(item.id!)} size="icon">
