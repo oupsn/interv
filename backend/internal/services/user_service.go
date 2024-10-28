@@ -98,3 +98,11 @@ func (u *userService) CreateAdmin(user domains.User, portalId uint) (err error) 
 	}
 	return nil
 }
+
+func (u *userService) UpdateIndividualUser(userId uint, name string, username string) (user *domains.User, err error) {
+	user, err = u.userRepository.UpdateIndividualUser(userId, name, username)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}

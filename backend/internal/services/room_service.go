@@ -101,11 +101,11 @@ func (l roomService) GetRoomContext(roomId string) (*domains.Room, *domains.User
 	}
 	_ = room.WorkspaceID
 
-	if err = l.userInWorkspace.UpdateStatusCandidate(room.WorkspaceID, "pending"); err != nil {
+	if err = l.userInWorkspace.UpdateStatusIndividualCandidate(room.CandidateID, room.WorkspaceID, "pending"); err != nil {
 		return nil, nil, 0, 0, 0, 0, nil, "", err
 	}
 	if room.IsCodingDone != nil && room.IsVideoDone != nil && *room.IsCodingDone && *room.IsVideoDone {
-		err := l.userInWorkspace.UpdateStatusCandidate(room.WorkspaceID, "success")
+		err := l.userInWorkspace.UpdateStatusIndividualCandidate(room.CandidateID, room.WorkspaceID, "success")
 		if err != nil {
 			return nil, nil, 0, 0, 0, 0, nil, "", err
 		}

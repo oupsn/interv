@@ -41,18 +41,18 @@ export function getMenuList(
                     active: pathname === "/portal/workspace/" + workspaceId,
                   },
                   {
-                    href: "/portal/workspace/" + workspaceId + "/candidateList",
+                    href: "/portal/workspace/" + workspaceId + "/applicantList",
                     label: "Applicant List",
                     active:
                       pathname ===
-                      "/portal/workspace/" + workspaceId + "/candidateList",
+                      "/portal/workspace/" + workspaceId + "/applicantList",
                   },
                   {
-                    href: "/portal/workspace/" + workspaceId + "/interestList",
-                    label: "Interest List",
+                    href: "/portal/workspace/" + workspaceId + "/candidateList",
+                    label: "Candidate List",
                     active:
                       pathname ===
-                      "/portal/workspace/" + workspaceId + "/interestList",
+                      "/portal/workspace/" + workspaceId + "/candidateList",
                   },
                 ]
               : []),

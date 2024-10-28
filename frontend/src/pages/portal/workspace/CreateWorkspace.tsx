@@ -22,7 +22,7 @@ import DatePicker from "./components/DatePicker"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { DateRange } from "react-day-picker"
 import { addDays } from "date-fns"
 import { server } from "@/contexts/swr"
@@ -38,6 +38,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Link, useNavigate } from "react-router-dom"
 import QuestionPicker from "./components/QuestionPicker"
 import { Spinner } from "@/components/ui/spinner"
+import { LoadingContext } from "@/contexts/loading"
 
 // Zod schema for form validation
 
@@ -88,10 +89,10 @@ const CreateWorkspace = () => {
     isCoding: z.boolean().default(false),
     codingTime: z
       .number()
-      .min(isCoding ? 1 : 0, isCoding ? { message: "Required" } : {}),
+      .min(isCoding ? 1 : 0, isCoding ? { message: "Required" } : {})
+      .max(180),
     videoTime: z.number().min(0, isVideo ? { message: "Required" } : {}),
     reqScreen: z.boolean().default(false),
-    reqMicrophone: z.boolean().default(false),
     reqCamera: z.boolean().default(false),
   })
   const form = useForm<z.infer<typeof formSchema>>({
@@ -104,7 +105,6 @@ const CreateWorkspace = () => {
       videoTime: Number(0),
       codingTime: Number(0),
       reqScreen: false,
-      reqMicrophone: false,
       reqCamera: false,
     },
   })
@@ -113,6 +113,7 @@ const CreateWorkspace = () => {
   setValue("isCoding", isCoding)
   const startDate = watch("date.startDate")
   const endDate = watch("date.endDate")
+  const { setLoading } = useContext(LoadingContext)
 
   const handleDateChange = (range: DateRange | undefined) => {
     setDateRange(range)
@@ -137,12 +138,13 @@ const CreateWorkspace = () => {
     const ListVideoQuestion = videoCurrentQuestion
       ? videoCurrentQuestion.map((question) => question.id ?? 0)
       : []
-    isCoding ? setValue("codingTime", 0) : {},
-      toast.promise(
+    isCoding ? setValue("codingTime", 0) : {}, setLoading(true)
+    try {
+      const response = await toast.promise(
         server.workspace.createWorkspace({
           ...values,
           reqScreen: isCoding ? values.reqScreen : false,
-          reqMicrophone: isCoding ? values.reqMicrophone : false,
+          reqMicrophone: isCoding ? values.reqCamera : false,
           reqCamera: isCoding ? values.reqCamera : false,
           codingTime: isCoding ? values.codingTime * 60 : 0,
           videoTime: vidTime,
@@ -160,7 +162,16 @@ const CreateWorkspace = () => {
           },
         },
       )
-    navigate("/portal/workspace")
+      console.log(response)
+    } catch (error) {
+      console.error("Error creating workspace:", error)
+    } finally {
+      setLoading(true)
+      setTimeout(() => {
+        setLoading(false)
+        navigate("/portal/workspace/")
+      }, 1000)
+    }
   }
 
   useEffect(() => {
@@ -374,29 +385,6 @@ const CreateWorkspace = () => {
             />
             <FormField
               control={form.control}
-              name="reqMicrophone"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-2">
-                  <FormControl>
-                    <Checkbox
-                      checked={isCoding ? field.value : false} // Set checked to the boolean value
-                      onCheckedChange={field.onChange} // Update the form state when checkbox changes
-                      onBlur={field.onBlur} // Handle onBlur event
-                      name={field.name} // Set the name for the field
-                      ref={field.ref} // Forward the ref to the input
-                      disabled={!isCoding}
-                      className="size-5 mt-2"
-                    />
-                  </FormControl>
-                  <FormLabel className="text-lg">
-                    Require microphone record
-                  </FormLabel>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="reqCamera"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-2">
@@ -419,7 +407,7 @@ const CreateWorkspace = () => {
               )}
             />
 
-            <Button className={"w-full"}>Submit</Button>
+            <Button className={"w-full"}>Create Workspace</Button>
           </form>
         </Form>
       </ContentPanel>

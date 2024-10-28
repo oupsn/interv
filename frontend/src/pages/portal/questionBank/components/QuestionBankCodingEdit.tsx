@@ -51,6 +51,7 @@ import {
 import { CodingInterviewUpdateQuestionQuery } from "@/api/server"
 import { Controller } from "react-hook-form"
 import { LoadingContext } from "@/contexts/loading"
+import { textTruncate } from "../utils/utils"
 
 function QuestionBankCodingEdit() {
   const { codingTitle } = useParams()
@@ -268,7 +269,9 @@ function QuestionBankCodingEdit() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{decodedTitle}</BreadcrumbPage>
+              <BreadcrumbPage>
+                {textTruncate(decodedTitle ?? "", 50)}
+              </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -622,7 +625,7 @@ function QuestionBankCodingEdit() {
                   <DialogTitle>Confirm Update</DialogTitle>
                   <DialogDescription>
                     Are you sure you want to update the question "
-                    {formValues?.title}"?
+                    {textTruncate(formValues?.title ?? "", 50)} "?
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
