@@ -69,7 +69,4 @@ Interv-platform is a web application built using Go for the backend and React wi
     yarn build
     ```
 
-## License
-This project is licensed under the MIT License.
-
 ### Made with stress and anxiety ❤.
