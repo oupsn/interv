@@ -9,7 +9,7 @@ export default function MainLayoutRevamp() {
 
   if (!sidebar) return null
   return (
-    <main className="max-h-dvh flex ">
+    <main className="max-h-dvh flex overflow-y-hidden">
       <SideBarRevamp />
       <div className={"flex flex-col w-full max-h-full bg-zinc-50"}>
         <Outlet />

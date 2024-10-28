@@ -68,7 +68,7 @@ const CandidateDetailPage = () => {
               <TabsTrigger value="video">Video</TabsTrigger>
             </TabsList>
             <TabsContent value="coding">
-              <CodingResult />
+              <CodingResult workspaceId={Number(workspaceId)} />
             </TabsContent>
             <TabsContent value="video">
               <VideoResult />

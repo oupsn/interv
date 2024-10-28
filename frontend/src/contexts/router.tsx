@@ -20,7 +20,6 @@ import QuestionBankVideoDetail from "@/pages/portal/questionBank/components/Ques
 import QuestionBankCodingEdit from "@/pages/portal/questionBank/components/QuestionBankCodingEdit"
 import QuestionBankEditVideoQuestionForm from "@/pages/portal/questionBank/components/QuestionBankEditVideoQuestionForm.tsx"
 import WorkspaceInterestPage from "@/pages/portal/workspace/WorkspaceInterestPage"
-import CodingResult from "@/pages/portal/workspace/components/CodingResult"
 import CandidateDetailPage from "@/pages/portal/workspace/CandidateDetailPage"
 import QuestionGuideline from "@/pages/room/questionGuideline/QuestionGuideline"
 import EditWorkspacePage from "@/pages/portal/workspace/EditWorkspacePage"
@@ -165,10 +164,6 @@ export const router = createBrowserRouter([
   {
     path: "playground",
     element: <Playground />,
-  },
-  {
-    path: "coding/:userId",
-    element: <CodingResult />,
   },
 ])
 
