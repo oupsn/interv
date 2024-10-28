@@ -32,7 +32,7 @@ const QuestionBankCreateVideoQuestionForm = () => {
     title: z.string().min(1, { message: "Required" }),
     timeToPrepare: z.coerce.number().min(1, { message: "Required" }),
     timeToAnswer: z.coerce.number().min(1, { message: "Required" }),
-    totalAttempt: z.coerce.number().min(0, { message: "Required" }),
+    totalAttempt: z.coerce.number().min(1),
   })
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

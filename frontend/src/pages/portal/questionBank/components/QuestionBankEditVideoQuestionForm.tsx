@@ -28,6 +28,7 @@ import useCurrentUser from "@/hooks/UseCurrentUser.ts"
 import { useEffect } from "react"
 import { Spinner } from "@/components/ui/spinner.tsx"
 import { useGetVideoQuestionDetail } from "@/hooks/useGetVideoQuestionDetail.ts"
+import { textTruncate } from "@/pages/portal/questionBank/utils/utils.ts"
 
 const QuestionBankEditVideoQuestionForm = () => {
   const { currentUser } = useCurrentUser()
@@ -41,7 +42,7 @@ const QuestionBankEditVideoQuestionForm = () => {
     title: z.string().min(1, { message: "Required" }),
     timeToPrepare: z.coerce.number().min(1, { message: "Required" }),
     timeToAnswer: z.coerce.number().min(1, { message: "Required" }),
-    totalAttempt: z.coerce.number().min(0, { message: "Required" }),
+    totalAttempt: z.coerce.number().min(1),
   })
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -102,7 +103,7 @@ const QuestionBankEditVideoQuestionForm = () => {
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link to={`/portal/question/video/${videoQuestionId}`}>
-                  Question {videoQuestionId}
+                  {textTruncate(videoQuestion?.data?.title, 50)}
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
