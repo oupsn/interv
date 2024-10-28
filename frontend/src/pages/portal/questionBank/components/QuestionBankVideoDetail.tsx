@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button.tsx"
 import { FaEdit, FaTrash } from "react-icons/fa"
 import { Spinner } from "@/components/ui/spinner.tsx"
 import { useGetVideoQuestionDetail } from "@/hooks/useGetVideoQuestionDetail.ts"
+import { textTruncate } from "@/pages/portal/questionBank/utils/utils.ts"
 
 function QuestionBankVideoDetail() {
   const { videoQuestionId } = useParams()
@@ -43,7 +44,9 @@ function QuestionBankVideoDetail() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Question {videoQuestionId}</BreadcrumbPage>
+              <BreadcrumbPage>
+                {textTruncate(videoQuestion?.data?.title, 50)}
+              </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>
