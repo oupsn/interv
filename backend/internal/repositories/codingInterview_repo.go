@@ -207,7 +207,7 @@ func (c *codingInterviewRepository) GetRoomIDByUserID(userID uint) (string, erro
 	return roomID, nil
 }
 
-func (c *codingInterviewRepository) GetRoomIDByUserIDAndWorkspaceID(userID uint, workspaceID int) (string, error) {
+func (c *codingInterviewRepository) GetRoomIDByUserIDAndWorkspaceID(userID uint, workspaceID uint) (string, error) {
 	var roomID string
 	if err := c.DB.Model(&domains.Room{}).Where("candidate_id = ? AND workspace_id = ?", userID, workspaceID).Pluck("id", &roomID).Error; err != nil {
 		return "", err

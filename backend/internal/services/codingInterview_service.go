@@ -66,7 +66,7 @@ func (s *codingInterviewService) GetCodingInterviewQuestionsInWorkspace(workspac
 
 func (s *codingInterviewService) GetCodingSubmissionResultByUserWorkspace(userID uint, workspaceID uint) (domains.CodingQuestionSubmissionResult, error) {
 	var result domains.CodingQuestionSubmissionResult
-	roomID, err := s.codingInterviewRepository.GetRoomIDByUserID(userID)
+	roomID, err := s.codingInterviewRepository.GetRoomIDByUserIDAndWorkspaceID(userID, workspaceID)
 	if err != nil {
 		return domains.CodingQuestionSubmissionResult{}, ErrorGetRoomIDByUserID
 	}
