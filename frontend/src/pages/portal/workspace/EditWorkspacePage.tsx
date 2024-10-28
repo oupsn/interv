@@ -280,7 +280,7 @@ const EditWorkspacePage = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-3 px-3"
+            className="space-y-3 px-3 relative"
           >
             <FormField
               control={form.control}

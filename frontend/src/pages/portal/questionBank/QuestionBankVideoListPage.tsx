@@ -33,6 +33,7 @@ import {
 import { useState } from "react"
 import { toast } from "sonner"
 import { server } from "@/contexts/swr.tsx"
+import { textTruncate } from "@/pages/portal/questionBank/utils/utils.ts"
 import Panigator from "../workspace/components/Panigator"
 
 const QuestionBankVideoListPage = () => {
