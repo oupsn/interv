@@ -17,16 +17,41 @@ services:
       - 6379:6379
     volumes:
       - redis_data:/data
-  #core:
-    #build: ./backend
-    #restart: always
-    #ports:
-    #  - 5000:5000
-    #env_file: backend/config.env
-    #depends_on:
-    #  - db
-    #  - redis
+
+  minio:
+    image: minio/minio:RELEASE.2024-07-31T05-46-26Z.fips
+    restart: always
+    environment:
+      - MINIO_ROOT_USER=interv
+      - MINIO_ROOT_PASSWORD=interv
+    volumes:
+      - minio:/data
+    command:
+      #- minio server /data --console-address ":9001"
+      - server
+      - /data
+      - --console-address
+      - ":9001"
+
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - 5000:5000
+    env_file: backend/config.yaml
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
   redis_data:
+  minio:
