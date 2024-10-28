@@ -40,8 +40,8 @@ const QuestionBankEditVideoQuestionForm = () => {
   } = useGetVideoQuestionDetail(parseInt(videoQuestionId!))
   const formSchema = z.object({
     title: z.string().min(1, { message: "Required" }),
-    timeToPrepare: z.coerce.number().min(1, { message: "Required" }),
-    timeToAnswer: z.coerce.number().min(1, { message: "Required" }),
+    timeToPrepare: z.coerce.number().min(1).max(600),
+    timeToAnswer: z.coerce.number().min(1).max(600),
     totalAttempt: z.coerce.number().min(1),
   })
   const form = useForm<z.infer<typeof formSchema>>({
