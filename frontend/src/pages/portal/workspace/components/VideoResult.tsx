@@ -3,8 +3,11 @@ import { useGetVideoSubmission } from "@/hooks/useGetVideoSubmission.ts"
 import VideoResultRecordItem from "@/pages/portal/workspace/components/VideoResultRecordItem.tsx"
 import { Separator } from "@/components/ui/separator.tsx"
 function VideoResult() {
-  const { candidateId } = useParams()
-  const { data, isLoading } = useGetVideoSubmission(Number(candidateId))
+  const { candidateId, workspaceId } = useParams()
+  const { data, isLoading } = useGetVideoSubmission(
+    Number(candidateId),
+    Number(workspaceId),
+  )
 
   return (
     <div>

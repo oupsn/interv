@@ -21,7 +21,7 @@ type IVideoInterviewService interface {
 	GetVideoInterviewContext(roomId string) ([]domains.VideoQuestion, error)
 	GetVideoInterviewQuestion(questionId uint) (*domains.VideoQuestion, error)
 	SubmitVideoInterview(file *multipart.FileHeader, roomId string, candidateId uint, videoQuestionId uint) error
-	GetVideoInterviewResult(candidateId uint) ([]domains.VideoQuestionSnapshot, error)
+	GetVideoInterviewResult(candidateId uint, workspaceId uint) ([]domains.VideoQuestionSnapshot, error)
 }
 
 type videoInterviewService struct {
@@ -81,8 +81,12 @@ func (v videoInterviewService) SubmitVideoInterview(file *multipart.FileHeader, 
 	return nil
 }
 
-func (v videoInterviewService) GetVideoInterviewResult(candidateId uint) ([]domains.VideoQuestionSnapshot, error) {
-	snapshots, err := v.videoQuestionSnapshotRepo.GetByCandidateId(candidateId)
+func (v videoInterviewService) GetVideoInterviewResult(candidateId uint, workspaceId uint) ([]domains.VideoQuestionSnapshot, error) {
+	room, err := v.roomRepo.GetByWorkspaceIdAndCandidateId(workspaceId, candidateId)
+	if err != nil {
+		return nil, err
+	}
+	snapshots, err := v.videoQuestionSnapshotRepo.GetByCandidateId(candidateId, room.ID)
 	if err != nil {
 		return nil, err
 	}
