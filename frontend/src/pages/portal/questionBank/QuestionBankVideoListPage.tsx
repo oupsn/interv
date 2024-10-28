@@ -125,7 +125,7 @@ const QuestionBankVideoListPage = () => {
               {videoQuestionList?.data?.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">
-                    {textTruncate(item.title, 120)}
+                    {textTruncate(item.title ?? "", 120)}
                   </TableCell>
                   <TableCell>
                     <td className="flex w-fit gap-2">

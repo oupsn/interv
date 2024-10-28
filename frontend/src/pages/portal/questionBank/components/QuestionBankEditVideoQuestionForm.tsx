@@ -103,7 +103,7 @@ const QuestionBankEditVideoQuestionForm = () => {
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link to={`/portal/question/video/${videoQuestionId}`}>
-                  {textTruncate(videoQuestion?.data?.title, 50)}
+                  {textTruncate(videoQuestion?.data?.title ?? "", 50)}
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>

@@ -45,7 +45,7 @@ function QuestionBankVideoDetail() {
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage>
-                {textTruncate(videoQuestion?.data?.title, 50)}
+                {textTruncate(videoQuestion?.data?.title ?? "", 50)}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
