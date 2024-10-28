@@ -28,7 +28,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb.tsx"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import {
@@ -39,7 +39,7 @@ import {
   SelectItem,
 } from "@/components/ui/select"
 import { useGetCodingInterviewQuestionByTitle } from "@/hooks/useGetCodingInterviewQuestionByTitle"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -50,6 +50,7 @@ import {
 } from "@/components/ui/dialog"
 import { CodingInterviewUpdateQuestionQuery } from "@/api/server"
 import { Controller } from "react-hook-form"
+import { LoadingContext } from "@/contexts/loading"
 
 function QuestionBankCodingEdit() {
   const { codingTitle } = useParams()
@@ -57,6 +58,8 @@ function QuestionBankCodingEdit() {
   const decodedTitle = decodeURIComponent(encodedTitle ?? "")
   const { data: originalCodingQuestion, isLoading } =
     useGetCodingInterviewQuestionByTitle(encodedTitle ?? "")
+
+  const navigate = useNavigate()
 
   const formSchema = z.object({
     title: z.string().min(1),
@@ -76,7 +79,7 @@ function QuestionBankCodingEdit() {
       .min(1),
     difficulty: z.enum(["easy", "moderate", "hard"]),
   })
-
+  const { setLoading } = useContext(LoadingContext)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -141,12 +144,14 @@ function QuestionBankCodingEdit() {
             ...testCase,
             input: testCase.input.replace(/\n/g, "\\n") || "",
             output: testCase.output.replace(/\n/g, "\\n") || "",
+            is_hidden: testCase.isHidden,
+            is_example: testCase.isExample,
           })),
           difficulty: formValues.difficulty || "easy",
         },
       }
 
-      toast.promise(
+      await toast.promise(
         server.codingInterview.updateQuestion(codingQuestionID, updateBody),
         {
           loading: "Updating question...",
@@ -155,6 +160,13 @@ function QuestionBankCodingEdit() {
         },
       )
       setIsConfirmDialogOpen(false)
+      setLoading(true)
+      setTimeout(() => {
+        setLoading(false)
+        navigate(
+          "/portal/question/coding/" + encodeURIComponent(formValues.title),
+        )
+      }, 1000)
     }
   }
 

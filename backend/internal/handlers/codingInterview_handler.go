@@ -307,7 +307,6 @@ func (co CodingInterviewHandler) UpdateQuestion(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
-
 	question, err := co.codingInterviewService.UpdateCodingQuestion(uint(req.CodingQuestionID), domains.CodingQuestion{
 		Title:             req.Body.Title,
 		Description:       req.Body.Description,

@@ -15,6 +15,7 @@ import { server } from "@/contexts/swr"
 import { LoadingContext } from "@/contexts/loading"
 import TopBar from "@/components/layout/TopBar"
 import { useGetCodingInterviewContext } from "@/hooks/useGetCodginInterviewContext"
+import TopBarItem from "@/components/layout/TopBarItem"
 interface Question {
   index: number
   id: number
@@ -27,21 +28,31 @@ interface Question {
 }
 const CodingInterviewPage = () => {
   const { roomId } = useParams<{ roomId: string }>()
-  const [isStart, setIsStart] = useState(mockData.isStart)
-  const [timeRemain, setTimeRemain] = useState(mockData.timeRemain)
+  const [isStart, setIsStart] = useState(false)
+  const [timeRemain, setTimeRemain] = useState(3600)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [questionList, setQuestionList] = useState<Question[]>([])
   const { data: fetchedQuestions, mutate } = useGetCodingInterviewQuestion(
     roomId ?? "",
   )
-  const { data: fetchedContext } = useGetCodingInterviewContext(roomId ?? "")
+  const { data: fetchedContext, isLoading: contextLoading } =
+    useGetCodingInterviewContext(roomId ?? "")
   const [isFinish, setIsFinish] = useState(false)
   const [isRecordingSaved, setIsRecordingSaved] = useState(false)
   const [questionsLoaded, setQuestionsLoaded] = useState(false)
-
+  const [timeRemainText, setTimeRemainText] = useState("")
   const { selectedCameraId, selectedMicrophoneId, fetchDevice } =
     useContext(DeviceContext)
   const { setLoading, setText } = useContext(LoadingContext)
+  const formatTime = (time: number): string => {
+    const hours = Math.floor(time / 3600)
+    const minutes = Math.floor((time % 3600) / 60)
+    const seconds = time % 60
+
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+  }
   const {
     mediaBlobUrl: videoBlobUrl,
     startRecording: startVideoRecording,
@@ -75,13 +86,17 @@ const CodingInterviewPage = () => {
     onStart() {
       console.log("screen recording started")
     },
-    askPermissionOnMount: true,
+    askPermissionOnMount: false,
     stopStreamsOnStop: true,
   })
 
-  const startRecording = async () => {
-    await startVideoRecording()
-    await startScreenRecording()
+  const startRecording = async (camera: boolean, screen: boolean) => {
+    if (camera) {
+      await startVideoRecording()
+    }
+    if (screen) {
+      await startScreenRecording()
+    }
   }
   const stopRecording = async () => {
     await stopVideoRecording()
@@ -101,7 +116,10 @@ const CodingInterviewPage = () => {
   }
 
   const calculateTimeTaken = () => {
-    const timeTaken = mockData.timeRemain - timeRemain
+    const timeTaken =
+      fetchedContext?.data?.coding_time && timeRemain
+        ? fetchedContext.data.coding_time - timeRemain
+        : 0
     return timeTaken
   }
   const handleSubmitVideo = async (
@@ -109,6 +127,12 @@ const CodingInterviewPage = () => {
     screenBlobUrl: string,
   ) => {
     setLoading(true)
+    if (videoBlobUrl === "" && screenBlobUrl === "") {
+      setIsRecordingSaved(true)
+      setLoading(false)
+      setText("")
+      return
+    }
     setText("Submitting video and screen record...")
     const videoBlob = await fetch(videoBlobUrl).then((response) =>
       response.blob(),
@@ -147,7 +171,6 @@ const CodingInterviewPage = () => {
    */
   useEffect(() => {
     if (fetchedQuestions) {
-      console.log(fetchedQuestions)
       const newQuestions: Question[] =
         fetchedQuestions?.data?.map(
           (question: DomainsCodingQuestionResponse, index: number) => ({
@@ -180,6 +203,12 @@ const CodingInterviewPage = () => {
   useEffect(() => {
     if (videoBlobUrl && screenBlobUrl) {
       handleSubmitVideo(videoBlobUrl, screenBlobUrl)
+    } else if (videoBlobUrl && !screenBlobUrl) {
+      handleSubmitVideo(videoBlobUrl, "")
+    } else if (!videoBlobUrl && screenBlobUrl) {
+      handleSubmitVideo("", screenBlobUrl)
+    } else {
+      handleSubmitVideo("", "")
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoBlobUrl, screenBlobUrl])
@@ -207,9 +236,20 @@ const CodingInterviewPage = () => {
       }
     }
   }, [isStart, isFinish])
-
+  useEffect(() => {
+    if (timeRemain <= 0) {
+      setIsStart(true)
+      setIsRecordingSaved(true)
+      setIsFinish(true)
+    }
+  }, [timeRemain])
   useEffect(() => {
     if (fetchedContext?.data) {
+      if (fetchedContext.data.is_done) {
+        setIsStart(true)
+        setIsFinish(true)
+        return
+      }
       const createdAt = new Date(fetchedContext.data.created_at ?? "")
       const currentTime = new Date()
 
@@ -232,9 +272,25 @@ const CodingInterviewPage = () => {
   }, [fetchedContext])
   return (
     <div className="flex flex-col w-dvw h-dvh">
-      <TopBar></TopBar>
-      <div className={"w-dvw h-dvh flex max-h-sr z-0"}>
-        {isStart ? (
+      <TopBar isCodingInterview={true}>
+        {!isStart ||
+          (!isFinish && (
+            <TopBarItem
+              title={
+                "Time Remaining: " +
+                (timeRemainText === ""
+                  ? formatTime(timeRemain)
+                  : timeRemainText)
+              }
+            />
+          ))}
+      </TopBar>
+      <div className={"w-dvw h-dvh flex max-h-sr z-0 overflow-y-hidden"}>
+        {contextLoading ? (
+          <div className="flex items-center justify-center w-full h-full">
+            <p className="text-xl font-semibold">Loading...</p>
+          </div>
+        ) : isStart ? (
           isFinish ? (
             <CodingInterviewFinish
               isRecordingSaved={isRecordingSaved}
@@ -246,6 +302,7 @@ const CodingInterviewPage = () => {
               timeTaken={calculateTimeTaken()}
               roomId={roomId ?? ""}
               timeRemain={timeRemain}
+              setTimeRemainText={setTimeRemainText}
               questions={questionList}
               currentQuestion={questionList[currentQuestionIndex]}
               currentQuestionIndex={currentQuestionIndex}
@@ -263,12 +320,17 @@ const CodingInterviewPage = () => {
           )
         ) : (
           <CodingInterviewInstruction
-            title={mockData.title}
-            description={mockData.instuction}
+            isCameraRequired={fetchedContext?.data?.is_camera_required ?? false}
+            isScreenShareRequired={
+              fetchedContext?.data?.is_screen_share_required ?? false
+            }
             timeRemain={timeRemain}
             questionLength={questionList.length}
             clickStart={() => {
-              startRecording()
+              startRecording(
+                fetchedContext?.data?.is_camera_required ?? false,
+                fetchedContext?.data?.is_screen_share_required ?? false,
+              )
               setIsStart(true)
               mutate()
             }}
@@ -285,11 +347,4 @@ const CodingInterviewPage = () => {
   )
 }
 
-//FIXME: replace this with actual data naja
-const mockData = {
-  isStart: false,
-  timeRemain: 3600,
-  title: "This is a coding interview instruction",
-  instuction: "You have 30 minutes to solve the question",
-}
 export default CodingInterviewPage

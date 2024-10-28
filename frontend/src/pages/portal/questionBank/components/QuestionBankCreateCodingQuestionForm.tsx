@@ -29,7 +29,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb.tsx"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import {
@@ -40,9 +40,15 @@ import {
   SelectItem,
 } from "@/components/ui/select" // Import Select components
 import useCurrentUser from "@/hooks/UseCurrentUser"
+import JSZip from "jszip"
+import { saveAs } from "file-saver"
+import { useContext } from "react"
+import { LoadingContext } from "@/contexts/loading"
 
 function CreateCodingQuestion() {
   const { currentUser } = useCurrentUser()
+  const navigate = useNavigate()
+  const { setLoading } = useContext(LoadingContext)
   const formSchema = z.object({
     title: z.string().min(1),
     description: z.string().min(1),
@@ -51,9 +57,21 @@ function CreateCodingQuestion() {
     testCases: z
       .array(
         z.object({
-          input: z.string().min(1),
-          output: z.string().min(1),
-          isHidden: z.boolean().default(false),
+          input: z
+            .string()
+            .min(1)
+            .max(1000)
+            .refine((val) => val.length > 0, {
+              message: "Input cannot be empty",
+            }),
+          output: z
+            .string()
+            .min(1)
+            .max(1000)
+            .refine((val) => val.length > 0, {
+              message: "Output cannot be empty",
+            }),
+          isHidden: z.boolean().default(true),
           isExample: z.boolean().default(false),
         }),
       )
@@ -71,9 +89,8 @@ function CreateCodingQuestion() {
       difficulty: "easy",
     },
   })
-  /*   const navigate = useNavigate()
-   */
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const body: DomainsCreateCodingQuestionRequest = {
       title: values.title || "",
       description: values.description || "",
@@ -84,12 +101,14 @@ function CreateCodingQuestion() {
           ...testCase,
           input: testCase.input.replace(/\n/g, "\\n"),
           output: testCase.output.replace(/\n/g, "\\n"),
+          is_hidden: testCase.isHidden,
+          is_example: testCase.isExample,
         })) || [],
       difficulty: values.difficulty,
       portal_id: currentUser.portalId,
     }
 
-    toast.promise(
+    await toast.promise(
       server.codingInterview.createQuestion({
         body,
       }),
@@ -99,8 +118,11 @@ function CreateCodingQuestion() {
         error: "Failed to create question",
       },
     )
-    /*     navigate("/portal/question/coding")
-     */
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
+      navigate("/portal/question/coding/" + encodeURIComponent(values.title))
+    }, 1000)
   }
   const editorFormats = [
     "header",
@@ -130,53 +152,139 @@ function CreateCodingQuestion() {
     ],
   }
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0]
     if (!file) {
-      toast.message("Please upload a file")
+      toast.error("Please upload a file")
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      try {
-        const content = e.target?.result as string
-        if (!content.trim()) {
-          toast.message("Please upload a file")
-          return
-        }
-
-        const uploadedTestCases = JSON.parse(content)
-        if (Array.isArray(uploadedTestCases) && uploadedTestCases.length > 0) {
-          const validTestCases = uploadedTestCases.filter(
-            (testCase) =>
-              testCase.input.trim() !== "" || testCase.output.trim() !== "",
-          )
-
-          if (validTestCases.length > 0) {
-            const hiddenTestCases = validTestCases.map((testCase) => ({
-              ...testCase,
-              isHidden: true,
-              isExample: false,
-            }))
-
-            form.setValue("testCases", hiddenTestCases)
-            form.trigger("testCases")
-            toast.message(
-              `${hiddenTestCases.length} test case(s) imported successfully.`,
-            )
-          } else {
-            toast.message("No valid test cases found in the file")
-          }
-        } else {
-          toast.message("Invalid file format")
-        }
-      } catch (error) {
-        console.error("Error parsing file:", error)
-        toast.message("Error parsing file")
-      }
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error("File size exceeds 3MB limit")
+      return
     }
-    reader.readAsText(file)
+
+    if (
+      file.type !== "application/zip" &&
+      file.type !== "application/x-zip-compressed"
+    ) {
+      toast.error("Please upload a ZIP file")
+      return
+    }
+
+    try {
+      const zip = new JSZip()
+      const zipContent = await zip.loadAsync(file)
+      const testCases: {
+        input: string
+        output: string
+        isHidden: boolean
+        isExample: boolean
+      }[] = []
+      const processedInputs = new Set<string>()
+
+      for (const [filename, zipEntry] of Object.entries(zipContent.files)) {
+        if (!zipEntry.dir && filename.match(/^\d+_input\.txt$/)) {
+          const caseNumber = filename.split("_")[0]
+          processedInputs.add(caseNumber)
+        }
+      }
+
+      for (const caseNumber of processedInputs) {
+        const inputFile = zipContent.files[`${caseNumber}_input.txt`]
+        const outputFile = zipContent.files[`${caseNumber}_output.txt`]
+
+        if (!inputFile || !outputFile) {
+          toast.error(
+            `Missing input or output file for test case ${caseNumber}`,
+          )
+          continue
+        }
+
+        const input = await inputFile.async("text")
+        const output = await outputFile.async("text")
+
+        testCases.push({
+          input: input.trim(),
+          output: output.trim(),
+          isHidden: true,
+          isExample: testCases.length === 0,
+        })
+      }
+
+      if (testCases.length === 0) {
+        toast.error("No valid test cases found in the ZIP file")
+        return
+      }
+
+      testCases[0].isExample = true
+      testCases[0].isHidden = false
+
+      if (testCases.length > 0) {
+        form.setValue("testCases", [testCases[0], ...testCases.slice(1)])
+        form.trigger("testCases")
+        toast.success(`${testCases.length} test case(s) imported successfully`)
+      }
+    } catch (error) {
+      console.error("Error processing ZIP file:", error)
+      toast.error("Error processing ZIP file")
+    }
+  }
+
+  const handleExportTestCases = async () => {
+    const testCases = form.getValues("testCases")
+    if (testCases.length === 0) {
+      toast.error("No test cases to export")
+      return
+    }
+
+    try {
+      const zip = new JSZip()
+
+      testCases.forEach((testCase, index) => {
+        const caseNumber = index + 1
+        zip.file(`${caseNumber}_input.txt`, testCase.input)
+        zip.file(`${caseNumber}_output.txt`, testCase.output)
+      })
+
+      const content = await zip.generateAsync({ type: "blob" })
+      saveAs(content, "test_cases.zip")
+      toast.success("Test cases exported successfully")
+    } catch (error) {
+      console.error("Error exporting test cases:", error)
+      toast.error("Error exporting test cases")
+    }
+  }
+
+  const handleDownloadExampleZip = async () => {
+    try {
+      const zip = new JSZip()
+      const examples = [
+        {
+          input: "5\n2 4 6 8 10",
+          output: "30",
+        },
+        {
+          input: "3\n1 2 3",
+          output: "6",
+        },
+      ]
+
+      examples.forEach((example, index) => {
+        const caseNumber = index + 1
+        zip.file(`${caseNumber}_input.txt`, example.input)
+        zip.file(`${caseNumber}_output.txt`, example.output)
+      })
+
+      const content = await zip.generateAsync({ type: "blob" })
+      saveAs(content, "example_test_cases.zip")
+      toast.success("Example test cases downloaded successfully")
+    } catch (error) {
+      console.error("Error creating example ZIP:", error)
+      toast.error("Error creating example ZIP file")
+    }
   }
 
   const { fields, append, remove } = useFieldArray({
@@ -352,24 +460,34 @@ function CreateCodingQuestion() {
                         <FormLabel className="text-lg font-medium">
                           Test Cases <span className="text-red-500">*</span>
                         </FormLabel>
-                        <Button
-                          type="button"
-                          onClick={() =>
-                            append({
-                              input: "",
-                              output: "",
-                              isHidden: true,
-                              isExample: false,
-                            })
-                          }
-                          variant="outline"
-                        >
-                          Add Test Case
-                        </Button>
+                        <div className="space-x-2">
+                          <Button
+                            type="button"
+                            onClick={() =>
+                              append({
+                                input: "",
+                                output: "",
+                                isHidden: true,
+                                isExample: false,
+                              })
+                            }
+                            variant="outline"
+                          >
+                            Add Test Case
+                          </Button>
+                          <Button
+                            type="button"
+                            onClick={handleExportTestCases}
+                            variant="outline"
+                            disabled={fields.length === 0}
+                          >
+                            Export Test Cases
+                          </Button>
+                        </div>
                       </div>
                       <p className="text-sm text-gray-500 mb-4">
                         Add test cases to validate the solution. You can
-                        manually add test cases or import them from a JSON file.
+                        manually add test cases or import them from a ZIP file.
                       </p>
                       <FormControl>
                         <div className="space-y-4">
@@ -439,6 +557,11 @@ function CreateCodingQuestion() {
                                                       `testCases.${index}.isExample`,
                                                       false,
                                                     )
+                                                  } else {
+                                                    form.setValue(
+                                                      `testCases.${index}.isExample`,
+                                                      true,
+                                                    )
                                                   }
                                                 }}
                                               />
@@ -469,6 +592,11 @@ function CreateCodingQuestion() {
                                                     form.setValue(
                                                       `testCases.${index}.isHidden`,
                                                       false,
+                                                    )
+                                                  } else {
+                                                    form.setValue(
+                                                      `testCases.${index}.isHidden`,
+                                                      true,
                                                     )
                                                   }
                                                 }}
@@ -502,14 +630,28 @@ function CreateCodingQuestion() {
                         </div>
                       </FormControl>
                       <div className="mt-6">
-                        <Input
-                          type="file"
-                          accept=".json"
-                          onChange={handleFileUpload}
-                          className="w-full"
-                        />
+                        <div className="flex items-center gap-4 mb-4">
+                          <Input
+                            type="file"
+                            accept=".zip"
+                            onChange={handleFileUpload}
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            onClick={handleDownloadExampleZip}
+                            variant="outline"
+                            className="whitespace-nowrap"
+                          >
+                            Download Example
+                          </Button>
+                        </div>
                         <p className="text-sm text-gray-500 mt-2">
-                          Import test cases from a JSON file.
+                          Import test cases from a ZIP file (max 3MB). The ZIP
+                          should contain numbered pairs of input/output text
+                          files (e.g., 1_input.txt, 1_output.txt, 2_input.txt,
+                          2_output.txt, etc.). You can download an example ZIP
+                          file to see the expected format.
                         </p>
                       </div>
                       <div className="mt-4">
@@ -522,7 +664,14 @@ function CreateCodingQuestion() {
                           as examples in the problem description.
                         </p>
                       </div>
-                      <FormMessage />
+                      {fields.some(
+                        (field) =>
+                          field.input.length === 0 || field.output.length === 0,
+                      ) && (
+                        <p className="text-sm text-red-500">
+                          Input and output fields cannot be empty.
+                        </p>
+                      )}
                     </FormItem>
                   )}
                 />

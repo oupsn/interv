@@ -50,7 +50,7 @@ const ImageCarousel = ({
         <img
           src={images[currentIndex]}
           alt={`Interface example ${currentIndex + 1}`}
-          className="w-full h-full object-contain"
+          className="w-full h-full object-cover"
         />
 
         <div className="absolute inset-0 flex items-center justify-between p-4">
@@ -85,10 +85,10 @@ function QuestionGuideline() {
   const location = useLocation()
 
   const codingImages = [
+    "https://via.assets.so/img.jpg?w=1000&h=450",
     "https://via.assets.so/img.jpg?w=800&h=450",
-    "https://via.assets.so/img.jpg?w=800&h=450",
-    "https://via.assets.so/img.jpg?w=800&h=450",
-    "https://via.assets.so/img.jpg?w=800&h=450",
+    "https://via.assets.so/img.jpg?w=1200&h=450",
+    "https://via.assets.so/img.jpg?w=30000&h=450",
   ]
 
   const videoImages = [
@@ -127,16 +127,27 @@ function QuestionGuideline() {
             <AccordionTrigger className="text-xl font-semibold px-4 hover:no-underline">
               <div className="flex items-center gap-3">
                 <Code className="w-6 h-6 text-primary" />
-                Coding Challenge Guide
+                Coding Interview Guide
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-4 pt-4">
               <div className="space-y-6">
                 <ImageCarousel
                   images={codingImages}
-                  title="Coding Challenge Interface Guide"
+                  title="Coding Interview Interface Guide"
                 />
-
+                <section className="space-y-3">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5" />
+                    Interface Elements
+                  </h3>
+                  <ul className="list-disc pl-6 space-y-2">
+                    <li>Code Editor: Write and edit your solution</li>
+                    <li>Test Cases: Run and verify your code</li>
+                    <li>Problem Description: Details and requirements</li>
+                    <li>Submit Button: Submit your final solution</li>
+                  </ul>
+                </section>
                 <section className="space-y-3">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Timer className="w-5 h-5" />
@@ -166,19 +177,6 @@ function QuestionGuideline() {
                     <li>Test your code with different inputs</li>
                   </ul>
                 </section>
-
-                <section className="space-y-3">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5" />
-                    Interface Elements
-                  </h3>
-                  <ul className="list-disc pl-6 space-y-2">
-                    <li>Code Editor: Write and edit your solution</li>
-                    <li>Test Cases: Run and verify your code</li>
-                    <li>Problem Description: Details and requirements</li>
-                    <li>Submit Button: Submit your final solution</li>
-                  </ul>
-                </section>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -196,7 +194,18 @@ function QuestionGuideline() {
                   images={videoImages}
                   title="Video Interview Interface Guide"
                 />
-
+                <section className="space-y-3">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5" />
+                    Interface Elements
+                  </h3>
+                  <ul className="list-disc pl-6 space-y-2">
+                    <li>Camera Preview: Check your video appearance</li>
+                    <li>Question Display: Current question text</li>
+                    <li>Timer: Countdown for preparation and recording</li>
+                    <li>Recording Controls: Start/stop recording</li>
+                  </ul>
+                </section>
                 <section className="space-y-3">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Timer className="w-5 h-5" />
@@ -213,19 +222,6 @@ function QuestionGuideline() {
                 <section className="space-y-3">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Check className="w-5 h-5" />
-                    Interface Elements
-                  </h3>
-                  <ul className="list-disc pl-6 space-y-2">
-                    <li>Camera Preview: Check your video appearance</li>
-                    <li>Question Display: Current question text</li>
-                    <li>Timer: Countdown for preparation and recording</li>
-                    <li>Recording Controls: Start/stop recording</li>
-                  </ul>
-                </section>
-
-                <section className="space-y-3">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5" />
                     Technical Setup
                   </h3>
                   <ul className="list-disc pl-6 space-y-2">

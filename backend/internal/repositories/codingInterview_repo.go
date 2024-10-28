@@ -38,18 +38,22 @@ func (c *codingInterviewRepository) GetCodingQuestionRoomContext(roomID string) 
 		First(&workspace).Error; err != nil {
 		return domains.CodingQuestionRoomContext{}, err
 	}
-
+	var room domains.Room
+	if err := c.DB.Where("id = ?", roomID).First(&room).Error; err != nil {
+		return domains.CodingQuestionRoomContext{}, err
+	}
 	return domains.CodingQuestionRoomContext{
-		CreatedAt:  createdAt,
-		UpdatedAt:  updatedAt,
-		CodingTime: workspace.CodingTime,
+		CreatedAt:             createdAt,
+		UpdatedAt:             updatedAt,
+		CodingTime:            workspace.CodingTime,
+		IsDone:                *room.IsCodingDone,
+		IsCameraRequired:      *workspace.ReqCamera,
+		IsScreenShareRequired: *workspace.ReqScreen,
 	}, nil
 }
 
-// TODO: Add roomId to filter coding question by room
 func (c *codingInterviewRepository) GetCodingQuestionList(roomID string) ([]domains.CodingQuestionResponse, error) {
 	var codingQuestions []domains.CodingQuestion
-	//get workspace by room
 	var workspace domains.Workspace
 	if err := c.DB.Joins("JOIN rooms ON rooms.workspace_id = workspaces.id").
 		Where("rooms.id = ?", roomID).
@@ -116,7 +120,6 @@ func (c *codingInterviewRepository) GetCodingQuestionByTitle(title string) (doma
 		return domains.CodingQuestionResponse{}, err
 	}
 	var testCaseResponses []domains.CodingQuestionTestCaseResponse
-	fmt.Println(codingQuestion.TestCases)
 	for _, testCase := range codingQuestion.TestCases {
 		testCaseResponses = append(testCaseResponses, domains.CodingQuestionTestCaseResponse{
 			Input:     testCase.Input,
@@ -203,6 +206,14 @@ func (c *codingInterviewRepository) GetRoomIDByUserID(userID uint) (string, erro
 		return "", err
 	}
 	return roomID, nil
+}
+
+func (c *codingInterviewRepository) GetWorkspaceByRoomID(roomID string) (domains.Workspace, error) {
+	var workspace domains.Workspace
+	if err := c.DB.Model(&domains.Workspace{}).Joins("JOIN rooms ON rooms.workspace_id = workspaces.id").Where("rooms.id = ?", roomID).First(&workspace).Error; err != nil {
+		return domains.Workspace{}, err
+	}
+	return workspace, nil
 }
 
 func (c *codingInterviewRepository) SaveCodingSnapshot(snapshot domains.CodingQuestionSnapshot) (domains.CodingQuestionSnapshot, error) {

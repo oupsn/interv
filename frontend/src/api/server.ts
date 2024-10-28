@@ -238,6 +238,9 @@ export interface DomainsCodingQuestionResponse {
 export interface DomainsCodingQuestionRoomContext {
   coding_time?: number
   created_at?: string
+  is_camera_required?: boolean
+  is_done?: boolean
+  is_screen_share_required?: boolean
   updated_at?: string
 }
 
@@ -598,6 +601,8 @@ export interface HandlersCodingInterviewGetQuestionByTitleResponse {
 }
 
 export interface HandlersCodingInterviewGetSubmissionResultByUserResponse {
+  is_screen?: boolean
+  is_video?: boolean
   result?: DomainsCodingQuestionSubmission[]
   screen_url?: string
   video_url?: string

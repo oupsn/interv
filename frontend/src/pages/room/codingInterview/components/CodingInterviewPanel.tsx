@@ -21,6 +21,7 @@ import { LoadingContext } from "@/contexts/loading"
 
 interface CodingInterviewPanelProps {
   timeRemain: number
+  setTimeRemainText: (timeRemainText: string) => void
   questions: CodingInterviewQuestionProps[]
   currentQuestion: CodingInterviewQuestionProps
   currentQuestionIndex: number
@@ -43,6 +44,7 @@ interface EditorState {
 
 const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   timeRemain,
+  setTimeRemainText,
   questions,
   currentQuestion,
   currentQuestionIndex,
@@ -71,7 +73,9 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   const { setLoading, setText } = useContext(LoadingContext)
   useEffect(() => {
     const timer = setInterval(() => {
-      setCountdown((prevCountdown) => prevCountdown - 1)
+      if (countdown > 0) {
+        setCountdown((prevCountdown) => prevCountdown - 1)
+      }
     }, 1000)
 
     const snapshotInterval = setInterval(() => {
@@ -84,6 +88,15 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (countdown < 0) {
+      confirmSubmit()
+      return
+    }
+    setTimeRemainText(formatTime(countdown))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countdown])
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -216,10 +229,6 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-start h-full w-full gap-4 p-4">
-      <p className="text-lg font-semibold">
-        Time remaining: {formatTime(countdown)}
-      </p>
-
       <div
         className="flex flex-row w-full h-[calc(100vh-200px)] relative"
         ref={containerRef}

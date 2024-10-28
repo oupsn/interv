@@ -3441,6 +3441,15 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "is_camera_required": {
+                    "type": "boolean"
+                },
+                "is_done": {
+                    "type": "boolean"
+                },
+                "is_screen_share_required": {
+                    "type": "boolean"
+                },
                 "updated_at": {
                     "type": "string"
                 }
@@ -3969,6 +3978,12 @@ const docTemplate = `{
         "handlers.CodingInterviewGetSubmissionResultByUserResponse": {
             "type": "object",
             "properties": {
+                "is_screen": {
+                    "type": "boolean"
+                },
+                "is_video": {
+                    "type": "boolean"
+                },
                 "result": {
                     "type": "array",
                     "items": {

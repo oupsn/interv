@@ -43,7 +43,7 @@ function CodingResult() {
     <div>
       {isLoading ? (
         <p>Loading...</p>
-      ) : result ? (
+      ) : result?.data?.result?.length !== 0 && result ? (
         <div className="flex flex-col gap-6 w-full items-center mt-6">
           <div className="flex flex-col gap-2 w-full items-center">
             <h2 className="text-3xl font-bold text-primary">
@@ -68,6 +68,8 @@ function CodingResult() {
           <div className="flex flex-col gap-2 w-full">
             <h3 className="text-xl font-bold text-primary">Record Output</h3>
             <CodingResultRecordItem
+              isVideoRequired={result.data?.is_video || false}
+              isScreenRequired={result.data?.is_screen || false}
               videoUrl={result.data?.video_url || ""}
               screenUrl={result.data?.screen_url || ""}
             />
@@ -94,7 +96,12 @@ function CodingResult() {
           </div>
         </div>
       ) : (
-        <p>No data available</p>
+        <div className="flex flex-col items-center justify-center gap-4 mt-6">
+          <h2 className="text-2xl font-bold text-primary">No Results Found</h2>
+          <p className="text-gray-600">
+            The coding submission data is not available
+          </p>
+        </div>
       )}
     </div>
   )

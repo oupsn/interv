@@ -105,6 +105,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
             <SelectItem value="c">C</SelectItem>
           </SelectContent>
         </Select>
+
         <Button
           onClick={() => {
             onCompile(getLanguageNumber(language), content, "")

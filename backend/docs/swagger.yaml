@@ -737,6 +737,12 @@ definitions:
         type: integer
       created_at:
         type: string
+      is_camera_required:
+        type: boolean
+      is_done:
+        type: boolean
+      is_screen_share_required:
+        type: boolean
       updated_at:
         type: string
     type: object
@@ -1083,6 +1089,10 @@ definitions:
     type: object
   handlers.CodingInterviewGetSubmissionResultByUserResponse:
     properties:
+      is_screen:
+        type: boolean
+      is_video:
+        type: boolean
       result:
         items:
           $ref: '#/definitions/domains.CodingQuestionSubmission'
