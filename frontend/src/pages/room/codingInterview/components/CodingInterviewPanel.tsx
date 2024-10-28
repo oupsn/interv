@@ -20,7 +20,9 @@ import {
 import { LoadingContext } from "@/contexts/loading"
 
 interface CodingInterviewPanelProps {
+  isTimeUp: boolean
   timeRemain: number
+  setTimeRemainText: (timeRemainText: string) => void
   questions: CodingInterviewQuestionProps[]
   currentQuestion: CodingInterviewQuestionProps
   currentQuestionIndex: number
@@ -42,7 +44,9 @@ interface EditorState {
 }
 
 const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
+  isTimeUp,
   timeRemain,
+  setTimeRemainText,
   questions,
   currentQuestion,
   currentQuestionIndex,
@@ -56,22 +60,36 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   timeTaken,
 }) => {
   const [countdown, setCountdown] = useState(timeRemain)
-  const [editorStates, setEditorStates] = useState<EditorState[]>(
-    new Array(questions.length).fill({
+  const [editorStates, setEditorStates] = useState<EditorState[]>(() => {
+    const savedStates = localStorage.getItem(`editorStates-${roomId}`)
+    if (savedStates) {
+      return JSON.parse(savedStates)
+    }
+    return new Array(questions.length).fill({
       content: "",
       language: "python",
-      compileOutput: "",
-    }),
-  )
+      compileOutput: [],
+      isCompiling: false,
+    })
+  })
   const [leftPanelWidth, setLeftPanelWidth] = useState(50)
   const [isDragging, setIsDragging] = useState(false)
   const [isCompiling, setIsCompiling] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false)
+  const [isTimeUpDialogOpen, setIsTimeUpDialogOpen] = useState(false)
   const { setLoading, setText } = useContext(LoadingContext)
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown((prevCountdown) => prevCountdown - 1)
+    localStorage.setItem(`editorStates-${roomId}`, JSON.stringify(editorStates))
+  }, [editorStates, roomId])
+
+  useEffect(() => {
+    const timer = setInterval(async () => {
+      if (countdown > 0) {
+        setCountdown((prevCountdown) => prevCountdown - 1)
+      } else {
+        setIsTimeUpDialogOpen(true)
+      }
     }, 1000)
 
     const snapshotInterval = setInterval(() => {
@@ -84,6 +102,11 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    setTimeRemainText(formatTime(countdown))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countdown])
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -107,7 +130,11 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
       document.removeEventListener("mouseup", handleMouseUp)
     }
   }, [isDragging])
-
+  useEffect(() => {
+    if (isTimeUp) {
+      setIsTimeUpDialogOpen(true)
+    }
+  }, [isTimeUp])
   const formatTime = (time: number): string => {
     const hours = Math.floor(time / 3600)
     const minutes = Math.floor((time % 3600) / 60)
@@ -147,8 +174,10 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
         ...newStates[currentQuestionIndex],
         isCompiling: true,
       }
+      localStorage.setItem(`editorStates-${roomId}`, JSON.stringify(newStates))
       return newStates
     })
+
     const result = await server.codingInterview.getCompileResult({
       body: {
         language,
@@ -156,6 +185,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
         question_id: currentQuestion.id,
       },
     })
+
     setIsCompiling(false)
     if (result.data) {
       console.log(result.data)
@@ -166,6 +196,10 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
           compileOutput: result.data || [],
           isCompiling: false,
         }
+        localStorage.setItem(
+          `editorStates-${roomId}`,
+          JSON.stringify(newStates),
+        )
         return newStates
       })
     }
@@ -178,6 +212,7 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
   const confirmSubmit = async () => {
     setIsSubmitDialogOpen(false)
     setLoading(true)
+    localStorage.removeItem(`editorStates-${roomId}`)
     setText("Submitting coding question...")
     const submissionData: DomainsCreateCodingSubmissionRequest[] =
       questions.map((question, index) => ({
@@ -216,10 +251,6 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-start h-full w-full gap-4 p-4">
-      <p className="text-lg font-semibold">
-        Time remaining: {formatTime(countdown)}
-      </p>
-
       <div
         className="flex flex-row w-full h-[calc(100vh-200px)] relative"
         ref={containerRef}
@@ -304,6 +335,23 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
           )}
         </div>
       </div>
+
+      <Dialog open={isTimeUpDialogOpen} onOpenChange={setIsTimeUpDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Time's Up!</DialogTitle>
+            <DialogDescription>
+              Your time has expired. Your answers will be submitted
+              automatically.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="default" onClick={confirmSubmit}>
+              Submit Answers
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={isSubmitDialogOpen} onOpenChange={setIsSubmitDialogOpen}>
         <DialogContent>

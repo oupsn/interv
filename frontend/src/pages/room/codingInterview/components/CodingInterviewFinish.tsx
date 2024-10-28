@@ -24,7 +24,7 @@ function CodingInterviewFinish({
   return (
     <>
       {isRecordingSaved ? (
-        <div className="flex flex-col items-center justify-center min-h-screen  w-full">
+        <div className="flex flex-col items-center justify-center min-h-screen w-full">
           <FaCheckCircle className="text-green-500 w-24 h-24 mx-auto mb-4" />
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
             Congratulations!
@@ -32,9 +32,11 @@ function CodingInterviewFinish({
           <p className="text-xl text-gray-600 mb-6">
             You've completed the coding interview.
           </p>
-          <p className="text-2xl font-semibold text-gray-700 mb-8">
-            Time taken: {formatTime(timeTaken)}
-          </p>
+          {timeTaken > 0 && (
+            <p className="text-2xl font-semibold text-gray-700 mb-8">
+              Time taken: {formatTime(timeTaken)}
+            </p>
+          )}
 
           <button
             onClick={() => navigate(`/room/${roomId}`)}
