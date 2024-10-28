@@ -34,9 +34,11 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { server } from "@/contexts/swr.tsx"
 import { textTruncate } from "@/pages/portal/questionBank/utils/utils.ts"
-
+import Panigator from "../workspace/components/Panigator"
 const QuestionBankVideoListPage = () => {
   const { currentUser } = useCurrentUser()
+  const [page, setPage] = useState(1)
+  const size = 10
   const {
     data: videoQuestionList,
     error,
@@ -114,72 +116,92 @@ const QuestionBankVideoListPage = () => {
             <div>Error: {error.message}</div>
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead className={"w-[100px]"}>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {videoQuestionList?.data?.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium">
-                    {textTruncate(item.title ?? "", 120)}
-                  </TableCell>
-                  <TableCell>
-                    <td className="flex w-fit gap-2">
-                      <Button onClick={() => handleView(item.id!)} size="icon">
-                        <FaEye />
-                      </Button>
-                      <Button
-                        onClick={() => handleEdit(item.id ?? 0)}
-                        size="icon"
-                      >
-                        <FaEdit />
-                      </Button>
-                      <Dialog
-                        open={isDeleteDialogOpen}
-                        onOpenChange={setIsDeleteDialogOpen}
-                      >
-                        <DialogTrigger asChild>
-                          <Button
-                            onClick={() => handleDelete(item.id ?? 0)}
-                            size="icon"
-                          >
-                            <FaTrash />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-white">
-                          <DialogHeader>
-                            <DialogTitle>Delete Video Question</DialogTitle>
-                            <DialogDescription>
-                              Are you sure you want to delete this video
-                              question? This action cannot be undone.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <DialogFooter>
-                            <Button
-                              variant="outline"
-                              onClick={() => setIsDeleteDialogOpen(false)}
-                            >
-                              Cancel
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              onClick={confirmDelete}
-                            >
-                              Delete
-                            </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
-                    </td>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <Panigator
+            dataLength={
+              videoQuestionList?.data ? videoQuestionList?.data?.length : 0
+            }
+            children={
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead className={"w-[100px]"}>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {videoQuestionList?.data?.map((item, index) => {
+                    if (index >= (page - 1) * size && index <= page * size - 1)
+                      return (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">
+                            {textTruncate(item.title ?? "", 120)}
+                          </TableCell>
+                          <TableCell>
+                            <td className="flex w-fit gap-2">
+                              <Button
+                                onClick={() => handleView(item.id!)}
+                                size="icon"
+                              >
+                                <FaEye />
+                              </Button>
+                              <Button
+                                onClick={() => handleEdit(item.id ?? 0)}
+                                size="icon"
+                              >
+                                <FaEdit />
+                              </Button>
+                              <Dialog
+                                open={isDeleteDialogOpen}
+                                onOpenChange={setIsDeleteDialogOpen}
+                              >
+                                <DialogTrigger asChild>
+                                  <Button
+                                    onClick={() => handleDelete(item.id ?? 0)}
+                                    size="icon"
+                                  >
+                                    <FaTrash />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="bg-white">
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      Delete Video Question
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                      Are you sure you want to delete this video
+                                      question? This action cannot be undone.
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <DialogFooter>
+                                    <Button
+                                      variant="outline"
+                                      onClick={() =>
+                                        setIsDeleteDialogOpen(false)
+                                      }
+                                    >
+                                      Cancel
+                                    </Button>
+                                    <Button
+                                      variant="destructive"
+                                      onClick={confirmDelete}
+                                    >
+                                      Delete
+                                    </Button>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            </td>
+                          </TableCell>
+                        </TableRow>
+                      )
+                  })}
+                </TableBody>
+              </Table>
+            }
+            size={size}
+            page={page}
+            setPage={setPage}
+          />
         )}
       </ContentPanel>
     </ContentLayout>

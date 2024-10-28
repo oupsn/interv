@@ -1,6 +1,7 @@
 import * as React from "react"
 import dayjs from "dayjs"
 import { useNavigate } from "react-router-dom"
+import { FaUser } from "react-icons/fa"
 
 export type WorkspaceProps = {
   workspaceId: number
@@ -19,7 +20,7 @@ const WorkspaceCard: React.FC<WorkspaceProps> = ({
   return (
     <div
       className={
-        "size-80 p-6 flex flex-col justify-between text-lg text-start text-wrap shadow-lg rounded-lg border-2 hover:bg-iWhiteHover cursor-pointer"
+        "size-80 p-6 flex flex-col justify-between text-lg text-start text-wrap shadow-lg rounded-lg border-2 hover:bg-iWhiteHover cursor-pointer relative overflow-hidden"
       }
       onClick={() => navigate(workspaceId.toString())}
     >
@@ -34,6 +35,7 @@ const WorkspaceCard: React.FC<WorkspaceProps> = ({
       <div className="text-iGrey text-sm">
         Created on {dayjs(createAt).format("MM/DD/YYYY HH:mm A")}
       </div>
+      <FaUser className="text-iGreen absolute top-20 left-32 size-64 opacity-15" />
     </div>
   )
 }

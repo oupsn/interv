@@ -18,7 +18,7 @@ type User struct {
 	Username    string `gorm:"unique"`
 	Password    string
 	Role        UserType `gorm:"default:'general_user'"`
-	PortalId    uint
+	PortalId    *uint
 	Portal      Portal             `gorm:"foreignKey:PortalId"`
 	InWorkspace []*UserInWorkspace `gorm:"foreignKey:UserId"`
 	gorm.Model
