@@ -537,6 +537,7 @@ export type GetVideoInterviewResultError = HandlersErrResponse
 
 export interface GetVideoInterviewResultParams {
   userId: number
+  workspaceId: number
 }
 
 export type GetVideoQuestionByIdData = HandlersResponseGetVideoQuestionByIdResponse
@@ -1785,6 +1786,7 @@ export namespace VideoInterview {
     export type RequestParams = {}
     export type RequestQuery = {
       userId: number
+      workspaceId: number
     }
     export type RequestBody = never
     export type RequestHeaders = {}

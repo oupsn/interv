@@ -313,7 +313,10 @@ function CreateCodingQuestion() {
     >
       <ContentPanel>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 relative"
+          >
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="details">Question Details</TabsTrigger>
