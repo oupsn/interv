@@ -263,7 +263,7 @@ function QuestionBankCodingEdit() {
       }
     >
       <ContentPanel>
-        <Form {...form} >
+        <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-6 relative"
