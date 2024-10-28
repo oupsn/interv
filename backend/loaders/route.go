@@ -3,8 +3,9 @@ package loaders
 import (
 	"errors"
 	"fmt"
-	"github.com/getsentry/sentry-go"
 	"time"
+
+	"github.com/getsentry/sentry-go"
 
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/spf13/viper"

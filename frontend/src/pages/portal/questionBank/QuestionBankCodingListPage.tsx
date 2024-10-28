@@ -28,12 +28,23 @@ import { useEffect } from "react"
 import useIsFocused from "@/hooks/useIsFocused"
 import { useLocation } from "react-router-dom"
 import { Plus } from "lucide-react"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import Panigator from "../workspace/components/Panigator"
 
 const QuestionBankCodingListPage = () => {
   const navigate = useNavigate()
   const currentUser = useCurrentUser()
   const isFocused = useIsFocused()
   const location = useLocation()
+  const [page, setPage] = useState(1)
+  const [size] = useState(10)
   const {
     data: codingQuestionList,
     error,
@@ -117,86 +128,116 @@ const QuestionBankCodingListPage = () => {
         ) : error ? (
           <p>Error loading data</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full border">
-              <thead className="border-b">
-                <tr className="bg-gray-50">
-                  <th className="p-2 text-sm ml-4 text-center">Title</th>
-                  <th className="p-2 text-sm text-center">Difficulty</th>
-                  <th className="p-2 text-sm text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {codingQuestionList?.data?.map((item) => (
-                  <tr key={item.id} className="border-b hover:bg-gray-100">
-                    <td className="px-4 py-2 flex items-center gap-4">
-                      <FaCode className="mr-2" size={20} />
-                      <span>{item.title}</span>
-                    </td>
-                    <td className="px-4 py-2 text-center">
-                      {" "}
-                      <Badge
-                        className={`ml-2 badge ${item.difficulty === "easy" ? "bg-green-300" : item.difficulty === "moderate" ? "bg-yellow-300" : "bg-red-300"}`}
-                        variant={"secondary"}
-                      >
-                        {item.difficulty}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-2 flex items-center gap-2 justify-center">
-                      <Button
-                        onClick={() => handleView(item.title ?? "")}
-                        size="icon"
-                      >
-                        <FaEye />
-                      </Button>
-                      <Button
-                        onClick={() => handleEdit(item.title ?? "")}
-                        size="icon"
-                      >
-                        <FaEdit />
-                      </Button>
-                      <Dialog
-                        open={isDeleteDialogOpen}
-                        onOpenChange={setIsDeleteDialogOpen}
-                      >
-                        <DialogTrigger asChild>
-                          <Button
-                            onClick={() => handleDelete(item.id ?? 0)}
-                            size="icon"
-                          >
-                            <FaTrash />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-white">
-                          <DialogHeader>
-                            <DialogTitle>Confirm Deletion</DialogTitle>
-                            <DialogDescription>
-                              Are you sure you want to delete this coding
-                              question? This action cannot be undone.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <DialogFooter>
-                            <Button
-                              variant="outline"
-                              onClick={() => setIsDeleteDialogOpen(false)}
+          <>
+            <Panigator
+              dataLength={codingQuestionList?.data?.length ?? 0}
+              children={
+                <div className="overflow-x-auto">
+                  <Table className="min-w-full border">
+                    <TableHeader className="border-b">
+                      <TableRow className="bg-gray-50">
+                        <TableHead className="p-2 text-sm ml-4 text-center">
+                          Title
+                        </TableHead>
+                        <TableHead className="p-2 text-sm text-center">
+                          Difficulty
+                        </TableHead>
+                        <TableHead className="p-2 text-sm text-center">
+                          Actions
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {codingQuestionList?.data?.map((item, index) => {
+                        if (
+                          index >= (page - 1) * size &&
+                          index <= page * size - 1
+                        )
+                          return (
+                            <TableRow
+                              key={item.id}
+                              className="border-b hover:bg-gray-100"
                             >
-                              Cancel
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              onClick={confirmDelete}
-                            >
-                              Delete
-                            </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                              <TableCell className="px-4 py-2 flex items-center gap-4">
+                                <FaCode className="mr-2" size={20} />
+                                <span>{item.title}</span>
+                              </TableCell>
+                              <TableCell className="px-4 py-2 text-center">
+                                {" "}
+                                <Badge
+                                  className={`ml-2 badge ${item.difficulty === "easy" ? "bg-green-300" : item.difficulty === "moderate" ? "bg-yellow-300" : "bg-red-300"}`}
+                                  variant={"secondary"}
+                                >
+                                  {item.difficulty}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="px-4 py-2 flex items-center gap-2 justify-center">
+                                <Button
+                                  onClick={() => handleView(item.title ?? "")}
+                                  size="icon"
+                                >
+                                  <FaEye />
+                                </Button>
+                                <Button
+                                  onClick={() => handleEdit(item.title ?? "")}
+                                  size="icon"
+                                >
+                                  <FaEdit />
+                                </Button>
+                                <Dialog
+                                  open={isDeleteDialogOpen}
+                                  onOpenChange={setIsDeleteDialogOpen}
+                                >
+                                  <DialogTrigger asChild>
+                                    <Button
+                                      onClick={() => handleDelete(item.id ?? 0)}
+                                      size="icon"
+                                    >
+                                      <FaTrash />
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="bg-white">
+                                    <DialogHeader>
+                                      <DialogTitle>
+                                        Confirm Deletion
+                                      </DialogTitle>
+                                      <DialogDescription>
+                                        Are you sure you want to delete this
+                                        coding question? This action cannot be
+                                        undone.
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                      <Button
+                                        variant="outline"
+                                        onClick={() =>
+                                          setIsDeleteDialogOpen(false)
+                                        }
+                                      >
+                                        Cancel
+                                      </Button>
+                                      <Button
+                                        variant="destructive"
+                                        onClick={confirmDelete}
+                                      >
+                                        Delete
+                                      </Button>
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </Dialog>
+                              </TableCell>
+                            </TableRow>
+                          )
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              }
+              size={size}
+              page={page}
+              setPage={setPage}
+            />
+          </>
         )}
       </ContentPanel>
     </ContentLayout>

@@ -23,16 +23,16 @@ var (
 	ErrorGetCodingSubmissionResultByUser      = fiber.NewError(fiber.StatusInternalServerError, "can not get coding submission result by user")
 	ErrorGetObjectSubmission                  = fiber.NewError(fiber.StatusInternalServerError, "can not get object submission")
 	ErrorGetRoomIDByUserID                    = fiber.NewError(fiber.StatusInternalServerError, "can not get room id by user id")
+	ErrorGetWorkspace                         = fiber.NewError(fiber.StatusInternalServerError, "can not get workspace")
 )
 
 type ICodingInterviewService interface {
-	//TODO: add get coding question by room id
 	GetCodingInterviewQuestionRoomContext(roomID string) (domains.CodingQuestionRoomContext, error)
 	GetCodingInterviewQuestions(roomID string) ([]domains.CodingQuestionResponse, error)
 	GetCodingInterviewQuestionByTitle(title string) (domains.CodingQuestionResponse, error)
 	GetCodingInterviewQuestionsInPortal(portalID int) ([]domains.CodingQuestion, error)
 	GetCodingInterviewQuestionsInWorkspace(workspaceId int) ([]domains.CodingQuestion, error)
-	GetCodingSubmissionResultByUser(userID uint) (domains.CodingQuestionSubmissionResult, error)
+	GetCodingSubmissionResultByUserWorkspace(userID uint, workspaceID uint) (domains.CodingQuestionSubmissionResult, error)
 	GenerateCompileToken(req domains.CompilationRequest) (string, error)
 	GetCompileResult(req domains.CompilationRequest) ([]domains.CompilationResultResponse, error)
 	CreateCodingQuestion(req domains.CodingQuestion, portalID uint) (domains.CreateCodingQuestionResponse, error)

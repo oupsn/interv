@@ -147,12 +147,17 @@ type AnalyzeResult struct {
 
 type CodingQuestionSubmissionResult struct {
 	Result    []CodingQuestionSubmission `json:"result"`
+	IsVideo   bool                       `json:"is_video"`
+	IsScreen  bool                       `json:"is_screen"`
 	ScreenURL string                     `json:"screen_url"`
 	VideoURL  string                     `json:"video_url"`
 }
 
 type CodingQuestionRoomContext struct {
-	CodingTime uint      `json:"coding_time"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	CodingTime            uint      `json:"coding_time"`
+	IsDone                bool      `json:"is_done"`
+	IsCameraRequired      bool      `json:"is_camera_required"`
+	IsScreenShareRequired bool      `json:"is_screen_share_required"`
+	CreatedAt             time.Time `json:"created_at"`
+	UpdatedAt             time.Time `json:"updated_at"`
 }

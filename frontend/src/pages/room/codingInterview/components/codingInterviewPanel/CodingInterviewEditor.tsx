@@ -105,6 +105,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
             <SelectItem value="c">C</SelectItem>
           </SelectContent>
         </Select>
+
         <Button
           onClick={() => {
             onCompile(getLanguageNumber(language), content, "")
@@ -152,6 +153,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                     <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded-md">
                       {formatTestCase(
                         output[index].compile_result?.stdout || "",
+                      )}
+                      {output[index].compile_result?.stderr && (
+                        <span>{output[index].compile_result?.stderr}</span>
                       )}
                     </pre>
                   </div>
