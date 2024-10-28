@@ -1753,6 +1753,12 @@ const docTemplate = `{
                         "name": "userId",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "workspaceId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {

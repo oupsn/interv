@@ -157,7 +157,7 @@ func (v VideoInterviewHandler) GetVideoInterviewResult(c *fiber.Ctx) error {
 		return err
 	}
 
-	result, err := v.videoInterviewService.GetVideoInterviewResult(query.UserID)
+	result, err := v.videoInterviewService.GetVideoInterviewResult(query.UserID, query.WorkspaceID)
 	if err != nil {
 		return err
 	}

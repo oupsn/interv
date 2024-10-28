@@ -2552,6 +2552,10 @@ paths:
         name: userId
         required: true
         type: integer
+      - in: query
+        name: workspaceId
+        required: true
+        type: integer
       produces:
       - application/json
       responses:

@@ -17,6 +17,7 @@ type IRoomRepository interface {
 	SetRoomSession(roomId string, sessionIdentifier string) error
 	RevokeRoomSession(roomId string) error
 	GetRoomSession(roomId string) (string, error)
+	GetByWorkspaceIdAndCandidateId(workspaceId uint, candidateId uint) (*domains.Room, error)
 }
 
 type roomRepository struct {
@@ -100,4 +101,13 @@ func (l roomRepository) RevokeRoomSession(roomId string) error {
 	}
 
 	return nil
+}
+
+func (l roomRepository) GetByWorkspaceIdAndCandidateId(workspaceId uint, candidateId uint) (*domains.Room, error) {
+	room := domains.Room{}
+	if err := l.DB.First(&room, "workspace_id = ? AND candidate_id = ?", workspaceId, candidateId).Error; err != nil {
+		return nil, err
+	}
+
+	return &room, nil
 }
