@@ -88,10 +88,10 @@ const CreateWorkspace = () => {
     isCoding: z.boolean().default(false),
     codingTime: z
       .number()
-      .min(isCoding ? 1 : 0, isCoding ? { message: "Required" } : {}),
+      .min(isCoding ? 1 : 0, isCoding ? { message: "Required" } : {})
+      .max(180),
     videoTime: z.number().min(0, isVideo ? { message: "Required" } : {}),
     reqScreen: z.boolean().default(false),
-    reqMicrophone: z.boolean().default(false),
     reqCamera: z.boolean().default(false),
   })
   const form = useForm<z.infer<typeof formSchema>>({
@@ -104,7 +104,6 @@ const CreateWorkspace = () => {
       videoTime: Number(0),
       codingTime: Number(0),
       reqScreen: false,
-      reqMicrophone: false,
       reqCamera: false,
     },
   })
@@ -142,7 +141,7 @@ const CreateWorkspace = () => {
         server.workspace.createWorkspace({
           ...values,
           reqScreen: isCoding ? values.reqScreen : false,
-          reqMicrophone: isCoding ? values.reqMicrophone : false,
+          reqMicrophone: isCoding ? values.reqCamera : false,
           reqCamera: isCoding ? values.reqCamera : false,
           codingTime: isCoding ? values.codingTime * 60 : 0,
           videoTime: vidTime,
@@ -160,6 +159,7 @@ const CreateWorkspace = () => {
           },
         },
       )
+    console.log(values.reqCamera)
     navigate("/portal/workspace")
   }
 
@@ -368,29 +368,6 @@ const CreateWorkspace = () => {
                       Require screen record
                     </FormLabel>
                   </FormItem>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="reqMicrophone"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-2">
-                  <FormControl>
-                    <Checkbox
-                      checked={isCoding ? field.value : false} // Set checked to the boolean value
-                      onCheckedChange={field.onChange} // Update the form state when checkbox changes
-                      onBlur={field.onBlur} // Handle onBlur event
-                      name={field.name} // Set the name for the field
-                      ref={field.ref} // Forward the ref to the input
-                      disabled={!isCoding}
-                      className="size-5 mt-2"
-                    />
-                  </FormControl>
-                  <FormLabel className="text-lg">
-                    Require microphone record
-                  </FormLabel>
                   <FormMessage />
                 </FormItem>
               )}

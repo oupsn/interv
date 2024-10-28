@@ -89,8 +89,10 @@ const EditWorkspacePage = () => {
 
   const [vidTime, setVidTime] = useState<number>(0)
 
-  const isVideo = workspaceData?.data?.isVideo
-  const isCoding = workspaceData?.data?.isCoding
+  const isVideo =
+    videoCurrentQuestion === undefined ? false : videoCurrentQuestion.length > 0
+  const isCoding =
+    codeCurrentQuestion === undefined ? false : codeCurrentQuestion.length > 0
 
   const formSchema = z.object({
     title: z.string().min(1, { message: "Required" }),
@@ -117,7 +119,7 @@ const EditWorkspacePage = () => {
         endDate: workspaceData?.data?.endDate,
       },
       isVideo: workspaceData?.data?.isVideo,
-      isCoding: workspaceData?.data?.isVideo,
+      isCoding: workspaceData?.data?.isCoding,
       videoTime: workspaceData?.data?.videoTime,
       codingTime: workspaceData?.data?.codingTime
         ? Math.round(workspaceData?.data?.codingTime / 60) > 0
@@ -130,8 +132,8 @@ const EditWorkspacePage = () => {
     },
   })
   const { setValue, watch } = form
-  setValue("isVideo", isVideo ? true : true)
-  setValue("isCoding", isCoding ? true : true)
+  setValue("isVideo", isVideo ? true : false)
+  setValue("isCoding", isCoding ? true : false)
   const startDate = watch("date.startDate")
   const endDate = watch("date.endDate")
   const handleDateChange = (range: DateRange | undefined) => {

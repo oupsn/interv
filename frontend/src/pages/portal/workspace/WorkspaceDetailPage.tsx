@@ -26,6 +26,7 @@ import { useGetCodingInterviewQuestionByWorpsaceId } from "@/hooks/useGetCodingI
 import { cn } from "@/lib/utils"
 import { Spinner } from "@/components/ui/spinner"
 import { FaEdit } from "react-icons/fa"
+import { Button } from "@/components/ui/button"
 
 const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams()
@@ -131,7 +132,7 @@ const WorkspaceDetailPage = () => {
         <div
           className={cn(
             "text-xl flex flex-col h-full",
-            disablePage ? "gap-8" : "gap-4",
+            disablePage ? "gap-5" : "gap-4",
           )}
         >
           <div className="flex items-center gap-5">
@@ -140,12 +141,15 @@ const WorkspaceDetailPage = () => {
             </Label>
 
             {workspaceActive || workspaceData?.data?.userInWorkspace == null ? (
-              <FaEdit
-                className="hover:cursor-pointer text-iGreen"
+              <Button
+                size="icon"
+                className="hover:cursor-pointer"
                 onClick={() => {
                   navigate("edit")
                 }}
-              />
+              >
+                <FaEdit />
+              </Button>
             ) : (
               <></>
             )}

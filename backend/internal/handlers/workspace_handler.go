@@ -231,33 +231,36 @@ func (w WorkspaceHandler) CreateWorkspace(c *fiber.Ctx) error {
 	}
 
 	response, err := w.workspaceService.Create(
-		form.Title, 
-		form.StartDate, 
-		form.EndDate, 
-		form.IsVideo, 
-		form.IsCoding, 
-		form.VideoTime, 
-		form.CodingTime, 
-		form.ReqScreen, 
-		form.ReqMicrophone, 
-		form.ReqCamera, 
-		form.PortalId, 
-		form.CodeQuestion, 
+		form.Title,
+		form.StartDate,
+		form.EndDate,
+		form.IsVideo,
+		form.IsCoding,
+		form.VideoTime,
+		form.CodingTime,
+		form.ReqScreen,
+		form.ReqMicrophone,
+		form.ReqCamera,
+		form.PortalId,
+		form.CodeQuestion,
 		form.VideoQuestion)
 	if err != nil {
 		return err
 	}
 
 	return Created(c, WorkspaceDetail{
-		Id:         response.Id,
-		Title:      response.Title,
-		StartDate:  response.StartDate,
-		EndDate:    response.EndDate,
-		IsVideo:    *response.IsVideo,
-		IsCoding:   *response.IsCoding,
-		VideoTime:  response.VideoTime,
-		CodingTime: response.CodingTime,
-		PortalId:   response.PortalId,
+		Id:            response.Id,
+		Title:         response.Title,
+		StartDate:     response.StartDate,
+		EndDate:       response.EndDate,
+		IsVideo:       *response.IsVideo,
+		IsCoding:      *response.IsCoding,
+		ReqScreen:     *response.ReqScreen,
+		ReqMicrophone: *response.ReqMicrophone,
+		ReqCamera:     *response.ReqCamera,
+		VideoTime:     response.VideoTime,
+		CodingTime:    response.CodingTime,
+		PortalId:      response.PortalId,
 	})
 }
 
@@ -284,19 +287,19 @@ func (w WorkspaceHandler) UpdateWorkspace(c *fiber.Ctx) error {
 	}
 
 	response, err := w.workspaceService.Update(
-		form.Id, 
-		form.Title, 
-		form.StartDate, 
-		form.EndDate, 
-		form.IsVideo, 
-		form.IsCoding, 
-		form.VideoTime, 
-		form.CodingTime, 
-		form.ReqScreen, 
-		form.ReqMicrophone, 
-		form.ReqCamera, 
-		form.PortalId, 
-		form.CodeQuestion, 
+		form.Id,
+		form.Title,
+		form.StartDate,
+		form.EndDate,
+		form.IsVideo,
+		form.IsCoding,
+		form.VideoTime,
+		form.CodingTime,
+		form.ReqScreen,
+		form.ReqMicrophone,
+		form.ReqCamera,
+		form.PortalId,
+		form.CodeQuestion,
 		form.VideoQuestion)
 	if err != nil {
 		return err

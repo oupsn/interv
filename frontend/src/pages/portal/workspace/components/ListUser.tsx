@@ -9,7 +9,14 @@ import {
   TableCell,
   Table,
 } from "@/components/ui/table"
-import { FaTrash, FaRegUser, FaStar, FaRegStar, FaEye } from "react-icons/fa"
+import {
+  FaTrash,
+  FaRegUser,
+  FaStar,
+  FaRegStar,
+  FaEye,
+  FaEdit,
+} from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import { server } from "@/contexts/swr"
 import { useGetWorkspace } from "@/hooks/useGetWorkspace"
@@ -75,7 +82,7 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
         <TableRow>
           <TableHead className={"w-2/6"}>Name</TableHead>
           <TableHead className={"w-2/6"}>Email</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead className={"w-[100px]"}>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -95,38 +102,61 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                   <TableCell className="font-medium">{user.status}</TableCell>
                   <TableCell>
                     <td className="flex w-fit gap-2">
-                      <Button
-                        size="icon"
-                        onClick={() => {
-                          console.log(user.userId)
-                          toast.promise(
-                            server.userInWorkspace
-                              .interestUser({
-                                workspaceId: user.workspaceId,
-                                userId: user.userId,
-                                isInterest: user.isInterest,
-                              })
-                              .then(() => mutate()),
-                            {
-                              loading: "Interest candidate",
-                              success: "Process successfully",
-                              error: (err) => {
-                                return err.response.data.message
+                      {user.status == "idle" ? (
+                        <Button
+                          size="icon"
+                          onClick={() => {
+                            navigate(user.userId?.toString() ?? "0")
+                          }}
+                        >
+                          <FaEye />
+                        </Button>
+                      ) : (
+                        <Button
+                          size="icon"
+                          onClick={() => {
+                            console.log(user.userId)
+                            toast.promise(
+                              server.userInWorkspace
+                                .interestUser({
+                                  workspaceId: user.workspaceId,
+                                  userId: user.userId,
+                                  isInterest: user.isInterest,
+                                })
+                                .then(() => mutate()),
+                              {
+                                loading: "Interest candidate",
+                                success: "Process successfully",
+                                error: (err) => {
+                                  return err.response.data.message
+                                },
                               },
-                            },
-                          )
-                        }}
-                      >
-                        {user.isInterest ? <FaStar /> : <FaRegStar />}
-                      </Button>
-                      <Button
-                        size="icon"
-                        onClick={() => {
-                          navigate(user.userId?.toString() ?? "0")
-                        }}
-                      >
-                        <FaEye />
-                      </Button>
+                            )
+                          }}
+                        >
+                          {user.isInterest ? <FaStar /> : <FaRegStar />}
+                        </Button>
+                      )}
+
+                      {user.status == "idle" ? (
+                        <Button
+                          size="icon"
+                          onClick={() => {
+                            navigate(user.userId?.toString() ?? "0")
+                          }}
+                        >
+                          <FaEdit />
+                        </Button>
+                      ) : (
+                        <Button
+                          size="icon"
+                          onClick={() => {
+                            navigate(user.userId?.toString() ?? "0")
+                          }}
+                        >
+                          <FaEye />
+                        </Button>
+                      )}
                       <Dialog
                         open={isDeleteDialogOpen}
                         onOpenChange={setIsDeleteDialogOpen}

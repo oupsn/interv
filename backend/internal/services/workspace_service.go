@@ -151,8 +151,8 @@ func (w *workspaceService) Update(
 		return nil, err
 	}
 
-	w.videoQuestionRepositories.DeleteByWorkspaceId(id)
-	w.codingInterviewService.DeleteCodingQuestionInWorkspace(id)
+	err = w.videoQuestionRepositories.DeleteByWorkspaceId(id)
+	err = w.codingInterviewService.DeleteCodingQuestionInWorkspace(id)
 
 	workspace, err = w.workspaceRepository.Update(domains.Workspace{
 		Id:            id,
