@@ -22,12 +22,16 @@ interface CodingInterviewDeviceSetupProps {
   screenStatus: StatusMessages
   previewVideoStream: MediaStream | null
   previewScreenStream: MediaStream | null
+  isCameraRequired: boolean
+  isScreenShareRequired: boolean
 }
 
 const CodingInterviewDeviceSetup: FC<CodingInterviewDeviceSetupProps> = ({
   handleClickStart,
   previewVideoStream,
   previewScreenStream,
+  isCameraRequired,
+  isScreenShareRequired,
   mediaError,
   mediaStatus,
   screenError,
@@ -49,74 +53,88 @@ const CodingInterviewDeviceSetup: FC<CodingInterviewDeviceSetupProps> = ({
   return (
     <div className="flex flex-col gap-10 overflow-y-auto">
       <div className="flex flex-row gap-10 justify-center">
-        <CodingVideoPreviewStream stream={previewVideoStream} />
-        <CodingScreenPreviewStream stream={previewScreenStream} />
+        {isCameraRequired && (
+          <CodingVideoPreviewStream stream={previewVideoStream} />
+        )}
+        {isScreenShareRequired && (
+          <CodingScreenPreviewStream stream={previewScreenStream} />
+        )}
       </div>
 
       <div className={"flex flex-row gap-20 justify-center"}>
-        <div>
-          <Label>Camera options</Label>
-          <Select
-            value={selectedCameraId}
-            onValueChange={(value) => {
-              setSelectedCameraId(value)
-            }}
-          >
-            <SelectTrigger className="w-[180px]" value={selectedCameraId}>
-              <SelectValue placeholder="Camera" />
-            </SelectTrigger>
-            <SelectContent>
-              {videoDevices[0]?.deviceId
-                ? videoDevices.map((device, index) => (
-                    <SelectItem value={device.deviceId} key={index}>
-                      {device.label}
-                    </SelectItem>
-                  ))
-                : null}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label>Microphone options</Label>
-          <Select
-            value={selectedMicrophoneId}
-            onValueChange={(value) => {
-              setSelectedMicrophoneId(value)
-            }}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Microphone" />
-            </SelectTrigger>
-            <SelectContent>
-              {audioDevices[0]?.deviceId
-                ? audioDevices.map((device, index) => (
-                    <SelectItem value={device.deviceId} key={index}>
-                      {device.label}
-                    </SelectItem>
-                  ))
-                : null}
-            </SelectContent>
-          </Select>
-        </div>
+        {isCameraRequired && (
+          <div>
+            <Label>Camera options</Label>
+            <Select
+              value={selectedCameraId}
+              onValueChange={(value) => {
+                setSelectedCameraId(value)
+              }}
+            >
+              <SelectTrigger className="w-[180px]" value={selectedCameraId}>
+                <SelectValue placeholder="Camera" />
+              </SelectTrigger>
+              <SelectContent>
+                {videoDevices[0]?.deviceId
+                  ? videoDevices.map((device, index) => (
+                      <SelectItem value={device.deviceId} key={index}>
+                        {device.label}
+                      </SelectItem>
+                    ))
+                  : null}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+        {isCameraRequired && (
+          <div>
+            <Label>Microphone options</Label>
+            <Select
+              value={selectedMicrophoneId}
+              onValueChange={(value) => {
+                setSelectedMicrophoneId(value)
+              }}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Microphone" />
+              </SelectTrigger>
+              <SelectContent>
+                {audioDevices[0]?.deviceId
+                  ? audioDevices.map((device, index) => (
+                      <SelectItem value={device.deviceId} key={index}>
+                        {device.label}
+                      </SelectItem>
+                    ))
+                  : null}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
       <div
         className={"space-y-4 flex flex-row gap-16 items-center justify-center"}
       >
-        <VideoInterviewStatusBox
-          title={"Screen"}
-          error={screenError}
-          status={screenStatus}
-        />
-        <VideoInterviewStatusBox
-          title={"Camera"}
-          error={mediaError}
-          status={mediaStatus}
-        />
-        <VideoInterviewStatusBox
-          title={"Microphone"}
-          error={mediaError}
-          status={mediaStatus}
-        />
+        {isScreenShareRequired && (
+          <VideoInterviewStatusBox
+            title={"Screen"}
+            error={screenError}
+            status={screenStatus}
+          />
+        )}
+        {isCameraRequired && (
+          <VideoInterviewStatusBox
+            title={"Camera"}
+            error={mediaError}
+            status={mediaStatus}
+          />
+        )}
+        {isCameraRequired && (
+          <VideoInterviewStatusBox
+            title={"Microphone"}
+            error={mediaError}
+            status={mediaStatus}
+          />
+        )}
       </div>
       <Button
         disabled={

@@ -28,7 +28,8 @@ type VideoInterviewQuestionSetting struct {
 } // @name VideoInterviewQuestionSetting
 
 type VideoInterviewResultQuery struct {
-	UserID uint `json:"userId"  validate:"required"`
+	UserID      uint `json:"userId"  validate:"required"`
+	WorkspaceID uint `json:"workspaceId"  validate:"required"`
 } // @name VideoInterviewResultQuery
 
 type VideoInterviewResultResponse struct {

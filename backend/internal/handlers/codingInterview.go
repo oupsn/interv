@@ -45,7 +45,8 @@ type CodingInterviewCreateQuestionSnapshotQuery []domains.CodingQuestionSnapshot
 type CodingInterviewCreateQuestionSubmissionQuery []domains.CreateCodingSubmissionRequest
 
 type CodingInterviewGetSubmissionResultByUserQuery struct {
-	UserID uint `json:"userID" validate:"required"`
+	UserID      uint `json:"userID" validate:"required"`
+	WorkspaceID uint `json:"workspaceID" validate:"required"`
 } // @name CodingInterviewGetSubmissionResultByUserQuery
 
 // @name CodingInterviewGetSubmissionResultByUserResponse

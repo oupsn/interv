@@ -64,11 +64,15 @@ func (s *codingInterviewService) GetCodingInterviewQuestionsInWorkspace(workspac
 	return questions, nil
 }
 
-func (s *codingInterviewService) GetCodingSubmissionResultByUser(userID uint) (domains.CodingQuestionSubmissionResult, error) {
+func (s *codingInterviewService) GetCodingSubmissionResultByUserWorkspace(userID uint, workspaceID uint) (domains.CodingQuestionSubmissionResult, error) {
 	var result domains.CodingQuestionSubmissionResult
 	roomID, err := s.codingInterviewRepository.GetRoomIDByUserID(userID)
 	if err != nil {
 		return domains.CodingQuestionSubmissionResult{}, ErrorGetRoomIDByUserID
+	}
+	workspace, err := s.codingInterviewRepository.GetWorkspaceByRoomID(roomID)
+	if err != nil {
+		return domains.CodingQuestionSubmissionResult{}, ErrorGetWorkspace
 	}
 	videoURL, videoErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%s-video.mp4", roomID))
 	screenURL, screenErr := s.objectRepository.Get("coding-interview", fmt.Sprintf("%s-screen.mp4", roomID))
@@ -77,7 +81,9 @@ func (s *codingInterviewService) GetCodingSubmissionResultByUser(userID uint) (d
 	}
 	result.VideoURL = videoURL
 	result.ScreenURL = screenURL
-	submissions, err := s.codingInterviewRepository.GetCodingQuestionSubmissionByUserID(userID)
+	result.IsScreen = *workspace.ReqScreen
+	result.IsVideo = *workspace.ReqCamera
+	submissions, err := s.codingInterviewRepository.GetCodingQuestionSubmissionByUserIDWorkspaceID(userID, workspaceID)
 	if err != nil {
 		fmt.Println(err)
 		return domains.CodingQuestionSubmissionResult{}, ErrorGetCodingSubmissionResultByUser
@@ -114,12 +120,8 @@ func (s *codingInterviewService) GetCompileResult(req domains.CompilationRequest
 			if err != nil {
 				return []domains.CompilationResultResponse{}, ErrorGetCompileResult
 			}
-
-			if res.Status.Description == "Accepted" {
-				result = res
-			}
-
 			if res.Status.Description != "Processing" && res.Status.Description != "In Queue" {
+				result = res
 				break
 			}
 
@@ -185,6 +187,7 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 			Language:   langCode[submission.Language],
 		}
 		compileResult, err := s.GetCompileResult(compileReq)
+		fmt.Println("compileResult", compileResult)
 		if err != nil {
 			return domains.CreateCodingSubmissionResponse{}, ErrorGetCompileResult
 		}
@@ -196,6 +199,7 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 		if err != nil {
 			return domains.CreateCodingSubmissionResponse{}, ErrorGetLintResult
 		}
+		fmt.Println("lintResult", lintResult)
 		// Encode lintResult to JSON string
 		lintResultJSON, err := json.Marshal(lintResult)
 		if err != nil {

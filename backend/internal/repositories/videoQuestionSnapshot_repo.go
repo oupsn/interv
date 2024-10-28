@@ -7,7 +7,7 @@ import (
 
 type IVideoQuestionSnapshotRepository interface {
 	Create(question domains.VideoQuestionSnapshot) (*domains.VideoQuestionSnapshot, error)
-	GetByCandidateId(candidateId uint) ([]domains.VideoQuestionSnapshot, error)
+	GetByCandidateId(candidateId uint, roomId string) ([]domains.VideoQuestionSnapshot, error)
 }
 
 type videoQuestionSnapshotRepository struct {
@@ -28,9 +28,9 @@ func (v videoQuestionSnapshotRepository) Create(questionSnapshot domains.VideoQu
 	return &questionSnapshot, nil
 }
 
-func (v videoQuestionSnapshotRepository) GetByCandidateId(candidateId uint) ([]domains.VideoQuestionSnapshot, error) {
+func (v videoQuestionSnapshotRepository) GetByCandidateId(candidateId uint, roomId string) ([]domains.VideoQuestionSnapshot, error) {
 	var questionSnapshots []domains.VideoQuestionSnapshot
-	if err := v.DB.Preload("VideoQuestion").Find(&questionSnapshots, "candidate_id = ?", candidateId).Error; err != nil {
+	if err := v.DB.Preload("VideoQuestion").Find(&questionSnapshots, "candidate_id = ? AND room_id = ?", candidateId, roomId).Error; err != nil {
 		return nil, err
 	}
 

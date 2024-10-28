@@ -166,7 +166,7 @@ func (co CodingInterviewHandler) GetSubmissionResultByUser(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	res, err := co.codingInterviewService.GetCodingSubmissionResultByUser(req.UserID)
+	res, err := co.codingInterviewService.GetCodingSubmissionResultByUserWorkspace(req.UserID, req.WorkspaceID)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
@@ -307,7 +307,6 @@ func (co CodingInterviewHandler) UpdateQuestion(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
-
 	question, err := co.codingInterviewService.UpdateCodingQuestion(uint(req.CodingQuestionID), domains.CodingQuestion{
 		Title:             req.Body.Title,
 		Description:       req.Body.Description,

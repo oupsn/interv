@@ -1,6 +1,13 @@
 import TopBar from "@/components/layout/TopBar"
 import TopBarItem from "@/components/layout/TopBarItem"
-
+import CodingGuide1 from "@/assets/images/coding-guide-1.png"
+import CodingGuide2 from "@/assets/images/coding-guide-2.png"
+import CodingGuide3 from "@/assets/images/coding-guide-3.png"
+import VideoGuide1 from "@/assets/images/video-guide-1.png"
+import VideoGuide2 from "@/assets/images/video-guide-2.png"
+import VideoGuide3 from "@/assets/images/video-guide-3.png"
+import VideoGuide4 from "@/assets/images/video-guide-4.png"
+import VideoGuide5 from "@/assets/images/video-guide-5.png"
 import {
   Accordion,
   AccordionContent,
@@ -84,19 +91,15 @@ function QuestionGuideline() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const codingImages = [
-    "https://via.assets.so/img.jpg?w=800&h=450",
-    "https://via.assets.so/img.jpg?w=800&h=450",
-    "https://via.assets.so/img.jpg?w=800&h=450",
-    "https://via.assets.so/img.jpg?w=800&h=450",
-  ]
+  const codingImages = [CodingGuide1, CodingGuide2, CodingGuide3]
 
   const videoImages = [
-    "https://via.assets.so/img.jpg?w=800&h=450",
-    "https://via.assets.so/img.jpg?w=800&h=450",
-    "https://via.assets.so/img.jpg?w=800&h=450",
+    VideoGuide1,
+    VideoGuide2,
+    VideoGuide3,
+    VideoGuide4,
+    VideoGuide5,
   ]
-
   return (
     <div className="flex flex-col w-dvw h-dvh">
       <TopBar>
@@ -127,16 +130,27 @@ function QuestionGuideline() {
             <AccordionTrigger className="text-xl font-semibold px-4 hover:no-underline">
               <div className="flex items-center gap-3">
                 <Code className="w-6 h-6 text-primary" />
-                Coding Challenge Guide
+                Coding Interview Guide
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-4 pt-4">
               <div className="space-y-6">
                 <ImageCarousel
                   images={codingImages}
-                  title="Coding Challenge Interface Guide"
+                  title="Coding Interview Interface Guide"
                 />
-
+                <section className="space-y-3">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5" />
+                    Interface Elements
+                  </h3>
+                  <ul className="list-disc pl-6 space-y-2">
+                    <li>Code Editor: Write and edit your solution</li>
+                    <li>Test Cases: Run and verify your code</li>
+                    <li>Problem Description: Details and requirements</li>
+                    <li>Submit Button: Submit your final solution</li>
+                  </ul>
+                </section>
                 <section className="space-y-3">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Timer className="w-5 h-5" />
@@ -166,19 +180,6 @@ function QuestionGuideline() {
                     <li>Test your code with different inputs</li>
                   </ul>
                 </section>
-
-                <section className="space-y-3">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5" />
-                    Interface Elements
-                  </h3>
-                  <ul className="list-disc pl-6 space-y-2">
-                    <li>Code Editor: Write and edit your solution</li>
-                    <li>Test Cases: Run and verify your code</li>
-                    <li>Problem Description: Details and requirements</li>
-                    <li>Submit Button: Submit your final solution</li>
-                  </ul>
-                </section>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -192,11 +193,25 @@ function QuestionGuideline() {
             </AccordionTrigger>
             <AccordionContent className="px-4 pt-4">
               <div className="space-y-6">
-                <ImageCarousel
-                  images={videoImages}
-                  title="Video Interview Interface Guide"
-                />
-
+                {videoImages.length > 0 && (
+                  <ImageCarousel
+                    images={videoImages}
+                    title="Video Interview Interface Guide"
+                  />
+                )}
+                <section className="space-y-3">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5" />
+                    Interface Elements
+                  </h3>
+                  <ul className="list-disc pl-6 space-y-2">
+                    <li>Device Setup: Check your device setup</li>
+                    <li>Question Display: Current question text</li>
+                    <li>Timer: Countdown for preparation and recording</li>
+                    <li>Retake Question: Retake the current question</li>
+                    <li>Submit the video: Submit your final video</li>
+                  </ul>
+                </section>
                 <section className="space-y-3">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Timer className="w-5 h-5" />
@@ -213,19 +228,6 @@ function QuestionGuideline() {
                 <section className="space-y-3">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Check className="w-5 h-5" />
-                    Interface Elements
-                  </h3>
-                  <ul className="list-disc pl-6 space-y-2">
-                    <li>Camera Preview: Check your video appearance</li>
-                    <li>Question Display: Current question text</li>
-                    <li>Timer: Countdown for preparation and recording</li>
-                    <li>Recording Controls: Start/stop recording</li>
-                  </ul>
-                </section>
-
-                <section className="space-y-3">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5" />
                     Technical Setup
                   </h3>
                   <ul className="list-disc pl-6 space-y-2">
