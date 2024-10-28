@@ -266,7 +266,7 @@ function QuestionBankCodingEdit() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6"
+            className="space-y-6 relative"
           >
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
