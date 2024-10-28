@@ -87,10 +87,11 @@ func (v videoQuestionRepository) DeleteById(id uint) error {
 }
 
 func (v videoQuestionRepository) DeleteByWorkspaceId(workspaceId uint) error {
-	if err := v.DB.Delete(&domains.VideoQuestion{}, "workspace_id = ?", workspaceId).Error; err != nil {
+	if err := v.DB.
+		Table("video_question_workspaces").
+		Where("workspace_id = ?", workspaceId).
+		Delete(nil).Error; err != nil {
 		return err
 	}
-
 	return nil
 }
-

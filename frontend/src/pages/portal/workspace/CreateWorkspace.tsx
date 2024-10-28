@@ -22,7 +22,7 @@ import DatePicker from "./components/DatePicker"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { DateRange } from "react-day-picker"
 import { addDays } from "date-fns"
 import { server } from "@/contexts/swr"
@@ -38,6 +38,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Link, useNavigate } from "react-router-dom"
 import QuestionPicker from "./components/QuestionPicker"
 import { Spinner } from "@/components/ui/spinner"
+import { LoadingContext } from "@/contexts/loading"
 
 // Zod schema for form validation
 
@@ -112,6 +113,7 @@ const CreateWorkspace = () => {
   setValue("isCoding", isCoding)
   const startDate = watch("date.startDate")
   const endDate = watch("date.endDate")
+  const { setLoading } = useContext(LoadingContext)
 
   const handleDateChange = (range: DateRange | undefined) => {
     setDateRange(range)
@@ -136,8 +138,9 @@ const CreateWorkspace = () => {
     const ListVideoQuestion = videoCurrentQuestion
       ? videoCurrentQuestion.map((question) => question.id ?? 0)
       : []
-    isCoding ? setValue("codingTime", 0) : {},
-      toast.promise(
+    isCoding ? setValue("codingTime", 0) : {}, setLoading(true)
+    try {
+      const response = await toast.promise(
         server.workspace.createWorkspace({
           ...values,
           reqScreen: isCoding ? values.reqScreen : false,
@@ -159,8 +162,16 @@ const CreateWorkspace = () => {
           },
         },
       )
-    console.log(values.reqCamera)
-    navigate("/portal/workspace")
+      console.log(response)
+    } catch (error) {
+      console.error("Error creating workspace:", error)
+    } finally {
+      setLoading(true)
+      setTimeout(() => {
+        setLoading(false)
+        navigate("/portal/workspace/")
+      }, 1000)
+    }
   }
 
   useEffect(() => {
@@ -396,7 +407,7 @@ const CreateWorkspace = () => {
               )}
             />
 
-            <Button className={"w-full"}>Submit</Button>
+            <Button className={"w-full"}>Create Workspace</Button>
           </form>
         </Form>
       </ContentPanel>

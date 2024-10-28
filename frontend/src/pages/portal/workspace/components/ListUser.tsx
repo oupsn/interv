@@ -142,7 +142,7 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                         <Button
                           size="icon"
                           onClick={() => {
-                            navigate(user.userId?.toString() ?? "0")
+                            navigate((user.userId?.toString() ?? "0") + "/edit")
                           }}
                         >
                           <FaEdit />

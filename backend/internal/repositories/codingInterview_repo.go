@@ -102,7 +102,7 @@ func (c *codingInterviewRepository) GetCodingQuestionListInWorkspace(workspaceId
 	var codingQuestions []domains.CodingQuestion
 	if err := c.DB.Distinct("coding_questions.*").
 		Joins("JOIN coding_question_in_workspaces ON coding_questions.id = coding_question_in_workspaces.coding_question_id").
-		Where("coding_question_in_workspaces.workspace_id = ?", workspaceId).
+		Where("coding_question_in_workspaces.workspace_id = ? AND coding_question_in_workspaces.deleted_at IS NULL", workspaceId).
 		Find(&codingQuestions).Error; err != nil {
 		return nil, err
 	}

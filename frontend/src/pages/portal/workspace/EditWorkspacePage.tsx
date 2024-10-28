@@ -15,7 +15,7 @@ import {
   DomainsCodingQuestion,
   GetVideoQuestionByPortalIdResponse,
 } from "@/api/server"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import useCurrentUser from "@/hooks/UseCurrentUser"
 import { useGetCodingInterviewQuestionByPortalId } from "@/hooks/useGetCodingInterviewQuestionByPortalId"
 import { useGetVideoInterviewQuestionByPortalId } from "@/hooks/useGetVideoInterviewQuestionByPortalId"
@@ -40,6 +40,15 @@ import { toast } from "sonner"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { LoadingContext } from "@/contexts/loading"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 const EditWorkspacePage = () => {
   const navigate = useNavigate()
@@ -87,12 +96,21 @@ const EditWorkspacePage = () => {
       : videoQuestion?.data,
   )
 
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
   const [vidTime, setVidTime] = useState<number>(0)
 
   const isVideo =
-    videoCurrentQuestion === undefined ? false : videoCurrentQuestion.length > 0
+    videoCurrentQuestion === undefined
+      ? false
+      : videoCurrentQuestion
+        ? videoCurrentQuestion.length > 0
+        : false
   const isCoding =
-    codeCurrentQuestion === undefined ? false : codeCurrentQuestion.length > 0
+    codeCurrentQuestion === undefined
+      ? false
+      : codeCurrentQuestion
+        ? codeCurrentQuestion.length > 0
+        : false
 
   const formSchema = z.object({
     title: z.string().min(1, { message: "Required" }),
@@ -107,7 +125,6 @@ const EditWorkspacePage = () => {
       .min(isCoding ? 1 : 0, isCoding ? { message: "Required" } : {}),
     videoTime: z.number().min(0, isVideo ? { message: "Required" } : {}),
     reqScreen: z.boolean().default(false),
-    reqMicrophone: z.boolean().default(false),
     reqCamera: z.boolean().default(false),
   })
   const form = useForm<z.infer<typeof formSchema>>({
@@ -127,7 +144,6 @@ const EditWorkspacePage = () => {
           : 1
         : 0,
       reqScreen: workspaceData?.data?.reqScreen,
-      reqMicrophone: workspaceData?.data?.reqMicrophone,
       reqCamera: workspaceData?.data?.reqCamera,
     },
   })
@@ -136,6 +152,7 @@ const EditWorkspacePage = () => {
   setValue("isCoding", isCoding ? true : false)
   const startDate = watch("date.startDate")
   const endDate = watch("date.endDate")
+  const { setLoading } = useContext(LoadingContext)
   const handleDateChange = (range: DateRange | undefined) => {
     setDateRange(range)
     setValue(
@@ -149,41 +166,56 @@ const EditWorkspacePage = () => {
       { shouldValidate: true },
     )
   }
+  const [formValues, setFormValues] = useState<z.infer<
+    typeof formSchema
+  > | null>(null)
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const eD = new Date(endDate)
-    const sD = new Date(startDate)
-    const ListCodeQuestion = codeCurrentQuestion
-      ? codeCurrentQuestion.map((question) => question.id ?? 0)
-      : []
-    const ListVideoQuestion = videoCurrentQuestion
-      ? videoCurrentQuestion.map((question) => question.id ?? 0)
-      : []
-    isCoding ? setValue("codingTime", 0) : {},
-      toast.promise(
-        server.workspace.updateWorkspace({
-          ...values,
-          reqScreen: isCoding ? values.reqScreen : false,
-          reqMicrophone: isCoding ? values.reqMicrophone : false,
-          reqCamera: isCoding ? values.reqCamera : false,
-          codingTime: isCoding ? values.codingTime * 60 : 0,
-          videoTime: vidTime,
-          endDate: eD.toISOString(),
-          startDate: sD.toISOString(),
-          portalId: currentUser.portalId,
-          codeQuestion: ListCodeQuestion,
-          videoQuestion: ListVideoQuestion,
-          id: Number(workspaceId),
-        }),
-        {
-          loading: "Update workspace...",
-          success: "Workspace updated successfully",
-          error: (err) => {
-            return err.response.data.message
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    setFormValues(values)
+    setIsConfirmDialogOpen(true)
+  }
+
+  const onSubmit = async () => {
+    if (formValues) {
+      const eD = new Date(endDate)
+      const sD = new Date(startDate)
+      const ListCodeQuestion = codeCurrentQuestion
+        ? codeCurrentQuestion.map((question) => question.id ?? 0)
+        : []
+      const ListVideoQuestion = videoCurrentQuestion
+        ? videoCurrentQuestion.map((question) => question.id ?? 0)
+        : []
+      isCoding ? setValue("codingTime", 0) : {},
+        await toast.promise(
+          server.workspace.updateWorkspace({
+            ...formValues,
+            reqScreen: isCoding ? formValues.reqScreen : false,
+            reqMicrophone: isCoding ? formValues.reqCamera : false,
+            reqCamera: isCoding ? formValues.reqCamera : false,
+            codingTime: isCoding ? formValues.codingTime * 60 : 0,
+            videoTime: vidTime,
+            endDate: eD.toISOString(),
+            startDate: sD.toISOString(),
+            portalId: currentUser.portalId,
+            codeQuestion: ListCodeQuestion,
+            videoQuestion: ListVideoQuestion,
+            id: Number(workspaceId),
+          }),
+          {
+            loading: "Update workspace...",
+            success: "Workspace updated successfully",
+            error: (err) => {
+              return err.response.data.message
+            },
           },
-        },
-      )
-    navigate("/portal/workspace")
+        )
+      setIsConfirmDialogOpen(false)
+      setLoading(true)
+      setTimeout(() => {
+        setLoading(false)
+        navigate("/portal/workspace/" + workspaceId)
+      }, 1000)
+    }
   }
   const truncatedTitle = workspaceData?.data?.title
     ? workspaceData.data.title.length > 30
@@ -279,7 +311,7 @@ const EditWorkspacePage = () => {
       <ContentPanel>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-3 px-3 relative"
           >
             <FormField
@@ -436,29 +468,6 @@ const EditWorkspacePage = () => {
             />
             <FormField
               control={form.control}
-              name="reqMicrophone"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-2">
-                  <FormControl>
-                    <Checkbox
-                      checked={isCoding ? field.value : false} // Set checked to the boolean value
-                      onCheckedChange={field.onChange} // Update the form state when checkbox changes
-                      onBlur={field.onBlur} // Handle onBlur event
-                      name={field.name} // Set the name for the field
-                      ref={field.ref} // Forward the ref to the input
-                      disabled={!isCoding}
-                      className="size-5 mt-2"
-                    />
-                  </FormControl>
-                  <FormLabel className="text-lg">
-                    Require microphone record
-                  </FormLabel>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="reqCamera"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-2">
@@ -480,7 +489,34 @@ const EditWorkspacePage = () => {
                 </FormItem>
               )}
             />
-
+            <Dialog
+              open={isConfirmDialogOpen}
+              onOpenChange={setIsConfirmDialogOpen}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Confirm Update</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to update the workspace ?
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsConfirmDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="default"
+                    onClick={onSubmit}
+                    className="bg-primary text-white"
+                  >
+                    Update
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             <Button className={"w-full"}>Submit</Button>
           </form>
         </Form>

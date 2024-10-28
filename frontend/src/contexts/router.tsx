@@ -23,6 +23,7 @@ import WorkspaceInterestPage from "@/pages/portal/workspace/WorkspaceInterestPag
 import CandidateDetailPage from "@/pages/portal/workspace/CandidateDetailPage"
 import QuestionGuideline from "@/pages/room/questionGuideline/QuestionGuideline"
 import EditWorkspacePage from "@/pages/portal/workspace/EditWorkspacePage"
+import EditCandidatePage from "@/pages/portal/workspace/EditCandidatePage"
 
 export const router = createBrowserRouter([
   {
@@ -68,7 +69,16 @@ export const router = createBrowserRouter([
                       },
                       {
                         path: ":candidateId",
-                        element: <CandidateDetailPage />,
+                        children: [
+                          {
+                            path: "",
+                            element: <CandidateDetailPage />,
+                          },
+                          {
+                            path: "edit",
+                            element: <EditCandidatePage />,
+                          },
+                        ],
                       },
                     ],
                   },

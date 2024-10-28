@@ -25,8 +25,18 @@ import { useGetVideoInterviewQuestionByPortalId } from "@/hooks/useGetVideoInter
 import { useGetCodingInterviewQuestionByWorpsaceId } from "@/hooks/useGetCodingInterviewQuestionByWorkspaceId"
 import { cn } from "@/lib/utils"
 import { Spinner } from "@/components/ui/spinner"
-import { FaEdit } from "react-icons/fa"
+import { FaEdit, FaTrash } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { server } from "@/contexts/swr"
+import { toast } from "sonner"
 
 const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams()
@@ -34,6 +44,7 @@ const WorkspaceDetailPage = () => {
   const disablePage = true
   const navigate = useNavigate()
 
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const { data: workspaceData } = useGetWorkspace(Number(workspaceId))
   const { data: codeQuestion, isLoading: isCodeQuestionLoading } =
     useGetCodingInterviewQuestionByPortalId(currentUser.portalId)
@@ -75,6 +86,26 @@ const WorkspaceDetailPage = () => {
       ? `${workspaceData.data.title.slice(0, 30)}...`
       : workspaceData.data.title
     : ""
+
+  const handleDelete = () => {
+    setIsDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = () => {
+    if (workspaceId) {
+      toast.promise(
+        server.workspace
+          .deleteWorkspaceById({ id: Number(workspaceId) })
+          .then(() => navigate("/portal/workspace")),
+        {
+          loading: "Deleting...",
+          success: "Deleted successfully",
+          error: "Failed to delete",
+        },
+      )
+    }
+    setIsDeleteDialogOpen(false)
+  }
 
   useEffect(() => {
     setCodeCurrentQuestion(codeWorkspaceQuestion?.data?.sort())
@@ -125,6 +156,28 @@ const WorkspaceDetailPage = () => {
               <BreadcrumbPage>{truncatedTitle}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
+          <BreadcrumbList>
+            {workspaceActive || workspaceData?.data?.userInWorkspace == null ? (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  navigate("edit")
+                }}
+                size="icon"
+              >
+                <FaEdit />
+              </Button>
+            ) : (
+              <></>
+            )}
+            <Button
+              variant="outline"
+              onClick={() => handleDelete()}
+              size="icon"
+            >
+              <FaTrash />
+            </Button>
+          </BreadcrumbList>
         </Breadcrumb>
       }
     >
@@ -135,25 +188,34 @@ const WorkspaceDetailPage = () => {
             disablePage ? "gap-5" : "gap-4",
           )}
         >
-          <div className="flex items-center gap-5">
-            <Label className="text-3xl font-bold text-primary">
-              Title: {truncatedTitle}
-            </Label>
-
-            {workspaceActive || workspaceData?.data?.userInWorkspace == null ? (
-              <Button
-                size="icon"
-                className="hover:cursor-pointer"
-                onClick={() => {
-                  navigate("edit")
-                }}
-              >
-                <FaEdit />
-              </Button>
-            ) : (
-              <></>
-            )}
-          </div>
+          <Dialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+          >
+            <DialogContent className="bg-white">
+              <DialogHeader>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this coding question? This
+                  action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDeleteDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={confirmDelete}>
+                  Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Label className="text-3xl font-bold text-primary">
+            Title: {truncatedTitle}
+          </Label>
           <Label>Number of candidate : {workspaceData?.data?.memberNum}</Label>
           <Label>
             Time period :{" "}

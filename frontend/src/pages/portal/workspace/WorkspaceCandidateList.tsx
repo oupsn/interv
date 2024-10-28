@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input.tsx"
 import Papa from "papaparse"
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { server } from "@/contexts/swr"
 import { useGetWorkspace } from "@/hooks/useGetWorkspace"
@@ -21,6 +21,7 @@ import ListUser from "./components/ListUser"
 import { Spinner } from "@/components/ui/spinner"
 import saveAs from "file-saver"
 import { toast } from "sonner"
+import { FaDownload, FaFile, FaUpload } from "react-icons/fa"
 
 const WorkspaceCandidateList = () => {
   const [importUser, setImportUser] = useState<UserData[]>()
@@ -28,6 +29,10 @@ const WorkspaceCandidateList = () => {
   const size = 10
   const { workspaceId } = useParams()
   const { data, mutate, isLoading } = useGetWorkspace(Number(workspaceId))
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isFileSelected, setIsFileSelected] = useState(false)
+  const [fileName, setFileName] = useState("")
 
   const truncatedTitle = data?.data?.title
     ? data.data.title.length > 15
@@ -48,7 +53,7 @@ const WorkspaceCandidateList = () => {
   }
 
   function parseUserData(input: string[][]): UserData[] {
-    const currentTimestamp = new Date().toISOString() // Generate once for all entries
+    const currentTimestamp = new Date().toISOString()
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     return input
@@ -58,7 +63,7 @@ const WorkspaceCandidateList = () => {
           Array.isArray(item) &&
           item.length === 2 &&
           item.every((i) => typeof i === "string") &&
-          emailRegex.test(item[1]), // Validate email format
+          emailRegex.test(item[1]),
       )
       .map(([name, username]) => ({
         name,
@@ -73,9 +78,9 @@ const WorkspaceCandidateList = () => {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0]
-    const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB limit in bytes
-
-    // Early return if no file or the file exceeds size limit
+    setIsFileSelected(!!file)
+    setFileName(file?.name ?? "")
+    const MAX_FILE_SIZE = 2 * 1024 * 1024
     if (!file) return
     if (file.size > MAX_FILE_SIZE) {
       toast.error("File too large. Maximum size is 2MB.")
@@ -88,11 +93,8 @@ const WorkspaceCandidateList = () => {
           skipEmptyLines: true,
           complete: (results: Papa.ParseResult<string[]>) => {
             const data = results.data as string[][]
-
-            // Regex to check for special characters (allows alphanumeric, space, comma, dot, dash, and @)
             const specialCharRegex = /^[a-zA-Z0-9\s,.\-@]+$/
 
-            // Validate each row and cell for special characters and length
             const isValid = data.every((row: string[], rowIndex: number) =>
               row.every((cell: string, cellIndex: number) => {
                 const valid = specialCharRegex.test(cell) && cell.length <= 40
@@ -113,12 +115,11 @@ const WorkspaceCandidateList = () => {
             }
           },
           error: (error) => {
-            reject(error) // Handle parse errors
+            reject(error)
           },
         })
       })
 
-      // Show a toast for promise
       await toast.promise(fileUploadPromise, {
         loading: "Processing file...",
         success: "File processed successfully!",
@@ -126,10 +127,9 @@ const WorkspaceCandidateList = () => {
           err instanceof Error ? err.message : "Something went wrong",
       })
     } catch (error: unknown) {
-      // Narrow down the error type to access message
       const errorMessage =
         error instanceof Error ? error.message : "An unexpected error occurred"
-      toast.error(errorMessage) // Display the error message
+      toast.error(errorMessage)
     }
   }
 
@@ -139,10 +139,9 @@ const WorkspaceCandidateList = () => {
       workspaceId: Number(workspaceId),
     }
     if (importUser && importUser.length > 0) {
-      // Proceed with the toast promise if there are users
       toast.promise(
         server.user.createUser(importData).finally(() => {
-          mutate() // Refresh the data after the operation
+          mutate()
         }),
         {
           loading: "Processing file...",
@@ -152,9 +151,9 @@ const WorkspaceCandidateList = () => {
         },
       )
     } else {
-      // If importUser has no data, show an error message
-      toast.error("No Data or File might be invalid") // Notify user about the absence of data
+      toast.error("No Data or File might be invalid")
     }
+    setIsFileSelected(false)
   }
 
   const handleExportFile = () => {
@@ -171,6 +170,7 @@ const WorkspaceCandidateList = () => {
       </div>
     )
   }
+
   return (
     <ContentLayout
       title="Applicant List"
@@ -196,48 +196,62 @@ const WorkspaceCandidateList = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>
-            <Button
-              className="mr-5"
-              onClick={() => {
-                if (!data?.data?.isCoding && !data?.data?.isVideo) {
-                  toast.error(
-                    "Please add a question before sending invitations",
-                  )
-                  return
-                }
-
-                toast.promise(
-                  server.workspace
-                    .inviteAllCandidate({
-                      workspaceId: data?.data?.id ?? 0,
-                    })
-                    .finally(() => {
-                      mutate() // Refresh the data after sending invitations
-                    }),
-                  {
-                    loading: "Sending invitation",
-                    success: "Invitation sent successfully",
-                    error: (err) => err.response.data.message,
-                  },
-                )
-              }}
-            >
-              Invite All
-            </Button>
-
             <div className="flex flex-row gap-2 justify-between">
+              <Button
+                onClick={() => {
+                  if (!data?.data?.isCoding && !data?.data?.isVideo) {
+                    toast.error(
+                      "Please add a question before sending invitations",
+                    )
+                    return
+                  }
+
+                  toast.promise(
+                    server.workspace
+                      .inviteAllCandidate({
+                        workspaceId: data?.data?.id ?? 0,
+                      })
+                      .finally(() => {
+                        mutate()
+                      }),
+                    {
+                      loading: "Sending invitation",
+                      success: "Invitation sent successfully",
+                      error: (err) => err.response.data.message,
+                    },
+                  )
+                }}
+              >
+                Send Invite
+              </Button>
               <Button
                 onClick={() => {
                   handleExportFile()
                 }}
               >
-                Download Template
+                <FaDownload className="mr-2" /> Template
               </Button>
+
+              <Button onClick={() => fileInputRef.current?.click()}>
+                {!isFileSelected ? (
+                  <>
+                    <FaUpload className="mr-2" />
+                    Candidates
+                  </>
+                ) : (
+                  <>
+                    <FaFile className="mr-2" />
+                    {fileName}
+                  </>
+                )}
+              </Button>
+
               <Input
-                className="w-1/2"
+                className="hidden"
                 type="file"
                 accept=".csv"
                 id="userMail"
+                ref={fileInputRef}
                 onChange={(e) => {
                   handleFileUpload(e)
                 }}
@@ -247,6 +261,7 @@ const WorkspaceCandidateList = () => {
                 onClick={() => {
                   handleSubmitFile()
                 }}
+                disabled={!isFileSelected}
               >
                 Submit
               </Button>

@@ -37,6 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import Panigator from "../workspace/components/Panigator"
+import { textTruncate } from "./utils/utils"
 
 const QuestionBankCodingListPage = () => {
   const navigate = useNavigate()
@@ -160,7 +161,9 @@ const QuestionBankCodingListPage = () => {
                             >
                               <TableCell className="px-4 py-2 flex items-center gap-4">
                                 <FaCode className="mr-2" size={20} />
-                                <span>{item.title}</span>
+                                <span>
+                                  {textTruncate(item.title ?? "", 50)}
+                                </span>
                               </TableCell>
                               <TableCell className="px-4 py-2 text-center">
                                 {" "}

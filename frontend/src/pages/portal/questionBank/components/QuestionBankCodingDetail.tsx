@@ -35,6 +35,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { toast } from "sonner"
+import { textTruncate } from "../utils/utils"
 
 function QuestionBankCodingDetail() {
   const { codingTitle } = useParams()
@@ -114,7 +115,9 @@ function QuestionBankCodingDetail() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{codingTitle}</BreadcrumbPage>
+                  <BreadcrumbPage>
+                    {textTruncate(codingTitle ?? "", 50)}
+                  </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
               <BreadcrumbList>

@@ -7,6 +7,7 @@ import (
 type IUserRepository interface {
 	Create(user domains.User) (newUser *domains.User, err error)
 	FindByUsernameAndPassword(username string, password string) (user *domains.User, err error)
+	UpdateIndividualUser(userId uint, name string, username string) (user *domains.User, err error)
 	FindByUsername(username string) (user *domains.User, err error)
 	FindById(id uint) (user *domains.User, err error)
 	DeleteById(id uint) (err error)

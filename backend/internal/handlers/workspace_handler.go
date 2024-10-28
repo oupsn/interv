@@ -328,7 +328,7 @@ func (w WorkspaceHandler) UpdateWorkspace(c *fiber.Ctx) error {
 // @Success 200 {object} Response[string]
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /workspace.delete [post]
+// @Router /workspace.delete [delete]
 func (w WorkspaceHandler) DeleteWorkspaceById(c *fiber.Ctx) error {
 	form := new(DeleteWorkspaceBody)
 
