@@ -129,65 +129,72 @@ const QuestionBankVideoListPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {videoQuestionList?.data?.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">
-                        {textTruncate(item.title ?? "", 120)}
-                      </TableCell>
-                      <TableCell>
-                        <td className="flex w-fit gap-2">
-                          <Button
-                            onClick={() => handleView(item.id!)}
-                            size="icon"
-                          >
-                            <FaEye />
-                          </Button>
-                          <Button
-                            onClick={() => handleEdit(item.id ?? 0)}
-                            size="icon"
-                          >
-                            <FaEdit />
-                          </Button>
-                          <Dialog
-                            open={isDeleteDialogOpen}
-                            onOpenChange={setIsDeleteDialogOpen}
-                          >
-                            <DialogTrigger asChild>
+                  {videoQuestionList?.data?.map((item, index) => {
+                    if (index >= (page - 1) * size && index <= page * size - 1)
+                      return (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">
+                            {textTruncate(item.title ?? "", 120)}
+                          </TableCell>
+                          <TableCell>
+                            <td className="flex w-fit gap-2">
                               <Button
-                                onClick={() => handleDelete(item.id ?? 0)}
+                                onClick={() => handleView(item.id!)}
                                 size="icon"
                               >
-                                <FaTrash />
+                                <FaEye />
                               </Button>
-                            </DialogTrigger>
-                            <DialogContent className="bg-white">
-                              <DialogHeader>
-                                <DialogTitle>Delete Video Question</DialogTitle>
-                                <DialogDescription>
-                                  Are you sure you want to delete this video
-                                  question? This action cannot be undone.
-                                </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter>
-                                <Button
-                                  variant="outline"
-                                  onClick={() => setIsDeleteDialogOpen(false)}
-                                >
-                                  Cancel
-                                </Button>
-                                <Button
-                                  variant="destructive"
-                                  onClick={confirmDelete}
-                                >
-                                  Delete
-                                </Button>
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
-                        </td>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                              <Button
+                                onClick={() => handleEdit(item.id ?? 0)}
+                                size="icon"
+                              >
+                                <FaEdit />
+                              </Button>
+                              <Dialog
+                                open={isDeleteDialogOpen}
+                                onOpenChange={setIsDeleteDialogOpen}
+                              >
+                                <DialogTrigger asChild>
+                                  <Button
+                                    onClick={() => handleDelete(item.id ?? 0)}
+                                    size="icon"
+                                  >
+                                    <FaTrash />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="bg-white">
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      Delete Video Question
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                      Are you sure you want to delete this video
+                                      question? This action cannot be undone.
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <DialogFooter>
+                                    <Button
+                                      variant="outline"
+                                      onClick={() =>
+                                        setIsDeleteDialogOpen(false)
+                                      }
+                                    >
+                                      Cancel
+                                    </Button>
+                                    <Button
+                                      variant="destructive"
+                                      onClick={confirmDelete}
+                                    >
+                                      Delete
+                                    </Button>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            </td>
+                          </TableCell>
+                        </TableRow>
+                      )
+                  })}
                 </TableBody>
               </Table>
             }
