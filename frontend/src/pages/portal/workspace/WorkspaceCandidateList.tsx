@@ -22,6 +22,21 @@ import { Spinner } from "@/components/ui/spinner"
 import saveAs from "file-saver"
 import { toast } from "sonner"
 import { FaDownload, FaFile, FaUpload } from "react-icons/fa"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 const WorkspaceCandidateList = () => {
   const [importUser, setImportUser] = useState<UserData[]>()
@@ -108,10 +123,12 @@ const WorkspaceCandidateList = () => {
             )
 
             if (isValid) {
-              setImportUser(parseUserData(data))
+              const parsedData = parseUserData(data)
+              setImportUser(parsedData)
+              setShowPreviewDialog(true)
               resolve()
             } else {
-              reject(console.log(Error))
+              reject(new Error("Invalid file format"))
             }
           },
           error: (error) => {
@@ -161,6 +178,135 @@ const WorkspaceCandidateList = () => {
     const csvContent = csvRows.map((row) => row.join(",")).join("\n")
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
     saveAs(blob, "candidate_import_template.csv")
+  }
+
+  const [showPreviewDialog, setShowPreviewDialog] = useState(false)
+
+  const [previewPage, setPreviewPage] = useState(1)
+  const previewItemsPerPage = 10
+
+  const PreviewDialog = () => {
+    const startIndex = (previewPage - 1) * previewItemsPerPage
+    const endIndex = startIndex + previewItemsPerPage
+    const totalPages = importUser
+      ? Math.ceil(importUser.length / previewItemsPerPage)
+      : 0
+    const currentPageData = importUser?.slice(startIndex, endIndex)
+
+    return (
+      <Dialog open={showPreviewDialog} onOpenChange={setShowPreviewDialog}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader className="pb-4 border-b">
+            <DialogTitle className="text-xl font-semibold">
+              Preview Candidates
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Review the candidates before confirming the upload
+            </p>
+          </DialogHeader>
+
+          {/* File Info Section */}
+          <div className="bg-muted/50 p-3 rounded-lg mb-4">
+            <div className="flex items-center gap-2 text-sm">
+              <FaFile className="text-muted-foreground" />
+              <span className="font-medium">{fileName}</span>
+              <span className="text-muted-foreground">•</span>
+              <span className="text-muted-foreground">
+                {importUser?.length || 0} candidates
+              </span>
+            </div>
+          </div>
+
+          {/* Table Section */}
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[60px] text-center">#</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentPageData?.map((user, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="text-center text-muted-foreground">
+                      {startIndex + index + 1}
+                    </TableCell>
+                    <TableCell className="font-medium">{user.name}</TableCell>
+                    <TableCell>{user.username}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Pagination Section */}
+          <div className="flex items-center justify-between py-4 border-t mt-4">
+            <div className="text-sm text-muted-foreground">
+              Showing {startIndex + 1} to{" "}
+              {Math.min(endIndex, importUser?.length || 0)} of{" "}
+              {importUser?.length || 0} entries
+            </div>
+            <div className="flex items-center gap-6">
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPreviewPage((p) => Math.max(1, p - 1))}
+                  disabled={previewPage === 1}
+                  className="h-8 w-8 p-0"
+                >
+                  <span className="sr-only">Previous page</span>←
+                </Button>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm font-medium">{previewPage}</span>
+                  <span className="text-muted-foreground text-sm">of</span>
+                  <span className="text-sm font-medium">{totalPages}</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setPreviewPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={previewPage === totalPages}
+                  className="h-8 w-8 p-0"
+                >
+                  <span className="sr-only">Next page</span>→
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions Section */}
+          <DialogFooter className="border-t pt-4">
+            <div className="flex justify-end gap-3 w-full">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowPreviewDialog(false)
+                  setIsFileSelected(false)
+                  setFileName("")
+                  setPreviewPage(1)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  handleSubmitFile()
+                  setShowPreviewDialog(false)
+                  setPreviewPage(1)
+                }}
+              >
+                Confirm Upload
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
   }
 
   if (isLoading) {
@@ -256,15 +402,6 @@ const WorkspaceCandidateList = () => {
                   handleFileUpload(e)
                 }}
               />
-
-              <Button
-                onClick={() => {
-                  handleSubmitFile()
-                }}
-                disabled={!isFileSelected}
-              >
-                Submit
-              </Button>
             </div>
           </BreadcrumbList>
         </Breadcrumb>
@@ -295,6 +432,7 @@ const WorkspaceCandidateList = () => {
           <></>
         )}
       </ContentPanel>
+      <PreviewDialog />
     </ContentLayout>
   )
 }

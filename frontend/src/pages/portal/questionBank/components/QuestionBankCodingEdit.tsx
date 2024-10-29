@@ -16,7 +16,7 @@ import { z } from "zod"
 import "react-quill/dist/quill.snow.css"
 import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Trash2 } from "lucide-react"
+import { Trash2, Plus, Upload, Download } from "lucide-react"
 import { server } from "@/contexts/swr"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -527,8 +527,8 @@ function QuestionBankCodingEdit() {
                                 isExample: false,
                               })
                             }
-                            variant="outline"
                           >
+                            <Plus className="h-4 w-4 mr-2" />
                             Add Test Case
                           </Button>
                           <Button
@@ -537,6 +537,7 @@ function QuestionBankCodingEdit() {
                             variant="outline"
                             disabled={fields.length === 0}
                           >
+                            <Upload className="h-4 w-4 mr-2" />
                             Export Test Cases
                           </Button>
                         </div>
@@ -706,9 +707,9 @@ function QuestionBankCodingEdit() {
                           <Button
                             type="button"
                             onClick={handleDownloadExampleZip}
-                            variant="outline"
                             className="whitespace-nowrap"
                           >
+                            <Download className="h-4 w-4 mr-2" />
                             Download Example
                           </Button>
                         </div>
