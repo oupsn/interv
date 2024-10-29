@@ -17,7 +17,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         <FaSearch />
       </span>
       <Input
-        placeholder="Search by name"
+        placeholder="Search"
         value={searchTerm}
         onChange={onSearchChange}
         className="pl-10" // Add left padding to make room for the icon

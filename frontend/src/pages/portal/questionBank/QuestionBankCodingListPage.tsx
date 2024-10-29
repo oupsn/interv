@@ -39,6 +39,7 @@ import {
 import Panigator from "../workspace/components/Panigator"
 import { textTruncate } from "./utils/utils"
 import SearchBar from "../workspace/components/SearchBar"
+import DifficultyDropdown from "../workspace/components/DifficultyDropdown"
 
 const QuestionBankCodingListPage = () => {
   const navigate = useNavigate()
@@ -54,6 +55,7 @@ const QuestionBankCodingListPage = () => {
     mutate,
   } = useGetCodingInterviewQuestionByPortalId(currentUser.currentUser.portalId)
   const [searchTerm, setSearchTerm] = useState("")
+  const [selectedDifficulty, setSelectedDifficulty] = useState("")
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
@@ -74,9 +76,14 @@ const QuestionBankCodingListPage = () => {
   }
 
   const filteredQuestion =
-    codingQuestionList?.data?.filter((question) =>
-      question.title?.toLowerCase().includes(searchTerm.toLowerCase()),
-    ) ?? []
+    codingQuestionList?.data?.filter((question) => {
+      const matchesSearch = question.title
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase())
+      const matchesDifficulty =
+        selectedDifficulty === "" || question.difficulty === selectedDifficulty
+      return matchesSearch && matchesDifficulty
+    }) ?? []
 
   const confirmDelete = () => {
     if (deleteItemId) {
@@ -118,6 +125,14 @@ const QuestionBankCodingListPage = () => {
           </BreadcrumbList>
           <BreadcrumbList>
             <BreadcrumbItem>
+              Difficulty:
+              <DifficultyDropdown
+                selectedDifficulty={selectedDifficulty}
+                onDifficultyChange={setSelectedDifficulty} // Update difficulty state
+              />
+            </BreadcrumbItem>
+            <BreadcrumbItem>
+              Title:
               <SearchBar
                 searchTerm={searchTerm}
                 onSearchChange={(e) => setSearchTerm(e.target.value)}
