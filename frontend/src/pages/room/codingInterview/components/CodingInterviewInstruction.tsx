@@ -90,7 +90,7 @@ const CodingInterviewInstruction: React.FC<CodingInterviewInstructionProps> = ({
         </DialogContent>
       </Dialog>
 
-      <div className="flex flex-row">
+      <div className="flex flex-row w-full">
         <div className="flex flex-col items-start justify-start w-full h-full px-16 py-4 rounded-lg shadow-md ">
           <Link to={"/room/" + roomId}>
             <div className="flex flex-row items-center justify-center gap-2 text-gray-500">

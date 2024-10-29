@@ -182,6 +182,7 @@ func (s *codingInterviewService) CreateCodingSnapshot(req []domains.CodingQuesti
 }
 
 func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodingSubmissionRequest) (domains.CreateCodingSubmissionResponse, error) {
+	var totalScore uint = 0
 	for _, submission := range req {
 		langCode := map[string]uint{
 			"python": 10,
@@ -226,7 +227,6 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 		}
 		/* 		Insert compile result
 		 */
-		var totalScore uint = 0
 		for _, testCase := range compileResult {
 			compileResultJSON, err := json.Marshal(testCase.CompileResult)
 			if err != nil {
@@ -245,8 +245,8 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 				totalScore += 1
 			}
 		}
-		s.roomRepository.SaveRoomScore(req[0].RoomID, totalScore)
 	}
+	s.roomRepository.SaveRoomScore(req[0].RoomID, totalScore)
 	s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, true)
 
 	return domains.CreateCodingSubmissionResponse{
