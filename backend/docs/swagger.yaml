@@ -635,6 +635,8 @@ definitions:
         type: array
       videoTime:
         type: integer
+      workspaceScore:
+        $ref: '#/definitions/domains.WorkspaceScore'
     type: object
   domains.CodingQuestion:
     properties:
@@ -1061,6 +1063,15 @@ definitions:
           $ref: '#/definitions/domains.VideoQuestion'
         type: array
       videoTime:
+        type: integer
+    type: object
+  domains.WorkspaceScore:
+    properties:
+      candidateScore:
+        additionalProperties:
+          type: integer
+        type: object
+      totalTestCase:
         type: integer
     type: object
   gorm.DeletedAt:

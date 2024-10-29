@@ -417,6 +417,11 @@ export interface DomainsWorkspace {
   videoTime?: number
 }
 
+export interface DomainsWorkspaceScore {
+  candidateScore?: Record<string, number>
+  totalTestCase?: number
+}
+
 export interface ExtendRoomSessionBody {
   roomId: string
   sessionIdentifier: string
@@ -1046,6 +1051,7 @@ export interface WorkspaceDetail {
   userInWorkspace?: UserInWorkspace[]
   videoQueston?: VideoQuestionDetail[]
   videoTime?: number
+  workspaceScore?: DomainsWorkspaceScore
 }
 
 export namespace Authentication {

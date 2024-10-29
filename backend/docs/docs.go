@@ -3345,6 +3345,9 @@ const docTemplate = `{
                 },
                 "videoTime": {
                     "type": "integer"
+                },
+                "workspaceScore": {
+                    "$ref": "#/definitions/domains.WorkspaceScore"
                 }
             }
         },
@@ -3995,6 +3998,20 @@ const docTemplate = `{
                     }
                 },
                 "videoTime": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domains.WorkspaceScore": {
+            "type": "object",
+            "properties": {
+                "candidateScore": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "totalTestCase": {
                     "type": "integer"
                 }
             }

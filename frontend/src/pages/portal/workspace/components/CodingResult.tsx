@@ -20,16 +20,20 @@ function CodingResult({ workspaceId }: CodingResultProps) {
   const [questionPass, setQuestionPass] = useState<number>(0)
   const calculateQuestionPass = () => {
     if (result) {
-      setQuestionNumber(result.data?.result?.length || 0)
+      let totalTestCases = 0
+      let passedTestCases = 0
+
       result.data?.result?.forEach((question) => {
-        if (
-          question.test_cases_result?.every(
-            (testCase) => testCase.is_passed === true,
-          )
-        ) {
-          setQuestionPass((prev) => prev + 1)
-        }
+        totalTestCases += question.test_cases_result?.length || 0
+        question.test_cases_result?.forEach((testCase) => {
+          if (testCase.is_passed === true) {
+            passedTestCases += 1
+          }
+        })
       })
+
+      setQuestionNumber(totalTestCases)
+      setQuestionPass(passedTestCases)
     }
   }
   const formatTimeTaken = (timeTaken: number) => {

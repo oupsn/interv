@@ -2,25 +2,28 @@ package handlers
 
 import (
 	"time"
+
+	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 )
 
 type WorkspaceDetail struct {
-	Id              uint                  `json:"id"`
-	Title           string                `json:"title"`
-	StartDate       time.Time             `json:"startDate"`
-	EndDate         time.Time             `json:"endDate"`
-	IsVideo         bool                  `json:"isVideo"`
-	IsCoding        bool                  `json:"isCoding"`
-	VideoTime       uint                  `json:"videoTime"`
-	CodingTime      uint                  `json:"codingTime"`
-	ReqScreen       bool                  `json:"reqScreen"`
-	ReqMicrophone   bool                  `json:"reqMicrophone"`
-	ReqCamera       bool                  `json:"reqCamera"`
-	PortalId        uint                  `json:"portalId"`
-	MemberNum       uint                  `json:"memberNum"`
-	CreateAt        time.Time             `json:"createAt"`
-	VideoQueston    []VideoQuestionDetail `json:"videoQueston"`
-	UserInWorkspace []UserInWorkspace     `json:"userInWorkspace"`
+	Id              uint                   `json:"id"`
+	Title           string                 `json:"title"`
+	StartDate       time.Time              `json:"startDate"`
+	EndDate         time.Time              `json:"endDate"`
+	IsVideo         bool                   `json:"isVideo"`
+	IsCoding        bool                   `json:"isCoding"`
+	VideoTime       uint                   `json:"videoTime"`
+	CodingTime      uint                   `json:"codingTime"`
+	ReqScreen       bool                   `json:"reqScreen"`
+	ReqMicrophone   bool                   `json:"reqMicrophone"`
+	ReqCamera       bool                   `json:"reqCamera"`
+	PortalId        uint                   `json:"portalId"`
+	MemberNum       uint                   `json:"memberNum"`
+	CreateAt        time.Time              `json:"createAt"`
+	VideoQueston    []VideoQuestionDetail  `json:"videoQueston"`
+	UserInWorkspace []UserInWorkspace      `json:"userInWorkspace"`
+	WorkspaceScore  domains.WorkspaceScore `json:"workspaceScore"`
 } // @name WorkspaceDetail
 
 type CreateWorkspaceBody struct {
@@ -115,7 +118,7 @@ type GetIndividualUserBody struct {
 } // @name GetIndividualUserBody
 
 type UpdateIndividualUserBody struct {
-	UserId      uint   `json:"userId" validate:"required"`
-	Name        string `json:"name" validate:"required"`
-	Username    string `json:"username" validate:"required"`
+	UserId   uint   `json:"userId" validate:"required"`
+	Name     string `json:"name" validate:"required"`
+	Username string `json:"username" validate:"required"`
 } // @name UpdateIndividualUserBody
