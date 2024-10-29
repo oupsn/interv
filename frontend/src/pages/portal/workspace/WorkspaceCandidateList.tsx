@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input.tsx"
 import Papa from "papaparse"
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { server } from "@/contexts/swr"
 import { useGetWorkspace } from "@/hooks/useGetWorkspace"
@@ -21,6 +21,8 @@ import ListUser from "./components/ListUser"
 import { Spinner } from "@/components/ui/spinner"
 import saveAs from "file-saver"
 import { toast } from "sonner"
+import { FaDownload, FaFile, FaUpload } from "react-icons/fa"
+import SearchBar from "./components/SearchBar"
 
 const WorkspaceCandidateList = () => {
   const [importUser, setImportUser] = useState<UserData[]>()
@@ -28,7 +30,16 @@ const WorkspaceCandidateList = () => {
   const size = 10
   const { workspaceId } = useParams()
   const { data, mutate, isLoading } = useGetWorkspace(Number(workspaceId))
+  const [searchTerm, setSearchTerm] = useState("")
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isFileSelected, setIsFileSelected] = useState(false)
+  const [fileName, setFileName] = useState("")
 
+  const truncatedTitle = data?.data?.title
+    ? data.data.title.length > 15
+      ? `${data.data.title.slice(0, 15)}...`
+      : data.data.title
+    : ""
   type UserData = {
     name: string
     username: string
@@ -68,6 +79,8 @@ const WorkspaceCandidateList = () => {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0]
+    setIsFileSelected(!!file)
+    setFileName(file?.name ?? "")
     const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB limit in bytes
 
     // Early return if no file or the file exceeds size limit
@@ -159,6 +172,11 @@ const WorkspaceCandidateList = () => {
     saveAs(blob, "candidate_import_template.csv")
   }
 
+  const filteredUsers =
+    data?.data?.userInWorkspace?.filter((user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    ) ?? []
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -166,6 +184,7 @@ const WorkspaceCandidateList = () => {
       </div>
     )
   }
+
   return (
     <ContentLayout
       title={data?.data?.title ?? ""}
@@ -179,41 +198,69 @@ const WorkspaceCandidateList = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to={"/portal/workspace/" + workspaceId}>
+                  {truncatedTitle}
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
               <BreadcrumbPage>Applicant List</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>
-            <Button
-              className="mr-5"
-              onClick={() => {
-                toast.promise(
-                  server.workspace
-                    .inviteAllCandidate({
-                      workspaceId: data?.data?.id ?? 0,
-                    })
-                    .finally(() => {
-                      mutate() // Refresh the data after sending invitations
-                    }),
-                  {
-                    loading: "Sending invitation",
-                    success: "Invitation sent successfully",
-                    error: (err) => {
-                      return err.response.data.message
-                    },
-                  },
-                )
-              }}
-            >
-              Invite All
-            </Button>
+            <div className="flex flex-row gap-2 justify-between">
+              <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Button
+                onClick={() => {
+                  if (!data?.data?.isCoding && !data?.data?.isVideo) {
+                    toast.error(
+                      "Please add a question before sending invitations",
+                    )
+                    return
+                  }
 
-            <div className="flex flex-row gap-2">
+                  toast.promise(
+                    server.workspace
+                      .inviteAllCandidate({
+                        workspaceId: data?.data?.id ?? 0,
+                      })
+                      .finally(() => {
+                        mutate()
+                      }),
+                    {
+                      loading: "Sending invitation",
+                      success: "Invitation sent successfully",
+                      error: (err) => err.response.data.message,
+                    },
+                  )
+                }}
+              >
+                Send Invite
+              </Button>
               <Button
                 onClick={() => {
                   handleExportFile()
                 }}
               >
-                Download Template
+                <FaDownload className="mr-2" /> Template
+              </Button>
+              <Button onClick={() => fileInputRef.current?.click()}>
+                {!isFileSelected ? (
+                  <>
+                    <FaUpload className="mr-2" />
+                    Candidates
+                  </>
+                ) : (
+                  <>
+                    <FaFile className="mr-2" />
+                    {fileName}
+                  </>
+                )}
               </Button>
               <Input
                 className="w-1/2"
@@ -238,19 +285,15 @@ const WorkspaceCandidateList = () => {
       }
     >
       <ContentPanel>
-        {data?.data?.userInWorkspace ? (
+        {filteredUsers.length ? (
           <Panigator
-            dataLength={
-              data?.data?.userInWorkspace
-                ? data?.data?.userInWorkspace.length
-                : 0
-            }
+            dataLength={filteredUsers.length}
             children={
               <ListUser
-                listUser={data?.data?.userInWorkspace ?? []}
+                listUser={filteredUsers}
                 page={page}
                 size={size}
-                workspace={Number(data.data.id)}
+                workspace={Number(workspaceId)}
               />
             }
             size={size}

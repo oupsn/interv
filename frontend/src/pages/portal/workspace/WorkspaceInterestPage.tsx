@@ -16,32 +16,55 @@ import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import Panigator from "./components/Panigator"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
 
 const WorkspaceInterestPage = () => {
   const [page, setPage] = useState(1)
-  const size = 4
+  const size = 10
   const { workspaceId } = useParams()
   const { data, isLoading } = useGetWorkspace(Number(workspaceId))
   const interest = data?.data
     ? data?.data?.userInWorkspace?.filter((candidate) => candidate.isInterest)
     : []
+  const truncatedTitle = data?.data?.title
+    ? data.data.title.length > 15
+      ? `${data.data.title.slice(0, 15)}...`
+      : data.data.title
+    : ""
 
   const handleExportFile = () => {
-    const interestedUsers =
-      interest?.map((candidate) => ({
-        name: candidate.name,
-        username: candidate.username,
-      })) ?? []
+    toast.promise(
+      new Promise<void>((resolve, reject) => {
+        if (interest && interest.length > 0) {
+          const interestedUsers = interest.map((candidate) => ({
+            name: candidate.name,
+            username: candidate.username,
+          }))
 
-    const csvRows = [
-      ["name", "username"],
-      ...interestedUsers.map((user) => [user.name, user.username]),
-    ]
+          const csvRows = [
+            ["name", "email"],
+            ...interestedUsers.map((user) => [user.name, user.username]),
+          ]
 
-    const csvContent = csvRows.map((row) => row.join(",")).join("\n")
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-    saveAs(blob, data?.data?.title + "interested_users.csv")
+          const csvContent = csvRows.map((row) => row.join(",")).join("\n")
+          const blob = new Blob([csvContent], {
+            type: "text/csv;charset=utf-8;",
+          })
+          saveAs(blob, `${data?.data?.title}_candidates.csv`)
+
+          resolve()
+        } else {
+          reject(new Error("No candidates found"))
+        }
+      }),
+      {
+        loading: "Exporting file...",
+        success: "File exported successfully!",
+        error: "No interested users to export",
+      },
+    )
   }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -51,13 +74,21 @@ const WorkspaceInterestPage = () => {
   }
   return (
     <ContentLayout
-      title={data?.data?.title ?? ""}
+      title="Candidate List"
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link to="/portal/workspace">Workspaces</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to={"/portal/workspace/" + workspaceId}>
+                  {truncatedTitle}
+                </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />

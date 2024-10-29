@@ -37,6 +37,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import Panigator from "../workspace/components/Panigator"
+import { textTruncate } from "./utils/utils"
+import SearchBar from "../workspace/components/SearchBar"
 
 const QuestionBankCodingListPage = () => {
   const navigate = useNavigate()
@@ -51,7 +53,7 @@ const QuestionBankCodingListPage = () => {
     isLoading,
     mutate,
   } = useGetCodingInterviewQuestionByPortalId(currentUser.currentUser.portalId)
-
+  const [searchTerm, setSearchTerm] = useState("")
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
@@ -70,6 +72,11 @@ const QuestionBankCodingListPage = () => {
     setDeleteItemId(id)
     setIsDeleteDialogOpen(true)
   }
+
+  const filteredQuestion =
+    codingQuestionList?.data?.filter((question) =>
+      question.title?.toLowerCase().includes(searchTerm.toLowerCase()),
+    ) ?? []
 
   const confirmDelete = () => {
     if (deleteItemId) {
@@ -110,6 +117,12 @@ const QuestionBankCodingListPage = () => {
             <BreadcrumbItem></BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>
+            <BreadcrumbItem>
+              <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </BreadcrumbItem>
             <Button
               variant="outline"
               onClick={() => handleAdd()}
@@ -130,7 +143,7 @@ const QuestionBankCodingListPage = () => {
         ) : (
           <>
             <Panigator
-              dataLength={codingQuestionList?.data?.length ?? 0}
+              dataLength={filteredQuestion.length}
               children={
                 <div className="overflow-x-auto">
                   <Table className="min-w-full border">
@@ -148,7 +161,7 @@ const QuestionBankCodingListPage = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {codingQuestionList?.data?.map((item, index) => {
+                      {filteredQuestion.map((item, index) => {
                         if (
                           index >= (page - 1) * size &&
                           index <= page * size - 1
@@ -160,7 +173,9 @@ const QuestionBankCodingListPage = () => {
                             >
                               <TableCell className="px-4 py-2 flex items-center gap-4">
                                 <FaCode className="mr-2" size={20} />
-                                <span>{item.title}</span>
+                                <span>
+                                  {textTruncate(item.title ?? "", 50)}
+                                </span>
                               </TableCell>
                               <TableCell className="px-4 py-2 text-center">
                                 {" "}
