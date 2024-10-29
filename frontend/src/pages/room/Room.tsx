@@ -155,8 +155,9 @@ const RoomPage = () => {
                     <p className="text-2xl font-semibold">Coding Questions</p>
                     <div className="space-y-2">
                       <p className="text-gray-600">
-                        {data?.data?.totalCodingQuestion} coding question{" "}
-                        {data?.data?.totalCodingQuestion > 1 ? "s" : ""}
+                        {data?.data?.totalCodingQuestion} question
+                        {data?.data?.totalCodingQuestion > 1 ? "s" : ""} to
+                        complete
                       </p>
                       <p className="text-sm text-gray-500">
                         Estimated time: {data?.data?.totalCodingQuestion * 30}{" "}

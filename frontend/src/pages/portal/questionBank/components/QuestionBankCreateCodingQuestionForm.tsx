@@ -16,7 +16,7 @@ import { z } from "zod"
 import "react-quill/dist/quill.snow.css"
 import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Trash2 } from "lucide-react"
+import { Trash2, Plus, Download, Upload } from "lucide-react"
 import { server } from "@/contexts/swr"
 import { Textarea } from "@/components/ui/textarea"
 import { DomainsCreateCodingQuestionRequest } from "@/api/server"
@@ -235,6 +235,8 @@ function CreateCodingQuestion() {
 
   const handleExportTestCases = async () => {
     const testCases = form.getValues("testCases")
+    const title = form.getValues("title")
+
     if (testCases.length === 0) {
       toast.error("No test cases to export")
       return
@@ -250,7 +252,7 @@ function CreateCodingQuestion() {
       })
 
       const content = await zip.generateAsync({ type: "blob" })
-      saveAs(content, "test_cases.zip")
+      saveAs(content, `${title}_testcases.zip`)
       toast.success("Test cases exported successfully")
     } catch (error) {
       console.error("Error exporting test cases:", error)
@@ -474,8 +476,8 @@ function CreateCodingQuestion() {
                                 isExample: false,
                               })
                             }
-                            variant="outline"
                           >
+                            <Plus className="h-4 w-4 mr-2" />
                             Add Test Case
                           </Button>
                           <Button
@@ -484,6 +486,7 @@ function CreateCodingQuestion() {
                             variant="outline"
                             disabled={fields.length === 0}
                           >
+                            <Upload className="h-4 w-4 mr-2" />
                             Export Test Cases
                           </Button>
                         </div>
@@ -643,9 +646,9 @@ function CreateCodingQuestion() {
                           <Button
                             type="button"
                             onClick={handleDownloadExampleZip}
-                            variant="outline"
                             className="whitespace-nowrap"
                           >
+                            <Download className="h-4 w-4 mr-2" />
                             Download Example
                           </Button>
                         </div>

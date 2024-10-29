@@ -174,7 +174,7 @@ func (c *codingInterviewRepository) GetCodingQuestionSubmissionByUserIDWorkspace
 		if err := c.DB.Where("submission_id = ?", codingQuestionSubmission.Id).Find(&testCaseResults).Error; err != nil {
 			return nil, err
 		}
-		if err := c.DB.Where("id = ?", codingQuestionSubmission.QuestionID).Find(&codingQuestion).Error; err != nil {
+		if err := c.DB.Distinct("coding_questions.*").Where("id = ?", codingQuestionSubmission.QuestionID).Find(&codingQuestion).Error; err != nil {
 			return nil, err
 		}
 		for ind, testCaseResult := range testCaseResults {
