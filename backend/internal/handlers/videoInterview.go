@@ -7,6 +7,7 @@ type VideoInterviewContextQuery struct {
 type VideoInterviewContextResponse struct {
 	TotalQuestion   int                             `json:"totalQuestions"  validate:"required"`
 	QuestionSetting []VideoInterviewQuestionSetting `json:"questionSetting"  validate:"required"`
+	CurrentQuestion int                             `json:"currentQuestion"  validate:"required"`
 } // @name VideoInterviewContextResponse
 
 type VideoInterviewQuestionQuery struct {

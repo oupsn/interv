@@ -3,6 +3,7 @@ package handlers
 import (
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/services"
 	"github.com/gofiber/fiber/v2"
+	"sort"
 	"strconv"
 )
 
@@ -56,9 +57,14 @@ func (v VideoInterviewHandler) GetVideoInterviewContext(c *fiber.Ctx) error {
 		)
 	}
 
+	sort.Slice(questionSetting, func(i, j int) bool {
+		return questionSetting[i].QuestionID < questionSetting[j].QuestionID
+	})
+
 	return Ok(c, VideoInterviewContextResponse{
 		TotalQuestion:   len(videoQuestion),
 		QuestionSetting: questionSetting,
+		CurrentQuestion: 1,
 	})
 }
 
