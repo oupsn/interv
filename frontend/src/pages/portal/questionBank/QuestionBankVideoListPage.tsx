@@ -35,6 +35,7 @@ import { toast } from "sonner"
 import { server } from "@/contexts/swr.tsx"
 import { textTruncate } from "@/pages/portal/questionBank/utils/utils.ts"
 import Panigator from "../workspace/components/Panigator"
+import SearchBar from "../workspace/components/SearchBar"
 const QuestionBankVideoListPage = () => {
   const { currentUser } = useCurrentUser()
   const [page, setPage] = useState(1)
@@ -49,6 +50,7 @@ const QuestionBankVideoListPage = () => {
     number | null
   >(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
   const navigate = useNavigate()
   const handleAdd = () => {
     navigate("/portal/question/video/create")
@@ -65,6 +67,11 @@ const QuestionBankVideoListPage = () => {
     setSelectedItemToDelete(id)
     setIsDeleteDialogOpen(true)
   }
+
+  const filteredQuestion =
+    videoQuestionList?.data?.filter((question) =>
+      question.title?.toLowerCase().includes(searchTerm.toLowerCase()),
+    ) ?? []
 
   const confirmDelete = () => {
     if (selectedItemToDelete) {
@@ -94,6 +101,12 @@ const QuestionBankVideoListPage = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>
+            <BreadcrumbItem>
+              <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </BreadcrumbItem>
             <Button
               variant="outline"
               onClick={() => handleAdd()}
@@ -117,9 +130,7 @@ const QuestionBankVideoListPage = () => {
           </div>
         ) : (
           <Panigator
-            dataLength={
-              videoQuestionList?.data ? videoQuestionList?.data?.length : 0
-            }
+            dataLength={filteredQuestion.length}
             children={
               <Table>
                 <TableHeader>
@@ -129,7 +140,7 @@ const QuestionBankVideoListPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {videoQuestionList?.data?.map((item, index) => {
+                  {filteredQuestion.map((item, index) => {
                     if (index >= (page - 1) * size && index <= page * size - 1)
                       return (
                         <TableRow key={item.id}>

@@ -20,7 +20,7 @@ import { toast } from "sonner"
 
 const WorkspaceInterestPage = () => {
   const [page, setPage] = useState(1)
-  const size = 4
+  const size = 10
   const { workspaceId } = useParams()
   const { data, isLoading } = useGetWorkspace(Number(workspaceId))
   const interest = data?.data
@@ -50,11 +50,11 @@ const WorkspaceInterestPage = () => {
           const blob = new Blob([csvContent], {
             type: "text/csv;charset=utf-8;",
           })
-          saveAs(blob, `${data?.data?.title}_interested_users.csv`)
+          saveAs(blob, `${data?.data?.title}_candidates.csv`)
 
           resolve()
         } else {
-          reject(new Error("No interested users found"))
+          reject(new Error("No candidates found"))
         }
       }),
       {

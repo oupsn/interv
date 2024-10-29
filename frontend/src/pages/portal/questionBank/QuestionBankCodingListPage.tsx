@@ -38,6 +38,8 @@ import {
 } from "@/components/ui/table"
 import Panigator from "../workspace/components/Panigator"
 import { textTruncate } from "./utils/utils"
+import SearchBar from "../workspace/components/SearchBar"
+import DifficultyDropdown from "../workspace/components/DifficultyDropdown"
 
 const QuestionBankCodingListPage = () => {
   const navigate = useNavigate()
@@ -52,7 +54,8 @@ const QuestionBankCodingListPage = () => {
     isLoading,
     mutate,
   } = useGetCodingInterviewQuestionByPortalId(currentUser.currentUser.portalId)
-
+  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedDifficulty, setSelectedDifficulty] = useState("")
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
@@ -71,6 +74,16 @@ const QuestionBankCodingListPage = () => {
     setDeleteItemId(id)
     setIsDeleteDialogOpen(true)
   }
+
+  const filteredQuestion =
+    codingQuestionList?.data?.filter((question) => {
+      const matchesSearch = question.title
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase())
+      const matchesDifficulty =
+        selectedDifficulty === "" || question.difficulty === selectedDifficulty
+      return matchesSearch && matchesDifficulty
+    }) ?? []
 
   const confirmDelete = () => {
     if (deleteItemId) {
@@ -111,6 +124,20 @@ const QuestionBankCodingListPage = () => {
             <BreadcrumbItem></BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>
+            <BreadcrumbItem>
+              Difficulty:
+              <DifficultyDropdown
+                selectedDifficulty={selectedDifficulty}
+                onDifficultyChange={setSelectedDifficulty} // Update difficulty state
+              />
+            </BreadcrumbItem>
+            <BreadcrumbItem>
+              Title:
+              <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </BreadcrumbItem>
             <Button
               variant="outline"
               onClick={() => handleAdd()}
@@ -131,7 +158,7 @@ const QuestionBankCodingListPage = () => {
         ) : (
           <>
             <Panigator
-              dataLength={codingQuestionList?.data?.length ?? 0}
+              dataLength={filteredQuestion.length}
               children={
                 <div className="overflow-x-auto">
                   <Table className="min-w-full border">
@@ -149,7 +176,7 @@ const QuestionBankCodingListPage = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {codingQuestionList?.data?.map((item, index) => {
+                      {filteredQuestion.map((item, index) => {
                         if (
                           index >= (page - 1) * size &&
                           index <= page * size - 1

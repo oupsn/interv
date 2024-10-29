@@ -22,6 +22,7 @@ import { Spinner } from "@/components/ui/spinner"
 import saveAs from "file-saver"
 import { toast } from "sonner"
 import { FaDownload, FaFile, FaUpload } from "react-icons/fa"
+import SearchBar from "./components/SearchBar"
 
 const WorkspaceCandidateList = () => {
   const [importUser, setImportUser] = useState<UserData[]>()
@@ -29,7 +30,7 @@ const WorkspaceCandidateList = () => {
   const size = 10
   const { workspaceId } = useParams()
   const { data, mutate, isLoading } = useGetWorkspace(Number(workspaceId))
-
+  const [searchTerm, setSearchTerm] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isFileSelected, setIsFileSelected] = useState(false)
   const [fileName, setFileName] = useState("")
@@ -80,7 +81,9 @@ const WorkspaceCandidateList = () => {
     const file = event.target.files?.[0]
     setIsFileSelected(!!file)
     setFileName(file?.name ?? "")
-    const MAX_FILE_SIZE = 2 * 1024 * 1024
+    const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB limit in bytes
+
+    // Early return if no file or the file exceeds size limit
     if (!file) return
     if (file.size > MAX_FILE_SIZE) {
       toast.error("File too large. Maximum size is 2MB.")
@@ -163,6 +166,11 @@ const WorkspaceCandidateList = () => {
     saveAs(blob, "candidate_import_template.csv")
   }
 
+  const filteredUsers =
+    data?.data?.userInWorkspace?.filter((user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    ) ?? []
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -197,6 +205,10 @@ const WorkspaceCandidateList = () => {
           </BreadcrumbList>
           <BreadcrumbList>
             <div className="flex flex-row gap-2 justify-between">
+              <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={(e) => setSearchTerm(e.target.value)}
+              />
               <Button
                 onClick={() => {
                   if (!data?.data?.isCoding && !data?.data?.isVideo) {
@@ -271,20 +283,16 @@ const WorkspaceCandidateList = () => {
       }
     >
       <ContentPanel>
-        {data?.data?.userInWorkspace?.length ? (
+        {filteredUsers.length ? (
           <Panigator
-            dataLength={
-              data?.data?.userInWorkspace
-                ? data?.data?.userInWorkspace.length
-                : 0
-            }
+            dataLength={filteredUsers.length}
             children={
               <ListUser
                 listUser={data?.data?.userInWorkspace ?? []}
                 listScore={data?.data?.workspaceScore ?? {}}
                 page={page}
                 size={size}
-                workspace={Number(data.data.id)}
+                workspace={Number(workspaceId)}
               />
             }
             size={size}
