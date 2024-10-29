@@ -66,7 +66,15 @@ function CodingResultQuestionItem({
               />
             </TabsContent>
             <TabsContent value="lint-results">
-              <CodingResultQuestionLint lint={question.linter_result || ""} />
+              {question.linter_result?.length &&
+              question.linter_result?.length > 0 ? (
+                <CodingResultQuestionLint lint={question.linter_result || ""} />
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <h4 className="text-lg font-semibold">Lint Results</h4>
+                  <p className="text-md">No lint results found</p>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
