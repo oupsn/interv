@@ -875,6 +875,16 @@ export interface SubmitVideoInterviewPayload {
   videoQuestionId: number
 }
 
+export type UpdateIndividualUserData = HandlersResponseUser
+
+export type UpdateIndividualUserError = HandlersErrResponse
+
+export interface UpdateIndividualUserParams {
+  name: string
+  userId: number
+  username: string
+}
+
 export type UpdateQuestionData = HandlersResponseDomainsCodingQuestion
 
 export type UpdateQuestionError = HandlersErrResponse
@@ -1666,6 +1676,28 @@ export namespace User {
     export type RequestHeaders = {}
     export type ResponseBody = DeleteUserData
   }
+
+  /**
+   * No description
+   * @tags user
+   * @name UpdateIndividualUser
+   * @summary Update Individual User
+   * @request PATCH:/user.updateIndividualUser
+   * @response `200` `UpdateIndividualUserData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace UpdateIndividualUser {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      name: string
+      userId: number
+      username: string
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = UpdateIndividualUserData
+  }
 }
 
 export namespace UserInWorkspace {
@@ -1936,7 +1968,7 @@ export namespace Workspace {
    * @tags workspace
    * @name DeleteWorkspaceById
    * @summary Delete workspace By Id
-   * @request POST:/workspace.delete
+   * @request DELETE:/workspace.delete
    * @response `200` `DeleteWorkspaceByIdData` OK
    * @response `400` `HandlersErrResponse` Bad Request
    * @response `500` `HandlersErrResponse` Internal Server Error
@@ -2853,6 +2885,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags user
+     * @name UpdateIndividualUser
+     * @summary Update Individual User
+     * @request PATCH:/user.updateIndividualUser
+     * @response `200` `UpdateIndividualUserData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    updateIndividualUser: (query: UpdateIndividualUserParams, params: RequestParams = {}) =>
+      this.request<UpdateIndividualUserData, UpdateIndividualUserError>({
+        path: `/user.updateIndividualUser`,
+        method: "PATCH",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
   }
   userInWorkspace = {
     /**
@@ -3141,7 +3194,7 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * @tags workspace
      * @name DeleteWorkspaceById
      * @summary Delete workspace By Id
-     * @request POST:/workspace.delete
+     * @request DELETE:/workspace.delete
      * @response `200` `DeleteWorkspaceByIdData` OK
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
@@ -3149,7 +3202,7 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
     deleteWorkspaceById: (payload: DeleteWorkspaceBody, params: RequestParams = {}) =>
       this.request<DeleteWorkspaceByIdData, DeleteWorkspaceByIdError>({
         path: `/workspace.delete`,
-        method: "POST",
+        method: "DELETE",
         body: payload,
         type: ContentType.Json,
         format: "json",

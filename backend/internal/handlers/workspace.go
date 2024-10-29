@@ -113,3 +113,9 @@ type GetIndividualUserBody struct {
 	WorkspaceId uint `json:"workspaceId" validate:"required"`
 	UserId      uint `json:"userId" validate:"required"`
 } // @name GetIndividualUserBody
+
+type UpdateIndividualUserBody struct {
+	UserId      uint   `json:"userId" validate:"required"`
+	Name        string `json:"name" validate:"required"`
+	Username    string `json:"username" validate:"required"`
+} // @name UpdateIndividualUserBody

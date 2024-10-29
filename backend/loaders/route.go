@@ -77,6 +77,7 @@ func SetupRoutes() {
 	// user
 	public.Post("user.createUser", userHandlers.CreateUser)
 	public.Post("user.createAdmin", userHandlers.CreateAdmin)
+	public.Patch("user.updateIndividualUser", userHandlers.UpdateIndividualUser)
 
 	// auth
 	public.Post("auth.login", authHandlers.Login)

@@ -2401,6 +2401,42 @@ paths:
       summary: Delete user
       tags:
       - user
+  /user.updateIndividualUser:
+    patch:
+      consumes:
+      - application/json
+      operationId: UpdateIndividualUser
+      parameters:
+      - in: query
+        name: name
+        required: true
+        type: string
+      - in: query
+        name: userId
+        required: true
+        type: integer
+      - in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Update Individual User
+      tags:
+      - user
   /userInWorkspace.delete:
     delete:
       consumes:
@@ -2824,7 +2860,7 @@ paths:
       tags:
       - workspace
   /workspace.delete:
-    post:
+    delete:
       consumes:
       - application/json
       operationId: DeleteWorkspaceById

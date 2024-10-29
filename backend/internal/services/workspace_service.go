@@ -1,9 +1,10 @@
 package services
 
 import (
-	"github.com/getsentry/sentry-go"
 	"strings"
 	"time"
+
+	"github.com/getsentry/sentry-go"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -150,8 +151,8 @@ func (w *workspaceService) Update(
 		return nil, err
 	}
 
-	w.videoQuestionRepositories.DeleteByWorkspaceId(id)
-	w.codingInterviewService.DeleteCodingQuestionInWorkspace(id)
+	err = w.videoQuestionRepositories.DeleteByWorkspaceId(id)
+	err = w.codingInterviewService.DeleteCodingQuestionInWorkspace(id)
 
 	workspace, err = w.workspaceRepository.Update(domains.Workspace{
 		Id:            id,
@@ -244,8 +245,24 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 	return nil
 }
 
-func (w *workspaceService) UpdateStatusCandidate(workspaceId uint, status string) (err error) {
-	err = w.userInWorkspaceRepository.UpdateStatusCandidate(workspaceId, status)
+func (w *workspaceService) UpdateIndividualUser(userId uint, name string, username string) (user *domains.User, err error) {
+	user, err = w.userRepository.UpdateIndividualUser(userId, name, username)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (w *workspaceService) UpdateStatusAllCandidate(workspaceId uint, status string) (err error) {
+	err = w.userInWorkspaceRepository.UpdateStatusAllCandidate(workspaceId, status)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (w *workspaceService) UpdateStatusIndividualCandidate(userId uint, workspaceId uint, status string) (err error) {
+	err = w.userInWorkspaceRepository.UpdateStatusIndividualCandidate(userId, workspaceId, status)
 	if err != nil {
 		return err
 	}
