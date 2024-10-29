@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils.ts"
 import { useParams } from "react-router-dom"
 import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
 import { toast } from "sonner"
+import Cookies from "js-cookie"
+import dayjs from "dayjs"
 
 interface VideoInterviewPostQuestion {
   attemptLeft: number
@@ -43,6 +45,7 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
       {
         loading: "Submitting video...",
         success: () => {
+          Cookies.set("s_" + questionId.toString(), dayjs().toISOString()) //TODO: come back here one day
           handleNextQuestion()
           setMediaBlob([])
           setRecordState("pre")
@@ -87,13 +90,20 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
       </div>
 
       <p className={"text-xl font-semibold"}>
-        You have {attemptLeft} attempts left.
+        You have{" "}
+        {attemptLeft - Number(Cookies.get("r_" + questionId.toString()))}{" "}
+        attempts left.
       </p>
       <div className={"flex gap-10"}>
-        {attemptLeft > 0 ? (
+        {attemptLeft - Number(Cookies.get("r_" + questionId.toString())) > 0 ? (
           <Button
             onClick={() => {
               setRecordState("detail")
+              const currentAttempt = Cookies.get("r_" + questionId.toString())
+              Cookies.set(
+                "r_" + questionId.toString(),
+                String(Number(currentAttempt ?? 0) + 1),
+              ) //TODO: come back here one day
             }}
           >
             Retake
