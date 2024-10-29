@@ -51,7 +51,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const getDefaultCode = (lang: string) => {
     switch (lang) {
       case "python":
-        return '# Python3 code here\nprint("Hello, World!")'
+        return '# Python3 code here\n# To handle multiple line input. For example, use: s, k = input().split("\\n")\n# It will assign s as the first line and k as the second line\nprint("Hello, World!")'
       case "java":
         return '// Java code here\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}'
       case "c":
