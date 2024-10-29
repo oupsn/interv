@@ -29,7 +29,7 @@ const WorkspaceCard: React.FC<WorkspaceProps> = ({
           {title}
         </div>
         <div className="text-xl font-semibold">
-          {member > 1 ? member + " Candidates" : member + " Candidate"}
+          {member > 1 ? member + " Applicants" : member + " Applicant"}
         </div>
       </div>
       <div className="text-iGrey text-sm">
