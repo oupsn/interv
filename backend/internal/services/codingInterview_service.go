@@ -14,15 +14,17 @@ import (
 type codingInterviewService struct {
 	codeCompilationRepository repositories.ICompilationRepository
 	codingInterviewRepository repositories.ICodingInterviewRepository
+	roomRepository            repositories.IRoomRepository
 	objectRepository          repositories.IObjectRepository
 	lintRepository            repositories.ILinterRepository
 }
 
-func NewCodingInterviewService(codeCompilationRepository repositories.ICompilationRepository, codingInterviewRepository repositories.ICodingInterviewRepository, objectRepository repositories.IObjectRepository, lintRepository repositories.ILinterRepository) ICodingInterviewService {
+func NewCodingInterviewService(codeCompilationRepository repositories.ICompilationRepository, codingInterviewRepository repositories.ICodingInterviewRepository, roomRepository repositories.IRoomRepository, objectRepository repositories.IObjectRepository, lintRepository repositories.ILinterRepository) ICodingInterviewService {
 
 	return &codingInterviewService{
 		codeCompilationRepository: codeCompilationRepository,
 		codingInterviewRepository: codingInterviewRepository,
+		roomRepository:            roomRepository,
 		objectRepository:          objectRepository,
 		lintRepository:            lintRepository,
 	}
@@ -219,6 +221,7 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 		}
 		/* 		Insert compile result
 		 */
+		var totalScore uint = 0
 		for _, testCase := range compileResult {
 			compileResultJSON, err := json.Marshal(testCase.CompileResult)
 			if err != nil {
@@ -233,8 +236,11 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 			if err != nil {
 				return domains.CreateCodingSubmissionResponse{}, ErrorCreateCodingSubmissionTestCaseResult
 			}
+			if testCase.IsPassed {
+				totalScore += 1
+			}
 		}
-
+		s.roomRepository.SaveRoomScore(req[0].RoomID, totalScore)
 	}
 	s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, true)
 

@@ -281,6 +281,7 @@ const WorkspaceCandidateList = () => {
             children={
               <ListUser
                 listUser={data?.data?.userInWorkspace ?? []}
+                listScore={data?.data?.workspaceScore ?? {}}
                 page={page}
                 size={size}
                 workspace={Number(data.data.id)}

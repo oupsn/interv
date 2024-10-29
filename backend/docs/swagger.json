@@ -3337,6 +3337,9 @@
                 },
                 "videoTime": {
                     "type": "integer"
+                },
+                "workspaceScore": {
+                    "$ref": "#/definitions/domains.WorkspaceScore"
                 }
             }
         },
@@ -3987,6 +3990,20 @@
                     }
                 },
                 "videoTime": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domains.WorkspaceScore": {
+            "type": "object",
+            "properties": {
+                "candidateScore": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "totalTestCase": {
                     "type": "integer"
                 }
             }
