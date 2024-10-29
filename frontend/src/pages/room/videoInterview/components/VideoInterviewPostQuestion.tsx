@@ -91,13 +91,13 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
 
       <p className={"text-xl font-semibold"}>
         You have{" "}
-        {attemptLeft - Number(Cookies.get("r_" + questionId.toString()) ?? 0) ??
-          0}{" "}
+        {attemptLeft -
+          Number(Cookies.get("r_" + questionId.toString()) ?? "0") ?? 0}{" "}
         attempts left.
       </p>
       <div className={"flex gap-10"}>
         {(attemptLeft -
-          Number(Cookies.get("r_" + questionId.toString()) ?? 0) ?? 0 > 0) ? (
+          Number(Cookies.get("r_" + questionId.toString()) ?? "0") ?? 0 > 0) ? (
           <Button
             onClick={() => {
               setRecordState("detail")
