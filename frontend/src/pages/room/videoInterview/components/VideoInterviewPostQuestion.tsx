@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils.ts"
 import { useParams } from "react-router-dom"
 import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
 import { toast } from "sonner"
+import Cookies from "js-cookie"
+import dayjs from "dayjs"
 
 interface VideoInterviewPostQuestion {
   attemptLeft: number
@@ -43,6 +45,7 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
       {
         loading: "Submitting video...",
         success: () => {
+          Cookies.set("s_" + questionId.toString(), dayjs().toISOString()) //TODO: come back here one day
           handleNextQuestion()
           setMediaBlob([])
           setRecordState("pre")

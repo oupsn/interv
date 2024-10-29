@@ -17,7 +17,11 @@ const VideoInterviewPage = () => {
     return activeQuestion == id
   }
 
-  const handleNextQuestion = () => {
+  const handleNextQuestion = (overwriteActiveQuestion?: number) => {
+    if (overwriteActiveQuestion) {
+      setActiveQuestion(overwriteActiveQuestion)
+      return
+    }
     setActiveQuestion((prev) => prev + 1)
   }
 

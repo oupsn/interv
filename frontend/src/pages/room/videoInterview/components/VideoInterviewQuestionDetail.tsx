@@ -53,6 +53,7 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
         mediaBlobUrl={mediaBlobUrl ?? ""}
         setRecordState={setRecordState}
         setAttemptLeft={setAttemptLeft}
+        questionId={questionId}
       />
       <div className={"w-fit h-fit relative"}>
         {!isStarted ? (
