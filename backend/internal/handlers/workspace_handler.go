@@ -37,7 +37,7 @@ func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 		return err
 	}
 
-	workspace, candidate, err := w.workspaceService.GetWorkspaceById(form.Id)
+	workspace, candidate, workspaceScore, err := w.workspaceService.GetWorkspaceById(form.Id)
 	if err != nil {
 		return err
 	}
@@ -83,6 +83,7 @@ func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 		CreateAt:        workspace.CreatedAt,
 		VideoQueston:    vidQ,
 		UserInWorkspace: res,
+		WorkspaceScore:  *workspaceScore,
 	})
 }
 

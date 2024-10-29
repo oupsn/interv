@@ -1,5 +1,5 @@
 import * as React from "react"
-import { UserInWorkspace } from "@/api/server"
+import { DomainsWorkspaceScore, UserInWorkspace } from "@/api/server"
 
 import {
   TableHeader,
@@ -17,6 +17,7 @@ import {
   FaEye,
   FaEdit,
 } from "react-icons/fa"
+import { LiaHourglassEndSolid } from "react-icons/lia"
 import { Button } from "@/components/ui/button"
 import { server } from "@/contexts/swr"
 import { useGetWorkspace } from "@/hooks/useGetWorkspace"
@@ -35,6 +36,7 @@ import { useState } from "react"
 
 export type ListWorkspaceProps = {
   listUser: UserInWorkspace[]
+  listScore: DomainsWorkspaceScore
   page: number
   size: number
   workspace: number
@@ -42,6 +44,7 @@ export type ListWorkspaceProps = {
 
 const ListUser: React.FC<ListWorkspaceProps> = ({
   listUser,
+  listScore,
   page,
   size,
   workspace,
@@ -83,6 +86,7 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
           <TableHead className={"w-2/6"}>Name</TableHead>
           <TableHead className={"w-2/6"}>Email</TableHead>
           <TableHead>Status</TableHead>
+          {listScore && <TableHead>Score</TableHead>}
           <TableHead className={"w-[100px]"}>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -100,6 +104,20 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                   </TableCell>
                   <TableCell className="font-medium">{user.username}</TableCell>
                   <TableCell className="font-medium">{user.status}</TableCell>
+                  {listScore && (
+                    <TableCell className="font-medium ">
+                      {user.status === "success" ? (
+                        <>
+                          {listScore.candidateScore?.[
+                            user.userId?.toString() ?? "0"
+                          ] ?? 0}{" "}
+                          / {listScore.totalTestCase ?? 0}
+                        </>
+                      ) : (
+                        <LiaHourglassEndSolid className="text-primary ml-2 text-xl" />
+                      )}
+                    </TableCell>
+                  )}
                   <TableCell>
                     <td className="flex w-fit gap-2">
                       {user.status == "idle" ? (

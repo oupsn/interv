@@ -24,3 +24,8 @@ type Workspace struct {
 	UserInWorkspace []*UserInWorkspace `gorm:"foreignKey:WorkspaceId"`
 	gorm.Model
 }
+
+type WorkspaceScore struct {
+	TotalTestCase  uint          `json:"totalTestCase"`
+	CandidateScore map[uint]uint `json:"candidateScore"`
+}
