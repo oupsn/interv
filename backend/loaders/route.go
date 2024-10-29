@@ -40,12 +40,12 @@ func SetupRoutes() {
 	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, workspaceRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories, videoQuestionSnapshotRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
-	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, objectRepositories, lintRepository)
+	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, roomRepositories, objectRepositories, lintRepository)
 	var mailServices = services.NewMailService(mailRepositories)
 	var questionServices = services.NewVideoQuestionService(videoQuestionRepositories)
 	var roomServices = services.NewRoomService(roomRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories, portalRepository, userInWorkspaceRepositories)
 	var portalService = services.NewPortalService(portalRepository)
-	var workspaceService = services.NewWorkspaceService(workspaceRepositories, userInWorkspaceRepositories, userRepositories, mailServices, roomServices, codingInterviewServices, questionServices, videoQuestionRepositories)
+	var workspaceService = services.NewWorkspaceService(workspaceRepositories, roomRepositories, userInWorkspaceRepositories, userRepositories, mailServices, roomServices, codingInterviewServices, questionServices, videoQuestionRepositories)
 	var authServices = services.NewAuthService(userRepositories)
 
 	// Handlers
@@ -77,6 +77,7 @@ func SetupRoutes() {
 	// user
 	public.Post("user.createUser", userHandlers.CreateUser)
 	public.Post("user.createAdmin", userHandlers.CreateAdmin)
+	public.Patch("user.updateIndividualUser", userHandlers.UpdateIndividualUser)
 
 	// auth
 	public.Post("auth.login", authHandlers.Login)

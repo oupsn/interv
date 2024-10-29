@@ -26,8 +26,16 @@ func (uiw *userInWorkspaceRepository) Create(userInWorkspace []*domains.UserInWo
 	return userInWorkspace, nil
 }
 
-func (uiw *userInWorkspaceRepository) UpdateStatusCandidate(workspaceId uint, status string) (err error) {
-	print("key")
+func (uiw *userInWorkspaceRepository) UpdateStatusIndividualCandidate(userId uint, workspaceId uint, status string) (err error) {
+
+	if err := uiw.DB.Model(domains.UserInWorkspace{}).Where("user_id = ? AND workspace_id = ? AND status <> ?", userId, workspaceId, "success").Update("status", status).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (uiw *userInWorkspaceRepository) UpdateStatusAllCandidate(workspaceId uint, status string) (err error) {
 	foundUserInWorkspace := new([]domains.UserInWorkspace)
 	if err := uiw.DB.Find(&foundUserInWorkspace, "workspace_id = ?", workspaceId).Error; err != nil {
 		return err

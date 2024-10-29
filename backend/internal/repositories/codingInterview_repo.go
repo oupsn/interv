@@ -100,9 +100,10 @@ func (c *codingInterviewRepository) GetCodingQuestionListInPortal(portalID int) 
 
 func (c *codingInterviewRepository) GetCodingQuestionListInWorkspace(workspaceId int) ([]domains.CodingQuestion, error) {
 	var codingQuestions []domains.CodingQuestion
-	if err := c.DB.Distinct("coding_question_in_workspaces.*").
+	if err := c.DB.Distinct("coding_questions.*").
 		Joins("JOIN coding_question_in_workspaces ON coding_questions.id = coding_question_in_workspaces.coding_question_id").
-		Where("coding_question_in_workspaces.workspace_id = ?", workspaceId).
+		Where("coding_question_in_workspaces.workspace_id = ? AND coding_question_in_workspaces.deleted_at IS NULL", workspaceId).
+		Preload("TestCases").
 		Find(&codingQuestions).Error; err != nil {
 		return nil, err
 	}
@@ -207,6 +208,13 @@ func (c *codingInterviewRepository) GetRoomIDByUserID(userID uint) (string, erro
 	return roomID, nil
 }
 
+func (c *codingInterviewRepository) GetRoomIDByUserIDAndWorkspaceID(userID uint, workspaceID uint) (string, error) {
+	var roomID string
+	if err := c.DB.Model(&domains.Room{}).Where("candidate_id = ? AND workspace_id = ?", userID, workspaceID).Pluck("id", &roomID).Error; err != nil {
+		return "", err
+	}
+	return roomID, nil
+}
 func (c *codingInterviewRepository) GetWorkspaceByRoomID(roomID string) (domains.Workspace, error) {
 	var workspace domains.Workspace
 	if err := c.DB.Model(&domains.Workspace{}).Joins("JOIN rooms ON rooms.workspace_id = workspaces.id").Where("rooms.id = ?", roomID).First(&workspace).Error; err != nil {

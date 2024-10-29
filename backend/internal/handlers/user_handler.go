@@ -115,3 +115,28 @@ func (u UserHandler) DeleteUser(c *fiber.Ctx) error {
 
 	return Ok(c, body.Id)
 }
+
+// UpdateIndividualUser
+// @ID UpdateIndividualUser
+// @Tags user
+// @Summary Update Individual User
+// @Accept json
+// @Produce json
+// @Param payload query UpdateIndividualUserBody true "UpdateIndividualUserBody"
+// @Success 200 {object} Response[User]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /user.updateIndividualUser [patch]
+func (u UserHandler) UpdateIndividualUser(c *fiber.Ctx) error {
+	form := UpdateIndividualUserBody{}
+	if err := c.QueryParser(&form); err != nil {
+		return err
+	}
+	user, err := u.userService.UpdateIndividualUser(form.UserId, form.Name, form.Username)
+
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, user)
+}

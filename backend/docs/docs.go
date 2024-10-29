@@ -1498,6 +1498,61 @@ const docTemplate = `{
                 }
             }
         },
+        "/user.updateIndividualUser": {
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update Individual User",
+                "operationId": "UpdateIndividualUser",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "userId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/userInWorkspace.delete": {
             "delete": {
                 "consumes": [
@@ -2143,7 +2198,7 @@ const docTemplate = `{
             }
         },
         "/workspace.delete": {
-            "post": {
+            "delete": {
                 "consumes": [
                     "application/json"
                 ],
@@ -3290,6 +3345,9 @@ const docTemplate = `{
                 },
                 "videoTime": {
                     "type": "integer"
+                },
+                "workspaceScore": {
+                    "$ref": "#/definitions/domains.WorkspaceScore"
                 }
             }
         },
@@ -3940,6 +3998,20 @@ const docTemplate = `{
                     }
                 },
                 "videoTime": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domains.WorkspaceScore": {
+            "type": "object",
+            "properties": {
+                "candidateScore": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "totalTestCase": {
                     "type": "integer"
                 }
             }

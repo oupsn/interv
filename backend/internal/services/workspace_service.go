@@ -1,9 +1,10 @@
 package services
 
 import (
-	"github.com/getsentry/sentry-go"
 	"strings"
 	"time"
+
+	"github.com/getsentry/sentry-go"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -13,6 +14,7 @@ import (
 
 type workspaceService struct {
 	workspaceRepository       repositories.IWorkspaceRepository
+	roomRepository            repositories.IRoomRepository
 	userInWorkspaceRepository repositories.IUserInWorkspaceRepository
 	userRepository            repositories.IUserRepository
 	mailService               IMailService
@@ -24,6 +26,7 @@ type workspaceService struct {
 
 func NewWorkspaceService(
 	workspaceRepository repositories.IWorkspaceRepository,
+	roomRepository repositories.IRoomRepository,
 	userInWorkspaceRepository repositories.IUserInWorkspaceRepository,
 	userRepository repositories.IUserRepository,
 	mailService IMailService,
@@ -35,6 +38,7 @@ func NewWorkspaceService(
 	return &workspaceService{
 		userInWorkspaceRepository: userInWorkspaceRepository,
 		workspaceRepository:       workspaceRepository,
+		roomRepository:            roomRepository,
 		userRepository:            userRepository,
 		mailService:               mailService,
 		roomService:               roomService,
@@ -44,16 +48,34 @@ func NewWorkspaceService(
 	}
 }
 
-func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspace, candidate *[]domains.UserInWorkspace, err error) {
+func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspace, candidate *[]domains.UserInWorkspace, workspaceScore *domains.WorkspaceScore, err error) {
 	workspace, err = w.videoQuestionRepositories.GetByWorkspaceId(id)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	candidate, err = w.userInWorkspaceRepository.FindByWorkspaceId(id)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
-	return workspace, candidate, nil
+	codingQuestions, err := w.codingInterviewService.GetCodingInterviewQuestionsInWorkspace(int(id))
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	var totalTestCase uint = 0
+	for _, question := range codingQuestions {
+		totalTestCase += uint(len(question.TestCases))
+	}
+	workspaceScore = &domains.WorkspaceScore{
+		TotalTestCase:  totalTestCase,
+		CandidateScore: make(map[uint]uint),
+	}
+	for _, candidate := range *candidate {
+		workspaceScore.CandidateScore[candidate.UserId], err = w.roomRepository.GetRoomScoreByWorkspaceIdCandidateId(id, candidate.UserId)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+	}
+	return workspace, candidate, workspaceScore, nil
 }
 
 func (w *workspaceService) InterestUser(workspaceId uint, candidateId uint, interest *bool) error {
@@ -150,8 +172,8 @@ func (w *workspaceService) Update(
 		return nil, err
 	}
 
-	w.videoQuestionRepositories.DeleteByWorkspaceId(id)
-	w.codingInterviewService.DeleteCodingQuestionInWorkspace(id)
+	err = w.videoQuestionRepositories.DeleteByWorkspaceId(id)
+	err = w.codingInterviewService.DeleteCodingQuestionInWorkspace(id)
 
 	workspace, err = w.workspaceRepository.Update(domains.Workspace{
 		Id:            id,
@@ -244,8 +266,24 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 	return nil
 }
 
-func (w *workspaceService) UpdateStatusCandidate(workspaceId uint, status string) (err error) {
-	err = w.userInWorkspaceRepository.UpdateStatusCandidate(workspaceId, status)
+func (w *workspaceService) UpdateIndividualUser(userId uint, name string, username string) (user *domains.User, err error) {
+	user, err = w.userRepository.UpdateIndividualUser(userId, name, username)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (w *workspaceService) UpdateStatusAllCandidate(workspaceId uint, status string) (err error) {
+	err = w.userInWorkspaceRepository.UpdateStatusAllCandidate(workspaceId, status)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (w *workspaceService) UpdateStatusIndividualCandidate(userId uint, workspaceId uint, status string) (err error) {
+	err = w.userInWorkspaceRepository.UpdateStatusIndividualCandidate(userId, workspaceId, status)
 	if err != nil {
 		return err
 	}

@@ -11,6 +11,7 @@ type Room struct {
 	WorkspaceID  uint
 	IsVideoDone  *bool
 	IsCodingDone *bool
+	CodingScore  uint
 	Workspace    Workspace `gorm:"foreignKey:WorkspaceID"`
 	Candidate    User      `gorm:"foreignKey:CandidateID"`
 	gorm.Model

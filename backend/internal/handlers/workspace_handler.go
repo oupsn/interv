@@ -37,7 +37,7 @@ func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 		return err
 	}
 
-	workspace, candidate, err := w.workspaceService.GetWorkspaceById(form.Id)
+	workspace, candidate, workspaceScore, err := w.workspaceService.GetWorkspaceById(form.Id)
 	if err != nil {
 		return err
 	}
@@ -76,13 +76,14 @@ func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 		VideoTime:       workspace.VideoTime,
 		CodingTime:      workspace.CodingTime,
 		ReqScreen:       *workspace.ReqScreen,
-		ReqMicrophone:   *workspace.ReqScreen,
+		ReqMicrophone:   *workspace.ReqMicrophone,
 		ReqCamera:       *workspace.ReqCamera,
 		PortalId:        workspace.PortalId,
 		MemberNum:       uint(member),
 		CreateAt:        workspace.CreatedAt,
 		VideoQueston:    vidQ,
 		UserInWorkspace: res,
+		WorkspaceScore:  *workspaceScore,
 	})
 }
 
@@ -230,21 +231,37 @@ func (w WorkspaceHandler) CreateWorkspace(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := w.workspaceService.Create(form.Title, form.StartDate, form.EndDate, form.IsVideo, form.IsCoding, form.VideoTime, form.CodingTime, form.ReqScreen, form.ReqMicrophone, form.ReqCamera, form.PortalId, form.CodeQuestion, form.VideoQuestion)
+	response, err := w.workspaceService.Create(
+		form.Title,
+		form.StartDate,
+		form.EndDate,
+		form.IsVideo,
+		form.IsCoding,
+		form.VideoTime,
+		form.CodingTime,
+		form.ReqScreen,
+		form.ReqMicrophone,
+		form.ReqCamera,
+		form.PortalId,
+		form.CodeQuestion,
+		form.VideoQuestion)
 	if err != nil {
 		return err
 	}
 
 	return Created(c, WorkspaceDetail{
-		Id:         response.Id,
-		Title:      response.Title,
-		StartDate:  response.StartDate,
-		EndDate:    response.EndDate,
-		IsVideo:    *response.IsVideo,
-		IsCoding:   *response.IsCoding,
-		VideoTime:  response.VideoTime,
-		CodingTime: response.CodingTime,
-		PortalId:   response.PortalId,
+		Id:            response.Id,
+		Title:         response.Title,
+		StartDate:     response.StartDate,
+		EndDate:       response.EndDate,
+		IsVideo:       *response.IsVideo,
+		IsCoding:      *response.IsCoding,
+		ReqScreen:     *response.ReqScreen,
+		ReqMicrophone: *response.ReqMicrophone,
+		ReqCamera:     *response.ReqCamera,
+		VideoTime:     response.VideoTime,
+		CodingTime:    response.CodingTime,
+		PortalId:      response.PortalId,
 	})
 }
 
@@ -270,7 +287,21 @@ func (w WorkspaceHandler) UpdateWorkspace(c *fiber.Ctx) error {
 		return err
 	}
 
-	response, err := w.workspaceService.Update(form.Id, form.Title, form.StartDate, form.EndDate, form.IsVideo, form.IsCoding, form.VideoTime, form.CodingTime, form.ReqScreen, form.ReqMicrophone, form.ReqCamera, form.PortalId, form.CodeQuestion, form.VideoQuestion)
+	response, err := w.workspaceService.Update(
+		form.Id,
+		form.Title,
+		form.StartDate,
+		form.EndDate,
+		form.IsVideo,
+		form.IsCoding,
+		form.VideoTime,
+		form.CodingTime,
+		form.ReqScreen,
+		form.ReqMicrophone,
+		form.ReqCamera,
+		form.PortalId,
+		form.CodeQuestion,
+		form.VideoQuestion)
 	if err != nil {
 		return err
 	}
@@ -298,7 +329,7 @@ func (w WorkspaceHandler) UpdateWorkspace(c *fiber.Ctx) error {
 // @Success 200 {object} Response[string]
 // @Failure 400 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
-// @Router /workspace.delete [post]
+// @Router /workspace.delete [delete]
 func (w WorkspaceHandler) DeleteWorkspaceById(c *fiber.Ctx) error {
 	form := new(DeleteWorkspaceBody)
 
@@ -358,7 +389,7 @@ func (w WorkspaceHandler) InviteAllCandidate(c *fiber.Ctx) error {
 	if err := w.workspaceService.InviteAllCandidate(body.WorkspaceId); err != nil {
 		return err
 	}
-	if err := w.workspaceService.UpdateStatusCandidate(body.WorkspaceId, "unseen"); err != nil {
+	if err := w.workspaceService.UpdateStatusAllCandidate(body.WorkspaceId, "unseen"); err != nil {
 		return err
 	}
 

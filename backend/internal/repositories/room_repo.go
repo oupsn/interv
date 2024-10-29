@@ -2,10 +2,11 @@ package repositories
 
 import (
 	"context"
+	"time"
+
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
-	"time"
 )
 
 type IRoomRepository interface {
@@ -13,6 +14,8 @@ type IRoomRepository interface {
 	CreateMultiple(questions []domains.Room) ([]domains.Room, error)
 	GetById(id string) (*domains.Room, error)
 	Update(question domains.Room) error
+	SaveRoomScore(roomId string, score uint) error
+	GetRoomScoreByWorkspaceIdCandidateId(workspaceId uint, candidateId uint) (uint, error)
 	DeleteById(id string) error
 	SetRoomSession(roomId string, sessionIdentifier string) error
 	RevokeRoomSession(roomId string) error
@@ -63,6 +66,27 @@ func (l roomRepository) Update(question domains.Room) error {
 	}
 
 	return nil
+}
+func (l roomRepository) SaveRoomScore(roomId string, score uint) error {
+	var room domains.Room
+	if err := l.DB.First(&room, "id = ?", roomId).Error; err != nil {
+		return err
+	}
+
+	room.CodingScore = score
+	if err := l.DB.Save(&room).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (l roomRepository) GetRoomScoreByWorkspaceIdCandidateId(workspaceId uint, candidateId uint) (uint, error) {
+	var room domains.Room
+	if err := l.DB.First(&room, "workspace_id = ? AND candidate_id = ?", workspaceId, candidateId).Error; err != nil {
+		return 0, nil
+	}
+	return room.CodingScore, nil
 }
 
 func (l roomRepository) DeleteById(id string) error {

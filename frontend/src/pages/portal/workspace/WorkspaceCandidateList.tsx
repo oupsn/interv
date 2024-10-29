@@ -54,7 +54,7 @@ const WorkspaceCandidateList = () => {
   }
 
   function parseUserData(input: string[][]): UserData[] {
-    const currentTimestamp = new Date().toISOString() // Generate once for all entries
+    const currentTimestamp = new Date().toISOString()
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     return input
@@ -64,7 +64,7 @@ const WorkspaceCandidateList = () => {
           Array.isArray(item) &&
           item.length === 2 &&
           item.every((i) => typeof i === "string") &&
-          emailRegex.test(item[1]), // Validate email format
+          emailRegex.test(item[1]),
       )
       .map(([name, username]) => ({
         name,
@@ -96,36 +96,33 @@ const WorkspaceCandidateList = () => {
           skipEmptyLines: true,
           complete: (results: Papa.ParseResult<string[]>) => {
             const data = results.data as string[][]
+            const specialCharRegex = /^[a-zA-Z0-9\s,.\-@]+$/
 
-            // Regex to check for special characters (allows alphanumeric, space, comma, dot, dash, and @)
-            const specialCharRegex = /^[a-zA-Z\s,.\-@]+$/
-
-            // Validate each row and cell for special characters and length
-            const isValid = data.every((row: string[]) =>
-              row.every(
-                (cell: string) =>
-                  specialCharRegex.test(cell) && cell.length <= 40, // Check special chars and length
-              ),
+            const isValid = data.every((row: string[], rowIndex: number) =>
+              row.every((cell: string, cellIndex: number) => {
+                const valid = specialCharRegex.test(cell) && cell.length <= 40
+                if (!valid) {
+                  console.error(
+                    `Validation error in row ${rowIndex + 1}, cell ${cellIndex + 1}: "${cell}"`,
+                  )
+                }
+                return valid
+              }),
             )
 
             if (isValid) {
               setImportUser(parseUserData(data))
               resolve()
             } else {
-              reject(
-                new Error(
-                  "File contains special characters that are not allowed, or some cells exceed 30 characters.",
-                ),
-              )
+              reject(console.log(Error))
             }
           },
           error: (error) => {
-            reject(error) // Handle parse errors
+            reject(error)
           },
         })
       })
 
-      // Show a toast for promise
       await toast.promise(fileUploadPromise, {
         loading: "Processing file...",
         success: "File processed successfully!",
@@ -133,12 +130,10 @@ const WorkspaceCandidateList = () => {
           err instanceof Error ? err.message : "Something went wrong",
       })
     } catch (error: unknown) {
-      // Narrow down the error type to access message
       const errorMessage =
         error instanceof Error ? error.message : "An unexpected error occurred"
-      toast.error(errorMessage) // Display the error message
+      toast.error(errorMessage)
     }
-    console.log(importUser)
   }
 
   const handleSubmitFile = () => {
@@ -147,10 +142,9 @@ const WorkspaceCandidateList = () => {
       workspaceId: Number(workspaceId),
     }
     if (importUser && importUser.length > 0) {
-      // Proceed with the toast promise if there are users
       toast.promise(
         server.user.createUser(importData).finally(() => {
-          mutate() // Refresh the data after the operation
+          mutate()
         }),
         {
           loading: "Processing file...",
@@ -160,13 +154,13 @@ const WorkspaceCandidateList = () => {
         },
       )
     } else {
-      // If importUser has no data, show an error message
-      toast.error("No Data or File might be invalid") // Notify user about the absence of data
+      toast.error("No Data or File might be invalid")
     }
+    setIsFileSelected(false)
   }
 
   const handleExportFile = () => {
-    const csvRows = [["name", "username"]]
+    const csvRows = [["name", "email"]]
     const csvContent = csvRows.map((row) => row.join(",")).join("\n")
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
     saveAs(blob, "candidate_import_template.csv")
@@ -187,7 +181,7 @@ const WorkspaceCandidateList = () => {
 
   return (
     <ContentLayout
-      title={data?.data?.title ?? ""}
+      title="Applicant List"
       breadcrumb={
         <Breadcrumb>
           <BreadcrumbList>
@@ -249,6 +243,7 @@ const WorkspaceCandidateList = () => {
               >
                 <FaDownload className="mr-2" /> Template
               </Button>
+
               <Button onClick={() => fileInputRef.current?.click()}>
                 {!isFileSelected ? (
                   <>
@@ -262,11 +257,13 @@ const WorkspaceCandidateList = () => {
                   </>
                 )}
               </Button>
+
               <Input
-                className="w-1/2"
+                className="hidden"
                 type="file"
                 accept=".csv"
                 id="userMail"
+                ref={fileInputRef}
                 onChange={(e) => {
                   handleFileUpload(e)
                 }}
@@ -276,6 +273,7 @@ const WorkspaceCandidateList = () => {
                 onClick={() => {
                   handleSubmitFile()
                 }}
+                disabled={!isFileSelected}
               >
                 Submit
               </Button>
@@ -290,7 +288,8 @@ const WorkspaceCandidateList = () => {
             dataLength={filteredUsers.length}
             children={
               <ListUser
-                listUser={filteredUsers}
+                listUser={data?.data?.userInWorkspace ?? []}
+                listScore={data?.data?.workspaceScore ?? {}}
                 page={page}
                 size={size}
                 workspace={Number(workspaceId)}

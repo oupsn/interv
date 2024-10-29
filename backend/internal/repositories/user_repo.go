@@ -44,6 +44,20 @@ func (u *userRepository) FindByUsername(username string) (user *domains.User, er
 	return foundUser, nil
 }
 
+func (u *userRepository) UpdateIndividualUser(userId uint, name string, username string) (*domains.User, error) {
+	foundUser := new(domains.User)
+	if err := u.DB.Model(&foundUser).
+		Where("id = ?", userId).
+		Updates(map[string]interface{}{
+			"name":     name,
+			"username": username,
+		}).Error; err != nil {
+		return nil, err
+	}
+
+	return foundUser, nil
+}
+
 func (u *userRepository) FindById(id uint) (user *domains.User, err error) {
 	foundUser := new(domains.User)
 
