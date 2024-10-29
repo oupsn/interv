@@ -109,7 +109,7 @@ func (s *codingInterviewService) GetCompileResult(req domains.CompilationRequest
 		return []domains.CompilationResultResponse{}, ErrorGetCodingInterviewTestcase
 	}
 	for _, testCase := range testCases {
-		input := strings.TrimRight(testCase.Input, "\n")
+		input := strings.TrimSpace(testCase.Input)
 		output := testCase.Output
 		token, err := s.codeCompilationRepository.GenerateCompileToken(req, input)
 		if err != nil {
@@ -129,7 +129,12 @@ func (s *codingInterviewService) GetCompileResult(req domains.CompilationRequest
 
 			time.Sleep(500 * time.Millisecond)
 		}
-		if strings.TrimRight(result.Stdout, "\n") == strings.TrimRight(output, "\n") {
+		// Remove newline characters from stdout and output before comparison
+		cleanStdout := strings.ReplaceAll(strings.TrimSpace(result.Stdout), "\n", "")
+		cleanOutput := strings.ReplaceAll(strings.ReplaceAll(strings.TrimSpace(output), "\n", ""), "\\n", "")
+		fmt.Println("actual output", cleanStdout)
+		fmt.Println("testcase output", cleanOutput)
+		if cleanStdout == cleanOutput {
 			compileResult = append(compileResult, domains.CompilationResultResponse{
 				TestcaseId:    int(testCase.ID),
 				IsPassed:      true,

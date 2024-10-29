@@ -282,6 +282,8 @@ function QuestionBankCodingEdit() {
 
   const handleExportTestCases = async () => {
     const testCases = form.getValues("testCases")
+    const title = form.getValues("title")
+
     if (testCases.length === 0) {
       toast.error("No test cases to export")
       return
@@ -297,7 +299,7 @@ function QuestionBankCodingEdit() {
       })
 
       const content = await zip.generateAsync({ type: "blob" })
-      saveAs(content, "test_cases.zip")
+      saveAs(content, `${title}_testcases.zip`)
       toast.success("Test cases exported successfully")
     } catch (error) {
       console.error("Error exporting test cases:", error)
