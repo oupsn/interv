@@ -1,8 +1,21 @@
 function CodingResultQuestionLint({ lint }: { lint: string }) {
-  const sortedResults = JSON.parse(lint)?.results.sort(
-    (a: { line: string }, b: { line: string }) =>
-      parseInt(a.line) - parseInt(b.line),
-  )
+  if (!lint) return null
+
+  let sortedResults = []
+  try {
+    const parsedLint = JSON.parse(lint)
+    if (parsedLint?.results?.length) {
+      sortedResults = parsedLint.results.sort(
+        (a: { line: string }, b: { line: string }) =>
+          parseInt(a.line) - parseInt(b.line),
+      )
+    }
+  } catch (error) {
+    console.error("Error parsing lint data:", error)
+    return null
+  }
+
+  if (!sortedResults.length) return null
 
   return (
     <div className="flex flex-col gap-2">
