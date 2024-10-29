@@ -201,10 +201,10 @@ const WorkspaceCandidateList = () => {
         <DialogContent className="max-w-3xl">
           <DialogHeader className="pb-4 border-b">
             <DialogTitle className="text-xl font-semibold">
-              Preview Candidates
+              Preview Applicants
             </DialogTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              Review the candidates before confirming the upload
+              Review the applicants before confirming the upload
             </p>
           </DialogHeader>
 
@@ -393,7 +393,7 @@ const WorkspaceCandidateList = () => {
                 {!isFileSelected ? (
                   <>
                     <FaUpload className="mr-2" />
-                    Candidates
+                    Upload
                   </>
                 ) : (
                   <>
