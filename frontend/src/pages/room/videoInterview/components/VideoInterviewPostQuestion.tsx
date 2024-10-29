@@ -102,7 +102,7 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
               const currentAttempt = Cookies.get("r_" + questionId.toString())
               Cookies.set(
                 "r_" + questionId.toString(),
-                String(Number(currentAttempt ?? 0) + 1),
+                String(Number(currentAttempt ?? "0") + 1),
               ) //TODO: come back here one day
             }}
           >
