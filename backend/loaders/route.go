@@ -6,8 +6,7 @@ import (
 	"time"
 
 	"github.com/getsentry/sentry-go"
-
-	swagger "github.com/arsmn/fiber-swagger/v2"
+	"github.com/gofiber/swagger"
 	"github.com/spf13/viper"
 
 	_ "csgit.sit.kmutt.ac.th/interv/interv-platform/docs"
