@@ -20,7 +20,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   return (
     <>
       <div
-        className="w-full flex justify-start bg-zinc-100 p-2 text-lg hover:cursor-pointer"
+        className="w-full flex justify-start bg-zinc-100 p-2 text-lg hover:cursor-pointer hover:bg-zinc-200 rounded-md"
         onClick={() => {
           for (const asm of stockQuestion ?? []) {
             if (asm?.id == id) {

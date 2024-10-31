@@ -26,7 +26,7 @@ const QuestionPicker: React.FC<QuestionPickerProps> = ({
   disable,
 }) => {
   const questionBox =
-    "w-full h-56 border-solid border border-grey-500 overflow-auto flex flex-col gap-0.5 rounded-lg"
+    "w-full h-56 border-solid border border-grey-500 overflow-auto flex flex-col gap-2 rounded-lg p-2"
 
   return (
     <div
