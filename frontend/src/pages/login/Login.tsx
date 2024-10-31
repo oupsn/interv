@@ -63,7 +63,9 @@ const LoginPage = () => {
           alt="Interv"
           className={"w-60 place-self-center"}
         />
-        {/*<p className={"text-2xl font-semibold"}>Sign in</p>*/}
+        <h3 className={"text-md text-center text-gray-500"}>
+          Sign in to Interv Portal
+        </h3>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}

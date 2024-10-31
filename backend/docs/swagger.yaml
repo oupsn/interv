@@ -523,6 +523,8 @@ definitions:
     type: object
   VideoInterviewContextResponse:
     properties:
+      currentQuestion:
+        type: integer
       questionSetting:
         items:
           $ref: '#/definitions/VideoInterviewQuestionSetting'
@@ -530,6 +532,7 @@ definitions:
       totalQuestions:
         type: integer
     required:
+    - currentQuestion
     - questionSetting
     - totalQuestions
     type: object

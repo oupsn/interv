@@ -182,6 +182,20 @@ func (s *codingInterviewService) CreateCodingSnapshot(req []domains.CodingQuesti
 }
 
 func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodingSubmissionRequest) (domains.CreateCodingSubmissionResponse, error) {
+	if len(req) == 0 {
+		return domains.CreateCodingSubmissionResponse{}, ErrorInvalidSubmissionRequest
+	}
+	//Set it to true to prevent other submission from being processed
+	s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, true)
+	go s.processCodingSubmission(req)
+	return domains.CreateCodingSubmissionResponse{
+		Status:  "processing",
+		Message: "Coding submission is being processed",
+	}, nil
+}
+
+// New helper function to process the submission
+func (s *codingInterviewService) processCodingSubmission(req []domains.CreateCodingSubmissionRequest) {
 	var totalScore uint = 0
 	for _, submission := range req {
 		langCode := map[string]uint{
@@ -197,7 +211,8 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 		compileResult, err := s.GetCompileResult(compileReq)
 		fmt.Println("compileResult", compileResult)
 		if err != nil {
-			return domains.CreateCodingSubmissionResponse{}, ErrorGetCompileResult
+			s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+			return
 		}
 		lintReq := repositories.AnalyzeRequest{
 			Code:     submission.Code,
@@ -205,13 +220,15 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 		}
 		lintResult, err := s.lintRepository.Analyze(lintReq)
 		if err != nil {
-			return domains.CreateCodingSubmissionResponse{}, ErrorGetLintResult
+			s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+			return
 		}
 		fmt.Println("lintResult", lintResult)
 		// Encode lintResult to JSON string
 		lintResultJSON, err := json.Marshal(lintResult)
 		if err != nil {
-			return domains.CreateCodingSubmissionResponse{}, ErrorEncodingLintResult
+			s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+			return
 		}
 
 		submissionResult, err := s.codingInterviewRepository.SaveCodingSubmission(domains.CodingQuestionSubmission{
@@ -223,14 +240,16 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 			LinterResult: string(lintResultJSON),
 		})
 		if err != nil {
-			return domains.CreateCodingSubmissionResponse{}, ErrorCreateCodingSubmission
+			s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+			return
 		}
 		/* 		Insert compile result
 		 */
 		for _, testCase := range compileResult {
 			compileResultJSON, err := json.Marshal(testCase.CompileResult)
 			if err != nil {
-				return domains.CreateCodingSubmissionResponse{}, ErrorEncodingCompileResult
+				s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+				return
 			}
 			_, err = s.codingInterviewRepository.SaveCodingSubmissionTestCaseResult(domains.CodingQuestionSubmissionTestCaseResult{
 				TestCaseId:    uint(testCase.TestcaseId),
@@ -239,20 +258,17 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 				CompileResult: string(compileResultJSON),
 			})
 			if err != nil {
-				return domains.CreateCodingSubmissionResponse{}, ErrorCreateCodingSubmissionTestCaseResult
+				s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+				return
 			}
 			if testCase.IsPassed {
 				totalScore += 1
 			}
 		}
 	}
+	// Update final results
 	s.roomRepository.SaveRoomScore(req[0].RoomID, totalScore)
 	s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, true)
-
-	return domains.CreateCodingSubmissionResponse{
-		Status:  "success",
-		Message: "Coding submission created successfully",
-	}, nil
 }
 
 func (s *codingInterviewService) AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error {

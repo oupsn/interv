@@ -1002,6 +1002,7 @@ export interface UserInWorkspace {
 }
 
 export interface VideoInterviewContextResponse {
+  currentQuestion: number
   questionSetting: VideoInterviewQuestionSetting[]
   totalQuestions: number
 }

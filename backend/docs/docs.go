@@ -3182,10 +3182,14 @@ const docTemplate = `{
         "VideoInterviewContextResponse": {
             "type": "object",
             "required": [
+                "currentQuestion",
                 "questionSetting",
                 "totalQuestions"
             ],
             "properties": {
+                "currentQuestion": {
+                    "type": "integer"
+                },
                 "questionSetting": {
                     "type": "array",
                     "items": {
