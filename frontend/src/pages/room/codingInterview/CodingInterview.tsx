@@ -73,7 +73,7 @@ const CodingInterviewPage = () => {
     onStart() {
       console.log("video recording started")
     },
-    askPermissionOnMount: true,
+    askPermissionOnMount: fetchedContext?.data?.is_camera_required ?? false,
     stopStreamsOnStop: true,
   })
   const {
@@ -88,7 +88,8 @@ const CodingInterviewPage = () => {
     onStart() {
       console.log("screen recording started")
     },
-    askPermissionOnMount: false,
+    askPermissionOnMount:
+      fetchedContext?.data?.is_screen_share_required ?? false,
     stopStreamsOnStop: true,
   })
 

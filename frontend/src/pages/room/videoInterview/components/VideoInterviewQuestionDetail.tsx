@@ -6,6 +6,8 @@ import { VideoPreviewStream } from "@/pages/room/videoInterview/components/Video
 import { VideoInterviewQuestionTimeRemain } from "@/pages/room/videoInterview/components/VideoInterviewQuestionTimeRemain.tsx"
 import DOMPurify from "dompurify"
 import parse from "html-react-parser"
+import { Clock } from "lucide-react"
+import { QuestionMarkCircledIcon } from "@radix-ui/react-icons"
 
 interface VideoInterviewQuestionDetailProps {
   questionId: number
@@ -42,31 +44,67 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
 
   return (
     <>
-      <VideoInterviewQuestionTimeRemain
-        timeToPrepare={timeToPrepare}
-        timeToAnswer={timeToAnswer}
-        startRecording={startRecording}
-        stopRecording={stopRecording}
-        isStarted={isStarted}
-        setIsStarted={setIsStarted}
-        setMediaBlob={setMediaBlob}
-        mediaBlobUrl={mediaBlobUrl ?? ""}
-        setRecordState={setRecordState}
-        setAttemptLeft={setAttemptLeft}
-        questionId={questionId}
-      />
-      <div className={"w-fit h-fit relative"}>
-        {!isStarted ? (
+      {" "}
+      <div className="flex flex-row justify-center relative w-full h-full">
+        <div className="flex flex-col gap-6 w-full p-10 h-full border-l border-gray-200 border-b">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white font-semibold">
+              {questionIndex}
+            </span>
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Interview Question
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <Clock className="w-4 h-4" />
+            <span>Preparation time: {timeToPrepare} seconds</span>
+            <span className="mx-2">•</span>
+            <span>Answer time: {timeToAnswer} seconds</span>
+          </div>
+
+          <div className="space-y-3">
+            <div className="prose prose-lg">{parse(cleanDescription)}</div>
+
+            <div className="flex items-start gap-2 mt-4 p-4 rounded-md">
+              <QuestionMarkCircledIcon className="w-5 h-5 text-primary mt-0.5" />
+              <p className="text-sm text-primary">
+                Take a moment to gather your thoughts. Remember to speak clearly
+                and maintain eye contact with the camera.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 relative items-center justify-center w-full p-10 border-l border-gray-200 border-b">
+          <VideoInterviewQuestionTimeRemain
+            timeToPrepare={timeToPrepare}
+            timeToAnswer={timeToAnswer}
+            startRecording={startRecording}
+            stopRecording={stopRecording}
+            isStarted={isStarted}
+            setIsStarted={setIsStarted}
+            setMediaBlob={setMediaBlob}
+            mediaBlobUrl={mediaBlobUrl ?? ""}
+            setRecordState={setRecordState}
+            setAttemptLeft={setAttemptLeft}
+            questionId={questionId}
+          />
           <div
             className={
-              "flex items-center justify-center bg-white w-full h-full absolute opacity-50"
+              "w-full h-full relative flex items-center justify-center"
             }
-          ></div>
-        ) : null}
-        <VideoPreviewStream />
+          >
+            {!isStarted ? (
+              <div
+                className={
+                  "flex items-center justify-center bg-white w-full h-full absolute opacity-50"
+                }
+              ></div>
+            ) : null}
+            <VideoPreviewStream />
+          </div>
+        </div>
       </div>
-      <p className={"text-2xl font-semibold"}>Question {questionIndex}</p>
-      <p className={"text-xl"}>{parse(cleanDescription)}</p>
     </>
   )
 }

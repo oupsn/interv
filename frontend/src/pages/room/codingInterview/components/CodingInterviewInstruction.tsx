@@ -100,8 +100,11 @@ const CodingInterviewInstruction: React.FC<CodingInterviewInstructionProps> = ({
           <div className="flex flex-col items-start justify-start mt-4">
             <h1 className="text-2xl">Hello, {candidateName}</h1>
             <p className="text-md">
-              Welcome to the coding interview. Please follow the instructions
-              and guidelines provided.
+              Welcome to the{" "}
+              <span className="font-semibold text-primary">
+                coding interview
+              </span>
+              . Please follow the instructions and guidelines provided.
             </p>
           </div>
           <div className="flex flex-col items-start justify-start mt-4 gap-2">
