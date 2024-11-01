@@ -50,4 +50,6 @@ type ICodingInterviewService interface {
 	DeleteCodingQuestionInWorkspace(workspaceID uint) error
 	UpdateCodingQuestion(codingQuestionID uint, question domains.CodingQuestion) (domains.CodingQuestion, error)
 	UploadCodingVideo(roomID string, screenFile *multipart.FileHeader, videoFile *multipart.FileHeader) error
+	UploadVideoChunk(roomID string, chunk *multipart.FileHeader, info domains.ChunkInfo) error
+	CompleteVideoUpload(roomID string, fileID string, fileType string) error
 }

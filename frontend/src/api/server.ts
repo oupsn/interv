@@ -45,6 +45,17 @@ export interface CodingInterviewUpdateQuestionQuery {
   codingQuestionID: number
 }
 
+export type CompleteVideoUploadData = HandlersResponseString
+
+export type CompleteVideoUploadError = HandlersErrResponse
+
+export interface CompleteVideoUploadPayload {
+  /** File ID */
+  fileId: string
+  /** File Type */
+  fileType: string
+}
+
 export type CreateAdminData = HandlersResponseUser
 
 export type CreateAdminError = HandlersErrResponse
@@ -953,6 +964,23 @@ export interface UploadObjectPayload {
   file: File
 }
 
+export type UploadVideoChunkData = HandlersResponseString
+
+export type UploadVideoChunkError = HandlersErrResponse
+
+export interface UploadVideoChunkPayload {
+  /** Coding Interview Video Chunk File */
+  chunk: File
+  /** Chunk Index */
+  chunkIndex: number
+  /** File ID */
+  fileId: string
+  /** File Type */
+  fileType: string
+  /** Total Chunks */
+  totalChunks: number
+}
+
 export type UploadVideoData = HandlersResponseString
 
 export type UploadVideoError = HandlersErrResponse
@@ -1124,6 +1152,27 @@ export namespace CodingInterview {
     export type RequestBody = CodingInterviewAddQuestionQuery
     export type RequestHeaders = {}
     export type ResponseBody = AddQuestionData
+  }
+
+  /**
+   * @description Complete a coding interview video upload
+   * @tags codingInterview
+   * @name CompleteVideoUpload
+   * @summary Complete a coding interview video upload
+   * @request POST:/codingInterview.complete-upload/{roomId}
+   * @response `200` `CompleteVideoUploadData` Successful response with a message
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace CompleteVideoUpload {
+    export type RequestParams = {
+      /** Room ID */
+      roomId: string
+    }
+    export type RequestQuery = {}
+    export type RequestBody = CompleteVideoUploadPayload
+    export type RequestHeaders = {}
+    export type ResponseBody = CompleteVideoUploadData
   }
 
   /**
@@ -1378,6 +1427,27 @@ export namespace CodingInterview {
     export type RequestBody = UploadVideoPayload
     export type RequestHeaders = {}
     export type ResponseBody = UploadVideoData
+  }
+
+  /**
+   * @description Upload a coding interview video chunk
+   * @tags codingInterview
+   * @name UploadVideoChunk
+   * @summary Upload a coding interview video chunk
+   * @request POST:/codingInterview.upload-chunk/{roomId}
+   * @response `200` `UploadVideoChunkData` Successful response with a message
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace UploadVideoChunk {
+    export type RequestParams = {
+      /** Room ID */
+      roomId: string
+    }
+    export type RequestQuery = {}
+    export type RequestBody = UploadVideoChunkPayload
+    export type RequestHeaders = {}
+    export type ResponseBody = UploadVideoChunkData
   }
 }
 
@@ -2286,6 +2356,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
       }),
 
     /**
+     * @description Complete a coding interview video upload
+     *
+     * @tags codingInterview
+     * @name CompleteVideoUpload
+     * @summary Complete a coding interview video upload
+     * @request POST:/codingInterview.complete-upload/{roomId}
+     * @response `200` `CompleteVideoUploadData` Successful response with a message
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    completeVideoUpload: (roomId: string, data: CompleteVideoUploadPayload, params: RequestParams = {}) =>
+      this.request<CompleteVideoUploadData, CompleteVideoUploadError>({
+        path: `/codingInterview.complete-upload/${roomId}`,
+        method: "POST",
+        body: data,
+        type: ContentType.FormData,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Create a new coding interview question submission
      *
      * @tags codingInterview
@@ -2545,6 +2636,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
     uploadVideo: (data: UploadVideoPayload, params: RequestParams = {}) =>
       this.request<UploadVideoData, UploadVideoError>({
         path: `/codingInterview.uploadVideo`,
+        method: "POST",
+        body: data,
+        type: ContentType.FormData,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Upload a coding interview video chunk
+     *
+     * @tags codingInterview
+     * @name UploadVideoChunk
+     * @summary Upload a coding interview video chunk
+     * @request POST:/codingInterview.upload-chunk/{roomId}
+     * @response `200` `UploadVideoChunkData` Successful response with a message
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    uploadVideoChunk: (roomId: string, data: UploadVideoChunkPayload, params: RequestParams = {}) =>
+      this.request<UploadVideoChunkData, UploadVideoChunkError>({
+        path: `/codingInterview.upload-chunk/${roomId}`,
         method: "POST",
         body: data,
         type: ContentType.FormData,
