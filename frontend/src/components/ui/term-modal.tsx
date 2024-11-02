@@ -1,18 +1,25 @@
+import { cn } from "@/lib/utils"
 import React, { useState } from "react"
+import { FaRegFileAlt } from "react-icons/fa"
 
 interface TermsModalProps {
   onAccept: () => void
 }
 
 const TermsModal: React.FC<TermsModalProps> = ({ onAccept }) => {
-  const [showPrivacy, setShowPrivacy] = useState(false)
+  const [consentGiven, setConsentGiven] = useState(false)
+  const [currentTab, setCurrentTab] = useState<"terms" | "privacy" | "consent">(
+    "terms",
+  )
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white rounded-lg p-6 shadow-lg max-w-xl w-full max-h-[90vh] overflow-y-scroll">
-        {!showPrivacy ? (
+        {currentTab === "terms" && (
           <>
-            <h2 className="text-xl font-semibold mb-4">Terms of Service</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <FaRegFileAlt /> Terms of Service
+            </h2>
             <p className="mb-4">
               By using this site, you agree to the following terms and
               conditions:
@@ -55,16 +62,19 @@ const TermsModal: React.FC<TermsModalProps> = ({ onAccept }) => {
             </div>
             <div className="flex justify-end">
               <button
-                onClick={() => setShowPrivacy(true)}
+                onClick={() => setCurrentTab("privacy")}
                 className="bg-primary text-white px-4 py-2 rounded"
               >
                 Next
               </button>
             </div>
           </>
-        ) : (
+        )}
+        {currentTab === "privacy" && (
           <>
-            <h2 className="text-xl font-semibold mb-4">Privacy Policy</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <FaRegFileAlt /> Privacy Policy
+            </h2>
             <div className=" mb-4 pr-2">
               <p className="mb-4">
                 Your privacy is important to us. We are committed to protecting
@@ -159,14 +169,99 @@ const TermsModal: React.FC<TermsModalProps> = ({ onAccept }) => {
             </p>
             <div className="flex justify-end gap-4">
               <button
-                onClick={() => setShowPrivacy(false)}
+                onClick={() => setCurrentTab("terms")}
                 className="bg-gray-200 text-black px-4 py-2 rounded"
               >
                 Back
               </button>
               <button
-                onClick={onAccept}
+                onClick={() => setCurrentTab("consent")}
                 className="bg-primary text-white px-4 py-2 rounded"
+              >
+                Next
+              </button>
+            </div>
+          </>
+        )}
+        {currentTab === "consent" && (
+          <>
+            <h3 className="font-semibold mb-4 text-2xl flex items-center gap-2">
+              <FaRegFileAlt /> Consent Form
+            </h3>
+            <p className="mb-6 text-gray-700">
+              Please review the following information regarding your consent for
+              data processing:
+            </p>
+            <div className="mb-6">
+              <h4 className="font-semibold text-lg">
+                Name of the Organization
+              </h4>
+              <p className="text-gray-600">Interv Inc.</p>
+            </div>
+            <div className="mb-6">
+              <h4 className="font-semibold text-lg">
+                Purpose of Data Processing
+              </h4>
+              <p className="text-gray-600">
+                The purpose of processing your data is to send the result to the
+                company conducting the interview for assessment and feedback.
+              </p>
+            </div>
+            <div className="mb-6">
+              <h4 className="font-semibold text-lg">
+                Types of Personal Data to be Processed
+              </h4>
+              <ul className="list-disc list-inside text-gray-600">
+                <li>Name</li>
+                <li>Email Address</li>
+                <li>Video, Audio and Screen Recordings</li>
+                <li>Usage Data (e.g., IP address, browser type)</li>
+              </ul>
+            </div>
+            <div className="mb-6">
+              <h4 className="font-semibold text-lg">
+                Duration of Personal Data Retention
+              </h4>
+              <p className="text-gray-600">
+                Your personal data will be retained for as long as necessary to
+                fulfill the purposes outlined above or as required by law.
+              </p>
+            </div>
+            <div className="mb-6">
+              <h4 className="font-semibold text-lg">
+                Contact Information for Withdrawing Consent
+              </h4>
+              <p className="text-gray-600">
+                If you wish to withdraw your consent, please contact us at:
+                <br />
+                <span className="font-semibold">Email:</span> help@interv.cc
+              </p>
+            </div>
+            <label className="flex items-center mb-6">
+              <input
+                type="checkbox"
+                checked={consentGiven}
+                onChange={() => setConsentGiven(!consentGiven)}
+                className="mr-2 h-4 w-4"
+              />
+              <span className="text-gray-600">
+                I consent to the processing of my data as specified above.
+              </span>
+            </label>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setCurrentTab("privacy")}
+                className="bg-gray-200 text-black px-4 py-2 rounded hover:bg-gray-300 transition"
+              >
+                Back
+              </button>
+              <button
+                onClick={onAccept}
+                className={cn(
+                  "bg-primary text-white px-4 py-2 rounded",
+                  !consentGiven && "opacity-50 cursor-not-allowed",
+                )}
+                disabled={!consentGiven}
               >
                 I Accept
               </button>
