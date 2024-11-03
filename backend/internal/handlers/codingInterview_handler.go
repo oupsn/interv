@@ -375,3 +375,104 @@ func (co CodingInterviewHandler) UploadCodingVideo(c *fiber.Ctx) error {
 
 	return Ok(c, "Coding video uploaded successfully")
 }
+
+// @Summary Upload a coding interview video chunk
+// @Description Upload a coding interview video chunk
+// @Tags codingInterview
+// @ID UploadVideoChunk
+// @Accept json
+// @Produce json
+// @Param roomId path string true "Room ID"
+// @Param chunk formData file true "Coding Interview Video Chunk File"
+// @Param fileId formData string true "File ID"
+// @Param chunkIndex formData int true "Chunk Index"
+// @Param totalChunks formData int true "Total Chunks"
+// @Param fileType formData string true "File Type"
+// @Success 200 {object} Response[string] "Successful response with a message"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.upload-chunk/{roomId} [post]
+func (h *CodingInterviewHandler) UploadVideoChunk(c *fiber.Ctx) error {
+	roomID := c.Params("roomId")
+	file, err := c.FormFile("chunk")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "No chunk provided",
+		})
+	}
+
+	// Validate chunk size (2MB max)
+	if file.Size > 2*1024*1024 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Chunk too large",
+		})
+	}
+
+	// Parse other form fields
+	info := domains.ChunkInfo{
+		FileID:      c.FormValue("fileId"),
+		ChunkIndex:  parseInt(c.FormValue("chunkIndex")),
+		TotalChunks: parseInt(c.FormValue("totalChunks")),
+		FileType:    c.FormValue("fileType"),
+	}
+
+	// Validate required fields
+	if info.FileID == "" || info.FileType == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Missing required fields",
+		})
+	}
+
+	if err := h.codingInterviewService.UploadVideoChunk(roomID, file, info); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success":    true,
+		"chunkIndex": info.ChunkIndex,
+	})
+}
+
+// @Summary Complete a coding interview video upload
+// @Description Complete a coding interview video upload
+// @Tags codingInterview
+// @ID CompleteVideoUpload
+// @Accept json
+// @Produce json
+// @Param roomId path string true "Room ID"
+// @Param fileId formData string true "File ID"
+// @Param fileType formData string true "File Type"
+// @Success 200 {object} Response[string] "Successful response with a message"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.complete-upload/{roomId} [post]
+func (h *CodingInterviewHandler) CompleteVideoUpload(c *fiber.Ctx) error {
+	roomID := c.Params("roomId")
+	fileID := c.FormValue("fileId")
+	fileType := c.FormValue("fileType")
+
+	if fileID == "" || fileType == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Missing required fields",
+		})
+	}
+
+	if err := h.codingInterviewService.CompleteVideoUpload(roomID, fileID, fileType); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+	})
+}
+func parseInt(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return 0
+	}
+	return i
+}

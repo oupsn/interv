@@ -229,8 +229,10 @@ const CodingInterviewPanel: React.FC<CodingInterviewPanelProps> = ({
     } catch (error) {
       console.error("Submission failed:", error)
     }
-    setIsFinish(true)
-    setLoading(false)
+    setTimeout(() => {
+      setIsFinish(true)
+      setLoading(false)
+    }, 1000)
   }
 
   const createQuestionSnapshot = async () => {

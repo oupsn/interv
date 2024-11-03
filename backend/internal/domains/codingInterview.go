@@ -161,3 +161,10 @@ type CodingQuestionRoomContext struct {
 	CreatedAt             time.Time `json:"created_at"`
 	UpdatedAt             time.Time `json:"updated_at"`
 }
+
+type ChunkInfo struct {
+	FileID      string `json:"file_id"`
+	ChunkIndex  int    `json:"chunk_index"`
+	TotalChunks int    `json:"total_chunks"`
+	FileType    string `json:"file_type"`
+}

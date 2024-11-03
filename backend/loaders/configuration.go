@@ -31,6 +31,7 @@ const (
 	EnvCLinterEndpoint      = "C_LINTER_ENDPOINT"
 	EnvRedisURL             = "REDIS_URL"
 	SENTRY_DSN              = "SENTRY_DSN"
+	TempDir                 = "TEMP_DIR"
 )
 
 func init() {

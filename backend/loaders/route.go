@@ -39,7 +39,7 @@ func SetupRoutes() {
 	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, workspaceRepositories)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories, videoQuestionSnapshotRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
-	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, roomRepositories, objectRepositories, lintRepository)
+	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, roomRepositories, objectRepositories, lintRepository, viper.GetString(TempDir))
 	var mailServices = services.NewMailService(mailRepositories)
 	var questionServices = services.NewVideoQuestionService(videoQuestionRepositories)
 	var roomServices = services.NewRoomService(roomRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories, portalRepository, userInWorkspaceRepositories)
@@ -103,6 +103,8 @@ func SetupRoutes() {
 	public.Put("codingInterview.updateQuestion/:codingQuestionID", codingInterviewHandlers.UpdateQuestion)
 	public.Delete("codingInterview.deleteQuestion/:codingQuestionID", codingInterviewHandlers.DeleteQuestion)
 	public.Post("codingInterview.uploadVideo", codingInterviewHandlers.UploadCodingVideo)
+	public.Post("codingInterview.upload-chunk/:roomId", codingInterviewHandlers.UploadVideoChunk)
+	public.Post("codingInterview.complete-upload/:roomId", codingInterviewHandlers.CompleteVideoUpload)
 	public.Post("codingInterview.getSubmissionResultByUser", codingInterviewHandlers.GetSubmissionResultByUser)
 
 	// video question

@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"mime/multipart"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/repositories"
+	"github.com/valyala/fasthttp"
 )
 
 type codingInterviewService struct {
@@ -17,9 +20,16 @@ type codingInterviewService struct {
 	roomRepository            repositories.IRoomRepository
 	objectRepository          repositories.IObjectRepository
 	lintRepository            repositories.ILinterRepository
+	tempDir                   string
+}
+type ChunkInfo struct {
+	FileID      string
+	ChunkIndex  int
+	TotalChunks int
+	FileType    string
 }
 
-func NewCodingInterviewService(codeCompilationRepository repositories.ICompilationRepository, codingInterviewRepository repositories.ICodingInterviewRepository, roomRepository repositories.IRoomRepository, objectRepository repositories.IObjectRepository, lintRepository repositories.ILinterRepository) ICodingInterviewService {
+func NewCodingInterviewService(codeCompilationRepository repositories.ICompilationRepository, codingInterviewRepository repositories.ICodingInterviewRepository, roomRepository repositories.IRoomRepository, objectRepository repositories.IObjectRepository, lintRepository repositories.ILinterRepository, tempDir string) ICodingInterviewService {
 
 	return &codingInterviewService{
 		codeCompilationRepository: codeCompilationRepository,
@@ -27,6 +37,7 @@ func NewCodingInterviewService(codeCompilationRepository repositories.ICompilati
 		roomRepository:            roomRepository,
 		objectRepository:          objectRepository,
 		lintRepository:            lintRepository,
+		tempDir:                   tempDir,
 	}
 }
 
@@ -106,20 +117,23 @@ func (s *codingInterviewService) GetCompileResult(req domains.CompilationRequest
 	var compileResult []domains.CompilationResultResponse
 	testCases, err := s.codingInterviewRepository.GetCodingQuestionTestcaseByQuestionID(int(req.QuestionID))
 	if err != nil {
+		fmt.Println("error in GetCodingQuestionTestcaseByQuestionID", err)
 		return []domains.CompilationResultResponse{}, ErrorGetCodingInterviewTestcase
 	}
 	for _, testCase := range testCases {
-		input := strings.TrimSpace(testCase.Input)
+		input := strings.TrimRight(testCase.Input, "\n")
 		output := testCase.Output
 		token, err := s.codeCompilationRepository.GenerateCompileToken(req, input)
 		if err != nil {
+			fmt.Println("error in GenerateCompileToken", err)
 			return []domains.CompilationResultResponse{}, ErrorGetCompileToken
 		}
 		var result domains.CompilationCompileResult
 		startTime := time.Now()
 		for time.Since(startTime) < 20*time.Second {
 			res, err := s.codeCompilationRepository.GetCompileResult(token.Token)
-			if err != nil {
+			if err != nil && err.Error() != "EOF" {
+				fmt.Println("error in GetCompileResult", err)
 				return []domains.CompilationResultResponse{}, ErrorGetCompileResult
 			}
 			if res.Status.Description != "Processing" && res.Status.Description != "In Queue" {
@@ -182,6 +196,20 @@ func (s *codingInterviewService) CreateCodingSnapshot(req []domains.CodingQuesti
 }
 
 func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodingSubmissionRequest) (domains.CreateCodingSubmissionResponse, error) {
+	if len(req) == 0 {
+		return domains.CreateCodingSubmissionResponse{}, ErrorInvalidSubmissionRequest
+	}
+	s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, true)
+	go s.processCodingSubmission(req)
+
+	return domains.CreateCodingSubmissionResponse{
+		Status:  "processing",
+		Message: "Coding submission is being processed",
+	}, nil
+}
+
+// New helper function to process the submission
+func (s *codingInterviewService) processCodingSubmission(req []domains.CreateCodingSubmissionRequest) {
 	var totalScore uint = 0
 	for _, submission := range req {
 		langCode := map[string]uint{
@@ -197,7 +225,9 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 		compileResult, err := s.GetCompileResult(compileReq)
 		fmt.Println("compileResult", compileResult)
 		if err != nil {
-			return domains.CreateCodingSubmissionResponse{}, ErrorGetCompileResult
+			s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+			fmt.Println("error in compileResult", err)
+			return
 		}
 		lintReq := repositories.AnalyzeRequest{
 			Code:     submission.Code,
@@ -205,13 +235,17 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 		}
 		lintResult, err := s.lintRepository.Analyze(lintReq)
 		if err != nil {
-			return domains.CreateCodingSubmissionResponse{}, ErrorGetLintResult
+			s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+			fmt.Println("error in lintResult", err)
+			return
 		}
 		fmt.Println("lintResult", lintResult)
 		// Encode lintResult to JSON string
 		lintResultJSON, err := json.Marshal(lintResult)
 		if err != nil {
-			return domains.CreateCodingSubmissionResponse{}, ErrorEncodingLintResult
+			s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+			fmt.Println("error in lintResultJSON", err)
+			return
 		}
 
 		submissionResult, err := s.codingInterviewRepository.SaveCodingSubmission(domains.CodingQuestionSubmission{
@@ -223,14 +257,18 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 			LinterResult: string(lintResultJSON),
 		})
 		if err != nil {
-			return domains.CreateCodingSubmissionResponse{}, ErrorCreateCodingSubmission
+			s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+			fmt.Println("error in saveCodingSubmission", err)
+			return
 		}
 		/* 		Insert compile result
 		 */
 		for _, testCase := range compileResult {
 			compileResultJSON, err := json.Marshal(testCase.CompileResult)
 			if err != nil {
-				return domains.CreateCodingSubmissionResponse{}, ErrorEncodingCompileResult
+				s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+				fmt.Println("error in compileResultJSON", err)
+				return
 			}
 			_, err = s.codingInterviewRepository.SaveCodingSubmissionTestCaseResult(domains.CodingQuestionSubmissionTestCaseResult{
 				TestCaseId:    uint(testCase.TestcaseId),
@@ -239,20 +277,18 @@ func (s *codingInterviewService) CreateCodingSubmission(req []domains.CreateCodi
 				CompileResult: string(compileResultJSON),
 			})
 			if err != nil {
-				return domains.CreateCodingSubmissionResponse{}, ErrorCreateCodingSubmissionTestCaseResult
+				s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, false)
+				fmt.Println("error in saveCodingSubmissionTestCaseResult", err)
+				return
 			}
 			if testCase.IsPassed {
 				totalScore += 1
 			}
 		}
 	}
+	// Update final results
 	s.roomRepository.SaveRoomScore(req[0].RoomID, totalScore)
 	s.codingInterviewRepository.UpdateCodingDoneInRoom(req[0].RoomID, true)
-
-	return domains.CreateCodingSubmissionResponse{
-		Status:  "success",
-		Message: "Coding submission created successfully",
-	}, nil
 }
 
 func (s *codingInterviewService) AddCodingQuestion(codingQuestionID uint, target string, targetID uint) error {
@@ -284,5 +320,66 @@ func (s *codingInterviewService) UploadCodingVideo(roomID string, screenFile *mu
 		fmt.Println(err)
 		return ErrorUploadingVideo
 	}
+	return nil
+}
+
+func (s *codingInterviewService) UploadVideoChunk(roomID string, chunk *multipart.FileHeader, info domains.ChunkInfo) error {
+	// Create directory for this file if it doesn't exist
+	chunkDir := filepath.Join(s.tempDir, roomID, info.FileID)
+	if err := os.MkdirAll(chunkDir, 0755); err != nil {
+		return fmt.Errorf("failed to create chunk directory: %w", err)
+	}
+
+	// Save chunk to temporary file
+	chunkPath := filepath.Join(chunkDir, fmt.Sprintf("chunk_%d", info.ChunkIndex))
+
+	// Save uploaded file to chunk path
+	if err := fasthttp.SaveMultipartFile(chunk, chunkPath); err != nil {
+		return fmt.Errorf("failed to save chunk file: %w", err)
+	}
+
+	return nil
+}
+
+func (s *codingInterviewService) CompleteVideoUpload(roomID, fileID, fileType string) error {
+	chunkDir := filepath.Join(s.tempDir, roomID, fileID)
+
+	// Get list of chunks
+	files, err := os.ReadDir(chunkDir)
+	if err != nil {
+		return fmt.Errorf("failed to read chunk directory: %w", err)
+	}
+
+	// Create final file
+	finalPath := filepath.Join(chunkDir, "final")
+	finalFile, err := os.Create(finalPath)
+	if err != nil {
+		return fmt.Errorf("failed to create final file: %w", err)
+	}
+	defer finalFile.Close()
+	// Combine chunks
+	for i := 0; i < len(files); i++ {
+		chunkPath := filepath.Join(chunkDir, fmt.Sprintf("chunk_%d", i))
+		chunkData, err := os.ReadFile(chunkPath)
+		if err != nil {
+			return fmt.Errorf("failed to read chunk %d: %w", i, err)
+		}
+
+		if _, err := finalFile.Write(chunkData); err != nil {
+			return fmt.Errorf("failed to write to final file: %w", err)
+		}
+
+		// Clean up chunk
+		os.Remove(chunkPath)
+	}
+
+	finalFile.Seek(0, 0)
+	filename := fmt.Sprintf("%s-%s.mp4", roomID, fileType)
+	if err := s.objectRepository.UploadOsFile(finalPath, "coding-interview", filename); err != nil {
+		return fmt.Errorf("failed to upload final file: %w", err)
+	}
+
+	os.RemoveAll(chunkDir)
+
 	return nil
 }
