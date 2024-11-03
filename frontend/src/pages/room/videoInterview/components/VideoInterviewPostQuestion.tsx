@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom"
 import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
 import { toast } from "sonner"
 import Cookies from "js-cookie"
-import dayjs from "dayjs"
 
 interface VideoInterviewPostQuestion {
   attemptLeft: number
@@ -45,7 +44,7 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
       {
         loading: "Submitting video...",
         success: () => {
-          Cookies.set("s_" + questionId.toString(), dayjs().toISOString()) //TODO: come back here one day
+          Cookies.set("s_" + questionId.toString(), "true") //TODO: come back here one day
           handleNextQuestion()
           setMediaBlob([])
           setRecordState("pre")
@@ -90,14 +89,10 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
       </div>
 
       <p className={"text-xl font-semibold"}>
-        You have{" "}
-        {attemptLeft - Number(Cookies.get("r_" + questionId.toString()) ?? "0")}{" "}
-        attempts left.
+        You have {attemptLeft} attempts left.
       </p>
       <div className={"flex gap-10"}>
-        {attemptLeft -
-          Number(Cookies.get("r_" + questionId.toString()) ?? "0") >
-        0 ? (
+        {attemptLeft > 0 ? (
           <Button
             onClick={() => {
               setRecordState("detail")
@@ -107,6 +102,8 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
                 "r_" + questionId.toString(),
                 String(Number(currentAttempt ?? "0") + 1),
               ) //TODO: come back here one day
+              Cookies.remove("a_" + questionId.toString()) //TODO: come back here one day
+              Cookies.remove("p_" + questionId.toString()) //TODO: come back here one day
             }}
           >
             Retake
@@ -115,6 +112,8 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
         <Button
           disabled={selectedVideo === ""}
           onClick={() => {
+            Cookies.remove("a_" + questionId.toString()) //TODO: come back here one day
+            Cookies.remove("p_" + questionId.toString()) //TODO: come back here one day
             handleSubmitVideo()
           }}
         >
