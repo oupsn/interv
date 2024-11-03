@@ -55,11 +55,11 @@ func (a *authService) GenerateJwtToken(userId uint, username string, expiration 
 
 func (a *authService) Me(userId uint) (user *domains.User, portalId *uint, err error) {
 	user, err = a.userRepository.FindById(userId)
-	portalId = user.PortalId
-
 	if err != nil {
-		return nil, nil, ErrorUserNotFound
+		return nil, nil, err
 	}
+
+	portalId = user.PortalId
 
 	return user, portalId, nil
 }

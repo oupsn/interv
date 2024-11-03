@@ -6,6 +6,7 @@ require (
 	github.com/getsentry/sentry-go v0.29.1
 	github.com/go-playground/validator/v10 v10.21.0
 	github.com/gofiber/fiber/v2 v2.52.5
+	github.com/gofiber/swagger v1.1.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/mailjet/mailjet-apiv3-go/v4 v4.0.1
 	github.com/minio/minio-go/v7 v7.0.75
@@ -20,7 +21,7 @@ require (
 require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2 // indirect
+	github.com/swaggo/files/v2 v2.0.0 // indirect
 )
 
 require (
@@ -28,7 +29,6 @@ require (
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/andybalholm/brotli v1.1.0 // indirect
-	github.com/arsmn/fiber-swagger/v2 v2.31.1
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
