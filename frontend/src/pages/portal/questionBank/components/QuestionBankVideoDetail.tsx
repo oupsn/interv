@@ -108,6 +108,7 @@ function QuestionBankVideoDetail() {
             >
               <DialogTrigger asChild>
                 <Button
+                  variant={"outline"}
                   onClick={() => handleDelete(videoQuestion?.data?.id ?? 0)}
                   size="icon"
                 >
