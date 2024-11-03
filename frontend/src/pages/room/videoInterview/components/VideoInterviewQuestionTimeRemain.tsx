@@ -110,13 +110,19 @@ export const VideoInterviewQuestionTimeRemain: FC<
   return (
     <>
       {isStarted ? (
-        <p className={"text-xl font-semibold"}>
-          Time remaining: {timeToAnswerRemain}
-        </p>
+        <div className={"flex flex-col items-center gap-4"}>
+          <p className={"text-xl font-semibold"}>Time remaining</p>
+          <p className={"text-3xl font-semibold opacity-100"}>
+            {timeToAnswerRemain}
+          </p>
+        </div>
       ) : (
-        <p className={"text-xl font-semibold opacity-100"}>
-          Start record in {timeToPrepareRemain}
-        </p>
+        <div className={"flex flex-col items-center gap-4"}>
+          <p className={"text-xl font-semibold opacity-100"}>Start record in</p>
+          <p className={"text-3xl font-semibold opacity-100"}>
+            {timeToPrepareRemain}
+          </p>
+        </div>
       )}
     </>
   )
