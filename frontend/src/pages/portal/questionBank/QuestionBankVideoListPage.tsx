@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/breadcrumb.tsx"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa"
+import { Video } from "lucide-react"
 import { Button } from "@/components/ui/button.tsx"
 import useCurrentUser from "@/hooks/UseCurrentUser.ts"
 import { useNavigate } from "react-router-dom"
@@ -97,7 +98,10 @@ const QuestionBankVideoListPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbPage>Video Questions</BreadcrumbPage>
+              <BreadcrumbPage className="flex flex-row items-center">
+                <Video className="mr-2" size={20} />
+                Video Questions
+              </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>
@@ -132,11 +136,15 @@ const QuestionBankVideoListPage = () => {
           <Panigator
             dataLength={filteredQuestion.length}
             children={
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead className={"w-[100px]"}>Actions</TableHead>
+              <Table className="border">
+                <TableHeader className="border-b">
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="p-2 text-sm absolute left-2">
+                      Title
+                    </TableHead>
+                    <TableHead className="p-2 text-sm text-center">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -144,11 +152,11 @@ const QuestionBankVideoListPage = () => {
                     if (index >= (page - 1) * size && index <= page * size - 1)
                       return (
                         <TableRow key={item.id}>
-                          <TableCell className="font-medium">
+                          <TableCell className="px-4 py-2 text-sm">
                             {textTruncate(item.title ?? "", 120)}
                           </TableCell>
-                          <TableCell>
-                            <td className="flex w-fit gap-2">
+                          <TableCell className="px-4 py-2 text-sm text-center">
+                            <div className="flex gap-2 justify-center">
                               <Button
                                 onClick={() => handleView(item.id!)}
                                 size="icon"
@@ -201,7 +209,7 @@ const QuestionBankVideoListPage = () => {
                                   </DialogFooter>
                                 </DialogContent>
                               </Dialog>
-                            </td>
+                            </div>
                           </TableCell>
                         </TableRow>
                       )

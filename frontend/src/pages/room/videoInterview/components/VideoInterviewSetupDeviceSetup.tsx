@@ -33,8 +33,13 @@ const VideoInterviewSetupDeviceSetup: FC<
   } = useContext(DeviceContext)
 
   return (
-    <>
-      <p className={"text-2xl font-semibold"}>Video Interview</p>
+    <div className="flex flex-col gap-4 w-full items-center justify-center rounded-lg shadow-md">
+      <div className="flex flex-col items-center justify-center gap-2">
+        <p className={"text-lg font-semibold"}>Device Setup</p>
+        <p className="text-sm text-gray-500">
+          Please ensure your camera and microphone are working properly.
+        </p>
+      </div>
       <VideoPreviewStream
         setMediaError={setMediaError}
         setMediaStatus={setMediaStatus}
@@ -111,7 +116,7 @@ const VideoInterviewSetupDeviceSetup: FC<
       >
         Start
       </Button>
-    </>
+    </div>
   )
 }
 

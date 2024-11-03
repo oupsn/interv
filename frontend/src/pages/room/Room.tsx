@@ -8,17 +8,24 @@ import TopBar from "@/components/layout/TopBar"
 import TopBarItem from "@/components/layout/TopBarItem"
 import { Clock, Video, Code, Info } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { CandidateContext } from "@/contexts/candidate"
+import { useContext, useEffect } from "react"
 
 const RoomPage = () => {
   const { roomId } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
   const { data, error, isLoading } = useGetRoomContext(roomId!)
-
+  const { setCandidateName } = useContext(CandidateContext)
   /*   const timeRemaining = data?.data?.dueDate
     ? dayjs(data.data.dueDate).diff(dayjs(), "hour")
     : 0 */
-
+  useEffect(() => {
+    if (data?.data?.candidateName) {
+      setCandidateName(data.data.candidateName)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.data?.candidateName])
   return (
     <div className="flex flex-col w-dvw h-dvh">
       <TopBar>

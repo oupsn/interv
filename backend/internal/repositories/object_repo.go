@@ -47,6 +47,11 @@ func (o objectRepository) Upload(file *multipart.FileHeader, bucketName string, 
 	return nil
 }
 
+func (o objectRepository) UploadOsFile(filePath string, bucketName string, objectName string) error {
+	_, err := o.MINIO.FPutObject(context.Background(), bucketName, objectName, filePath, minio.PutObjectOptions{})
+	return err
+}
+
 func (o objectRepository) Get(bucketName string, objectName string) (string, error) {
 	reqParams := make(url.Values)
 	preSignUrl, err := o.MINIO.PresignedGetObject(context.Background(), bucketName, objectName, time.Minute*10, reqParams)

@@ -7,7 +7,8 @@ import {
 } from "@/components/ui/breadcrumb.tsx"
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { useGetCodingInterviewQuestionByPortalId } from "@/hooks/useGetCodingInterviewQuestionByPortalId"
-import { FaCode, FaEye, FaEdit, FaTrash } from "react-icons/fa"
+import { FaEye, FaEdit, FaTrash } from "react-icons/fa"
+import { Code } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
@@ -119,7 +120,10 @@ const QuestionBankCodingListPage = () => {
         <Breadcrumb>
           <BreadcrumbList className="flex flex-row justify-between">
             <BreadcrumbItem>
-              <BreadcrumbPage>Coding Questions</BreadcrumbPage>
+              <BreadcrumbPage className="flex flex-row items-center">
+                <Code className="mr-2" size={20} />
+                Coding Questions
+              </BreadcrumbPage>
             </BreadcrumbItem>
             <BreadcrumbItem></BreadcrumbItem>
           </BreadcrumbList>
@@ -164,7 +168,7 @@ const QuestionBankCodingListPage = () => {
                   <Table className="min-w-full border">
                     <TableHeader className="border-b">
                       <TableRow className="bg-gray-50">
-                        <TableHead className="p-2 text-sm ml-4 text-center">
+                        <TableHead className="p-2 text-sm absolute left-2">
                           Title
                         </TableHead>
                         <TableHead className="p-2 text-sm text-center">
@@ -187,7 +191,6 @@ const QuestionBankCodingListPage = () => {
                               className="border-b hover:bg-gray-100"
                             >
                               <TableCell className="px-4 py-2 flex items-center gap-4">
-                                <FaCode className="mr-2" size={20} />
                                 <span>
                                   {textTruncate(item.title ?? "", 50)}
                                 </span>
