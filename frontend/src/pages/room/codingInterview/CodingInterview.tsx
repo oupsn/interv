@@ -73,7 +73,7 @@ const CodingInterviewPage = () => {
     onStart() {
       console.log("video recording started")
     },
-    askPermissionOnMount: true,
+    askPermissionOnMount: fetchedContext?.data?.is_camera_required ?? false,
     stopStreamsOnStop: true,
   })
   const {
@@ -88,7 +88,8 @@ const CodingInterviewPage = () => {
     onStart() {
       console.log("screen recording started")
     },
-    askPermissionOnMount: false,
+    askPermissionOnMount:
+      fetchedContext?.data?.is_screen_share_required ?? false,
     stopStreamsOnStop: true,
   })
 
@@ -124,50 +125,109 @@ const CodingInterviewPage = () => {
         : 0
     return timeTaken
   }
+
+  const CHUNK_SIZE = 1024 * 1024 * 2
+  const MAX_RETRIES = 3
+
   const handleSubmitVideo = async (
     videoBlobUrl: string,
     screenBlobUrl: string,
   ) => {
     setTransparent(false)
     setLoading(true)
+
     if (videoBlobUrl === "" && screenBlobUrl === "") {
       setIsRecordingSaved(true)
       setLoading(false)
       setText("")
       return
     }
-    setText("Submitting video and screen record...")
-    const videoBlob = await fetch(videoBlobUrl).then((response) =>
-      response.blob(),
-    )
-    const screenBlob = await fetch(screenBlobUrl).then((response) =>
-      response.blob(),
-    )
 
-    const videoFile = new File([videoBlob], "video.mp4", {
-      type: "video/mp4",
-      lastModified: Date.now(),
-    })
-    const screenFile = new File([screenBlob], "screen.mp4", {
-      type: "video/mp4",
-      lastModified: Date.now(),
-    })
+    const uploadInChunks = async (
+      blob: Blob,
+      fileType: "video" | "screen",
+    ): Promise<boolean> => {
+      const totalChunks = Math.ceil(blob.size / CHUNK_SIZE)
+      const fileId = `${roomId}-${fileType}-${Date.now()}`
 
-    server.codingInterview
-      .uploadVideo({
-        videoFile: videoFile,
-        screenFile: screenFile,
-        roomID: roomId ?? "",
-      })
-      .catch((error) => {
-        console.error(error)
-      })
-      .finally(() => {
-        setIsRecordingSaved(true)
-        setLoading(false)
-        setText("")
-        setTransparent(true)
-      })
+      setText(`Uploading ${fileType} recording: 0%`)
+
+      for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        const start = chunkIndex * CHUNK_SIZE
+        const end = Math.min(start + CHUNK_SIZE, blob.size)
+        const chunk = blob.slice(start, end)
+
+        const formData = new FormData()
+        formData.append("chunk", chunk)
+        formData.append("fileId", fileId)
+        formData.append("chunkIndex", chunkIndex.toString())
+        formData.append("totalChunks", totalChunks.toString())
+        formData.append("fileType", fileType)
+
+        let retries = 0
+        while (retries < MAX_RETRIES) {
+          try {
+            await server.codingInterview.uploadVideoChunk(roomId ?? "", {
+              chunk: formData.get("chunk") as File,
+              chunkIndex: parseInt(formData.get("chunkIndex") as string),
+              fileId: formData.get("fileId") as string,
+              fileType: formData.get("fileType") as string,
+              totalChunks: parseInt(formData.get("totalChunks") as string),
+            })
+
+            /*             const progress = Math.round(((chunkIndex + 1) / totalChunks) * 100)
+             */ setText(
+              `Please wait while we upload your ${fileType} recording`,
+            )
+
+            break
+          } catch (error) {
+            retries++
+            if (retries === MAX_RETRIES) {
+              console.error(
+                `Failed to upload chunk ${chunkIndex} after ${MAX_RETRIES} attempts`,
+              )
+              throw error
+            }
+            await new Promise((resolve) =>
+              setTimeout(resolve, 1000 * Math.pow(2, retries)),
+            )
+          }
+        }
+      }
+      //Complete upload
+      try {
+        await server.codingInterview.completeVideoUpload(roomId ?? "", {
+          fileId,
+          fileType,
+        })
+        return true
+      } catch (error) {
+        console.error("Failed to complete upload:", error)
+        throw error
+      }
+    }
+
+    try {
+      if (videoBlobUrl) {
+        const videoBlob = await fetch(videoBlobUrl).then((r) => r.blob())
+        await uploadInChunks(videoBlob, "video")
+      }
+
+      if (screenBlobUrl) {
+        const screenBlob = await fetch(screenBlobUrl).then((r) => r.blob())
+        await uploadInChunks(screenBlob, "screen")
+      }
+
+      setIsRecordingSaved(true)
+    } catch (error) {
+      console.error("Upload failed:", error)
+      // Show error to user
+    } finally {
+      setLoading(false)
+      setText("")
+      setTransparent(true)
+    }
   }
 
   /*   

@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react"
-import SideBar from "@/components/layout/SideBar.tsx"
-import SideBarItem from "@/components/layout/SideBarItem.tsx"
-import MainPanel from "@/components/layout/MainPanel.tsx"
 import VideoInterviewSetupDeviceSetup from "@/pages/room/videoInterview/components/VideoInterviewSetupDeviceSetup.tsx"
 import { useNavigate, useParams } from "react-router-dom"
 import { useGetVideoInterviewContext } from "@/hooks/useGetVideoInterviewContext.ts"
 import VideoInterviewQuestionPanel from "@/pages/room/videoInterview/components/VideoInterviewQuestionPanel.tsx"
 import { cn } from "@/lib/utils.ts"
 import { VideoInterviewFinish } from "@/pages/room/videoInterview/components/VideoInterviewFinish.tsx"
+import TopBar from "@/components/layout/TopBar"
+import VideoInterviewInstruction from "./components/VIdeoInterviewInstruction"
 import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
 import { Spinner } from "@/components/ui/spinner.tsx"
 import { FaCheckCircle } from "react-icons/fa"
@@ -20,9 +19,9 @@ const VideoInterviewPage = () => {
     useGetRoomContext(roomId!)
   const navigate = useNavigate()
 
-  const isActive = (id: number) => {
+  /*  const isActive = (id: number) => {
     return activeQuestion == id
-  }
+  } */
 
   const handleNextQuestion = (overwriteActiveQuestion?: number) => {
     if (overwriteActiveQuestion) {
@@ -47,9 +46,14 @@ const VideoInterviewPage = () => {
   const renderVideoInterviewByStage = () => {
     if (activeQuestion == 0) {
       return (
-        <VideoInterviewSetupDeviceSetup
-          handleNextQuestion={handleNextQuestion}
-        />
+        <div className="flex flex-row w-full h-full overflow-y-hidden">
+          <VideoInterviewInstruction
+            questionLength={data?.data?.totalQuestions ?? 0}
+          />
+          <VideoInterviewSetupDeviceSetup
+            handleNextQuestion={handleNextQuestion}
+          />
+        </div>
       )
     }
 
@@ -57,22 +61,51 @@ const VideoInterviewPage = () => {
       return <VideoInterviewFinish />
     } else {
       return (
-        <VideoInterviewQuestionPanel
-          questionId={
-            data!.data!.questionSetting[activeQuestion - 1].questionId
-          }
-          questionIndex={activeQuestion}
-          totalAttempt={
-            data!.data!.questionSetting[activeQuestion - 1].totalAttempt
-          }
-          timeToPrepare={
-            data!.data!.questionSetting[activeQuestion - 1].timeToPrepare
-          }
-          timeToAnswer={
-            data!.data!.questionSetting[activeQuestion - 1].timeToAnswer
-          }
-          handleNextQuestion={handleNextQuestion}
-        />
+        <div className="flex flex-col gap-8 w-full justify-center h-full relative overflow-hidden">
+          <VideoInterviewQuestionPanel
+            questionId={
+              data!.data!.questionSetting[activeQuestion - 1].questionId
+            }
+            questionIndex={activeQuestion}
+            totalAttempt={
+              data!.data!.questionSetting[activeQuestion - 1].totalAttempt
+            }
+            timeToPrepare={
+              data!.data!.questionSetting[activeQuestion - 1].timeToPrepare
+            }
+            timeToAnswer={
+              data!.data!.questionSetting[activeQuestion - 1].timeToAnswer
+            }
+            handleNextQuestion={handleNextQuestion}
+          />
+
+          {/* Question Navigation Bar */}
+          <div className="flex justify-center gap-2 p-4">
+            {Array.from({ length: data?.data?.totalQuestions ?? 0 }).map(
+              (_item, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleNextQuestion(index + 1)}
+                  disabled={
+                    index + 1 > activeQuestion || index + 1 < activeQuestion
+                  }
+                  className={cn(
+                    "w-10 h-10 rounded-md border-2",
+                    "flex items-center justify-center",
+                    "transition-all duration-200",
+                    index + 1 === activeQuestion
+                      ? "bg-primary text-white"
+                      : index + 1 < activeQuestion
+                        ? "border-gray-300 bg-gray-300 text-white cursor-not-allowed"
+                        : "border-gray-300 text-gray-300 cursor-not-allowed",
+                  )}
+                >
+                  {index + 1}
+                </button>
+              ),
+            )}
+          </div>
+        </div>
       )
     }
   }
@@ -109,8 +142,9 @@ const VideoInterviewPage = () => {
   }
 
   return (
-    <>
-      <SideBar>
+    <div className="flex flex-col w-dvw h-dvh">
+      <TopBar></TopBar>
+      {/* <SideBar>
         <SideBarItem
           title={"Setup"}
           isActive={isActive(0)}
@@ -132,11 +166,11 @@ const VideoInterviewPage = () => {
           title={"Finish"}
           isActive={isActive((data?.data?.totalQuestions ?? 0) + 1)}
         />
-      </SideBar>
-      <MainPanel className={"flex flex-col justify-center items-center"}>
+      </SideBar> */}
+      <div className={"flex h-full flex-col justify-center items-center"}>
         {renderVideoInterviewByStage()}
-      </MainPanel>
-    </>
+      </div>
+    </div>
   )
 }
 

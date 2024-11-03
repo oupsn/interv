@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button.tsx"
 import { Dispatch, FC, SetStateAction } from "react"
+import { FaExclamationTriangle } from "react-icons/fa"
 
 interface VideoInterviewPreQuestionProps {
   questionIndex: number
@@ -17,27 +18,47 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
   setRecordState,
 }) => {
   return (
-    <>
-      <p className={"text-2xl font-semibold"}>Question {questionIndex}</p>
-      <div className={"flex gap-8 bg-iWhiteHover p-4 rounded-xl"}>
-        <div>
-          <p className={"text-xl font-semibold"}>Max Attempt</p>
-          <p className={"text-xl text-center"}>{totalAttempt}</p>
+    <div className="max-w-2xl mx-auto p-6 flex flex-col items-center justify-center gap-6">
+      {/* Header */}
+      <div className="text-center">
+        <h2 className="text-3xl font-bold mb-2">Question {questionIndex}</h2>
+        <p className="text-gray-600">
+          Please review the details before starting
+        </p>
+      </div>
+
+      {/* Info Cards */}
+      <div className="grid grid-cols-3 gap-6 w-full bg-iWhiteHover p-6 rounded-xl shadow-sm">
+        <div className="text-center p-4 bg-white rounded-lg">
+          <p className="text-sm text-gray-600 mb-1">Maximum Attempts</p>
+          <p className="text-2xl font-semibold">{totalAttempt}</p>
         </div>
-        <div>
-          <p className={"text-xl font-semibold"}>Time to prepare</p>
-          <p className={"text-xl text-center"}>{timeToPrepare} seconds</p>
+        <div className="text-center p-4 bg-white rounded-lg">
+          <p className="text-sm text-gray-600 mb-1">Preparation Time</p>
+          <p className="text-2xl font-semibold">{timeToPrepare}s</p>
         </div>
-        <div>
-          <p className={"text-xl font-semibold"}>Time to answer</p>
-          <p className={"text-xl text-center"}>{timeToAnswer} seconds</p>
+        <div className="text-center p-4 bg-white rounded-lg">
+          <p className="text-sm text-gray-600 mb-1">Answer Time</p>
+          <p className="text-2xl font-semibold">{timeToAnswer}s</p>
         </div>
       </div>
-      <Button onClick={() => setRecordState("detail")}>Start</Button>
-      <p className={"font-semibold"}>
-        Notes: The preparation time will start immediately once you start the
-        question.
-      </p>
-    </>
+
+      {/* Warning Message */}
+      <div className="bg-red-50 p-4 rounded-lg flex items-center gap-3 text-red-700">
+        <FaExclamationTriangle className="text-red-500 flex-shrink-0" />
+        <p className="text-sm">
+          Important: The preparation timer will begin immediately after clicking
+          the Start button
+        </p>
+      </div>
+
+      {/* Action Button */}
+      <Button
+        onClick={() => setRecordState("detail")}
+        className="w-full max-w-xs py-3 text-lg font-semibold"
+      >
+        Start Question
+      </Button>
+    </div>
   )
 }

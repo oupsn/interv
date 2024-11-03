@@ -24,6 +24,13 @@ var (
 	ErrorGetObjectSubmission                  = fiber.NewError(fiber.StatusInternalServerError, "can not get object submission")
 	ErrorGetRoomIDByUserID                    = fiber.NewError(fiber.StatusInternalServerError, "can not get room id by user id")
 	ErrorGetWorkspace                         = fiber.NewError(fiber.StatusInternalServerError, "can not get workspace")
+	ErrorInvalidSubmissionRequest             = fiber.NewError(fiber.StatusBadRequest, "invalid submission request")
+	ErrorUploadCodingVideo                    = fiber.NewError(fiber.StatusInternalServerError, "can not upload coding video")
+	ErrorGetCodingVideoChunk                  = fiber.NewError(fiber.StatusInternalServerError, "can not get coding video chunk")
+	ErrorWritingTempFile                      = fiber.NewError(fiber.StatusInternalServerError, "can not write temp file")
+	ErrorCreatingTempFile                     = fiber.NewError(fiber.StatusInternalServerError, "can not create temp file")
+	ErrorReadingChunk                         = fiber.NewError(fiber.StatusInternalServerError, "can not read chunk")
+	ErrorNoChunksFound                        = fiber.NewError(fiber.StatusInternalServerError, "no chunk found")
 )
 
 type ICodingInterviewService interface {
@@ -43,4 +50,6 @@ type ICodingInterviewService interface {
 	DeleteCodingQuestionInWorkspace(workspaceID uint) error
 	UpdateCodingQuestion(codingQuestionID uint, question domains.CodingQuestion) (domains.CodingQuestion, error)
 	UploadCodingVideo(roomID string, screenFile *multipart.FileHeader, videoFile *multipart.FileHeader) error
+	UploadVideoChunk(roomID string, chunk *multipart.FileHeader, info domains.ChunkInfo) error
+	CompleteVideoUpload(roomID string, fileID string, fileType string) error
 }

@@ -1,7 +1,6 @@
-import React, { useEffect } from "react"
+import React, { useContext, useEffect } from "react"
 import CodingInterviewDeviceSetup from "./CodingInterviewDeviceSetup"
 import { StatusMessages } from "react-media-recorder-2"
-import useCurrentUser from "@/hooks/UseCurrentUser"
 import { Link, useParams } from "react-router-dom"
 import {
   ArrowLeftIcon,
@@ -16,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { CandidateContext } from "@/contexts/candidate"
 
 interface CodingInterviewInstructionProps {
   questionLength: number
@@ -57,9 +57,8 @@ const CodingInterviewInstruction: React.FC<CodingInterviewInstructionProps> = ({
   videoError,
   screenError,
 }) => {
-  const { currentUser } = useCurrentUser()
   const { roomId } = useParams()
-
+  const { candidateName } = useContext(CandidateContext)
   const [showTimeUpDialog, setShowTimeUpDialog] = React.useState(false)
 
   useEffect(() => {
@@ -99,10 +98,13 @@ const CodingInterviewInstruction: React.FC<CodingInterviewInstructionProps> = ({
             </div>
           </Link>
           <div className="flex flex-col items-start justify-start mt-4">
-            <h1 className="text-2xl">Hello, {currentUser?.name}</h1>
+            <h1 className="text-2xl">Hello, {candidateName}</h1>
             <p className="text-md">
-              Welcome to the coding interview. Please follow the instructions
-              and guidelines provided.
+              Welcome to the{" "}
+              <span className="font-semibold text-primary">
+                coding interview
+              </span>
+              . Please follow the instructions and guidelines provided.
             </p>
           </div>
           <div className="flex flex-col items-start justify-start mt-4 gap-2">
