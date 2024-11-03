@@ -41,7 +41,7 @@ function QuestionBankVideoDetail() {
     data: videoQuestion,
     isLoading,
     error,
-  } = useGetVideoQuestionDetail(parseInt(videoQuestionId!))
+  } = useGetVideoQuestionDetail(parseInt(videoQuestionId ?? ""))
 
   const handleDelete = (id: number) => {
     setSelectedItemToDelete(id)
