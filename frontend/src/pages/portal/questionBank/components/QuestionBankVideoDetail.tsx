@@ -25,13 +25,14 @@ import {
 } from "@/components/ui/dialog.tsx"
 import { toast } from "sonner"
 import { server } from "@/contexts/swr.tsx"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 function QuestionBankVideoDetail() {
   const [selectedItemToDelete, setSelectedItemToDelete] = useState<
     number | null
   >(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const { videoQuestionId } = useParams()
   const navigate = useNavigate()
   const handleEdit = (id: number) => {
@@ -39,7 +40,7 @@ function QuestionBankVideoDetail() {
   }
   const {
     data: videoQuestion,
-    isLoading,
+    mutate,
     error,
   } = useGetVideoQuestionDetail(parseInt(videoQuestionId!))
 
@@ -67,6 +68,12 @@ function QuestionBankVideoDetail() {
     setSelectedItemToDelete(null)
   }
 
+  useEffect(() => {
+    mutate().then(() => {
+      setIsLoading(false)
+    })
+  }, [mutate])
+
   return (
     <ContentLayout
       title={"Video Question"}
@@ -81,7 +88,9 @@ function QuestionBankVideoDetail() {
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage>
-                {textTruncate(videoQuestion?.data?.title ?? "", 50)}
+                {isLoading
+                  ? ""
+                  : textTruncate(videoQuestion?.data?.title ?? "", 50)}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>

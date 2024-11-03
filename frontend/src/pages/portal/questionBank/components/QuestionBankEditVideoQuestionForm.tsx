@@ -25,7 +25,7 @@ import {
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import useCurrentUser from "@/hooks/UseCurrentUser.ts"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Spinner } from "@/components/ui/spinner.tsx"
 import { useGetVideoQuestionDetail } from "@/hooks/useGetVideoQuestionDetail.ts"
 import { textTruncate } from "@/pages/portal/questionBank/utils/utils.ts"
@@ -33,9 +33,10 @@ import { textTruncate } from "@/pages/portal/questionBank/utils/utils.ts"
 const QuestionBankEditVideoQuestionForm = () => {
   const { currentUser } = useCurrentUser()
   const { videoQuestionId } = useParams()
+  const [isLoading, setIsLoading] = useState(true)
   const {
     data: videoQuestion,
-    isLoading,
+    mutate,
     error,
   } = useGetVideoQuestionDetail(parseInt(videoQuestionId!))
   const formSchema = z.object({
@@ -88,6 +89,12 @@ const QuestionBankEditVideoQuestionForm = () => {
     videoQuestion?.data?.totalAttempt,
   ])
 
+  useEffect(() => {
+    mutate().then(() => {
+      setIsLoading(false)
+    })
+  }, [mutate])
+
   return (
     <ContentLayout
       title={"Edit Video Question"}
@@ -103,7 +110,9 @@ const QuestionBankEditVideoQuestionForm = () => {
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link to={`/portal/question/video/${videoQuestionId}`}>
-                  {textTruncate(videoQuestion?.data?.title ?? "", 50)}
+                  {isLoading
+                    ? ""
+                    : textTruncate(videoQuestion?.data?.title ?? "", 50)}
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
