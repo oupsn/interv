@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react"
 import VideoInterviewSetupDeviceSetup from "@/pages/room/videoInterview/components/VideoInterviewSetupDeviceSetup.tsx"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useGetVideoInterviewContext } from "@/hooks/useGetVideoInterviewContext.ts"
 import VideoInterviewQuestionPanel from "@/pages/room/videoInterview/components/VideoInterviewQuestionPanel.tsx"
 import { cn } from "@/lib/utils.ts"
 import { VideoInterviewFinish } from "@/pages/room/videoInterview/components/VideoInterviewFinish.tsx"
 import TopBar from "@/components/layout/TopBar"
-import VideoInterviewInstruction from "./components/VideoInterviewInstruction"
+import VideoInterviewInstruction from "./components/VIdeoInterviewInstruction"
+import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
+import { Spinner } from "@/components/ui/spinner.tsx"
+import { FaCheckCircle } from "react-icons/fa"
 
 const VideoInterviewPage = () => {
   const { roomId } = useParams()
   const [activeQuestion, setActiveQuestion] = useState(0) // 0 for setup
   const { data } = useGetVideoInterviewContext(roomId!)
+  const { data: roomContextData, isLoading: isRoomContextLoading } =
+    useGetRoomContext(roomId!)
+  const navigate = useNavigate()
+
+  const isActive = (id: number) => {
+    return activeQuestion == id
+  }
 
   const handleNextQuestion = (overwriteActiveQuestion?: number) => {
     if (overwriteActiveQuestion) {
@@ -98,6 +108,37 @@ const VideoInterviewPage = () => {
         </div>
       )
     }
+  }
+
+  if (isRoomContextLoading) {
+    return (
+      <div className={"flex w-full justify-center items-center"}>
+        <Spinner size="lg" />
+      </div>
+    )
+  }
+
+  if (roomContextData?.data?.isVideoDone ?? true) {
+    return (
+      <>
+        <div className="flex flex-col items-center justify-center min-h-screen w-full">
+          <FaCheckCircle className="text-green-500 w-24 h-24 mx-auto mb-4" />
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">
+            Congratulations!
+          </h1>
+          <p className="text-xl text-gray-600 mb-6">
+            You've completed the video interview.
+          </p>
+
+          <button
+            onClick={() => navigate(`/room/${roomId}`)}
+            className="bg-primary text-white font-bold py-2 px-4 rounded transition duration-300"
+          >
+            Return to interview room
+          </button>
+        </div>
+      </>
+    )
   }
 
   return (

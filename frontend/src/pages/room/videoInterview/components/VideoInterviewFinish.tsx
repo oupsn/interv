@@ -1,7 +1,7 @@
-import { FaCheckCircle } from "react-icons/fa"
 import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { server } from "@/contexts/swr.tsx"
+import { FaCheckCircle } from "react-icons/fa"
 
 export const VideoInterviewFinish = () => {
   const navigate = useNavigate()
@@ -31,7 +31,7 @@ export const VideoInterviewFinish = () => {
           <div className="text-center p-8">
             <FaCheckCircle className="text-primary w-24 h-24 mx-auto mb-6" />
             <h1 className="text-4xl font-bold text-gray-800 mb-4">
-              Interview Recording Complete!
+              Video Interview Complete!
             </h1>
             <p className="text-xl text-gray-600 mb-6">
               🎉 Thank you for completing your video interview. Your responses

@@ -8,6 +8,7 @@ import DOMPurify from "dompurify"
 import parse from "html-react-parser"
 import { Clock } from "lucide-react"
 import { QuestionMarkCircledIcon } from "@radix-ui/react-icons"
+import { Button } from "@/components/ui/button.tsx"
 
 interface VideoInterviewQuestionDetailProps {
   questionId: number
@@ -105,6 +106,19 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
           </div>
         </div>
       </div>
+      <div className={"text-center space-y-2"}>
+        <p className={"text-2xl font-semibold"}>Question {questionIndex}</p>
+        <p className={"text-xl"}>{parse(cleanDescription)}</p>
+      </div>
+      <Button
+        disabled={!isStarted}
+        onClick={() => {
+          stopRecording()
+          setAttemptLeft((prev) => prev - 1)
+        }}
+      >
+        Stop recording
+      </Button>
     </>
   )
 }

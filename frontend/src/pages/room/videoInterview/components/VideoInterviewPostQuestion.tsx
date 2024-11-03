@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom"
 import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
 import { toast } from "sonner"
 import Cookies from "js-cookie"
-import dayjs from "dayjs"
 import { LoadingContext } from "@/contexts/loading"
 
 interface VideoInterviewPostQuestion {
@@ -49,7 +48,7 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
       {
         loading: "Submitting video...",
         success: () => {
-          Cookies.set("s_" + questionId.toString(), dayjs().toISOString()) //TODO: come back here one day
+          Cookies.set("s_" + questionId.toString(), "true") //TODO: come back here one day
           handleNextQuestion()
           setMediaBlob([])
           setRecordState("pre")
@@ -121,7 +120,11 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
           <div className="flex flex-col gap-4">
             <Button
               disabled={!selectedVideo}
-              onClick={handleSubmitVideo}
+              onClick={() => {
+                Cookies.remove("a_" + questionId.toString()) //TODO: come back here one day
+                Cookies.remove("p_" + questionId.toString()) //TODO: come back here one day
+                handleSubmitVideo()
+              }}
               className="w-48"
             >
               Submit Recording
@@ -133,14 +136,19 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
                 variant="outline"
                 onClick={() => {
                   setRecordState("detail")
-                  const currentAttempt = Number(
-                    Cookies.get(`r_${questionId}`) ?? "0",
-                  )
-                  Cookies.set(`r_${questionId}`, String(currentAttempt + 1))
+                  setRecordState("detail")
+                  const currentAttempt =
+                    Cookies.get("r_" + questionId.toString()) ?? 0
+                  Cookies.set(
+                    "r_" + questionId.toString(),
+                    String(Number(currentAttempt ?? "0") + 1),
+                  ) //TODO: come back here one day
+                  Cookies.remove("a_" + questionId.toString()) //TODO: come back here one day
+                  Cookies.remove("p_" + questionId.toString()) //TODO: come back here one day
                 }}
                 className="w-48"
               >
-                Record Again
+                Retake
               </Button>
             )}
           </div>
