@@ -41,7 +41,7 @@ function QuestionBankVideoDetail() {
     data: videoQuestion,
     isLoading,
     error,
-  } = useGetVideoQuestionDetail(parseInt(videoQuestionId!))
+  } = useGetVideoQuestionDetail(parseInt(videoQuestionId ?? ""))
 
   const handleDelete = (id: number) => {
     setSelectedItemToDelete(id)
@@ -99,6 +99,7 @@ function QuestionBankVideoDetail() {
             >
               <DialogTrigger asChild>
                 <Button
+                  variant={"outline"}
                   onClick={() => handleDelete(videoQuestion?.data?.id ?? 0)}
                   size="icon"
                 >
