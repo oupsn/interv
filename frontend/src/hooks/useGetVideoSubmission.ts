@@ -6,7 +6,7 @@ export const useGetVideoSubmission = (
   workspaceId: number,
 ) => {
   return useSWR(
-    ["videoInterview", "getVideoInterviewResult"],
+    ["videoInterview", "getVideoInterviewResult", candidateId, workspaceId],
     () =>
       server.videoInterview.getVideoInterviewResult({
         userId: candidateId,

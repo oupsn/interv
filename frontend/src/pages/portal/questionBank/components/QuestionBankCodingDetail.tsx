@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/card"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import DOMPurify from "dompurify"
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
@@ -85,9 +85,6 @@ function QuestionBankCodingDetail() {
     setIsDeleteDialogOpen(false)
     setDeleteItemId(null)
   }
-  useEffect(() => {
-    console.log(codingQuestion)
-  }, [codingQuestion])
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
