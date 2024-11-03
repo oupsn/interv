@@ -104,21 +104,17 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
             ) : null}
             <VideoPreviewStream />
           </div>
+          <Button
+            disabled={!isStarted}
+            onClick={() => {
+              stopRecording()
+              setAttemptLeft((prev) => prev - 1)
+            }}
+          >
+            Stop recording
+          </Button>
         </div>
       </div>
-      <div className={"text-center space-y-2"}>
-        <p className={"text-2xl font-semibold"}>Question {questionIndex}</p>
-        <p className={"text-xl"}>{parse(cleanDescription)}</p>
-      </div>
-      <Button
-        disabled={!isStarted}
-        onClick={() => {
-          stopRecording()
-          setAttemptLeft((prev) => prev - 1)
-        }}
-      >
-        Stop recording
-      </Button>
     </>
   )
 }

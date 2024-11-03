@@ -21,7 +21,7 @@ export const VideoInterviewFinish = () => {
   }, [roomId])
 
   return (
-    <div className="min-h-screen w-full mt-24">
+    <div className="min-h-screen w-full mt-24 overflow-hidden">
       {isUpdating ? (
         <div className="flex items-center justify-center min-h-screen">
           <p className="text-gray-600">Saving your progress...</p>

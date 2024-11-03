@@ -19,9 +19,9 @@ const VideoInterviewPage = () => {
     useGetRoomContext(roomId!)
   const navigate = useNavigate()
 
-  const isActive = (id: number) => {
+  /*  const isActive = (id: number) => {
     return activeQuestion == id
-  }
+  } */
 
   const handleNextQuestion = (overwriteActiveQuestion?: number) => {
     if (overwriteActiveQuestion) {
@@ -61,7 +61,7 @@ const VideoInterviewPage = () => {
       return <VideoInterviewFinish />
     } else {
       return (
-        <div className="flex flex-col gap-8 w-full justify-center h-full relative">
+        <div className="flex flex-col gap-8 w-full justify-center h-full relative overflow-hidden">
           <VideoInterviewQuestionPanel
             questionId={
               data!.data!.questionSetting[activeQuestion - 1].questionId
