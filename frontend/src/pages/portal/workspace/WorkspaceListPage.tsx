@@ -10,7 +10,7 @@ import {
 import ContentPanel from "@/components/layout/ContentPanel.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { useNavigate } from "react-router-dom"
-import { Plus } from "lucide-react"
+import { Layers, Plus } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner.tsx"
 
 const WorkspaceListPage = () => {
@@ -33,7 +33,10 @@ const WorkspaceListPage = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbPage>Workspaces</BreadcrumbPage>
+              <BreadcrumbPage className="flex flex-row items-center">
+                <Layers className="mr-2" size={20} />
+                Workspaces
+              </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
           <BreadcrumbList>

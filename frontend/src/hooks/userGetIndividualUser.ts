@@ -5,10 +5,12 @@ export const useGetIndividualUser = (
   candidateId: number,
   workspaceId: number,
 ) => {
-  return useSWR(["userInWorkspace", "GetIndividualUser"], () =>
-    server.userInWorkspace.getIndividualUser({
-      userId: candidateId,
-      workspaceId: workspaceId,
-    }),
+  return useSWR(
+    ["userInWorkspace", "GetIndividualUser", candidateId, workspaceId],
+    () =>
+      server.userInWorkspace.getIndividualUser({
+        userId: candidateId,
+        workspaceId: workspaceId,
+      }),
   )
 }

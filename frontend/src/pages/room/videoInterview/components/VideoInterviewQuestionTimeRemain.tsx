@@ -1,6 +1,7 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import Cookies from "js-cookie"
 import dayjs from "dayjs"
+import { cn } from "@/lib/utils"
 
 interface VideoInterviewQuestionTimeRemainingProps {
   timeToPrepare: number
@@ -108,22 +109,41 @@ export const VideoInterviewQuestionTimeRemain: FC<
     }
   }, [mediaBlobUrl])
   return (
-    <>
+    <div className="flex flex-col items-center space-y-2">
       {isStarted ? (
-        <div className={"flex flex-col items-center gap-4"}>
-          <p className={"text-xl font-semibold"}>Time remaining</p>
-          <p className={"text-3xl font-semibold opacity-100"}>
-            {timeToAnswerRemain}
+        <>
+          <p className="text-xl font-semibold">Recording in Progress</p>
+          <p className="text-lg">
+            Time Remaining:{" "}
+            <span
+              className={cn(
+                "font-bold text-2xl text-primary",
+                timeToAnswerRemain < 3 && "text-red-500",
+              )}
+            >
+              {timeToAnswerRemain}s
+            </span>
           </p>
-        </div>
+        </>
       ) : (
-        <div className={"flex flex-col items-center gap-4"}>
-          <p className={"text-xl font-semibold opacity-100"}>Start record in</p>
-          <p className={"text-3xl font-semibold opacity-100"}>
-            {timeToPrepareRemain}
+        <>
+          <p className="text-xl font-semibold">Preparation Time</p>
+          <p className="text-lg">
+            Recording starts in{" "}
+            <span
+              className={cn(
+                "font-bold text-2xl text-primary",
+                timeToPrepareRemain < 3 && "text-red-500",
+              )}
+            >
+              {timeToPrepareRemain}s
+            </span>
           </p>
-        </div>
+          <p className="text-sm text-gray-600">
+            Get ready to answer the question
+          </p>
+        </>
       )}
-    </>
+    </div>
   )
 }

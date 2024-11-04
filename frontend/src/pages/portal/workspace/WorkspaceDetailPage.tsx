@@ -45,12 +45,13 @@ const WorkspaceDetailPage = () => {
   const navigate = useNavigate()
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const { data: workspaceData } = useGetWorkspace(Number(workspaceId))
+  const { data: workspaceData, isLoading: isWorkspaceLoading } =
+    useGetWorkspace(Number(workspaceId))
   const { data: codeQuestion, isLoading: isCodeQuestionLoading } =
     useGetCodingInterviewQuestionByPortalId(currentUser.portalId)
   const { data: videoQuestion, isLoading: isVideoQuestionLoading } =
     useGetVideoInterviewQuestionByPortalId(currentUser.portalId)
-  const { data: codeWorkspaceQuestion } =
+  const { data: codeWorkspaceQuestion, isLoading: isCodeWorkspaceLoading } =
     useGetCodingInterviewQuestionByWorpsaceId(Number(workspaceId) ?? 0)
 
   const [codeCurrentQuestion, setCodeCurrentQuestion] = useState<
@@ -133,7 +134,12 @@ const WorkspaceDetailPage = () => {
     workspaceData,
   ])
 
-  if (isCodeQuestionLoading && isVideoQuestionLoading) {
+  if (
+    isCodeQuestionLoading ||
+    isVideoQuestionLoading ||
+    isWorkspaceLoading ||
+    isCodeWorkspaceLoading
+  ) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Spinner size="lg" />
