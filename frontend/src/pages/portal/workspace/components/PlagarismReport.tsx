@@ -76,8 +76,9 @@ function PlagarismReport() {
               <div className="bg-slate-50 p-4 rounded-lg">
                 <p className="text-sm text-gray-700 leading-relaxed">
                   This report analyzes code similarity between source and target
-                  submissions with a threshold of 70% or higher. The comparison
-                  uses the following color coding:
+                  submissions with a threshold of 70% or higher. The report will
+                  auto generate every night at 12:00 AM UTC. The comparison uses
+                  the following color coding:
                   <div className="flex gap-4 mt-2">
                     <span className="flex items-center gap-1">
                       <div className="w-3 h-3 bg-black rounded-full"></div>
