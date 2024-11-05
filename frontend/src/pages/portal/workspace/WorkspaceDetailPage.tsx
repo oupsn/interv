@@ -25,7 +25,7 @@ import { useGetVideoInterviewQuestionByPortalId } from "@/hooks/useGetVideoInter
 import { useGetCodingInterviewQuestionByWorpsaceId } from "@/hooks/useGetCodingInterviewQuestionByWorkspaceId"
 import { cn } from "@/lib/utils"
 import { Spinner } from "@/components/ui/spinner"
-import { FaEdit, FaTrash } from "react-icons/fa"
+import { FaEdit, FaFilePdf, FaTrash } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -219,9 +219,25 @@ const WorkspaceDetailPage = () => {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          <Label className="text-3xl font-bold text-primary">
-            Title: {truncatedTitle}
-          </Label>
+          <div className="flex flex-row justify-between">
+            <Label className="text-3xl font-bold text-primary">
+              Title: {truncatedTitle}
+            </Label>
+            {!workspaceActive ||
+            workspaceData?.data?.userInWorkspace == null ? (
+              <Button
+                variant="outline"
+                onClick={() => navigate("plagarism")}
+                className="flex flex-row gap-2"
+              >
+                <FaFilePdf />
+                Plagarism Report
+              </Button>
+            ) : (
+              <></>
+            )}
+          </div>
+
           <Label>Number of candidate : {workspaceData?.data?.memberNum}</Label>
           <Label>
             Time period :{" "}

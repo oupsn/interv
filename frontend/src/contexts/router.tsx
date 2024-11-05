@@ -24,6 +24,7 @@ import CandidateDetailPage from "@/pages/portal/workspace/CandidateDetailPage"
 import QuestionGuideline from "@/pages/room/questionGuideline/QuestionGuideline"
 import EditWorkspacePage from "@/pages/portal/workspace/EditWorkspacePage"
 import EditCandidatePage from "@/pages/portal/workspace/EditCandidatePage"
+import PlagarismReport from "@/pages/portal/workspace/components/PlagarismReport"
 
 export const router = createBrowserRouter([
   {
@@ -94,6 +95,10 @@ export const router = createBrowserRouter([
                         element: <CandidateDetailPage />,
                       },
                     ],
+                  },
+                  {
+                    path: "plagarism",
+                    element: <PlagarismReport />,
                   },
                 ],
               },

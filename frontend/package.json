@@ -33,6 +33,7 @@
     "@types/js-cookie": "^3.0.6",
     "@uiw/codemirror-extensions-langs": "^4.23.0",
     "@uiw/react-codemirror": "^4.23.0",
+    "ansi-to-html": "^0.7.2",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

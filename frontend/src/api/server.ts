@@ -357,6 +357,27 @@ export interface DomainsCreateCodingSubmissionRequest {
   time_taken?: number
 }
 
+export interface DomainsPlagarism {
+  createdAt?: string
+  created_at?: string
+  deletedAt?: GormDeletedAt
+  diff?: string
+  id?: number
+  question_title?: string
+  score?: number
+  source_code?: string
+  source_room_id?: string
+  source_user?: number
+  source_user_name?: string
+  target_code?: string
+  target_room_id?: string
+  target_user?: number
+  target_user_name?: string
+  updatedAt?: string
+  updated_at?: string
+  workspace_id?: number
+}
+
 export interface DomainsPortal {
   companyName?: string
   createdAt?: string
@@ -463,6 +484,10 @@ export interface GetObjectBody {
 export type GetObjectData = HandlersResponseString
 
 export type GetObjectError = HandlersErrResponse
+
+export type GetPlagarismData = HandlersResponseArrayDomainsPlagarism
+
+export type GetPlagarismError = HandlersErrResponse
 
 export type GetPortalByIdData = HandlersResponsePortalData
 
@@ -643,6 +668,13 @@ export enum HandlersMailPreset {
 
 export interface HandlersOkResponse {
   code?: number
+  message?: string
+  timestamp?: string
+}
+
+export interface HandlersResponseArrayDomainsPlagarism {
+  code?: number
+  data?: DomainsPlagarism[]
   message?: string
   timestamp?: string
 }
@@ -1266,6 +1298,27 @@ export namespace CodingInterview {
     export type RequestBody = CodingInterviewGetCompileResultQuery
     export type RequestHeaders = {}
     export type ResponseBody = GetCompileResultData
+  }
+
+  /**
+   * @description Get coding interview plagarism
+   * @tags codingInterview
+   * @name GetPlagarism
+   * @summary Get coding interview plagarism
+   * @request GET:/codingInterview.getPlagarism/{workspaceId}
+   * @response `200` `GetPlagarismData` Successful response with the coding interview plagarism
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetPlagarism {
+    export type RequestParams = {
+      /** Workspace ID */
+      workspaceId: number
+    }
+    export type RequestQuery = {}
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetPlagarismData
   }
 
   /**
@@ -2475,6 +2528,26 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
         path: `/codingInterview.getCompileResult`,
         method: "POST",
         body: body,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Get coding interview plagarism
+     *
+     * @tags codingInterview
+     * @name GetPlagarism
+     * @summary Get coding interview plagarism
+     * @request GET:/codingInterview.getPlagarism/{workspaceId}
+     * @response `200` `GetPlagarismData` Successful response with the coding interview plagarism
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getPlagarism: (workspaceId: number, params: RequestParams = {}) =>
+      this.request<GetPlagarismData, GetPlagarismError>({
+        path: `/codingInterview.getPlagarism/${workspaceId}`,
+        method: "GET",
         type: ContentType.Json,
         format: "json",
         ...params,

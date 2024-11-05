@@ -383,3 +383,7 @@ func (s *codingInterviewService) CompleteVideoUpload(roomID, fileID, fileType st
 
 	return nil
 }
+
+func (s *codingInterviewService) GetCodingPlagarism(workspaceID uint) ([]domains.Plagarism, error) {
+	return s.codingInterviewRepository.GetCodingPlagarism(workspaceID)
+}
