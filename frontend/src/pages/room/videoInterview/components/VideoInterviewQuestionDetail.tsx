@@ -47,7 +47,7 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
     <>
       {" "}
       <div className="flex flex-row justify-center relative w-full h-full">
-        <div className="flex flex-col gap-6 w-full p-10 h-full border-l border-gray-200 border-b">
+        <div className="flex flex-col gap-6 w-5/12 p-10 h-full border-l border-gray-200 border-b">
           <div className="flex items-center gap-3">
             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white font-semibold">
               {questionIndex}
@@ -76,7 +76,7 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-4 relative items-center justify-center w-full p-10 border-l border-gray-200 border-b">
+        <div className="flex flex-col gap-4 relative items-center justify-center w-7/12 p-10 border-l border-gray-200 border-b ">
           <VideoInterviewQuestionTimeRemain
             timeToPrepare={timeToPrepare}
             timeToAnswer={timeToAnswer}
