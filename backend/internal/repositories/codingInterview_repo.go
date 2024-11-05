@@ -342,3 +342,11 @@ func (c *codingInterviewRepository) DeleteCodingQuestionInWorkspace(workspaceID 
 	}
 	return nil
 }
+
+func (c *codingInterviewRepository) GetCodingPlagarism(workspaceID uint) ([]domains.Plagarism, error) {
+	var plagarisms []domains.Plagarism
+	if err := c.DB.Where("workspace_id = ?", workspaceID).Find(&plagarisms).Error; err != nil {
+		return nil, err
+	}
+	return plagarisms, nil
+}
