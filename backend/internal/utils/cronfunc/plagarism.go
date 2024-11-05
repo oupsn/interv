@@ -2,12 +2,13 @@ package cronfunc
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
-	"github.com/cvcio/go-plagiarism"
+	"github.com/adrg/strutil"
+	"github.com/adrg/strutil/metrics"
 	"github.com/sergi/go-diff/diffmatchpatch"
-
 	"gorm.io/gorm"
 )
 
@@ -22,11 +23,14 @@ type RoomListInWorkspace struct {
 	Room        []RoomWithCode
 }
 
-// Helper function to normalize whitespace
 func normalizeWhitespace(s string) string {
-	// Replace multiple spaces with single space and trim
 	fields := strings.Fields(s)
 	return strings.Join(fields, " ")
+}
+
+func checkPlagarism(sourceCode, targetCode string) (float64, error) {
+	similarity := strutil.Similarity(sourceCode, targetCode, metrics.NewJaroWinkler())
+	return similarity, nil
 }
 
 func RunPlagiarismCheck(db gorm.DB) error {
@@ -56,12 +60,7 @@ func RunPlagiarismCheck(db gorm.DB) error {
 		}
 	}
 
-	detector, err := plagiarism.NewDetector()
 	dmp := diffmatchpatch.New()
-
-	if err != nil {
-		return err
-	}
 	var highSimilarity []domains.Plagarism
 	for _, rooms := range workspaceMap {
 		for i := 0; i < len(rooms); i++ {
@@ -82,14 +81,21 @@ func RunPlagiarismCheck(db gorm.DB) error {
 
 				// Normalize whitespace before comparison
 				normalizedCode1 := normalizeWhitespace(rooms[i].Code)
+				fmt.Println("normalizecode1", normalizedCode1)
 				normalizedCode2 := normalizeWhitespace(rooms[j].Code)
+				fmt.Println("normalizecode2", normalizedCode2)
 
-				err := detector.DetectWithStrings(normalizedCode1, normalizedCode2)
+				plagarismScore, err := checkPlagarism(normalizedCode1, normalizedCode2)
 				if err != nil {
 					continue
 				}
+				fmt.Println("score", plagarismScore)
+				if plagarismScore > 0.7 {
+					score := plagarismScore
+					if math.IsInf(score, 0) || math.IsNaN(score) {
+						score = 1.0
+					}
 
-				if detector.Score > 0.75 {
 					var sourceUser domains.User
 					var targetUser domains.User
 					var question domains.CodingQuestion
@@ -105,7 +111,10 @@ func RunPlagiarismCheck(db gorm.DB) error {
 						fmt.Println(err)
 						continue
 					}
-					diffs := dmp.DiffMain(normalizedCode1, normalizedCode2, false)
+					if score > 1 {
+						score = 1
+					}
+					diffs := dmp.DiffMain(normalizedCode1, normalizedCode2, true)
 					highSimilarity = append(highSimilarity, domains.Plagarism{
 						WorkspaceID:    rooms[i].Room.WorkspaceID,
 						SourceUser:     sourceUser.ID,
@@ -117,7 +126,7 @@ func RunPlagiarismCheck(db gorm.DB) error {
 						SourceCode:     rooms[i].Code,
 						TargetCode:     rooms[j].Code,
 						QuestionTitle:  question.Title,
-						Score:          detector.Score,
+						Score:          score,
 						Diff:           dmp.DiffPrettyText(diffs),
 					})
 				}
