@@ -14,7 +14,7 @@ func main() {
 	loaders.SetupRedis()
 	loaders.SetupCron()
 	if viper.GetString(loaders.EnvMode) != "sit" {
-		loaders.SetupSentry()
+		//loaders.SetupSentry()
 		loaders.SetupMailjet()
 	}
 	loaders.SetupRoutes()
