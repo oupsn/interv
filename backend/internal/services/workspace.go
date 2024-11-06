@@ -11,7 +11,7 @@ var (
 )
 
 type IWorkspaceService interface {
-	GetWorkspaceById(id uint) (workspace *domains.Workspace, candidate *[]domains.UserInWorkspace, workspaceScore *domains.WorkspaceScore, err error)
+	GetWorkspaceById(workspaceId uint, portalId uint) (workspace *domains.Workspace, candidate *[]domains.UserInWorkspace, workspaceScore *domains.WorkspaceScore, err error)
 	GetPortalWorkspace(portalId *uint) (workspace *[]domains.Workspace, err error)
 	GetIndividualUser(workspaceId uint, userId uint) (userInworkspace *domains.UserInWorkspace, err error)
 	UpdateStatusAllCandidate(workspaceId uint, status string) (err error)

@@ -48,16 +48,16 @@ func NewWorkspaceService(
 	}
 }
 
-func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspace, candidate *[]domains.UserInWorkspace, workspaceScore *domains.WorkspaceScore, err error) {
-	workspace, err = w.videoQuestionRepositories.GetByWorkspaceId(id)
+func (w *workspaceService) GetWorkspaceById(workspaceId uint, portalId uint) (workspace *domains.Workspace, candidate *[]domains.UserInWorkspace, workspaceScore *domains.WorkspaceScore, err error) {
+	workspace, err = w.videoQuestionRepositories.GetByWorkspaceIdAndPortalId(workspaceId, portalId)
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	candidate, err = w.userInWorkspaceRepository.FindByWorkspaceId(id)
+	candidate, err = w.userInWorkspaceRepository.FindByWorkspaceId(workspaceId)
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	codingQuestions, err := w.codingInterviewService.GetCodingInterviewQuestionsInWorkspace(int(id))
+	codingQuestions, err := w.codingInterviewService.GetCodingInterviewQuestionsInWorkspace(int(workspaceId))
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -70,7 +70,7 @@ func (w *workspaceService) GetWorkspaceById(id uint) (workspace *domains.Workspa
 		CandidateScore: make(map[uint]uint),
 	}
 	for _, candidate := range *candidate {
-		workspaceScore.CandidateScore[candidate.UserId], err = w.roomRepository.GetRoomScoreByWorkspaceIdCandidateId(id, candidate.UserId)
+		workspaceScore.CandidateScore[candidate.UserId], err = w.roomRepository.GetRoomScoreByWorkspaceIdCandidateId(workspaceId, candidate.UserId)
 		if err != nil {
 			return nil, nil, nil, err
 		}

@@ -39,7 +39,8 @@ export type ListWorkspaceProps = {
   listScore: DomainsWorkspaceScore
   page: number
   size: number
-  workspace: number
+  workspaceId: number
+  portalId: number
 }
 
 const ListUser: React.FC<ListWorkspaceProps> = ({
@@ -47,7 +48,8 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
   listScore,
   page,
   size,
-  workspace,
+  workspaceId,
+  portalId,
 }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedItemToDelete, setSelectedItemToDelete] = useState<
@@ -77,7 +79,7 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
     setIsDeleteDialogOpen(false)
     setSelectedItemToDelete([null, null])
   }
-  const { mutate } = useGetWorkspace(workspace)
+  const { mutate } = useGetWorkspace(workspaceId, portalId)
   const navigate = useNavigate()
   return (
     <Table>
