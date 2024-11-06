@@ -45,8 +45,11 @@ const WorkspaceDetailPage = () => {
   const navigate = useNavigate()
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const { data: workspaceData, isLoading: isWorkspaceLoading } =
-    useGetWorkspace(Number(workspaceId))
+  const {
+    data: workspaceData,
+    error,
+    isLoading: isWorkspaceLoading,
+  } = useGetWorkspace(Number(workspaceId), Number(currentUser.portalId))
   const { data: codeQuestion, isLoading: isCodeQuestionLoading } =
     useGetCodingInterviewQuestionByPortalId(currentUser.portalId)
   const { data: videoQuestion, isLoading: isVideoQuestionLoading } =
@@ -109,27 +112,34 @@ const WorkspaceDetailPage = () => {
   }
 
   useEffect(() => {
-    setCodeCurrentQuestion(codeWorkspaceQuestion?.data?.sort())
-    setCodeStockQuestion(
-      codeQuestion?.data?.filter(
-        (question) => !codeCurrentQuestion?.includes(question),
-      ),
-    )
+    if (error !== undefined) {
+      toast.error("That workspace does not exist")
+      navigate("/portal/workspace")
+    } else {
+      setCodeCurrentQuestion(codeWorkspaceQuestion?.data?.sort())
+      setCodeStockQuestion(
+        codeQuestion?.data?.filter(
+          (question) => !codeCurrentQuestion?.includes(question),
+        ),
+      )
 
-    setVideoCurrentQuestion(workspaceData?.data?.videoQueston)
-    setVideoStockQuestion(
-      videoQuestion?.data?.filter((question) =>
-        workspaceData?.data?.videoQueston
-          ? workspaceData.data.videoQueston.some(
-              (workspaceQ) => question.id == workspaceQ.id,
-            )
-          : true,
-      ),
-    )
+      setVideoCurrentQuestion(workspaceData?.data?.videoQueston)
+      setVideoStockQuestion(
+        videoQuestion?.data?.filter((question) =>
+          workspaceData?.data?.videoQueston
+            ? workspaceData.data.videoQueston.some(
+                (workspaceQ) => question.id == workspaceQ.id,
+              )
+            : true,
+        ),
+      )
+    }
   }, [
     codeCurrentQuestion,
     codeQuestion,
     codeWorkspaceQuestion,
+    error,
+    navigate,
     videoQuestion,
     workspaceData,
   ])
@@ -146,6 +156,7 @@ const WorkspaceDetailPage = () => {
       </div>
     )
   }
+
   return (
     <ContentLayout
       title={"Workspace"}
