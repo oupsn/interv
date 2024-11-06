@@ -123,7 +123,8 @@ const WorkspaceInterestPage = () => {
                 listScore={data?.data?.workspaceScore ?? {}}
                 page={page}
                 size={size}
-                workspace={Number(workspaceId)}
+                workspaceId={Number(workspaceId)}
+                portalId={Number(currentUser.portalId)}
               />
             }
             size={size}

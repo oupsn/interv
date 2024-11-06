@@ -38,13 +38,18 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import SearchBar from "./components/SearchBar"
+import useCurrentUser from "@/hooks/UseCurrentUser"
 
 const WorkspaceCandidateList = () => {
   const [importUser, setImportUser] = useState<UserData[]>()
   const [page, setPage] = useState(1)
   const size = 10
+  const { currentUser } = useCurrentUser()
   const { workspaceId } = useParams()
-  const { data, mutate, isLoading } = useGetWorkspace(Number(workspaceId))
+  const { data, mutate, isLoading } = useGetWorkspace(
+    Number(workspaceId),
+    Number(currentUser.portalId),
+  )
   const [searchTerm, setSearchTerm] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isFileSelected, setIsFileSelected] = useState(false)
@@ -428,7 +433,8 @@ const WorkspaceCandidateList = () => {
                 listScore={data?.data?.workspaceScore ?? {}}
                 page={page}
                 size={size}
-                workspace={Number(workspaceId)}
+                workspaceId={Number(workspaceId)}
+                portalId={Number(currentUser.portalId)}
               />
             }
             size={size}

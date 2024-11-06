@@ -17,14 +17,19 @@ import Convert from "ansi-to-html"
 import DOMPurify from "dompurify"
 import { useGetWorkspace } from "@/hooks/useGetWorkspace"
 import { FileCode2, Users2, PercentCircle } from "lucide-react"
+import useCurrentUser from "@/hooks/UseCurrentUser"
 
 function PlagarismReport() {
   const { workspaceId } = useParams()
+  const { currentUser } = useCurrentUser()
   const convert = new Convert()
   const { data, isLoading } = useGetCodingInterviewPlagarism(
     Number(workspaceId),
   )
-  const { data: workspaceData } = useGetWorkspace(Number(workspaceId))
+  const { data: workspaceData } = useGetWorkspace(
+    Number(workspaceId),
+    Number(currentUser.portalId),
+  )
   const truncatedTitle = workspaceData?.data?.title
     ? workspaceData.data.title.length > 30
       ? `${workspaceData.data.title.slice(0, 30)}...`
