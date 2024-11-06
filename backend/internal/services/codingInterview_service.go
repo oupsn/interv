@@ -143,10 +143,15 @@ func (s *codingInterviewService) GetCompileResult(req domains.CompilationRequest
 
 			time.Sleep(500 * time.Millisecond)
 		}
-		// Remove newline characters from stdout and output before comparison
-		cleanStdout := strings.ReplaceAll(strings.TrimSpace(result.Stdout), "\n", "")
-		cleanOutput := strings.ReplaceAll(strings.ReplaceAll(strings.TrimSpace(output), "\n", ""), "\\n", "")
-		fmt.Println("actual output", cleanStdout)
+		cleanStdout := strings.ReplaceAll(result.Stdout, "\n", "\\n")
+		cleanOutput := strings.TrimSpace(output)
+		if cleanOutput[len(cleanOutput)-1] == 'n' && cleanOutput[len(cleanOutput)-2] == '\\' {
+			cleanOutput = cleanOutput[:len(cleanOutput)-2]
+		}
+		if cleanStdout[len(cleanStdout)-1] == 'n' && cleanStdout[len(cleanStdout)-2] == '\\' {
+			cleanStdout = cleanStdout[:len(cleanStdout)-2]
+		}
+		fmt.Println("compile output", cleanStdout)
 		fmt.Println("testcase output", cleanOutput)
 		if cleanStdout == cleanOutput {
 			compileResult = append(compileResult, domains.CompilationResultResponse{
