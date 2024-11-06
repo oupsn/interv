@@ -60,7 +60,8 @@ type UpdateWorkspaceBody struct {
 } // @name UpdateWorkspaceBody
 
 type GetWorkspaceBody struct {
-	Id uint `json:"id" validate:"required"`
+	WorkspaceId uint `json:"workspaceId" validate:"required"`
+	PortalId    uint `json:"portalId" validate:"required"`
 } // @name GetWorkspaceBody
 
 type DeleteWorkspaceBody struct {

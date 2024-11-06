@@ -2443,7 +2443,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "id",
+                        "name": "portalId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "workspaceId",
                         "in": "query",
                         "required": true
                     }

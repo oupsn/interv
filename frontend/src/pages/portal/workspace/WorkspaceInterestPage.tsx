@@ -17,12 +17,17 @@ import { ContentLayout } from "@/components/layout/ContentLayout.tsx"
 import Panigator from "./components/Panigator"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
+import useCurrentUser from "@/hooks/UseCurrentUser"
 
 const WorkspaceInterestPage = () => {
   const [page, setPage] = useState(1)
+  const { currentUser } = useCurrentUser()
   const size = 10
   const { workspaceId } = useParams()
-  const { data, isLoading } = useGetWorkspace(Number(workspaceId))
+  const { data, isLoading } = useGetWorkspace(
+    Number(workspaceId),
+    Number(currentUser.portalId),
+  )
   const interest = data?.data
     ? data?.data?.userInWorkspace?.filter((candidate) => candidate.isInterest)
     : []
@@ -118,7 +123,8 @@ const WorkspaceInterestPage = () => {
                 listScore={data?.data?.workspaceScore ?? {}}
                 page={page}
                 size={size}
-                workspace={Number(workspaceId)}
+                workspaceId={Number(workspaceId)}
+                portalId={Number(currentUser.portalId)}
               />
             }
             size={size}
