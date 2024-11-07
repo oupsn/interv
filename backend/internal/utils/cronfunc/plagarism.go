@@ -29,7 +29,7 @@ func normalizeWhitespace(s string) string {
 }
 
 func checkPlagarism(sourceCode, targetCode string) (float64, error) {
-	similarity := strutil.Similarity(sourceCode, targetCode, metrics.NewJaroWinkler())
+	similarity := strutil.Similarity(sourceCode, targetCode, metrics.NewLevenshtein())
 	return similarity, nil
 }
 
