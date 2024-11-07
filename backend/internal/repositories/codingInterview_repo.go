@@ -69,6 +69,7 @@ func (c *codingInterviewRepository) GetCodingQuestionList(roomID string) ([]doma
 		var testCaseResponses []domains.CodingQuestionTestCaseResponse
 		for _, testCase := range codingQuestion.TestCases {
 			testCaseResponses = append(testCaseResponses, domains.CodingQuestionTestCaseResponse{
+				Id:     testCase.ID,
 				Input:  testCase.Input,
 				Output: testCase.Output,
 			})

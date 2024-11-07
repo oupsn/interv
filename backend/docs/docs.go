@@ -3860,6 +3860,9 @@ const docTemplate = `{
         "domains.CodingQuestionTestCaseResponse": {
             "type": "object",
             "properties": {
+                "id": {
+                    "type": "integer"
+                },
                 "input": {
                     "type": "string"
                 },

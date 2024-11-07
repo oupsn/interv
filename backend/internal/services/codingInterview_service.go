@@ -145,11 +145,15 @@ func (s *codingInterviewService) GetCompileResult(req domains.CompilationRequest
 		}
 		cleanStdout := strings.ReplaceAll(result.Stdout, "\n", "\\n")
 		cleanOutput := strings.TrimSpace(output)
-		if cleanOutput[len(cleanOutput)-1] == 'n' && cleanOutput[len(cleanOutput)-2] == '\\' {
-			cleanOutput = cleanOutput[:len(cleanOutput)-2]
+		if len(cleanOutput) >= 2 {
+			if cleanOutput[len(cleanOutput)-1] == 'n' && cleanOutput[len(cleanOutput)-2] == '\\' {
+				cleanOutput = cleanOutput[:len(cleanOutput)-2]
+			}
 		}
-		if cleanStdout[len(cleanStdout)-1] == 'n' && cleanStdout[len(cleanStdout)-2] == '\\' {
-			cleanStdout = cleanStdout[:len(cleanStdout)-2]
+		if len(cleanStdout) >= 2 {
+			if cleanStdout[len(cleanStdout)-1] == 'n' && cleanStdout[len(cleanStdout)-2] == '\\' {
+				cleanStdout = cleanStdout[:len(cleanStdout)-2]
+			}
 		}
 		fmt.Println("compile output", cleanStdout)
 		fmt.Println("testcase output", cleanOutput)
