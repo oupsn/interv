@@ -308,6 +308,7 @@ export interface DomainsCodingQuestionTestCase {
 }
 
 export interface DomainsCodingQuestionTestCaseResponse {
+  id?: number
   input?: string
   is_example?: boolean
   is_hidden?: boolean
