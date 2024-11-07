@@ -1,6 +1,6 @@
 import CodingInterviewInstruction from "./components/CodingInterviewInstruction"
 import CodingInterviewPanel from "./components/CodingInterviewPanel"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState, useRef } from "react"
 import { useGetCodingInterviewQuestion } from "@/hooks/UseGetCodingInterviewQuestion"
 import {
   DomainsCodingQuestionResponse,
@@ -15,7 +15,6 @@ import { server } from "@/contexts/swr"
 import { LoadingContext } from "@/contexts/loading"
 import TopBar from "@/components/layout/TopBar"
 import { useGetCodingInterviewContext } from "@/hooks/useGetCodginInterviewContext"
-import TopBarItem from "@/components/layout/TopBarItem"
 interface Question {
   index: number
   id: number
@@ -279,27 +278,28 @@ const CodingInterviewPage = () => {
   /*   
   start coding interview timer
    */
-  useEffect(() => {
-    let timer: NodeJS.Timeout | undefined
+  const timerRef = useRef<NodeJS.Timeout | null>(null) // Use useRef to persist timer
 
-    if (isStart && !isFinish) {
-      timer = setInterval(() => {
+  useEffect(() => {
+    const setTimer = () => {
+      clearTimeout(timerRef.current!)
+      timerRef.current = setTimeout(() => {
         setTimeRemain((prevTime) => {
           if (prevTime > 0) {
             return prevTime - 1
           }
-          clearInterval(timer)
           return 0
         })
       }, 1000)
     }
+    if ((isStart || wasStarted) && !isFinish) {
+      setTimer()
+    }
 
     return () => {
-      if (timer) {
-        clearInterval(timer)
-      }
+      clearTimeout(timerRef.current!)
     }
-  }, [isStart, isFinish])
+  }, [isStart, wasStarted, isFinish, contextLoading])
   useEffect(() => {
     if (timeRemain <= 0 && fetchedContext?.data?.is_done) {
       setIsStart(true)
@@ -340,19 +340,15 @@ const CodingInterviewPage = () => {
   }, [fetchedContext])
   return (
     <div className="flex flex-col w-dvw h-dvh">
-      <TopBar isCodingInterview={true}>
-        {!isStart ||
-          (!isFinish && (
-            <TopBarItem
-              title={
-                "Time Remaining: " +
-                (timeRemainText === ""
-                  ? formatTime(timeRemain)
-                  : timeRemainText)
-              }
-            />
-          ))}
-      </TopBar>
+      <TopBar
+        timeRemain={
+          isStart && !isFinish
+            ? timeRemainText === ""
+              ? formatTime(timeRemain)
+              : timeRemainText
+            : ""
+        }
+      ></TopBar>
       <div className={"w-dvw h-dvh flex max-h-sr z-0 overflow-y-hidden"}>
         {contextLoading ? (
           <div className="flex items-center justify-center w-full h-full">

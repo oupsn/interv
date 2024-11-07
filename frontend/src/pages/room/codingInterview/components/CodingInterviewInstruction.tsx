@@ -37,9 +37,14 @@ const formatTime = (seconds: number) => {
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
   const secs = seconds % 60
-  return `${hours} hour${hours !== 1 ? "s" : ""} ${
-    minutes !== 0 ? `${minutes} ${minutes !== 1 ? "minutes" : "minute"}` : ""
-  } ${secs} second${secs !== 1 ? "s" : ""}`
+
+  const timeParts = []
+  if (hours > 0) timeParts.push(`${hours} hour${hours !== 1 ? "s" : ""}`)
+  if (minutes > 0)
+    timeParts.push(`${minutes} minute${minutes !== 1 ? "s" : ""}`)
+  if (secs > 0) timeParts.push(`${secs} second${secs !== 1 ? "s" : ""}`)
+
+  return timeParts.join(" ")
 }
 
 const CodingInterviewInstruction: React.FC<CodingInterviewInstructionProps> = ({
