@@ -135,47 +135,53 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       <div className="mt-6">
         <h3 className="text-xl font-semibold mb-4">Output:</h3>
         {!isCompiling &&
-          testCasesList?.map((item, index) => (
-            <div key={index} className="mb-6 p-4 border rounded-md">
-              <h4 className="text-lg font-semibold mb-2">
-                Test Case {index + 1}:
-              </h4>
-              <div className="mb-2">
-                <strong>Input:</strong>
-                <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded-md">
-                  {formatTestCase(item.input ?? "")}
-                </pre>
-              </div>
-              {output && output[index] ? (
-                <>
-                  <div className="mb-2">
-                    <strong>Output:</strong>
-                    <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded-md">
-                      {formatTestCase(
-                        output[index].compile_result?.stdout || "",
-                      )}
-                      {output[index].compile_result?.stderr && (
-                        <span>{output[index].compile_result?.stderr}</span>
-                      )}
-                    </pre>
-                  </div>
-                  <div
-                    className={`mt-2 font-semibold ${
-                      output[index].is_passed
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    Status: {output[index].is_passed ? "Passed" : "Not Passed"}
-                  </div>
-                </>
-              ) : (
-                <div className="text-gray-500 italic">
-                  Run the code to see the output and status.
+          testCasesList?.map((item, index) => {
+            const matchingOutput = output?.find(
+              (o) => o.test_case_id === item.id,
+            )
+            return (
+              <div key={item.id} className="mb-6 p-4 border rounded-md">
+                <h4 className="text-lg font-semibold mb-2">
+                  Test Case {index + 1}:
+                </h4>
+                <div className="mb-2">
+                  <strong>Input:</strong>
+                  <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded-md">
+                    {formatTestCase(item.input ?? "")}
+                  </pre>
                 </div>
-              )}
-            </div>
-          ))}
+                {matchingOutput ? (
+                  <>
+                    <div className="mb-2">
+                      <strong>Output:</strong>
+                      <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded-md">
+                        {formatTestCase(
+                          matchingOutput.compile_result?.stdout || "",
+                        )}
+                        {matchingOutput.compile_result?.stderr && (
+                          <span>{matchingOutput.compile_result?.stderr}</span>
+                        )}
+                      </pre>
+                    </div>
+                    <div
+                      className={`mt-2 font-semibold ${
+                        matchingOutput.is_passed
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      Status:{" "}
+                      {matchingOutput.is_passed ? "Passed" : "Not Passed"}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-gray-500 italic">
+                    Run the code to see the output and status.
+                  </div>
+                )}
+              </div>
+            )
+          })}
       </div>
       {!isCompiling && output && output.length > testCasesList.length && (
         <div className="mt-4 p-4 bg-gray-100 rounded-lg">

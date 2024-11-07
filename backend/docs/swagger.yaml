@@ -848,6 +848,8 @@ definitions:
     type: object
   domains.CodingQuestionTestCaseResponse:
     properties:
+      id:
+        type: integer
       input:
         type: string
       is_example:
