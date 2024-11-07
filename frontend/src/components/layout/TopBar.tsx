@@ -17,18 +17,15 @@ const TopBar: FC<TopBarProps> = ({ children, timeRemain }) => {
     <div className="flex flex-row justify-between w-full outline outline-1 outline-gray-200 px-16 items-center">
       <div className={"flex gap-10 flex-row items-center justify-between"}>
         <img src={IntervLogo} alt="interv" className="w-28 mb-2" />
-        <div>
-          {children}
-        </div>
+        <div>{children}</div>
       </div>
       <div className="flex flex-row gap-4 items-center">
-        {timeRemain !== undefined &&
-          timeRemain !== "" && (
-            <TopBarItem title={"Time Remaining: " + timeRemain} />
-          )}
+        {timeRemain !== undefined && timeRemain !== "" && (
+          <TopBarItem title={"Time Remaining: " + timeRemain} />
+        )}
         <Button
           variant={"outline"}
-        onClick={handleReportIssue}
+          onClick={handleReportIssue}
           className="text-red-500 hover:text-red-500 text-sm font-semibold text-nowrap border border-red-500 rounded-md px-4"
         >
           Report Issue
