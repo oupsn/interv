@@ -53,9 +53,34 @@ type PendingInterviewBody struct {
 
 type GetRoomSessionQuery struct {
 	RoomID string `json:"roomId"  validate:"required"`
-}
+} // @name GetRoomSessionQuery
 
 type SetRoomSessionBody struct {
 	RoomID            string `json:"roomId"  validate:"required"`
 	SessionIdentifier string `json:"sessionIdentifier"  validate:"required"`
+} // @name SetRoomSessionBody
+
+type GetRoomHistoryQuery struct {
+	RoomID     string `json:"roomId"  validate:"required"`
+	QuestionID uint   `json:"questionId"  validate:"required"`
+} // @name GetRoomHistoryQuery
+
+type GetRoomHistoryResponse struct {
+	ShouldSkipQuestion  bool `json:"shouldSkipQuestion"  validate:"required"`
+	MaxAttempt          uint `json:"maxAttempt"  validate:"required"`
+	CurrentAttempt      uint `json:"currentAttempt"  validate:"required"`
+	IsTimeToAnswerLeft  bool `json:"isTimeToAnswerLeft"  validate:"required"`
+	IsTimeToPrepareLeft bool `json:"isTimeToPrepareLeft"  validate:"required"`
+	TimeToAnswerLeft    int  `json:"timeToAnswerLeft"  validate:"required"`
+	TimeToPrepareLeft   int  `json:"timeToPrepareLeft"  validate:"required"`
+} // @name GetRoomHistoryResponse
+
+type UpdateStartAnswerTimeBody struct {
+	RoomID     string `json:"roomId"  validate:"required"`
+	QuestionID uint   `json:"questionId"  validate:"required"`
+} // @name UpdateStartAnswerTimeBody
+
+type AddRoomHistoryBody struct {
+	RoomID     string `json:"roomId"  validate:"required"`
+	QuestionID uint   `json:"questionId"  validate:"required"`
 }

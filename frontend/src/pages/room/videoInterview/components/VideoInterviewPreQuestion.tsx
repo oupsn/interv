@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button.tsx"
 import { Dispatch, FC, SetStateAction } from "react"
 import { FaExclamationTriangle } from "react-icons/fa"
+import { server } from "@/contexts/swr.tsx"
 
 interface VideoInterviewPreQuestionProps {
+  questionId: number
+  roomId: string
   questionIndex: number
   totalAttempt: number
   timeToPrepare: number
@@ -11,12 +14,25 @@ interface VideoInterviewPreQuestionProps {
 }
 
 export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
+  questionId,
+  roomId,
   questionIndex,
   totalAttempt,
   timeToAnswer,
   timeToPrepare,
   setRecordState,
 }) => {
+  const handleStartQuestion = () => {
+    server.room
+      .addRoomHistory({
+        questionId: questionId,
+        roomId: roomId,
+      })
+      .then(() => {
+        setRecordState("detail")
+      })
+  }
+
   return (
     <div className="max-w-2xl mx-auto p-6 flex flex-col items-center justify-center gap-6">
       {/* Header */}
@@ -54,7 +70,7 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
 
       {/* Action Button */}
       <Button
-        onClick={() => setRecordState("detail")}
+        onClick={handleStartQuestion}
         className="w-full max-w-xs py-3 text-lg font-semibold"
       >
         Start Question

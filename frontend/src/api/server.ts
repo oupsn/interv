@@ -13,6 +13,10 @@ export type AddQuestionData = HandlersResponseString
 
 export type AddQuestionError = HandlersErrResponse
 
+export type AddRoomHistoryData = HandlersResponseString
+
+export type AddRoomHistoryError = HandlersErrResponse
+
 export interface AdminCreateBody {
   name: string
   password: string
@@ -519,6 +523,25 @@ export interface GetRoomContextResponse {
   totalVideoTime: number
 }
 
+export type GetRoomHistoryData = HandlersResponseGetRoomHistoryResponse
+
+export type GetRoomHistoryError = HandlersErrResponse
+
+export interface GetRoomHistoryParams {
+  questionId: number
+  roomId: string
+}
+
+export interface GetRoomHistoryResponse {
+  currentAttempt: number
+  isTimeToAnswerLeft: boolean
+  isTimeToPrepareLeft: boolean
+  maxAttempt: number
+  shouldSkipQuestion: boolean
+  timeToAnswerLeft: number
+  timeToPrepareLeft: number
+}
+
 export type GetRoomSessionData = HandlersResponseString
 
 export type GetRoomSessionError = HandlersErrResponse
@@ -606,6 +629,11 @@ export interface GormDeletedAt {
   time?: string
   /** Valid is true if Time is not NULL */
   valid?: boolean
+}
+
+export interface HandlersAddRoomHistoryBody {
+  questionId: number
+  roomId: string
 }
 
 export interface HandlersCodingInterviewGetQuestionByTitleResponse {
@@ -710,6 +738,13 @@ export interface HandlersResponseGetRoomContextResponse {
   timestamp?: string
 }
 
+export interface HandlersResponseGetRoomHistoryResponse {
+  code?: number
+  data?: GetRoomHistoryResponse
+  message?: string
+  timestamp?: string
+}
+
 export interface HandlersResponseGetVideoQuestionByIdResponse {
   code?: number
   data?: GetVideoQuestionByIdResponse
@@ -808,11 +843,6 @@ export interface HandlersResponseWorkspaceDetail {
   timestamp?: string
 }
 
-export interface HandlersSetRoomSessionBody {
-  roomId: string
-  sessionIdentifier: string
-}
-
 export type InterestUserData = HandlersResponseUserInWorkspace
 
 export type InterestUserError = HandlersErrResponse
@@ -869,6 +899,11 @@ export type SendMailData = HandlersResponseString
 
 export type SendMailError = HandlersErrResponse
 
+export interface SetRoomSessionBody {
+  roomId: string
+  sessionIdentifier: string
+}
+
 export type SetRoomSessionData = HandlersResponseString
 
 export type SetRoomSessionError = HandlersErrResponse
@@ -915,6 +950,15 @@ export interface UpdateRoomContextBody {
 export type UpdateRoomContextData = HandlersResponseString
 
 export type UpdateRoomContextError = HandlersErrResponse
+
+export interface UpdateStartAnswerTimeBody {
+  questionId: number
+  roomId: string
+}
+
+export type UpdateStartAnswerTimeData = HandlersResponseString
+
+export type UpdateStartAnswerTimeError = HandlersErrResponse
 
 export interface UpdateVideoQuestionBody {
   portalId?: number
@@ -1571,6 +1615,24 @@ export namespace Room {
   /**
    * No description
    * @tags room
+   * @name AddRoomHistory
+   * @summary Add room history
+   * @request POST:/room.addRoomHistory
+   * @response `200` `AddRoomHistoryData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace AddRoomHistory {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = HandlersAddRoomHistoryBody
+    export type RequestHeaders = {}
+    export type ResponseBody = AddRoomHistoryData
+  }
+
+  /**
+   * No description
+   * @tags room
    * @name CreateRoom
    * @summary Create room
    * @request POST:/room.createRoom
@@ -1627,6 +1689,27 @@ export namespace Room {
   /**
    * No description
    * @tags room
+   * @name GetRoomHistory
+   * @summary Get room history
+   * @request GET:/room.getRoomHistory
+   * @response `200` `GetRoomHistoryData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace GetRoomHistory {
+    export type RequestParams = {}
+    export type RequestQuery = {
+      questionId: number
+      roomId: string
+    }
+    export type RequestBody = never
+    export type RequestHeaders = {}
+    export type ResponseBody = GetRoomHistoryData
+  }
+
+  /**
+   * No description
+   * @tags room
    * @name GetRoomSession
    * @summary Get room session
    * @request GET:/room.getRoomSession
@@ -1675,7 +1758,7 @@ export namespace Room {
   export namespace SetRoomSession {
     export type RequestParams = {}
     export type RequestQuery = {}
-    export type RequestBody = HandlersSetRoomSessionBody
+    export type RequestBody = SetRoomSessionBody
     export type RequestHeaders = {}
     export type ResponseBody = SetRoomSessionData
   }
@@ -1696,6 +1779,24 @@ export namespace Room {
     export type RequestBody = UpdateRoomContextBody
     export type RequestHeaders = {}
     export type ResponseBody = UpdateRoomContextData
+  }
+
+  /**
+   * No description
+   * @tags room
+   * @name UpdateStartAnswerTime
+   * @summary Update start answer time
+   * @request POST:/room.updateStartAnswerTime
+   * @response `200` `UpdateStartAnswerTimeData` OK
+   * @response `400` `HandlersErrResponse` Bad Request
+   * @response `500` `HandlersErrResponse` Internal Server Error
+   */
+  export namespace UpdateStartAnswerTime {
+    export type RequestParams = {}
+    export type RequestQuery = {}
+    export type RequestBody = UpdateStartAnswerTimeBody
+    export type RequestHeaders = {}
+    export type ResponseBody = UpdateStartAnswerTimeData
   }
 }
 
@@ -2798,6 +2899,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * No description
      *
      * @tags room
+     * @name AddRoomHistory
+     * @summary Add room history
+     * @request POST:/room.addRoomHistory
+     * @response `200` `AddRoomHistoryData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    addRoomHistory: (payload: HandlersAddRoomHistoryBody, params: RequestParams = {}) =>
+      this.request<AddRoomHistoryData, AddRoomHistoryError>({
+        path: `/room.addRoomHistory`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
      * @name CreateRoom
      * @summary Create room
      * @request POST:/room.createRoom
@@ -2861,6 +2983,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * No description
      *
      * @tags room
+     * @name GetRoomHistory
+     * @summary Get room history
+     * @request GET:/room.getRoomHistory
+     * @response `200` `GetRoomHistoryData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    getRoomHistory: (query: GetRoomHistoryParams, params: RequestParams = {}) =>
+      this.request<GetRoomHistoryData, GetRoomHistoryError>({
+        path: `/room.getRoomHistory`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
      * @name GetRoomSession
      * @summary Get room session
      * @request GET:/room.getRoomSession
@@ -2910,7 +3053,7 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    setRoomSession: (payload: HandlersSetRoomSessionBody, params: RequestParams = {}) =>
+    setRoomSession: (payload: SetRoomSessionBody, params: RequestParams = {}) =>
       this.request<SetRoomSessionData, SetRoomSessionError>({
         path: `/room.setRoomSession`,
         method: "POST",
@@ -2934,6 +3077,27 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
     updateRoomContext: (payload: UpdateRoomContextBody, params: RequestParams = {}) =>
       this.request<UpdateRoomContextData, UpdateRoomContextError>({
         path: `/room.updateRoomContext`,
+        method: "POST",
+        body: payload,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags room
+     * @name UpdateStartAnswerTime
+     * @summary Update start answer time
+     * @request POST:/room.updateStartAnswerTime
+     * @response `200` `UpdateStartAnswerTimeData` OK
+     * @response `400` `HandlersErrResponse` Bad Request
+     * @response `500` `HandlersErrResponse` Internal Server Error
+     */
+    updateStartAnswerTime: (payload: UpdateStartAnswerTimeBody, params: RequestParams = {}) =>
+      this.request<UpdateStartAnswerTimeData, UpdateStartAnswerTimeError>({
+        path: `/room.updateStartAnswerTime`,
         method: "POST",
         body: payload,
         type: ContentType.Json,

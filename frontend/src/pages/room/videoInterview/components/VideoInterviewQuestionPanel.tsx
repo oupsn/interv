@@ -1,8 +1,10 @@
-import { FC, useEffect, useState } from "react"
+import { FC, useState } from "react"
 import VideoInterviewQuestionDetail from "@/pages/room/videoInterview/components/VideoInterviewQuestionDetail.tsx"
 import { VideoInterviewPreQuestion } from "@/pages/room/videoInterview/components/VideoInterviewPreQuestion.tsx"
 import { VideoInterviewPostQuestion } from "@/pages/room/videoInterview/components/VideoInterviewPostQuestion.tsx"
-import Cookies from "js-cookie"
+import { useGetRoomHistory } from "@/hooks/useGetRoomHistory.ts"
+import { useParams } from "react-router-dom"
+import { Spinner } from "@/components/ui/spinner.tsx"
 
 interface VideoInterviewQuestionPanelProps {
   questionId: number
@@ -20,24 +22,27 @@ const VideoInterviewQuestionPanel: FC<VideoInterviewQuestionPanelProps> = ({
   timeToAnswer,
   handleNextQuestion,
 }) => {
+  const { roomId } = useParams()
+  const { data, isLoading } = useGetRoomHistory(roomId!, questionId)
   const [mediaBlob, setMediaBlob] = useState<string[]>([])
-  const [attemptLeft, setAttemptLeft] = useState(
-    totalAttempt - Number(Cookies.get("r_" + questionId.toString()) ?? "0"),
-  )
+  const [attemptLeft, setAttemptLeft] = useState(totalAttempt)
   const [recordState, setRecordState] = useState<"pre" | "detail" | "post">(
     "pre",
   )
 
-  /* eslint-disable react-hooks/exhaustive-deps*/
-  useEffect(() => {
-    setAttemptLeft(
-      totalAttempt - Number(Cookies.get("r_" + questionId.toString()) ?? "0"),
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Spinner size="lg" />
+      </div>
     )
-  }, [questionIndex])
+  }
 
   if (recordState == "pre") {
     return (
       <VideoInterviewPreQuestion
+        questionId={questionId}
+        roomId={roomId ?? ""}
         questionIndex={questionIndex}
         totalAttempt={attemptLeft}
         timeToPrepare={timeToPrepare}

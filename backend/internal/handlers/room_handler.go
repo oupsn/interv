@@ -10,12 +10,14 @@ import (
 )
 
 type RoomHandler struct {
-	roomService services.IRoomService
+	roomService        services.IRoomService
+	roomHistoryService services.IRoomHistoryService
 }
 
-func NewRoomHandler(roomService services.IRoomService) RoomHandler {
+func NewRoomHandler(roomService services.IRoomService, roomHistoryService services.IRoomHistoryService) RoomHandler {
 	return RoomHandler{
-		roomService: roomService,
+		roomService:        roomService,
+		roomHistoryService: roomHistoryService,
 	}
 }
 
@@ -234,4 +236,107 @@ func (l RoomHandler) SetRoomSession(c *fiber.Ctx) error {
 	}
 
 	return Ok(c, "room session set")
+}
+
+// GetRoomHistory
+// @ID getRoomHistory
+// @Tags room
+// @Summary Get room history
+// @Accept json
+// @Produce json
+// @Param payload query GetRoomHistoryQuery true "room id and question id"
+// @Success 200 {object} Response[GetRoomHistoryResponse]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /room.getRoomHistory [get]
+func (l RoomHandler) GetRoomHistory(c *fiber.Ctx) error {
+	query := GetRoomHistoryQuery{}
+	if err := c.QueryParser(&query); err != nil {
+		return err
+	}
+
+	if err := validate.Struct(query); err != nil {
+		return err
+	}
+
+	shouldSkipQuestion, maxAttempt, currentAttempt, IsTimeToAnswerLeft, IsTimeToPrepareLeft, timeToAnswerLeft, timeToPrepareLeft, err := l.roomHistoryService.GetRoomHistory(query.RoomID, query.QuestionID)
+	if err != nil {
+		return err
+	}
+
+	history := GetRoomHistoryResponse{
+		ShouldSkipQuestion:  shouldSkipQuestion,
+		MaxAttempt:          maxAttempt,
+		CurrentAttempt:      uint(currentAttempt),
+		IsTimeToAnswerLeft:  IsTimeToAnswerLeft,
+		IsTimeToPrepareLeft: IsTimeToPrepareLeft,
+		TimeToAnswerLeft:    timeToAnswerLeft,
+		TimeToPrepareLeft:   timeToPrepareLeft,
+	}
+
+	return Ok(c, history)
+}
+
+// UpdateStartAnswerTime
+// @ID updateStartAnswerTime
+// @Tags room
+// @Summary Update start answer time
+// @Accept json
+// @Produce json
+// @Param payload body UpdateStartAnswerTimeBody true "update start answer time"
+// @Success 200 {object} Response[string]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /room.updateStartAnswerTime [post]
+func (l RoomHandler) UpdateStartAnswerTime(c *fiber.Ctx) error {
+	body := UpdateStartAnswerTimeBody{}
+	if err := c.BodyParser(&body); err != nil {
+		return err
+	}
+
+	if err := validate.Struct(body); err != nil {
+		return err
+	}
+
+	err := l.roomHistoryService.UpdateStartAnswerTime(body.RoomID, body.QuestionID)
+	if err != nil {
+		return err
+	}
+
+	return Ok(c, "start answer time updated")
+}
+
+// AddRoomHistory
+// @ID addRoomHistory
+// @Tags room
+// @Summary Add room history
+// @Accept json
+// @Produce json
+// @Param payload body AddRoomHistoryBody true "add room history"
+// @Success 200 {object} Response[string]
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /room.addRoomHistory [post]
+func (l RoomHandler) AddRoomHistory(c *fiber.Ctx) error {
+	body := AddRoomHistoryBody{}
+	if err := c.BodyParser(&body); err != nil {
+		return err
+	}
+
+	if err := validate.Struct(body); err != nil {
+		return err
+	}
+
+	_, err := l.roomHistoryService.AddRoomHistory(domains.RoomHistory{
+		RoomID:          body.RoomID,
+		VideoQuestionID: body.QuestionID,
+	})
+	if err != nil {
+		if err.Error() == "room history already exists" {
+			return Ok(c, "room already exists, skipping")
+		}
+		return err
+	}
+
+	return Ok(c, "room history added")
 }
