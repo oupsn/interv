@@ -3087,7 +3087,11 @@ paths:
       operationId: GetWorkspace
       parameters:
       - in: query
-        name: id
+        name: portalId
+        required: true
+        type: integer
+      - in: query
+        name: workspaceId
         required: true
         type: integer
       produces:

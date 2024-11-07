@@ -37,7 +37,7 @@ func (w WorkspaceHandler) GetWorkspaceById(c *fiber.Ctx) error {
 		return err
 	}
 
-	workspace, candidate, workspaceScore, err := w.workspaceService.GetWorkspaceById(form.Id)
+	workspace, candidate, workspaceScore, err := w.workspaceService.GetWorkspaceById(form.WorkspaceId, form.PortalId)
 	if err != nil {
 		return err
 	}

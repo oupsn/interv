@@ -11,6 +11,7 @@ type IVideoQuestionRepository interface {
 	GetById(id uint) (*domains.VideoQuestion, error)
 	GetByPortalId(id uint) ([]domains.VideoQuestion, error)
 	GetByWorkspaceId(id uint) (*domains.Workspace, error)
+	GetByWorkspaceIdAndPortalId(workspaceId uint, portalId uint) (*domains.Workspace, error)
 	Update(question domains.VideoQuestion) error
 	DeleteById(id uint) error
 	DeleteByWorkspaceId(workspaceId uint) error
@@ -64,6 +65,15 @@ func (v videoQuestionRepository) GetByPortalId(id uint) ([]domains.VideoQuestion
 func (v videoQuestionRepository) GetByWorkspaceId(id uint) (*domains.Workspace, error) {
 	var workspace domains.Workspace
 	if err := v.DB.Preload("VideoQuestion").First(&workspace, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return &workspace, nil
+}
+
+func (v videoQuestionRepository) GetByWorkspaceIdAndPortalId(workspaceId uint, portalId uint) (*domains.Workspace, error) {
+	var workspace domains.Workspace
+	if err := v.DB.Preload("VideoQuestion").First(&workspace, "id = ? AND portal_id = ?", workspaceId, portalId).Error; err != nil {
 		return nil, err
 	}
 

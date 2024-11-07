@@ -624,7 +624,8 @@ export type GetWorkspaceData = HandlersResponseWorkspaceDetail
 export type GetWorkspaceError = HandlersErrResponse
 
 export interface GetWorkspaceParams {
-  id: number
+  portalId: number
+  workspaceId: number
 }
 
 export interface GormDeletedAt {
@@ -2142,7 +2143,8 @@ export namespace Workspace {
   export namespace GetWorkspace {
     export type RequestParams = {}
     export type RequestQuery = {
-      id: number
+      portalId: number
+      workspaceId: number
     }
     export type RequestBody = never
     export type RequestHeaders = {}

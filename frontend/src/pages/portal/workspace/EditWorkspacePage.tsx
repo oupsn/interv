@@ -56,7 +56,10 @@ const EditWorkspacePage = () => {
   const { workspaceId } = useParams()
   const { currentUser } = useCurrentUser()
   const [firstTime, setFirstTime] = useState<boolean>(true)
-  const { data: workspaceData } = useGetWorkspace(Number(workspaceId))
+  const { data: workspaceData } = useGetWorkspace(
+    Number(workspaceId),
+    Number(currentUser.portalId),
+  )
   const { data: codeWorkspaceQuestion } =
     useGetCodingInterviewQuestionByWorpsaceId(Number(workspaceId) ?? 0)
   const { data: codeQuestion, isLoading: isCodeQuestionLoading } =
