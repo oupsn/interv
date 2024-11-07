@@ -27,4 +27,10 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    terserOptions: {
+      compress: true,
+      mangle: true,
+    },
+  },
 })
