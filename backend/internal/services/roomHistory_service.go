@@ -9,7 +9,6 @@ import (
 type IRoomHistoryService interface {
 	AddRoomHistory(domains.RoomHistory) (*domains.Room, error)
 	GetRoomHistory(roomID string, questionID uint) (bool, uint, int, error)
-	// UpdateStartAnswerTime(roomID string, questionID uint) error
 }
 
 type roomHistoryService struct {

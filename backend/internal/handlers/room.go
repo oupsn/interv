@@ -74,4 +74,4 @@ type GetRoomHistoryResponse struct {
 type AddRoomHistoryBody struct {
 	RoomID     string `json:"roomId"  validate:"required"`
 	QuestionID uint   `json:"questionId"  validate:"required"`
-}
+} // @name AddRoomHistoryBody
