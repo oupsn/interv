@@ -292,6 +292,19 @@ definitions:
     - totalVideoQuestion
     - totalVideoTime
     type: object
+  GetRoomHistoryResponse:
+    properties:
+      currentAttemptLeft:
+        type: integer
+      maxAttempt:
+        type: integer
+      shouldSkipQuestion:
+        type: boolean
+    required:
+    - currentAttemptLeft
+    - maxAttempt
+    - shouldSkipQuestion
+    type: object
   GetVideoQuestionByIdResponse:
     properties:
       createdAt:
@@ -380,6 +393,16 @@ definitions:
     required:
     - mailList
     - preset
+    type: object
+  SetRoomSessionBody:
+    properties:
+      roomId:
+        type: string
+      sessionIdentifier:
+        type: string
+    required:
+    - roomId
+    - sessionIdentifier
     type: object
   UpdateRoomContextBody:
     properties:
@@ -1126,6 +1149,16 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
+  handlers.AddRoomHistoryBody:
+    properties:
+      questionId:
+        type: integer
+      roomId:
+        type: string
+    required:
+    - questionId
+    - roomId
+    type: object
   handlers.CodingInterviewGetQuestionByTitleResponse:
     properties:
       description:
@@ -1232,6 +1265,17 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/GetRoomContextResponse'
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  handlers.Response-GetRoomHistoryResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/GetRoomHistoryResponse'
       message:
         type: string
       timestamp:
@@ -1472,16 +1516,6 @@ definitions:
         type: string
       timestamp:
         type: string
-    type: object
-  handlers.SetRoomSessionBody:
-    properties:
-      roomId:
-        type: string
-      sessionIdentifier:
-        type: string
-    required:
-    - roomId
-    - sessionIdentifier
     type: object
 info:
   contact: {}
@@ -2298,6 +2332,36 @@ paths:
       summary: Get portal
       tags:
       - portal
+  /room.addRoomHistory:
+    post:
+      consumes:
+      - application/json
+      operationId: addRoomHistory
+      parameters:
+      - description: add room history
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.AddRoomHistoryBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Add room history
+      tags:
+      - room
   /room.createRoom:
     post:
       consumes:
@@ -2386,6 +2450,38 @@ paths:
       summary: Get room context
       tags:
       - room
+  /room.getRoomHistory:
+    get:
+      consumes:
+      - application/json
+      operationId: getRoomHistory
+      parameters:
+      - in: query
+        name: questionId
+        required: true
+        type: integer
+      - in: query
+        name: roomId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response-GetRoomHistoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get room history
+      tags:
+      - room
   /room.getRoomSession:
     get:
       consumes:
@@ -2455,7 +2551,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/handlers.SetRoomSessionBody'
+          $ref: '#/definitions/SetRoomSessionBody'
       produces:
       - application/json
       responses:

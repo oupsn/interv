@@ -2,15 +2,15 @@ import { FC, PropsWithChildren, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import useCurrentUser from "@/hooks/UseCurrentUser.ts"
 import { Toaster } from "sonner"
-import { isMobile } from "react-device-detect"
-import NotAllowMobile from "@/components/layout/NotAllowMobile.tsx"
+// import { isMobile } from "react-device-detect"
+// import NotAllowMobile from "@/components/layout/NotAllowMobile.tsx"
 
 const AppLoading: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
   const { currentUser, isLoading } = useCurrentUser()
   const isLoggedIn = currentUser != null
   const [isLoaded, setIsLoaded] = useState(false)
-  const [isAllowMobile, setIsAllowMobile] = useState(false)
+  // const [isAllowMobile, setIsAllowMobile] = useState(false)
   useEffect(() => {
     if (isLoading) {
       return
@@ -41,9 +41,9 @@ const AppLoading: FC<PropsWithChildren> = ({ children }) => {
     setIsLoaded(true)
   }, [isLoggedIn, navigate, isLoading])
 
-  if (isMobile && !isAllowMobile) {
-    return <NotAllowMobile setIsAllowMobile={setIsAllowMobile} />
-  }
+  // if (isMobile && !isAllowMobile) {
+  //   return <NotAllowMobile setIsAllowMobile={setIsAllowMobile} />
+  // }
 
   return (
     <>
