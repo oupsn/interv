@@ -452,6 +452,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/codingInterview.getPlagarism/{workspaceId}": {
+            "get": {
+                "description": "Get coding interview plagarism",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "codingInterview"
+                ],
+                "summary": "Get coding interview plagarism",
+                "operationId": "GetPlagarism",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Workspace ID",
+                        "name": "workspaceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with the coding interview plagarism",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-array_domains_Plagarism"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/codingInterview.getQuestionByTitle/{title}": {
             "get": {
                 "description": "Get coding interview question by title",
@@ -2539,7 +2584,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "name": "id",
+                        "name": "portalId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "workspaceId",
                         "in": "query",
                         "required": true
                     }
@@ -4015,6 +4066,9 @@ const docTemplate = `{
         "domains.CodingQuestionTestCaseResponse": {
             "type": "object",
             "properties": {
+                "id": {
+                    "type": "integer"
+                },
                 "input": {
                     "type": "string"
                 },
@@ -4136,6 +4190,65 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "time_taken": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domains.Plagarism": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "diff": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "question_title": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
+                },
+                "source_code": {
+                    "type": "string"
+                },
+                "source_room_id": {
+                    "type": "string"
+                },
+                "source_user": {
+                    "type": "integer"
+                },
+                "source_user_name": {
+                    "type": "string"
+                },
+                "target_code": {
+                    "type": "string"
+                },
+                "target_room_id": {
+                    "type": "string"
+                },
+                "target_user": {
+                    "type": "integer"
+                },
+                "target_user_name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "workspace_id": {
                     "type": "integer"
                 }
             }
@@ -4748,6 +4861,26 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/WorkspaceDetail"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-array_domains_Plagarism": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domains.Plagarism"
                     }
                 },
                 "message": {

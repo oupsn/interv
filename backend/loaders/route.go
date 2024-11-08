@@ -108,6 +108,7 @@ func SetupRoutes() {
 	public.Post("codingInterview.upload-chunk/:roomId", codingInterviewHandlers.UploadVideoChunk)
 	public.Post("codingInterview.complete-upload/:roomId", codingInterviewHandlers.CompleteVideoUpload)
 	public.Post("codingInterview.getSubmissionResultByUser", codingInterviewHandlers.GetSubmissionResultByUser)
+	public.Get("codingInterview.getPlagarism/:workspaceId", codingInterviewHandlers.GetPlagarism)
 
 	// video question
 	public.Post("videoQuestion.createVideoQuestion", questionHandlers.CreateVideoQuestion)

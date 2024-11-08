@@ -129,14 +129,12 @@ const QuestionBankCodingListPage = () => {
           </BreadcrumbList>
           <BreadcrumbList>
             <BreadcrumbItem>
-              Difficulty:
               <DifficultyDropdown
                 selectedDifficulty={selectedDifficulty}
                 onDifficultyChange={setSelectedDifficulty} // Update difficulty state
               />
             </BreadcrumbItem>
             <BreadcrumbItem>
-              Title:
               <SearchBar
                 searchTerm={searchTerm}
                 onSearchChange={(e) => setSearchTerm(e.target.value)}

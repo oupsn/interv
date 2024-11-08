@@ -25,4 +25,5 @@ type ICodingInterviewRepository interface {
 	UpdateCodingDoneInRoom(roomID string, isDone bool) error
 	DeleteCodingQuestion(codingQuestionID uint) error
 	DeleteCodingQuestionInWorkspace(workspaceID uint) error
+	GetCodingPlagarism(workspaceID uint) ([]domains.Plagarism, error)
 }

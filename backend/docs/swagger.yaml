@@ -893,6 +893,8 @@ definitions:
     type: object
   domains.CodingQuestionTestCaseResponse:
     properties:
+      id:
+        type: integer
       input:
         type: string
       is_example:
@@ -972,6 +974,45 @@ definitions:
       room_id:
         type: string
       time_taken:
+        type: integer
+    type: object
+  domains.Plagarism:
+    properties:
+      created_at:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      diff:
+        type: string
+      id:
+        type: integer
+      question_title:
+        type: string
+      score:
+        type: number
+      source_code:
+        type: string
+      source_room_id:
+        type: string
+      source_user:
+        type: integer
+      source_user_name:
+        type: string
+      target_code:
+        type: string
+      target_room_id:
+        type: string
+      target_user:
+        type: integer
+      target_user_name:
+        type: string
+      updated_at:
+        type: string
+      updatedAt:
+        type: string
+      workspace_id:
         type: integer
     type: object
   domains.Portal:
@@ -1378,6 +1419,19 @@ definitions:
       timestamp:
         type: string
     type: object
+  handlers.Response-array_domains_Plagarism:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/domains.Plagarism'
+        type: array
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
   handlers.Response-domains_CodingQuestion:
     properties:
       code:
@@ -1778,6 +1832,36 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Get compile result for a coding interview
+      tags:
+      - codingInterview
+  /codingInterview.getPlagarism/{workspaceId}:
+    get:
+      consumes:
+      - application/json
+      description: Get coding interview plagarism
+      operationId: GetPlagarism
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: workspaceId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with the coding interview plagarism
+          schema:
+            $ref: '#/definitions/handlers.Response-array_domains_Plagarism'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrResponse'
+      summary: Get coding interview plagarism
       tags:
       - codingInterview
   /codingInterview.getQuestionByTitle/{title}:
@@ -3153,7 +3237,11 @@ paths:
       operationId: GetWorkspace
       parameters:
       - in: query
-        name: id
+        name: portalId
+        required: true
+        type: integer
+      - in: query
+        name: workspaceId
         required: true
         type: integer
       produces:

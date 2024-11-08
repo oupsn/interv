@@ -52,4 +52,5 @@ type ICodingInterviewService interface {
 	UploadCodingVideo(roomID string, screenFile *multipart.FileHeader, videoFile *multipart.FileHeader) error
 	UploadVideoChunk(roomID string, chunk *multipart.FileHeader, info domains.ChunkInfo) error
 	CompleteVideoUpload(roomID string, fileID string, fileType string) error
+	GetCodingPlagarism(workspaceID uint) ([]domains.Plagarism, error)
 }

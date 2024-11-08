@@ -469,6 +469,32 @@ func (h *CodingInterviewHandler) CompleteVideoUpload(c *fiber.Ctx) error {
 		"success": true,
 	})
 }
+
+// @Summary Get coding interview plagarism
+// @Description Get coding interview plagarism
+// @Tags codingInterview
+// @ID GetPlagarism
+// @Accept json
+// @Produce json
+// @Param workspaceId path int true "Workspace ID"
+// @Success 200 {object} Response[[]domains.Plagarism] "Successful response with the coding interview plagarism"
+// @Failure 400 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /codingInterview.getPlagarism/{workspaceId} [get]
+func (co CodingInterviewHandler) GetPlagarism(c *fiber.Ctx) error {
+	workspaceID, err := strconv.Atoi(c.Params("workspaceId"))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	plagarism, err := co.codingInterviewService.GetCodingPlagarism(uint(workspaceID))
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return Ok(c, plagarism)
+}
+
 func parseInt(s string) int {
 	i, err := strconv.Atoi(s)
 	if err != nil {

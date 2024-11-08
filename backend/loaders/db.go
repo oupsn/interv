@@ -2,6 +2,7 @@ package loaders
 
 import (
 	"fmt"
+
 	"github.com/redis/go-redis/v9"
 
 	"csgit.sit.kmutt.ac.th/interv/interv-platform/internal/domains"
@@ -61,6 +62,7 @@ func CheckAutoMigrate() {
 			&domains.Room{},
 			&domains.VideoQuestionSnapshot{},
 			&domains.RoomHistory{},
+			&domains.Plagarism{},
 		)
 		if err != nil {
 			panic(err)
