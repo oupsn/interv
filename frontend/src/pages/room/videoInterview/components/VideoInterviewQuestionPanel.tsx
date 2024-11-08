@@ -25,7 +25,9 @@ const VideoInterviewQuestionPanel: FC<VideoInterviewQuestionPanelProps> = ({
   const { roomId } = useParams()
   const { data, isLoading } = useGetRoomHistory(roomId!, questionId)
   const [mediaBlob, setMediaBlob] = useState<string[]>([])
-  const [attemptLeft, setAttemptLeft] = useState(totalAttempt)
+  // const [attemptLeft, setAttemptLeft] = useState(
+  //   data?.data?.currentAttemptLeft ?? 0,
+  // )
   const [recordState, setRecordState] = useState<"pre" | "detail" | "post">(
     "pre",
   )
@@ -38,13 +40,18 @@ const VideoInterviewQuestionPanel: FC<VideoInterviewQuestionPanelProps> = ({
     )
   }
 
+  if (data?.data?.shouldSkipQuestion && recordState == "pre") {
+    handleNextQuestion()
+  }
+
   if (recordState == "pre") {
     return (
       <VideoInterviewPreQuestion
         questionId={questionId}
         roomId={roomId ?? ""}
         questionIndex={questionIndex}
-        totalAttempt={attemptLeft}
+        currentAttemptLeft={data?.data?.currentAttemptLeft ?? 0}
+        totalAttempt={totalAttempt}
         timeToPrepare={timeToPrepare}
         timeToAnswer={timeToAnswer}
         setRecordState={setRecordState}
@@ -61,7 +68,7 @@ const VideoInterviewQuestionPanel: FC<VideoInterviewQuestionPanelProps> = ({
         timeToAnswer={timeToAnswer}
         setMediaBlob={setMediaBlob}
         setRecordState={setRecordState}
-        setAttemptLeft={setAttemptLeft}
+        setAttemptLeft={() => {}}
       />
     )
   }
@@ -69,12 +76,13 @@ const VideoInterviewQuestionPanel: FC<VideoInterviewQuestionPanelProps> = ({
   if (recordState == "post") {
     return (
       <VideoInterviewPostQuestion
-        attemptLeft={attemptLeft}
+        attemptLeft={data?.data?.currentAttemptLeft ?? 0}
         mediaBlob={mediaBlob}
         setRecordState={setRecordState}
         handleNextQuestion={handleNextQuestion}
         setMediaBlob={setMediaBlob}
         questionId={questionId}
+        totalAttempt={totalAttempt}
       />
     )
   }

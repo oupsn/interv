@@ -1639,52 +1639,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/room.updateStartAnswerTime": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "room"
-                ],
-                "summary": "Update start answer time",
-                "operationId": "updateStartAnswerTime",
-                "parameters": [
-                    {
-                        "description": "update start answer time",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/UpdateStartAnswerTimeBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response-string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/user.createAdmin": {
             "post": {
                 "consumes": [
@@ -3174,35 +3128,19 @@ const docTemplate = `{
         "GetRoomHistoryResponse": {
             "type": "object",
             "required": [
-                "currentAttempt",
-                "isTimeToAnswerLeft",
-                "isTimeToPrepareLeft",
+                "currentAttemptLeft",
                 "maxAttempt",
-                "shouldSkipQuestion",
-                "timeToAnswerLeft",
-                "timeToPrepareLeft"
+                "shouldSkipQuestion"
             ],
             "properties": {
-                "currentAttempt": {
+                "currentAttemptLeft": {
                     "type": "integer"
-                },
-                "isTimeToAnswerLeft": {
-                    "type": "boolean"
-                },
-                "isTimeToPrepareLeft": {
-                    "type": "boolean"
                 },
                 "maxAttempt": {
                     "type": "integer"
                 },
                 "shouldSkipQuestion": {
                     "type": "boolean"
-                },
-                "timeToAnswerLeft": {
-                    "type": "integer"
-                },
-                "timeToPrepareLeft": {
-                    "type": "integer"
                 }
             }
         },
@@ -3370,21 +3308,6 @@ const docTemplate = `{
                 },
                 "isVideoDone": {
                     "type": "boolean"
-                },
-                "roomId": {
-                    "type": "string"
-                }
-            }
-        },
-        "UpdateStartAnswerTimeBody": {
-            "type": "object",
-            "required": [
-                "questionId",
-                "roomId"
-            ],
-            "properties": {
-                "questionId": {
-                    "type": "integer"
                 },
                 "roomId": {
                     "type": "string"

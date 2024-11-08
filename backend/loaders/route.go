@@ -126,7 +126,6 @@ func SetupRoutes() {
 	public.Get("room.getRoomSession", roomHandlers.GetRoomSession)
 	public.Post("room.setRoomSession", roomHandlers.SetRoomSession)
 	public.Get("room.getRoomHistory", roomHandlers.GetRoomHistory)
-	public.Post("room.updateStartAnswerTime", roomHandlers.UpdateStartAnswerTime)
 	public.Post("room.addRoomHistory", roomHandlers.AddRoomHistory)
 
 	// portal

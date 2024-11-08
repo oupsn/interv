@@ -66,19 +66,10 @@ type GetRoomHistoryQuery struct {
 } // @name GetRoomHistoryQuery
 
 type GetRoomHistoryResponse struct {
-	ShouldSkipQuestion  bool `json:"shouldSkipQuestion"  validate:"required"`
-	MaxAttempt          uint `json:"maxAttempt"  validate:"required"`
-	CurrentAttempt      uint `json:"currentAttempt"  validate:"required"`
-	IsTimeToAnswerLeft  bool `json:"isTimeToAnswerLeft"  validate:"required"`
-	IsTimeToPrepareLeft bool `json:"isTimeToPrepareLeft"  validate:"required"`
-	TimeToAnswerLeft    int  `json:"timeToAnswerLeft"  validate:"required"`
-	TimeToPrepareLeft   int  `json:"timeToPrepareLeft"  validate:"required"`
+	ShouldSkipQuestion bool `json:"shouldSkipQuestion"  validate:"required"`
+	MaxAttempt         uint `json:"maxAttempt"  validate:"required"`
+	CurrentAttemptLeft uint `json:"currentAttemptLeft"  validate:"required"`
 } // @name GetRoomHistoryResponse
-
-type UpdateStartAnswerTimeBody struct {
-	RoomID     string `json:"roomId"  validate:"required"`
-	QuestionID uint   `json:"questionId"  validate:"required"`
-} // @name UpdateStartAnswerTimeBody
 
 type AddRoomHistoryBody struct {
 	RoomID     string `json:"roomId"  validate:"required"`

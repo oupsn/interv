@@ -294,28 +294,16 @@ definitions:
     type: object
   GetRoomHistoryResponse:
     properties:
-      currentAttempt:
+      currentAttemptLeft:
         type: integer
-      isTimeToAnswerLeft:
-        type: boolean
-      isTimeToPrepareLeft:
-        type: boolean
       maxAttempt:
         type: integer
       shouldSkipQuestion:
         type: boolean
-      timeToAnswerLeft:
-        type: integer
-      timeToPrepareLeft:
-        type: integer
     required:
-    - currentAttempt
-    - isTimeToAnswerLeft
-    - isTimeToPrepareLeft
+    - currentAttemptLeft
     - maxAttempt
     - shouldSkipQuestion
-    - timeToAnswerLeft
-    - timeToPrepareLeft
     type: object
   GetVideoQuestionByIdResponse:
     properties:
@@ -427,16 +415,6 @@ definitions:
       roomId:
         type: string
     required:
-    - roomId
-    type: object
-  UpdateStartAnswerTimeBody:
-    properties:
-      questionId:
-        type: integer
-      roomId:
-        type: string
-    required:
-    - questionId
     - roomId
     type: object
   UpdateVideoQuestionBody:
@@ -2620,36 +2598,6 @@ paths:
           schema:
             $ref: '#/definitions/handlers.ErrResponse'
       summary: Update room context
-      tags:
-      - room
-  /room.updateStartAnswerTime:
-    post:
-      consumes:
-      - application/json
-      operationId: updateStartAnswerTime
-      parameters:
-      - description: update start answer time
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/UpdateStartAnswerTimeBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response-string'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.ErrResponse'
-      summary: Update start answer time
       tags:
       - room
   /user.createAdmin:

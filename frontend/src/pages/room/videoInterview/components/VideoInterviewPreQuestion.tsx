@@ -7,6 +7,7 @@ interface VideoInterviewPreQuestionProps {
   questionId: number
   roomId: string
   questionIndex: number
+  currentAttemptLeft: number
   totalAttempt: number
   timeToPrepare: number
   timeToAnswer: number
@@ -17,6 +18,7 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
   questionId,
   roomId,
   questionIndex,
+  currentAttemptLeft,
   totalAttempt,
   timeToAnswer,
   timeToPrepare,
@@ -47,7 +49,10 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
       <div className="grid grid-cols-3 gap-6 w-full bg-iWhiteHover p-6 rounded-xl shadow-sm">
         <div className="text-center p-4 bg-white rounded-lg">
           <p className="text-sm text-gray-600 mb-1">Maximum Attempts</p>
-          <p className="text-2xl font-semibold">{totalAttempt}</p>
+          <p className="text-2xl font-semibold">
+            {currentAttemptLeft}
+            <span className={"font-normal text-base"}>/{totalAttempt}</span>
+          </p>
         </div>
         <div className="text-center p-4 bg-white rounded-lg">
           <p className="text-sm text-gray-600 mb-1">Preparation Time</p>

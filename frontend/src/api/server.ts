@@ -559,13 +559,9 @@ export interface GetRoomHistoryParams {
 }
 
 export interface GetRoomHistoryResponse {
-  currentAttempt: number
-  isTimeToAnswerLeft: boolean
-  isTimeToPrepareLeft: boolean
+  currentAttemptLeft: number
   maxAttempt: number
   shouldSkipQuestion: boolean
-  timeToAnswerLeft: number
-  timeToPrepareLeft: number
 }
 
 export type GetRoomSessionData = HandlersResponseString
@@ -984,15 +980,6 @@ export interface UpdateRoomContextBody {
 export type UpdateRoomContextData = HandlersResponseString
 
 export type UpdateRoomContextError = HandlersErrResponse
-
-export interface UpdateStartAnswerTimeBody {
-  questionId: number
-  roomId: string
-}
-
-export type UpdateStartAnswerTimeData = HandlersResponseString
-
-export type UpdateStartAnswerTimeError = HandlersErrResponse
 
 export interface UpdateVideoQuestionBody {
   portalId?: number
@@ -1834,24 +1821,6 @@ export namespace Room {
     export type RequestBody = UpdateRoomContextBody
     export type RequestHeaders = {}
     export type ResponseBody = UpdateRoomContextData
-  }
-
-  /**
-   * No description
-   * @tags room
-   * @name UpdateStartAnswerTime
-   * @summary Update start answer time
-   * @request POST:/room.updateStartAnswerTime
-   * @response `200` `UpdateStartAnswerTimeData` OK
-   * @response `400` `HandlersErrResponse` Bad Request
-   * @response `500` `HandlersErrResponse` Internal Server Error
-   */
-  export namespace UpdateStartAnswerTime {
-    export type RequestParams = {}
-    export type RequestQuery = {}
-    export type RequestBody = UpdateStartAnswerTimeBody
-    export type RequestHeaders = {}
-    export type ResponseBody = UpdateStartAnswerTimeData
   }
 }
 
@@ -3153,27 +3122,6 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
     updateRoomContext: (payload: UpdateRoomContextBody, params: RequestParams = {}) =>
       this.request<UpdateRoomContextData, UpdateRoomContextError>({
         path: `/room.updateRoomContext`,
-        method: "POST",
-        body: payload,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags room
-     * @name UpdateStartAnswerTime
-     * @summary Update start answer time
-     * @request POST:/room.updateStartAnswerTime
-     * @response `200` `UpdateStartAnswerTimeData` OK
-     * @response `400` `HandlersErrResponse` Bad Request
-     * @response `500` `HandlersErrResponse` Internal Server Error
-     */
-    updateStartAnswerTime: (payload: UpdateStartAnswerTimeBody, params: RequestParams = {}) =>
-      this.request<UpdateStartAnswerTimeData, UpdateStartAnswerTimeError>({
-        path: `/room.updateStartAnswerTime`,
         method: "POST",
         body: payload,
         type: ContentType.Json,

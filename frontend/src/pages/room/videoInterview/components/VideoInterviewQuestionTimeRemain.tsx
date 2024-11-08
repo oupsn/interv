@@ -1,6 +1,5 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
-import {server} from "@/contexts/swr.tsx";
 
 interface VideoInterviewQuestionTimeRemainingProps {
   timeToPrepare: number
@@ -29,7 +28,6 @@ export const VideoInterviewQuestionTimeRemain: FC<
   setMediaBlob,
   setRecordState,
   setAttemptLeft,
-  questionId,
 }) => {
   const [timeToPrepareRemain, setTimeToPrepareRemain] = useState(timeToPrepare)
   const [timeToAnswerRemain, setTimeToAnswerRemain] = useState(timeToAnswer)
@@ -43,10 +41,6 @@ export const VideoInterviewQuestionTimeRemain: FC<
         clearInterval(intervalId)
         startRecording()
         setIsStarted(true)
-        server.room.updateStartAnswerTime({
-          questionId: questionId,
-          roomId: "roomId",
-        })
       }
     }, 1000)
 

@@ -259,52 +259,48 @@ func (l RoomHandler) GetRoomHistory(c *fiber.Ctx) error {
 		return err
 	}
 
-	shouldSkipQuestion, maxAttempt, currentAttempt, IsTimeToAnswerLeft, IsTimeToPrepareLeft, timeToAnswerLeft, timeToPrepareLeft, err := l.roomHistoryService.GetRoomHistory(query.RoomID, query.QuestionID)
+	shouldSkipQuestion, maxAttempt, currentAttempt, err := l.roomHistoryService.GetRoomHistory(query.RoomID, query.QuestionID)
 	if err != nil {
 		return err
 	}
 
 	history := GetRoomHistoryResponse{
-		ShouldSkipQuestion:  shouldSkipQuestion,
-		MaxAttempt:          maxAttempt,
-		CurrentAttempt:      uint(currentAttempt),
-		IsTimeToAnswerLeft:  IsTimeToAnswerLeft,
-		IsTimeToPrepareLeft: IsTimeToPrepareLeft,
-		TimeToAnswerLeft:    timeToAnswerLeft,
-		TimeToPrepareLeft:   timeToPrepareLeft,
+		ShouldSkipQuestion: shouldSkipQuestion,
+		MaxAttempt:         maxAttempt,
+		CurrentAttemptLeft: uint(currentAttempt),
 	}
 
 	return Ok(c, history)
 }
 
-// UpdateStartAnswerTime
-// @ID updateStartAnswerTime
-// @Tags room
-// @Summary Update start answer time
-// @Accept json
-// @Produce json
-// @Param payload body UpdateStartAnswerTimeBody true "update start answer time"
-// @Success 200 {object} Response[string]
-// @Failure 400 {object} ErrResponse
-// @Failure 500 {object} ErrResponse
-// @Router /room.updateStartAnswerTime [post]
-func (l RoomHandler) UpdateStartAnswerTime(c *fiber.Ctx) error {
-	body := UpdateStartAnswerTimeBody{}
-	if err := c.BodyParser(&body); err != nil {
-		return err
-	}
-
-	if err := validate.Struct(body); err != nil {
-		return err
-	}
-
-	err := l.roomHistoryService.UpdateStartAnswerTime(body.RoomID, body.QuestionID)
-	if err != nil {
-		return err
-	}
-
-	return Ok(c, "start answer time updated")
-}
+//// UpdateStartAnswerTime
+//// @ID updateStartAnswerTime
+//// @Tags room
+//// @Summary Update start answer time
+//// @Accept json
+//// @Produce json
+//// @Param payload body UpdateStartAnswerTimeBody true "update start answer time"
+//// @Success 200 {object} Response[string]
+//// @Failure 400 {object} ErrResponse
+//// @Failure 500 {object} ErrResponse
+//// @Router /room.updateStartAnswerTime [post]
+//func (l RoomHandler) UpdateStartAnswerTime(c *fiber.Ctx) error {
+//	body := UpdateStartAnswerTimeBody{}
+//	if err := c.BodyParser(&body); err != nil {
+//		return err
+//	}
+//
+//	if err := validate.Struct(body); err != nil {
+//		return err
+//	}
+//
+//	err := l.roomHistoryService.UpdateStartAnswerTime(body.RoomID, body.QuestionID)
+//	if err != nil {
+//		return err
+//	}
+//
+//	return Ok(c, "start answer time updated")
+//}
 
 // AddRoomHistory
 // @ID addRoomHistory
