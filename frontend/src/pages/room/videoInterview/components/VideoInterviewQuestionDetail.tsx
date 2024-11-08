@@ -46,13 +46,13 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
   return (
     <>
       {" "}
-      <div className="flex flex-row justify-center relative w-full h-full">
-        <div className="flex flex-col gap-6 w-5/12 p-10 h-full border-l border-gray-200 border-b">
+      <div className="flex md:flex-row flex-col justify-center relative w-full h-full overflow-y-scroll">
+        <div className="flex flex-col mt-64 md:mt-0 gap-6 w-full md:w-5/12 p-10 h-full border-l border-gray-200 border-b">
           <div className="flex items-center gap-3">
             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white font-semibold">
               {questionIndex}
             </span>
-            <h2 className="text-2xl font-semibold text-gray-800">
+            <h2 className="text-lg font-semibold text-gray-800">
               Interview Question
             </h2>
           </div>
@@ -65,7 +65,7 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
           </div>
 
           <div className="space-y-3">
-            <div className="prose prose-lg">{parse(cleanDescription)}</div>
+            <div className="text-lg">{parse(cleanDescription)}</div>
 
             <div className="flex items-start gap-2 mt-4 p-4 rounded-md">
               <QuestionMarkCircledIcon className="w-5 h-5 text-primary mt-0.5" />
@@ -76,7 +76,7 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-4 relative items-center justify-center w-7/12 p-10 border-l border-gray-200 border-b ">
+        <div className="flex flex-col gap-4 relative items-center justify-center w-full md:w-7/12 p-10 border-l border-gray-200 border-b ">
           <VideoInterviewQuestionTimeRemain
             timeToPrepare={timeToPrepare}
             timeToAnswer={timeToAnswer}

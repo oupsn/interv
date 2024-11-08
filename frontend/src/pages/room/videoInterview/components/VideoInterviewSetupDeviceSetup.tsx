@@ -33,7 +33,7 @@ const VideoInterviewSetupDeviceSetup: FC<
   } = useContext(DeviceContext)
 
   return (
-    <div className="flex flex-col gap-4 w-full items-center justify-center rounded-lg shadow-md">
+    <div className="flex flex-col gap-4 w-full items-center justify-center rounded-lg shadow-md h-full py-4 md:py-0">
       <div className="flex flex-col items-center justify-center gap-2">
         <p className={"text-lg font-semibold"}>Device Setup</p>
         <p className="text-sm text-gray-500">
@@ -104,6 +104,7 @@ const VideoInterviewSetupDeviceSetup: FC<
         />
       </div>
       <Button
+        className="md:w-auto w-full"
         disabled={!!mediaError || mediaStatus != "idle"}
         onClick={() => {
           const allCookies = Cookies.get()

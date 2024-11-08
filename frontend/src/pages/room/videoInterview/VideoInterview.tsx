@@ -46,7 +46,7 @@ const VideoInterviewPage = () => {
   const renderVideoInterviewByStage = () => {
     if (activeQuestion == 0) {
       return (
-        <div className="flex flex-row w-full h-full overflow-y-hidden">
+        <div className="flex flex-col md:flex-row w-full h-full overflow-y-scroll">
           <VideoInterviewInstruction
             questionLength={data?.data?.totalQuestions ?? 0}
           />
@@ -61,7 +61,7 @@ const VideoInterviewPage = () => {
       return <VideoInterviewFinish />
     } else {
       return (
-        <div className="flex flex-col gap-8 w-full justify-center h-full relative overflow-hidden">
+        <div className="flex flex-col gap-2 w-full justify-center h-full relative overflow-hidden">
           <VideoInterviewQuestionPanel
             questionId={
               data!.data!.questionSetting[activeQuestion - 1].questionId
@@ -80,7 +80,7 @@ const VideoInterviewPage = () => {
           />
 
           {/* Question Navigation Bar */}
-          <div className="flex justify-center gap-2 p-4">
+          <div className="flex justify-center gap-2">
             {Array.from({ length: data?.data?.totalQuestions ?? 0 }).map(
               (_item, index) => (
                 <button

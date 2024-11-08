@@ -96,7 +96,7 @@ const RoomPage = () => {
           </div>
         ) : (
           <>
-            <div className="p-4 space-y-4 text-center max-w-2xl">
+            <div className="p-4 space-y-4 text-center max-w-2xl mt-64 md:mt-0">
               <p className="text-3xl font-semibold mb-4">
                 Welcome, {data?.data?.candidateName}!
               </p>
@@ -107,7 +107,7 @@ const RoomPage = () => {
 
               <Alert className="mb-6">
                 <AlertDescription>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-col md:flex-row items-center gap-2">
                     <Clock className="h-4 w-4" />
                     Please complete this interview before{" "}
                     <span className="font-semibold">
@@ -120,7 +120,7 @@ const RoomPage = () => {
               </Alert>
             </div>
 
-            <div className="flex gap-12">
+            <div className="flex flex-col md:flex-row gap-12">
               {data?.data?.totalVideoQuestion !== undefined &&
                 data?.data?.totalVideoQuestion > 0 && (
                   <div className="shadow-xl text-center rounded-xl p-8 space-y-4 w-[340px] hover:shadow-2xl transition-shadow">

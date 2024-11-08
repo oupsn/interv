@@ -39,6 +39,15 @@ import { Link, useNavigate } from "react-router-dom"
 import QuestionPicker from "./components/QuestionPicker"
 import { Spinner } from "@/components/ui/spinner"
 import { LoadingContext } from "@/contexts/loading"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+
+import { CalendarIcon, VideoIcon, CodeIcon } from "lucide-react"
 
 // Zod schema for form validation
 
@@ -115,6 +124,11 @@ const CreateWorkspace = () => {
   const endDate = watch("date.endDate")
   const { setLoading } = useContext(LoadingContext)
 
+  const [showPreview, setShowPreview] = useState(false)
+  const [formData, setFormData] = useState<z.infer<typeof formSchema> | null>(
+    null,
+  )
+
   const handleDateChange = (range: DateRange | undefined) => {
     setDateRange(range)
     setValue(
@@ -127,6 +141,17 @@ const CreateWorkspace = () => {
       range?.to ? addDays(range?.to, 1).toISOString().split("T")[0] : "",
       { shouldValidate: true },
     )
+  }
+
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    setFormData(values)
+    setShowPreview(true)
+  }
+
+  const handleConfirm = async () => {
+    if (!formData) return
+    setShowPreview(false)
+    await onSubmit(formData)
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -207,211 +232,364 @@ const CreateWorkspace = () => {
     )
   }
   return (
-    <ContentLayout
-      title={"Create workspace"}
-      breadcrumb={
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/portal/workspace">Workspaces</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Create Workspace</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      }
-    >
-      <ContentPanel>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-3 px-3 relative"
-          >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-lg">Workspace Title</FormLabel>
-                  <FormControl>
-                    <Input type="text" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="date"
-              render={() => (
-                <FormItem>
-                  <FormLabel className="text-lg">Date</FormLabel>
-                  <FormControl>
-                    <DatePicker date={dateRange} setDate={handleDateChange} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex w-full gap-5">
-              <FormField
-                control={form.control}
-                name="isCoding"
-                render={() => (
-                  <FormItem className="w-full">
-                    <FormLabel className="text-lg">
-                      Setup Coding Question
-                    </FormLabel>
-                    <FormControl>
-                      <QuestionPicker
-                        currentQuestion={codeCurrentQuestion}
-                        setCurrentQuestion={setCodeCurrentQuestion}
-                        stockQuestion={codeStockQuestion}
-                        setStockQuestion={setCodeStockQuestion}
-                        disable={disablePage}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="isVideo"
-                render={() => (
-                  <FormItem className="w-full">
-                    <FormLabel className="text-lg">
-                      Setup Video Question
-                    </FormLabel>
-                    <FormControl>
-                      <QuestionPicker
-                        currentQuestion={videoCurrentQuestion}
-                        setCurrentQuestion={setVideoCurrentQuestion}
-                        stockQuestion={videoStockQuestion}
-                        setStockQuestion={setVideoStockQuestion}
-                        disable={disablePage}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex w-full gap-5">
-              <FormField
-                control={form.control}
-                name="codingTime"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel className="text-lg">
-                      Coding Time {"(Minutes)"}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        id="codingTime"
-                        type="number"
-                        {...field}
-                        value={
-                          isCoding ? (field.value > 0 ? field.value : "") : ""
-                        } // Start as empty when not coding
-                        onChange={(e) => {
-                          const value = e.target.value
-                          if (
-                            value === "" ||
-                            (value !== "0" && !value.startsWith("0"))
-                          ) {
-                            field.onChange(Number(value)) // Convert to number and update
-                          }
-                        }}
-                        disabled={!isCoding}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+    <>
+      <ContentLayout
+        title={"Create workspace"}
+        breadcrumb={
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to="/portal/workspace">Workspaces</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Create Workspace</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        }
+      >
+        <ContentPanel>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-6 px-6 py-4"
+            >
+              <div className="space-y-4">
+                <div className="flex flex-col items-start  gap-2">
+                  <h2 className="text-xl font-semibold">
+                    Workspace Information
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Enter the basic details for your workspace
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          Workspace Title
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter workspace title"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="date"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                          Date Range
+                        </FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            date={dateRange}
+                            setDate={handleDateChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
-              <FormField
-                control={form.control}
-                name="videoTime"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel className="text-lg">
-                      Maximum Video Time {"(Seconds)"}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        id="codingTime"
-                        type="number"
-                        {...field}
-                        value={isVideo ? vidTime : 0} // Ensure the field value doesn't start as undefined
-                        disabled={true}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+              <div className="space-y-4">
+                <div className="flex flex-col items-start  gap-2">
+                  <h2 className="text-xl font-semibold">
+                    Interview Questions Setup
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Select interview questions for your workspace
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="isCoding"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel className="flex flex-row items-center gap-2 bg-white w-full px-2 py-1 rounded-md text-gray-500 border border-gray-200 text-md justify-center ">
+                          <CodeIcon className="h-4 w-4" />
+                          Coding Questions
+                        </FormLabel>
+                        <FormControl>
+                          <QuestionPicker
+                            currentQuestion={codeCurrentQuestion}
+                            setCurrentQuestion={setCodeCurrentQuestion}
+                            stockQuestion={codeStockQuestion}
+                            setStockQuestion={setCodeStockQuestion}
+                            disable={disablePage}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="isVideo"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel className="flex flex-row items-center gap-2 bg-white w-full px-2 py-1 rounded-md text-gray-500 border border-gray-200 text-md justify-center ">
+                          <VideoIcon className="h-4 w-4" />
+                          Video Questions
+                        </FormLabel>
+                        <FormControl>
+                          <QuestionPicker
+                            currentQuestion={videoCurrentQuestion}
+                            setCurrentQuestion={setVideoCurrentQuestion}
+                            stockQuestion={videoStockQuestion}
+                            setStockQuestion={setVideoStockQuestion}
+                            disable={disablePage}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
-            <FormField
-              control={form.control}
-              name="reqScreen"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-2">
-                  <FormItem className="flex flex-row items-center gap-2">
-                    <FormControl>
-                      <Checkbox
-                        checked={isCoding ? field.value : false} // Set checked to the boolean value
-                        onCheckedChange={field.onChange} // Update the form state when checkbox changes
-                        onBlur={field.onBlur} // Handle onBlur event
-                        name={field.name} // Set the name for the field
-                        ref={field.ref} // Forward the ref to the input
-                        disabled={!isCoding}
-                        className="size-5 mt-2"
-                      />
-                    </FormControl>
-                    <FormLabel className="text-lg">
-                      Require screen record
-                    </FormLabel>
-                  </FormItem>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="reqCamera"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-2">
-                  <FormControl>
-                    <Checkbox
-                      checked={isCoding ? field.value : false} // Set checked to the boolean value
-                      onCheckedChange={field.onChange} // Update the form state when checkbox changes
-                      onBlur={field.onBlur} // Handle onBlur event
-                      name={field.name} // Set the name for the field
-                      ref={field.ref} // Forward the ref to the input
-                      disabled={!isCoding}
-                      className="size-5 mt-2"
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="flex flex-col gap-4">
+                    <h2 className="text-xs font-semibold flex flex-row gap-2 items-center  mb-2 text-muted-foreground">
+                      <CodeIcon className="h-4 w-4 text-muted-foreground" />
+                      Coding Interview Settings
+                    </h2>
+                    <FormField
+                      control={form.control}
+                      name="codingTime"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            Coding Time (Minutes)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder={
+                                isCoding ? "Enter time in minutes" : "Disabled"
+                              }
+                              {...field}
+                              value={
+                                isCoding
+                                  ? field.value > 0
+                                    ? field.value
+                                    : ""
+                                  : ""
+                              }
+                              onChange={(e) => {
+                                const value = e.target.value
+                                if (
+                                  value === "" ||
+                                  (value !== "0" && !value.startsWith("0"))
+                                ) {
+                                  field.onChange(Number(value))
+                                }
+                              }}
+                              disabled={!isCoding}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </FormControl>
-                  <FormLabel className="text-lg">
-                    Require camera record
-                  </FormLabel>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <div className="flex flex-col items-start gap-2">
+                      <FormLabel className="flex items-center gap-2">
+                        Recording Settings
+                      </FormLabel>
+                      <div className="flex gap-6">
+                        <FormField
+                          control={form.control}
+                          name="reqScreen"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center gap-2">
+                              <FormControl>
+                                <Checkbox
+                                  checked={isCoding ? field.value : false}
+                                  onCheckedChange={field.onChange}
+                                  disabled={!isCoding}
+                                  className="size-5"
+                                />
+                              </FormControl>
+                              <FormLabel className="m-0">
+                                Screen Recording
+                              </FormLabel>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="reqCamera"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center gap-2">
+                              <FormControl>
+                                <Checkbox
+                                  checked={isCoding ? field.value : false}
+                                  onCheckedChange={field.onChange}
+                                  disabled={!isCoding}
+                                  className="size-5"
+                                />
+                              </FormControl>
+                              <FormLabel className="m-0">
+                                Camera Recording
+                              </FormLabel>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    <h2 className="text-xs font-semibold flex flex-row gap-2 items-center  mb-2 text-muted-foreground">
+                      <VideoIcon className="h-4 w-4 text-muted-foreground" />
+                      Video Interview Settings
+                    </h2>
+                    <FormField
+                      control={form.control}
+                      name="videoTime"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            Maximum Video Time (Seconds)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              {...field}
+                              value={isVideo ? vidTime : 0}
+                              disabled={true}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
 
-            <Button className={"w-full"}>Create Workspace</Button>
-          </form>
-        </Form>
-      </ContentPanel>
-    </ContentLayout>
+              <Button className="w-full mt-6">Create Workspace</Button>
+            </form>
+          </Form>
+        </ContentPanel>
+      </ContentLayout>
+
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-gray-900">
+              Workspace Preview
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h3 className="font-semibold mb-1">Workspace Title</h3>
+                <p className="text-sm text-muted-foreground">
+                  {formData?.title}
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1">Date Range</h3>
+                <p className="text-sm text-muted-foreground">
+                  {formData?.date.startDate} to {formData?.date.endDate}
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-2">Selected Questions</h3>
+              <div className="grid grid-cols-2 gap-4">
+                {isCoding && (
+                  <div>
+                    <h4 className="text-sm font-medium flex items-center gap-2 border-b border-gray-200 pb-2">
+                      <CodeIcon className="h-4 w-4" />
+                      Coding Questions ({codeCurrentQuestion?.length || 0})
+                    </h4>
+                    <div className="flex flex-col max-h-[150px] overflow-y-auto hover:cursor-pointer">
+                      {codeCurrentQuestion?.map((question, index) => (
+                        <div
+                          key={question.id}
+                          className="p-2 rounded-md bg-gray-50 hover:bg-gray-100"
+                        >
+                          {index + 1}. {question.title}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Time Limit: {formData?.codingTime} minutes
+                    </p>
+                  </div>
+                )}
+                {isVideo && (
+                  <div>
+                    <h4 className="text-sm font-medium flex items-center gap-2 border-b border-gray-200 pb-2">
+                      <VideoIcon className="h-4 w-4" />
+                      Video Questions ({videoCurrentQuestion?.length || 0})
+                    </h4>
+                    <div className="flex flex-col max-h-[150px] overflow-y-auto hover:cursor-pointer">
+                      {videoCurrentQuestion?.map((question, index) => (
+                        <div
+                          key={question.id}
+                          className="p-2 rounded-md bg-gray-50 hover:bg-gray-100"
+                        >
+                          {index + 1}. {question.title}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Total Time: {vidTime} seconds
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {isCoding && (
+              <div>
+                <h3 className="font-semibold mb-2">
+                  Coding Recording Settings
+                </h3>
+                <div className="flex gap-4">
+                  <p className="text-sm text-muted-foreground">
+                    Screen Recording: {formData?.reqScreen ? "Yes" : "No"}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Camera Recording: {formData?.reqCamera ? "Yes" : "No"}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowPreview(false)}>
+              Edit
+            </Button>
+            <Button onClick={handleConfirm}>Create Workspace</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
