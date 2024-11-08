@@ -1,6 +1,5 @@
 import * as React from "react"
 import { DomainsWorkspaceScore, UserInWorkspace } from "@/api/server"
-
 import {
   TableHeader,
   TableRow,
@@ -56,6 +55,11 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
     [number | null, number | null]
   >([null, null])
 
+  const [sortConfig, setSortConfig] = useState<{
+    key: string
+    direction: "asc" | "desc"
+  } | null>(null)
+
   const handleDelete = (userId: number, workspaceId: number) => {
     setSelectedItemToDelete([userId, workspaceId])
     setIsDeleteDialogOpen(true)
@@ -81,19 +85,90 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
   }
   const { mutate } = useGetWorkspace(workspaceId, portalId)
   const navigate = useNavigate()
+
+  const sortedUsers = React.useMemo(() => {
+    if (sortConfig) {
+      const sortedList = [...listUser]
+      sortedList.sort((a, b) => {
+        if (
+          a[sortConfig.key as keyof UserInWorkspace] <
+          b[sortConfig.key as keyof UserInWorkspace]
+        ) {
+          return sortConfig.direction === "asc" ? -1 : 1
+        }
+        if (
+          a[sortConfig.key as keyof UserInWorkspace] >
+          b[sortConfig.key as keyof UserInWorkspace]
+        ) {
+          return sortConfig.direction === "asc" ? 1 : -1
+        }
+        return 0
+      })
+      return sortedList
+    }
+    return listUser
+  }, [listUser, sortConfig])
+
+  const handleSort = (key: string) => {
+    setSortConfig((prevConfig) => {
+      if (!prevConfig || prevConfig.key !== key) {
+        // Start with ascending if there was no previous config or a different key
+        return { key, direction: "asc" }
+      } else if (prevConfig.direction === "asc") {
+        // Move to descending if it was previously ascending
+        return { key, direction: "desc" }
+      } else if (prevConfig.direction === "desc") {
+        // Remove sorting if it was previously descending
+        return null
+      } else {
+        // Default to ascending
+        return { key, direction: "asc" }
+      }
+    })
+  }
+
+  const getSortIcon = (key: string) => {
+    if (sortConfig?.key === key) {
+      return sortConfig.direction === "asc" ? "▲" : "▼"
+    }
+    return null
+  }
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className={"w-2/6"}>Name</TableHead>
-          <TableHead className={"w-2/6"}>Email</TableHead>
-          <TableHead>Status</TableHead>
-          {listScore && <TableHead>Score</TableHead>}
-          <TableHead className={"w-[100px]"}>Actions</TableHead>
+          <TableHead
+            onClick={() => handleSort("name")}
+            className="w-2/6 cursor-pointer hover:font-bold hover:text-black"
+          >
+            Name {getSortIcon("name")}
+          </TableHead>
+          <TableHead
+            onClick={() => handleSort("username")}
+            className="w-2/6 cursor-pointer hover:font-bold hover:text-black"
+          >
+            Email {getSortIcon("username")}
+          </TableHead>
+          <TableHead
+            onClick={() => handleSort("status")}
+            className="cursor-pointer hover:font-bold hover:text-black"
+          >
+            Status {getSortIcon("status")}
+          </TableHead>
+          {listScore && (
+            <TableHead
+              onClick={() => handleSort("score")}
+              className="cursor-pointer hover:font-bold hover:text-black"
+            >
+              Score {getSortIcon("score")}
+            </TableHead>
+          )}
+          <TableHead className="w-[100px]">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {listUser?.map((user, index) => {
+        {sortedUsers?.map((user, index) => {
           if (index >= (page - 1) * size && index <= page * size - 1)
             return (
               <>
