@@ -53,7 +53,7 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
               {questionIndex}
             </span>
             <h2 className="text-2xl font-semibold text-gray-800">
-              Interview Question
+              {parse(cleanDescription)}
             </h2>
           </div>
 
@@ -65,10 +65,8 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
           </div>
 
           <div className="space-y-3">
-            <div className="prose prose-lg">{parse(cleanDescription)}</div>
-
-            <div className="flex items-start gap-2 mt-4 p-4 rounded-md">
-              <QuestionMarkCircledIcon className="w-5 h-5 text-primary mt-0.5" />
+            <div className="flex items-start gap-2 rounded-md">
+              <QuestionMarkCircledIcon className="w-6 h-6 text-primary" />
               <p className="text-sm text-primary">
                 Take a moment to gather your thoughts. Remember to speak clearly
                 and maintain eye contact with the camera.

@@ -85,7 +85,7 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
       <div className="flex flex-col md:flex-row items-center gap-8 justify-center p-6 relative">
         {/* Video Preview Section */}
         <div className="flex flex-col gap-6 relative">
-          <div className="flex flex-row gap-6 relative max-w-[800px] overflow-x-scroll">
+          <div className="flex flex-row gap-6 relative max-w-[800px] overflow-x-auto">
             {mediaBlob.map((blob, index) => (
               <div key={index} className="flex flex-col items-center gap-4">
                 <div className="relative">
