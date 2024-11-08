@@ -1228,6 +1228,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/room.addRoomHistory": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "room"
+                ],
+                "summary": "Add room history",
+                "operationId": "addRoomHistory",
+                "parameters": [
+                    {
+                        "description": "add room history",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.AddRoomHistoryBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/room.createRoom": {
             "post": {
                 "consumes": [
@@ -1363,6 +1409,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/room.getRoomHistory": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "room"
+                ],
+                "summary": "Get room history",
+                "operationId": "getRoomHistory",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "questionId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response-GetRoomHistoryResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/room.getRoomSession": {
             "get": {
                 "consumes": [
@@ -1472,7 +1567,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.SetRoomSessionBody"
+                            "$ref": "#/definitions/SetRoomSessionBody"
                         }
                     }
                 ],
@@ -3030,6 +3125,25 @@ const docTemplate = `{
                 }
             }
         },
+        "GetRoomHistoryResponse": {
+            "type": "object",
+            "required": [
+                "currentAttemptLeft",
+                "maxAttempt",
+                "shouldSkipQuestion"
+            ],
+            "properties": {
+                "currentAttemptLeft": {
+                    "type": "integer"
+                },
+                "maxAttempt": {
+                    "type": "integer"
+                },
+                "shouldSkipQuestion": {
+                    "type": "boolean"
+                }
+            }
+        },
         "GetVideoQuestionByIdResponse": {
             "type": "object",
             "properties": {
@@ -3162,6 +3276,21 @@ const docTemplate = `{
                 },
                 "preset": {
                     "$ref": "#/definitions/handlers.MailPreset"
+                }
+            }
+        },
+        "SetRoomSessionBody": {
+            "type": "object",
+            "required": [
+                "roomId",
+                "sessionIdentifier"
+            ],
+            "properties": {
+                "roomId": {
+                    "type": "string"
+                },
+                "sessionIdentifier": {
+                    "type": "string"
                 }
             }
         },
@@ -4284,6 +4413,21 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.AddRoomHistoryBody": {
+            "type": "object",
+            "required": [
+                "questionId",
+                "roomId"
+            ],
+            "properties": {
+                "questionId": {
+                    "type": "integer"
+                },
+                "roomId": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.CodingInterviewGetQuestionByTitleResponse": {
             "type": "object",
             "properties": {
@@ -4445,6 +4589,23 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/GetRoomContextResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Response-GetRoomHistoryResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/GetRoomHistoryResponse"
                 },
                 "message": {
                     "type": "string"
@@ -4814,21 +4975,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.SetRoomSessionBody": {
-            "type": "object",
-            "required": [
-                "roomId",
-                "sessionIdentifier"
-            ],
-            "properties": {
-                "roomId": {
-                    "type": "string"
-                },
-                "sessionIdentifier": {
                     "type": "string"
                 }
             }
