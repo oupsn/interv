@@ -1,12 +1,19 @@
-import { Dispatch, FC, SetStateAction, useContext, useState } from "react"
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react"
 import { Button } from "@/components/ui/button.tsx"
 import { server } from "@/contexts/swr.tsx"
 import { cn } from "@/lib/utils.ts"
 import { useParams } from "react-router-dom"
 import { useGetRoomContext } from "@/hooks/useGetRoomContext.ts"
 import { toast } from "sonner"
-import Cookies from "js-cookie"
 import { LoadingContext } from "@/contexts/loading"
+import { useGetRoomHistory } from "@/hooks/useGetRoomHistory.ts"
 
 interface VideoInterviewPostQuestion {
   attemptLeft: number
@@ -15,6 +22,7 @@ interface VideoInterviewPostQuestion {
   setRecordState: Dispatch<SetStateAction<"pre" | "detail" | "post">>
   setMediaBlob: Dispatch<SetStateAction<string[]>>
   questionId: number
+  totalAttempt: number
 }
 export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
   attemptLeft,
@@ -23,10 +31,12 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
   setRecordState,
   setMediaBlob,
   questionId,
+  totalAttempt,
 }) => {
   const { roomId } = useParams()
   const { data } = useGetRoomContext(roomId!)
   const { setLoading, setText } = useContext(LoadingContext)
+  const { mutate } = useGetRoomHistory(roomId!, questionId)
   const [selectedVideo, setSelectedVideo] = useState("")
   const handleSubmitVideo = async () => {
     setLoading(true)
@@ -48,7 +58,6 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
       {
         loading: "Submitting video...",
         success: () => {
-          Cookies.set("s_" + questionId.toString(), "true") //TODO: come back here one day
           handleNextQuestion()
           setMediaBlob([])
           setRecordState("pre")
@@ -62,6 +71,12 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
     setLoading(false)
     setText("")
   }
+
+  useEffect(() => {
+    mutate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <div className="flex flex-col items-center justify-center">
       <h2 className="text-xl font-semibold text-center mb-4">
@@ -70,7 +85,7 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
       <div className="flex flex-col md:flex-row items-center gap-8 justify-center p-6 relative">
         {/* Video Preview Section */}
         <div className="flex flex-col gap-6 relative">
-          <div className="flex flex-row gap-6 relative max-w-[800px] overflow-x-scroll">
+          <div className="flex flex-row gap-6 relative max-w-[800px] overflow-x-auto">
             {mediaBlob.map((blob, index) => (
               <div key={index} className="flex flex-col items-center gap-4">
                 <div className="relative">
@@ -111,7 +126,10 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
           <div className="text-center">
             <h3 className="text-lg font-medium mb-2">Remaining Attempts</h3>
             <p className="text-xl font-semibold">
-              {attemptLeft - Number(Cookies.get(`r_${questionId}`) ?? "0")}{" "}
+              <span className={cn(attemptLeft == 0 ? "text-red-500" : null)}>
+                {attemptLeft}
+              </span>
+              <span className={"font-normal text-base"}>/{totalAttempt}</span>{" "}
               <span className="text-base font-normal">attempts left</span>
             </p>
           </div>
@@ -121,8 +139,6 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
             <Button
               disabled={!selectedVideo}
               onClick={() => {
-                Cookies.remove("a_" + questionId.toString()) //TODO: come back here one day
-                Cookies.remove("p_" + questionId.toString()) //TODO: come back here one day
                 handleSubmitVideo()
               }}
               className="w-48"
@@ -130,21 +146,18 @@ export const VideoInterviewPostQuestion: FC<VideoInterviewPostQuestion> = ({
               Submit Recording
             </Button>
 
-            {attemptLeft - Number(Cookies.get(`r_${questionId}`) ?? "0") >
-              0 && (
+            {attemptLeft > 0 && (
               <Button
                 variant="outline"
                 onClick={() => {
-                  setRecordState("detail")
-                  setRecordState("detail")
-                  const currentAttempt =
-                    Cookies.get("r_" + questionId.toString()) ?? 0
-                  Cookies.set(
-                    "r_" + questionId.toString(),
-                    String(Number(currentAttempt ?? "0") + 1),
-                  ) //TODO: come back here one day
-                  Cookies.remove("a_" + questionId.toString()) //TODO: come back here one day
-                  Cookies.remove("p_" + questionId.toString()) //TODO: come back here one day
+                  server.room
+                    .addRoomHistory({
+                      questionId: questionId,
+                      roomId: roomId!,
+                    })
+                    .then(() => {
+                      setRecordState("detail")
+                    })
                 }}
                 className="w-48"
               >

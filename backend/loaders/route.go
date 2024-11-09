@@ -34,6 +34,7 @@ func SetupRoutes() {
 	var portalRepository = repositories.NewPortalRepository(*DB)
 	var lintRepository = repositories.NewLinterRepository(viper.GetString(EnvPythonLinterEndpoint), viper.GetString(EnvJavaLinterEndpoint), viper.GetString(EnvCLinterEndpoint))
 	var videoQuestionSnapshotRepositories = repositories.NewVideoQuestionSnapshotRepository(*DB)
+	var roomHistoryRepositories = repositories.NewRoomHistoryRepository(*DB)
 
 	// Services
 	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, workspaceRepositories)
@@ -46,6 +47,7 @@ func SetupRoutes() {
 	var portalService = services.NewPortalService(portalRepository)
 	var workspaceService = services.NewWorkspaceService(workspaceRepositories, roomRepositories, userInWorkspaceRepositories, userRepositories, mailServices, roomServices, codingInterviewServices, questionServices, videoQuestionRepositories)
 	var authServices = services.NewAuthService(userRepositories)
+	var roomHistoryServices = services.NewRoomHistoryService(roomHistoryRepositories, userRepositories, videoQuestionRepositories, codingInterviewRepositories, workspaceRepositories, portalRepository, userInWorkspaceRepositories)
 
 	// Handlers
 	var userHandlers = handlers.NewUserHandler(userServices)
@@ -55,7 +57,7 @@ func SetupRoutes() {
 	var codingInterviewHandlers = handlers.NewCodingInterviewHandler(codingInterviewServices)
 	var mailHandlers = handlers.NewMailHandler(mailServices)
 	var questionHandlers = handlers.NewVideoQuestionHandler(questionServices)
-	var roomHandlers = handlers.NewRoomHandler(roomServices)
+	var roomHandlers = handlers.NewRoomHandler(roomServices, roomHistoryServices)
 	var workspaceHandlers = handlers.NewWorkspaceHandler(workspaceService, authServices)
 	var portalHandler = handlers.NewPortalHandler(portalService)
 
@@ -123,6 +125,8 @@ func SetupRoutes() {
 	public.Post("room.extendRoomSession", roomHandlers.ExtendRoomSession)
 	public.Get("room.getRoomSession", roomHandlers.GetRoomSession)
 	public.Post("room.setRoomSession", roomHandlers.SetRoomSession)
+	public.Get("room.getRoomHistory", roomHandlers.GetRoomHistory)
+	public.Post("room.addRoomHistory", roomHandlers.AddRoomHistory)
 
 	// portal
 	public.Get("portal.get", portalHandler.GetPortalById)

@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button.tsx"
 import { FC, useContext, useState } from "react"
 import { DeviceContext } from "@/contexts/device.tsx"
 import { VideoPreviewStream } from "@/pages/room/videoInterview/components/VideoPreviewStream.tsx"
-import Cookies from "js-cookie"
 
 interface VideoInterviewSetupDeviceSetupProps {
   handleNextQuestion: (arg0?: number) => void
@@ -107,12 +106,7 @@ const VideoInterviewSetupDeviceSetup: FC<
         className="md:w-auto w-full"
         disabled={!!mediaError || mediaStatus != "idle"}
         onClick={() => {
-          const allCookies = Cookies.get()
-          const sCookies = Object.keys(allCookies).filter((key) =>
-            key.startsWith("s_"),
-          )
-          const sCookiesArray = sCookies.map((key) => allCookies[key])
-          handleNextQuestion(sCookiesArray.length + 1)
+          handleNextQuestion()
         }}
       >
         Start

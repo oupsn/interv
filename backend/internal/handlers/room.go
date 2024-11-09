@@ -53,9 +53,25 @@ type PendingInterviewBody struct {
 
 type GetRoomSessionQuery struct {
 	RoomID string `json:"roomId"  validate:"required"`
-}
+} // @name GetRoomSessionQuery
 
 type SetRoomSessionBody struct {
 	RoomID            string `json:"roomId"  validate:"required"`
 	SessionIdentifier string `json:"sessionIdentifier"  validate:"required"`
-}
+} // @name SetRoomSessionBody
+
+type GetRoomHistoryQuery struct {
+	RoomID     string `json:"roomId"  validate:"required"`
+	QuestionID uint   `json:"questionId"  validate:"required"`
+} // @name GetRoomHistoryQuery
+
+type GetRoomHistoryResponse struct {
+	ShouldSkipQuestion bool `json:"shouldSkipQuestion"  validate:"required"`
+	MaxAttempt         uint `json:"maxAttempt"  validate:"required"`
+	CurrentAttemptLeft uint `json:"currentAttemptLeft"  validate:"required"`
+} // @name GetRoomHistoryResponse
+
+type AddRoomHistoryBody struct {
+	RoomID     string `json:"roomId"  validate:"required"`
+	QuestionID uint   `json:"questionId"  validate:"required"`
+} // @name AddRoomHistoryBody
