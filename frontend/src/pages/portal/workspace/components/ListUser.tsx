@@ -32,6 +32,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useState } from "react"
+import { ArrowDownNarrowWide, ArrowUpNarrowWide } from "lucide-react"
 
 export type ListWorkspaceProps = {
   listUser: UserInWorkspace[]
@@ -129,7 +130,11 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
 
   const getSortIcon = (key: string) => {
     if (sortConfig?.key === key) {
-      return sortConfig.direction === "asc" ? "▲" : "▼"
+      return sortConfig.direction === "asc" ? (
+        <ArrowDownNarrowWide className="w-4 h-4" />
+      ) : (
+        <ArrowUpNarrowWide className="w-4 h-4" />
+      )
     }
     return null
   }
@@ -140,28 +145,36 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
         <TableRow>
           <TableHead
             onClick={() => handleSort("name")}
-            className="w-2/6 cursor-pointer hover:font-bold hover:text-black"
+            className="w-2/6 cursor-pointer  hover:text-black"
           >
-            Name {getSortIcon("name")}
+            <div className="flex gap-1 items-center">
+              Name {getSortIcon("name")}
+            </div>
           </TableHead>
           <TableHead
             onClick={() => handleSort("username")}
-            className="w-2/6 cursor-pointer hover:font-bold hover:text-black"
+            className="w-2/6 cursor-pointer  hover:text-black "
           >
-            Email {getSortIcon("username")}
+            <div className="flex gap-1 items-center">
+              Email {getSortIcon("username")}
+            </div>
           </TableHead>
           <TableHead
             onClick={() => handleSort("status")}
-            className="cursor-pointer hover:font-bold hover:text-black"
+            className="cursor-pointer  hover:text-black"
           >
-            Status {getSortIcon("status")}
+            <div className="flex gap-1 items-center">
+              Status {getSortIcon("status")}
+            </div>
           </TableHead>
           {listScore && (
             <TableHead
               onClick={() => handleSort("score")}
-              className="cursor-pointer hover:font-bold hover:text-black"
+              className="cursor-pointer  hover:text-black"
             >
-              Score {getSortIcon("score")}
+              <div className="flex gap-1 items-center">
+                Score {getSortIcon("score")}
+              </div>
             </TableHead>
           )}
           <TableHead className="w-[100px]">Actions</TableHead>

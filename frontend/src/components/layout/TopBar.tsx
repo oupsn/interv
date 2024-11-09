@@ -26,7 +26,7 @@ const TopBar: FC<TopBarProps> = ({ children, timeRemain }) => {
         <Button
           variant={"outline"}
           onClick={handleReportIssue}
-          className="text-red-500 hover:text-red-500 text-sm font-semibold text-nowrap border border-red-500 rounded-md px-4"
+          className="text-red-500 hover:text-red-500 text-sm font-semibold text-nowrap border border-red-500 md:flex hidden rounded-md px-4"
         >
           Report Issue
         </Button>

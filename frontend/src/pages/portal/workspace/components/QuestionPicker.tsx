@@ -5,6 +5,7 @@ import {
 } from "@/api/server"
 import QuestionItem from "@/pages/portal/workspace/components/QuestionItem.tsx"
 import { cn } from "@/lib/utils"
+import { ArrowUpDown } from "lucide-react"
 
 export type QuestionType =
   | DomainsCodingQuestion[]
@@ -25,70 +26,82 @@ const QuestionPicker: React.FC<QuestionPickerProps> = ({
   setStockQuestion,
   disable,
 }) => {
-  const questionBox =
-    "w-full h-56 border-solid border border-grey-500 overflow-auto flex flex-col gap-2 rounded-lg p-2"
+  const questionBox = cn(
+    "w-full h-56 border-solid border border-grey-500",
+    "overflow-auto flex flex-col gap-2 rounded-lg p-4",
+    "bg-white/50 shadow-sm overflow-y-auto",
+  )
 
   return (
     <div
       className={cn(
-        "h-full w-full flex flex-col gap-2 text-sm",
-        disable ? "opacity-90 pointer-events-none" : "",
+        "h-full w-full flex flex-col gap-4",
+        "rounded-lg bg-gray-50/30",
+        disable ? "opacity-90" : "",
       )}
     >
-      {!disable ? (
-        <div className="w-full flex flex-col">
-          <Label>Stock Question</Label>
+      {!disable && (
+        <div className="w-full flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-gray-700">
+            <Label className="font-medium">Available Questions</Label>
+          </div>
           <div className={questionBox}>
             {Array.isArray(stockQuestion) || Array.isArray(currentQuestion) ? (
-              stockQuestion?.map((question) => {
-                return (
+              stockQuestion?.length ? (
+                stockQuestion.map((question) => (
                   <QuestionItem
                     key={question.id}
-                    id={question?.id}
-                    title={question?.title}
+                    id={question.id}
+                    title={question.title}
                     currentQuestion={currentQuestion}
                     setCurrentQuestion={setCurrentQuestion}
                     stockQuestion={stockQuestion}
                     setStockQuestion={setStockQuestion}
                   />
-                )
-              })
-            ) : (
-              <></>
-            )}
+                ))
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  No available questions
+                </div>
+              )
+            ) : null}
           </div>
         </div>
-      ) : (
-        <></>
-      )}
-      {!disable ? (
-        <div className="flex justify-center text-5xl font-medium gap-5">
-          {"↑↓"}
-        </div>
-      ) : (
-        <></>
       )}
 
-      <div className="w-full flex flex-col">
-        {!disable ? <Label>Picked Question</Label> : <></>}
+      {!disable && (
+        <div className="flex items-center justify-center gap-2 text-gray-600">
+          <ArrowUpDown className="w-6 h-6" />
+        </div>
+      )}
+
+      <div className="w-full flex flex-col gap-2">
+        {!disable && (
+          <div className="flex items-center gap-2 text-gray-700">
+            <Label className="font-medium">Selected Questions</Label>
+          </div>
+        )}
         <div className={questionBox}>
           {Array.isArray(stockQuestion) || Array.isArray(currentQuestion) ? (
-            currentQuestion?.map((question) => {
-              return (
+            currentQuestion?.length ? (
+              currentQuestion.map((question) => (
                 <QuestionItem
                   key={question.id}
-                  id={question?.id}
-                  title={question?.title}
+                  id={question.id}
+                  title={question.title}
                   currentQuestion={currentQuestion}
                   setCurrentQuestion={setCurrentQuestion}
                   stockQuestion={stockQuestion}
                   setStockQuestion={setStockQuestion}
+                  disable={disable}
                 />
-              )
-            })
-          ) : (
-            <></>
-          )}
+              ))
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                No questions selected
+              </div>
+            )
+          ) : null}
         </div>
       </div>
     </div>

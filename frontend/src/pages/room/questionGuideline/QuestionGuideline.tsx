@@ -7,7 +7,6 @@ import VideoGuide1 from "@/assets/images/video-guide-1.png"
 import VideoGuide2 from "@/assets/images/video-guide-2.png"
 import VideoGuide3 from "@/assets/images/video-guide-3.png"
 import VideoGuide4 from "@/assets/images/video-guide-4.png"
-import VideoGuide5 from "@/assets/images/video-guide-5.png"
 import {
   Accordion,
   AccordionContent,
@@ -93,13 +92,7 @@ function QuestionGuideline() {
 
   const codingImages = [CodingGuide1, CodingGuide2, CodingGuide3]
 
-  const videoImages = [
-    VideoGuide1,
-    VideoGuide2,
-    VideoGuide3,
-    VideoGuide4,
-    VideoGuide5,
-  ]
+  const videoImages = [VideoGuide1, VideoGuide2, VideoGuide3, VideoGuide4]
   return (
     <div className="flex flex-col w-dvw h-dvh">
       <TopBar>

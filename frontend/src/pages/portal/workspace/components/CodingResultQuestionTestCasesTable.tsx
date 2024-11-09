@@ -17,8 +17,8 @@ function CodingResultQuestionTestCasesTable({
     ))
   }
   return (
-    <div className="flex flex-col gap-2">
-      <table className="min-w-full border-collapse border border-gray-300">
+    <div className="flex flex-col gap-2 max-h-[250px] overflow-y-auto hover:cursor-ns-resize">
+      <table className="min-w-full border-collapse border border-gray-300 ">
         <thead>
           <tr className="bg-gray-100">
             <th className="border border-gray-300 p-2"></th>

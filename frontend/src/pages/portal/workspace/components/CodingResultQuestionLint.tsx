@@ -18,7 +18,7 @@ function CodingResultQuestionLint({ lint }: { lint: string }) {
   if (!sortedResults.length) return null
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 max-h-[250px] overflow-y-auto hover:cursor-ns-resize">
       <table className="min-w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-100">
