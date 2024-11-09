@@ -75,6 +75,9 @@ func SetupRoutes() {
 		return c.SendString("Hello, Interv 🕊️")
 	})
 
+	// Swagger
+	public.Get("swagger/*", swagger.HandlerDefault)
+
 	// user
 	public.Post("user.createUser", userHandlers.CreateUser)
 	public.Post("user.createAdmin", userHandlers.CreateAdmin)
@@ -136,9 +139,6 @@ func SetupRoutes() {
 	// Private Routes
 	private := app.Group("/api")
 	private.Use(JwtAuthentication)
-
-	// Swagger
-	private.Get("swagger/*", swagger.HandlerDefault)
 
 	// User
 	private.Post("user.deleteUser", userHandlers.DeleteUser)
