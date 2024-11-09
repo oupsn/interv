@@ -85,7 +85,6 @@ const VideoInterviewPage = () => {
               (_item, index) => (
                 <button
                   key={index}
-                  onClick={() => handleNextQuestion(index + 1)}
                   disabled={
                     index + 1 > activeQuestion || index + 1 < activeQuestion
                   }

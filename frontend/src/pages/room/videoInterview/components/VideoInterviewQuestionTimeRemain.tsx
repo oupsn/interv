@@ -1,6 +1,4 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
-import Cookies from "js-cookie"
-import dayjs from "dayjs"
 import { cn } from "@/lib/utils"
 
 interface VideoInterviewQuestionTimeRemainingProps {
@@ -30,35 +28,12 @@ export const VideoInterviewQuestionTimeRemain: FC<
   setMediaBlob,
   setRecordState,
   setAttemptLeft,
-  questionId,
 }) => {
-  const [isTtpSynced, setIsTtpSynced] = useState(false)
-  const [isTtaSynced, setIsTtaSynced] = useState(false)
-  const [timeToPrepareRemain, setTimeToPrepareRemain] = useState(
-    Math.round(
-      timeToPrepare +
-        dayjs(Cookies.get("p_" + questionId.toString())).diff() / 1000,
-    ),
-  )
-  const [timeToAnswerRemain, setTimeToAnswerRemain] = useState(
-    Math.round(
-      timeToAnswer +
-        dayjs(Cookies.get("a_" + questionId.toString())).diff() / 1000,
-    ),
-  )
+  const [timeToPrepareRemain, setTimeToPrepareRemain] = useState(timeToPrepare)
+  const [timeToAnswerRemain, setTimeToAnswerRemain] = useState(timeToAnswer)
 
   /* eslint-disable react-hooks/exhaustive-deps*/
   useEffect(() => {
-    if (!Cookies.get("p_" + questionId.toString())) {
-      Cookies.set("p_" + questionId.toString(), dayjs().toISOString())
-    }
-    if (!isTtpSynced && timeToPrepareRemain < 3) {
-      setTimeToPrepareRemain(5)
-      setIsTtpSynced(true)
-    }
-    if (!isTtpSynced && timeToPrepareRemain > 3) {
-      setIsTtpSynced(true)
-    }
     const intervalId = setInterval(() => {
       if (timeToPrepareRemain > 0) {
         setTimeToPrepareRemain((prev) => prev - 1)
@@ -75,16 +50,6 @@ export const VideoInterviewQuestionTimeRemain: FC<
   /* eslint-disable react-hooks/exhaustive-deps*/
   useEffect(() => {
     if (isStarted) {
-      if (!Cookies.get("a_" + questionId.toString())) {
-        Cookies.set("a_" + questionId.toString(), dayjs().toISOString())
-      }
-      if (!isTtaSynced && timeToAnswerRemain > 10) {
-        setIsTtaSynced(true)
-      }
-      if (!isTtaSynced && timeToAnswerRemain < 10) {
-        setTimeToAnswerRemain(10)
-        setIsTtaSynced(true)
-      }
       const intervalId = setInterval(() => {
         if (timeToAnswerRemain > 0) {
           setTimeToAnswerRemain((prev) => prev - 1)

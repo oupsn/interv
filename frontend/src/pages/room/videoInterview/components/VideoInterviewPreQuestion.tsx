@@ -6,9 +6,13 @@ import {
   FaRedoAlt,
   FaStopwatch,
 } from "react-icons/fa"
+import { server } from "@/contexts/swr.tsx"
 
 interface VideoInterviewPreQuestionProps {
+  questionId: number
+  roomId: string
   questionIndex: number
+  currentAttemptLeft: number
   totalAttempt: number
   timeToPrepare: number
   timeToAnswer: number
@@ -16,12 +20,26 @@ interface VideoInterviewPreQuestionProps {
 }
 
 export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
+  questionId,
+  roomId,
   questionIndex,
+  currentAttemptLeft,
   totalAttempt,
   timeToAnswer,
   timeToPrepare,
   setRecordState,
 }) => {
+  const handleStartQuestion = () => {
+    server.room
+      .addRoomHistory({
+        questionId: questionId,
+        roomId: roomId,
+      })
+      .then(() => {
+        setRecordState("detail")
+      })
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6 flex flex-col items-center justify-center gap-6">
       {/* Header */}
@@ -50,37 +68,38 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
             <p className="text-sm text-muted-foreground">Answer Time</p>
             <p className="text-lg font-semibold">{timeToAnswer} seconds</p>
           </div>
+
+          <div className="flex items-center gap-4 p-4 bg-secondary/10 rounded-lg">
+            <div className="p-3 bg-primary/10 rounded-full">
+              <FaRedoAlt className="text-xl text-primary" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Maximum Attempts</p>
+              <p className="text-lg font-semibold">
+                {currentAttemptLeft}{" "}
+                {totalAttempt === 1 ? "attempt" : "attempts"}
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4 p-4 bg-secondary/10 rounded-lg">
-          <div className="p-3 bg-primary/10 rounded-full">
-            <FaRedoAlt className="text-xl text-primary" />
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Maximum Attempts</p>
-            <p className="text-lg font-semibold">
-              {totalAttempt} {totalAttempt === 1 ? "attempt" : "attempts"}
-            </p>
-          </div>
+        {/* Warning Message */}
+        <div className="bg-red-50 p-4 rounded-lg flex items-center gap-3 text-red-700">
+          <FaExclamationTriangle className="text-red-500 flex-shrink-0" />
+          <p className="text-sm">
+            Important: The preparation timer will begin immediately after
+            clicking the Start button
+          </p>
         </div>
-      </div>
 
-      {/* Warning Message */}
-      <div className="bg-red-50 p-4 rounded-lg flex items-center gap-3 text-red-700">
-        <FaExclamationTriangle className="text-red-500 flex-shrink-0" />
-        <p className="text-sm">
-          Important: The preparation timer will begin immediately after clicking
-          the Start button
-        </p>
+        {/* Action Button */}
+        <Button
+          onClick={handleStartQuestion}
+          className="w-full max-w-xs py-3 text-lg font-semibold"
+        >
+          Start Question
+        </Button>
       </div>
-
-      {/* Action Button */}
-      <Button
-        onClick={() => setRecordState("detail")}
-        className="w-full max-w-xs py-3 text-lg font-semibold"
-      >
-        Start Question
-      </Button>
     </div>
   )
 }
