@@ -16,10 +16,11 @@ interface CodingResultProps {
 
 function CodingResult({ workspaceId }: CodingResultProps) {
   const params = useParams()
-  const { data: result, isLoading } = useGetCodingSubmission(
-    Number(params.candidateId),
-    workspaceId,
-  )
+  const {
+    data: result,
+    isLoading,
+    isValidating,
+  } = useGetCodingSubmission(Number(params.candidateId), workspaceId)
   const { setLoading } = useContext(LoadingContext)
   const [questionNumber, setQuestionNumber] = useState<number>(0)
   const [questionPass, setQuestionPass] = useState<number>(0)
@@ -58,7 +59,7 @@ function CodingResult({ workspaceId }: CodingResultProps) {
   }, [result])
   return (
     <div className="container w-full mx-auto px-4">
-      {isLoading ? (
+      {isLoading || isValidating ? (
         <div className="flex justify-center items-center min-h-[400px]">
           <p className="text-lg text-gray-600">Loading submission details...</p>
         </div>

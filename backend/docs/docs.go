@@ -1248,7 +1248,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.AddRoomHistoryBody"
+                            "$ref": "#/definitions/AddRoomHistoryBody"
                         }
                     }
                 ],
@@ -2699,6 +2699,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "AddRoomHistoryBody": {
+            "type": "object",
+            "required": [
+                "questionId",
+                "roomId"
+            ],
+            "properties": {
+                "questionId": {
+                    "type": "integer"
+                },
+                "roomId": {
+                    "type": "string"
+                }
+            }
+        },
         "AdminCreateBody": {
             "type": "object",
             "required": [
@@ -4410,21 +4425,6 @@ const docTemplate = `{
                 "valid": {
                     "description": "Valid is true if Time is not NULL",
                     "type": "boolean"
-                }
-            }
-        },
-        "handlers.AddRoomHistoryBody": {
-            "type": "object",
-            "required": [
-                "questionId",
-                "roomId"
-            ],
-            "properties": {
-                "questionId": {
-                    "type": "integer"
-                },
-                "roomId": {
-                    "type": "string"
                 }
             }
         },
