@@ -37,7 +37,7 @@ func SetupRoutes() {
 	var roomHistoryRepositories = repositories.NewRoomHistoryRepository(*DB)
 
 	// Services
-	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, workspaceRepositories)
+	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, portalRepository)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories, videoQuestionSnapshotRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
 	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, roomRepositories, objectRepositories, lintRepository, viper.GetString(TempDir))
