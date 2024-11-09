@@ -13,6 +13,11 @@ export type AddQuestionData = HandlersResponseString
 
 export type AddQuestionError = HandlersErrResponse
 
+export interface AddRoomHistoryBody {
+  questionId: number
+  roomId: string
+}
+
 export type AddRoomHistoryData = HandlersResponseString
 
 export type AddRoomHistoryError = HandlersErrResponse
@@ -652,11 +657,6 @@ export interface GormDeletedAt {
   time?: string
   /** Valid is true if Time is not NULL */
   valid?: boolean
-}
-
-export interface HandlersAddRoomHistoryBody {
-  questionId: number
-  roomId: string
 }
 
 export interface HandlersCodingInterviewGetQuestionByTitleResponse {
@@ -1667,7 +1667,7 @@ export namespace Room {
   export namespace AddRoomHistory {
     export type RequestParams = {}
     export type RequestQuery = {}
-    export type RequestBody = HandlersAddRoomHistoryBody
+    export type RequestBody = AddRoomHistoryBody
     export type RequestHeaders = {}
     export type ResponseBody = AddRoomHistoryData
   }
@@ -2951,7 +2951,7 @@ export class Server<SecurityDataType extends unknown> extends HttpClient<Securit
      * @response `400` `HandlersErrResponse` Bad Request
      * @response `500` `HandlersErrResponse` Internal Server Error
      */
-    addRoomHistory: (payload: HandlersAddRoomHistoryBody, params: RequestParams = {}) =>
+    addRoomHistory: (payload: AddRoomHistoryBody, params: RequestParams = {}) =>
       this.request<AddRoomHistoryData, AddRoomHistoryError>({
         path: `/room.addRoomHistory`,
         method: "POST",
