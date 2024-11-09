@@ -1,5 +1,15 @@
 basePath: /api
 definitions:
+  AddRoomHistoryBody:
+    properties:
+      questionId:
+        type: integer
+      roomId:
+        type: string
+    required:
+    - questionId
+    - roomId
+    type: object
   AdminCreateBody:
     properties:
       name:
@@ -1148,16 +1158,6 @@ definitions:
       valid:
         description: Valid is true if Time is not NULL
         type: boolean
-    type: object
-  handlers.AddRoomHistoryBody:
-    properties:
-      questionId:
-        type: integer
-      roomId:
-        type: string
-    required:
-    - questionId
-    - roomId
     type: object
   handlers.CodingInterviewGetQuestionByTitleResponse:
     properties:
@@ -2343,7 +2343,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/handlers.AddRoomHistoryBody'
+          $ref: '#/definitions/AddRoomHistoryBody'
       produces:
       - application/json
       responses:

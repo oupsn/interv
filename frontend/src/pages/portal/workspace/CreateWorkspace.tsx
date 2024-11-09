@@ -60,7 +60,6 @@ const CreateWorkspace = () => {
     to: undefined,
   })
   const { currentUser } = useCurrentUser()
-  const [firstTime, setFirstTime] = useState<boolean>(true)
 
   const { data: codeQuestion, isLoading: isCodeQuestionLoading } =
     useGetCodingInterviewQuestionByPortalId(currentUser.portalId)
@@ -69,14 +68,14 @@ const CreateWorkspace = () => {
 
   const [codeStockQuestion, setCodeStockQuestion] = useState<
     DomainsCodingQuestion[] | undefined
-  >(codeQuestion?.data)
+  >(undefined)
   const [codeCurrentQuestion, setCodeCurrentQuestion] = useState<
     DomainsCodingQuestion[] | undefined
   >([])
 
   const [videoStockQuestion, setVideoStockQuestion] = useState<
     GetVideoQuestionByPortalIdResponse[] | undefined
-  >(videoQuestion?.data)
+  >(undefined)
   const [videoCurrentQuestion, setVideoCurrentQuestion] = useState<
     GetVideoQuestionByPortalIdResponse[] | undefined
   >([])
@@ -200,11 +199,13 @@ const CreateWorkspace = () => {
   }
 
   useEffect(() => {
-    if (firstTime) {
-      setCodeStockQuestion(codeQuestion?.data)
-      setVideoStockQuestion(videoQuestion?.data)
-      setFirstTime(false)
+    if (codeQuestion?.data && !codeStockQuestion) {
+      setCodeStockQuestion(codeQuestion.data)
     }
+    if (videoQuestion?.data && !videoStockQuestion) {
+      setVideoStockQuestion(videoQuestion.data)
+    }
+
     setVidTime(
       videoCurrentQuestion
         ?.map((question) => {
@@ -222,7 +223,13 @@ const CreateWorkspace = () => {
         .reduce((accumulator, currentValue) => accumulator + currentValue, 0) ??
         0,
     )
-  }, [codeQuestion, videoQuestion, videoCurrentQuestion, firstTime])
+  }, [
+    codeQuestion,
+    videoQuestion,
+    videoCurrentQuestion,
+    codeStockQuestion,
+    videoStockQuestion,
+  ])
 
   if (isCodeQuestionLoading || isVideoQuestionLoading) {
     return (

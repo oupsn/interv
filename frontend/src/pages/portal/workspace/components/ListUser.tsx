@@ -88,8 +88,21 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
   const navigate = useNavigate()
 
   const sortedUsers = React.useMemo(() => {
-    if (sortConfig) {
-      const sortedList = [...listUser]
+    if (!sortConfig) return listUser
+
+    const sortedList = [...listUser]
+
+    if (sortConfig.key === "score") {
+      sortedList.sort((a, b) => {
+        const scoreA =
+          listScore.candidateScore?.[a.userId?.toString() ?? ""] ?? 0
+        const scoreB =
+          listScore.candidateScore?.[b.userId?.toString() ?? ""] ?? 0
+        return sortConfig.direction === "asc"
+          ? scoreA - scoreB
+          : scoreB - scoreA
+      })
+    } else {
       sortedList.sort((a, b) => {
         if (
           a[sortConfig.key as keyof UserInWorkspace] <
@@ -105,10 +118,20 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
         }
         return 0
       })
+    }
+    return sortedList
+  }, [listUser, sortConfig, listScore.candidateScore])
+
+  const sortedScore = React.useMemo(() => {
+    if (sortConfig) {
+      const sortedList = Object.entries(listScore.candidateScore ?? {})
+      sortedList.sort((a, b) => {
+        return sortConfig.direction === "asc" ? a[1] - b[1] : b[1] - a[1]
+      })
       return sortedList
     }
-    return listUser
-  }, [listUser, sortConfig])
+    return Object.entries(listScore.candidateScore ?? {})
+  }, [listScore, sortConfig])
 
   const handleSort = (key: string) => {
     setSortConfig((prevConfig) => {
@@ -198,9 +221,9 @@ const ListUser: React.FC<ListWorkspaceProps> = ({
                     <TableCell className="font-medium ">
                       {user.status === "success" ? (
                         <>
-                          {listScore.candidateScore?.[
-                            user.userId?.toString() ?? "0"
-                          ] ?? 0}{" "}
+                          {sortedScore.find(
+                            (score) => score[0] === user.userId?.toString(),
+                          )?.[1] ?? 0}{" "}
                           / {listScore.totalTestCase ?? 0}
                         </>
                       ) : (
