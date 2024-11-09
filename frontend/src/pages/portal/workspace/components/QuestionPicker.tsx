@@ -29,7 +29,7 @@ const QuestionPicker: React.FC<QuestionPickerProps> = ({
   const questionBox = cn(
     "w-full h-56 border-solid border border-grey-500",
     "overflow-auto flex flex-col gap-2 rounded-lg p-4",
-    "bg-white/50 shadow-sm overflow-y-scroll",
+    "bg-white/50 shadow-sm overflow-y-auto",
   )
 
   return (
@@ -37,11 +37,11 @@ const QuestionPicker: React.FC<QuestionPickerProps> = ({
       className={cn(
         "h-full w-full flex flex-col gap-4",
         "rounded-lg bg-gray-50/30",
-        disable ? "opacity-90 overflow-y-scroll" : "",
+        disable ? "opacity-90" : "",
       )}
     >
       {!disable && (
-        <div className="w-full flex flex-col gap-2 overflow-y-scroll">
+        <div className="w-full flex flex-col gap-2">
           <div className="flex items-center gap-2 text-gray-700">
             <Label className="font-medium">Available Questions</Label>
           </div>
