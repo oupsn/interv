@@ -146,10 +146,10 @@ const CandidateDetailPage = () => {
           >
             <DialogContent className="bg-white">
               <DialogHeader>
-                <DialogTitle>Delete Video Question</DialogTitle>
+                <DialogTitle>Delete Candidate</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this video question? This
-                  action cannot be undone.
+                  Are you sure you want to delete this candidate? This action
+                  cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
