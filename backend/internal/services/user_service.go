@@ -14,10 +14,11 @@ type userService struct {
 	portalRepository          repositories.IPortalRepository
 }
 
-func NewUserService(userRepository repositories.IUserRepository, userInWorkspaceRepository repositories.IUserInWorkspaceRepository, workspaceRepository repositories.IWorkspaceRepository) IUserService {
+func NewUserService(userRepository repositories.IUserRepository, userInWorkspaceRepository repositories.IUserInWorkspaceRepository, portalRepository repositories.IPortalRepository) IUserService {
 	return &userService{
 		userRepository:            userRepository,
 		userInWorkspaceRepository: userInWorkspaceRepository,
+		portalRepository:          portalRepository,
 	}
 }
 
@@ -67,8 +68,11 @@ func (u *userService) Create(importUser []domains.User, workspaceId uint) (err e
 	return nil
 }
 
-func (u *userService) Delete(id uint) (err error) {
-	u.userInWorkspaceRepository.DeleteByUserId(id)
+func (u *userService) Delete(id uint) error {
+	err := u.userInWorkspaceRepository.DeleteByUserId(id)
+	if err != nil {
+		return err
+	}
 	return u.userRepository.DeleteById(id)
 }
 
@@ -76,12 +80,16 @@ func (u *userService) CreateAdmin(user domains.User, portalId uint) (err error) 
 	_, err = u.userRepository.FindByUsername(strings.TrimSpace(user.Username))
 	if err != nil {
 		bytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
 		newUser, err := u.userRepository.Create(domains.User{
 			ID:       user.ID,
 			Name:     user.Name,
 			Username: user.Username,
-			Password: (strings.TrimSpace(string(bytes))),
+			Password: strings.TrimSpace(string(bytes)),
 			Role:     user.Role,
+			PortalId: &portalId,
 		})
 		if err != nil {
 			return err

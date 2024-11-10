@@ -37,7 +37,7 @@ func SetupRoutes() {
 	var roomHistoryRepositories = repositories.NewRoomHistoryRepository(*DB)
 
 	// Services
-	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, workspaceRepositories)
+	var userServices = services.NewUserService(userRepositories, userInWorkspaceRepositories, portalRepository)
 	var videoInterviewServices = services.NewVideoInterviewService(objectRepositories, videoQuestionRepositories, roomRepositories, videoQuestionSnapshotRepositories)
 	var objectServices = services.NewObjectService(objectRepositories)
 	var codingInterviewServices = services.NewCodingInterviewService(compilationRespositories, codingInterviewRepositories, roomRepositories, objectRepositories, lintRepository, viper.GetString(TempDir))
@@ -74,6 +74,9 @@ func SetupRoutes() {
 	public.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, Interv 🕊️")
 	})
+
+	// Swagger
+	public.Get("swagger/*", swagger.HandlerDefault)
 
 	// user
 	public.Post("user.createUser", userHandlers.CreateUser)
@@ -136,9 +139,6 @@ func SetupRoutes() {
 	// Private Routes
 	private := app.Group("/api")
 	private.Use(JwtAuthentication)
-
-	// Swagger
-	private.Get("swagger/*", swagger.HandlerDefault)
 
 	// User
 	private.Post("user.deleteUser", userHandlers.DeleteUser)

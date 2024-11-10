@@ -1,6 +1,4 @@
 import { Outlet, useParams } from "react-router-dom"
-import { isMobile } from "react-device-detect"
-import NotAllowMobile from "@/components/layout/NotAllowMobile.tsx"
 import { useEffect, useState } from "react"
 import { server } from "@/contexts/swr.tsx"
 import IntervLogo from "@/assets/interv-logo.png"
@@ -66,10 +64,10 @@ export default function RoomMainLayout() {
     }
   }, [isSessionValid, roomId])
 
-  const [isAllowMobile, setIsAllowMobile] = useState(false)
-  if (isMobile && !isAllowMobile) {
-    return <NotAllowMobile setIsAllowMobile={setIsAllowMobile} />
-  }
+  // const [isAllowMobile, setIsAllowMobile] = useState(false)
+  // if (isMobile && !isAllowMobile) {
+  //   return <NotAllowMobile setIsAllowMobile={setIsAllowMobile} />
+  // }
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [termsAccepted, setTermsAccepted] = useState(false)
 
