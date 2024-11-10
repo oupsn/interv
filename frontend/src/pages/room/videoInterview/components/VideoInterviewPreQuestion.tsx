@@ -49,7 +49,7 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
           Please review the details before starting
         </p>
       </div>
-      <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex flex-col md:flex-row gap-6 w-full">
         <div className="flex items-center gap-4 p-4 bg-secondary/10 rounded-lg">
           <div className="p-3 bg-primary/10 rounded-full">
             <FaClock className="text-xl text-primary" />
@@ -82,24 +82,23 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
             </div>
           </div>
         </div>
-
-        {/* Warning Message */}
-        <div className="bg-red-50 p-4 rounded-lg flex items-center gap-3 text-red-700">
-          <FaExclamationTriangle className="text-red-500 flex-shrink-0" />
-          <p className="text-sm">
-            Important: The preparation timer will begin immediately after
-            clicking the Start button
-          </p>
-        </div>
-
-        {/* Action Button */}
-        <Button
-          onClick={handleStartQuestion}
-          className="w-full max-w-xs py-3 text-lg font-semibold"
-        >
-          Start Question
-        </Button>
       </div>
+      {/* Warning Message */}
+      <div className="bg-red-50 p-4 rounded-lg flex items-center gap-3 text-red-700">
+        <FaExclamationTriangle className="text-red-500 flex-shrink-0" />
+        <p className="text-sm">
+          Important: The preparation timer will begin immediately after clicking
+          the Start button
+        </p>
+      </div>
+
+      {/* Action Button */}
+      <Button
+        onClick={handleStartQuestion}
+        className="w-full max-w-xs py-3 text-lg font-semibold"
+      >
+        Start Question
+      </Button>
     </div>
   )
 }
