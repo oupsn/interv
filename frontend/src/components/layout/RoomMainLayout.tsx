@@ -68,10 +68,9 @@ export default function RoomMainLayout() {
   // if (isMobile && !isAllowMobile) {
   //   return <NotAllowMobile setIsAllowMobile={setIsAllowMobile} />
   // }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   const [termsAccepted, setTermsAccepted] = useState(false)
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     const hasAcceptedTerms = localStorage.getItem("termsAccepted")
     setTermsAccepted(!!hasAcceptedTerms)
