@@ -49,11 +49,11 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
       <div className="flex md:flex-row flex-col justify-center relative w-full h-full overflow-y-scroll">
         <div className="flex flex-col mt-64 md:mt-0 gap-6 w-full md:w-5/12 p-10 h-full border-l border-gray-200 border-b">
           <div className="flex items-center gap-3">
-            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white font-semibold">
+            <span className="flex items-center justify-center min-w-8 min-h-8 rounded-full bg-primary text-white font-semibold">
               {questionIndex}
             </span>
             <h2 className="text-lg font-semibold text-gray-800">
-              Interview Question
+              {parse(cleanDescription)}
             </h2>
           </div>
 
@@ -65,10 +65,8 @@ const VideoInterviewQuestionDetail: FC<VideoInterviewQuestionDetailProps> = ({
           </div>
 
           <div className="space-y-3">
-            <div className="text-lg">{parse(cleanDescription)}</div>
-
-            <div className="flex items-start gap-2 mt-4 p-4 rounded-md">
-              <QuestionMarkCircledIcon className="w-5 h-5 text-primary mt-0.5" />
+            <div className="flex items-start gap-2 rounded-md">
+              <QuestionMarkCircledIcon className="w-6 h-6 text-primary" />
               <p className="text-sm text-primary">
                 Take a moment to gather your thoughts. Remember to speak clearly
                 and maintain eye contact with the camera.

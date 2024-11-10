@@ -51,13 +51,11 @@ function PlagarismReport() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>
-                <BreadcrumbLink asChild>
-                  <Link to={`/portal/workspace/${workspaceId}`}>
-                    {truncatedTitle}
-                  </Link>
-                </BreadcrumbLink>
-              </BreadcrumbPage>
+              <BreadcrumbLink asChild>
+                <Link to={`/portal/workspace/${workspaceId}`}>
+                  {truncatedTitle}
+                </Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

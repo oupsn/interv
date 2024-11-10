@@ -76,8 +76,10 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
             <div>
               <p className="text-sm text-muted-foreground">Maximum Attempts</p>
               <p className="text-lg font-semibold">
-                {currentAttemptLeft}{" "}
-                {totalAttempt === 1 ? "attempt" : "attempts"}
+                {currentAttemptLeft}
+                <span>
+                  /{totalAttempt} {totalAttempt === 1 ? "attempt" : "attempts"}
+                </span>
               </p>
             </div>
           </div>
