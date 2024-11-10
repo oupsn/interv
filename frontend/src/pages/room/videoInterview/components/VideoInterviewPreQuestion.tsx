@@ -49,7 +49,7 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
           Please review the details before starting
         </p>
       </div>
-      <div className="flex flex-col md:flex-row gap-6 w-full">
+      <div className="flex flex-col items-center md:flex-row gap-6 w-full">
         <div className="flex items-center gap-4 p-4 bg-secondary/10 rounded-lg">
           <div className="p-3 bg-primary/10 rounded-full">
             <FaClock className="text-xl text-primary" />
@@ -68,20 +68,20 @@ export const VideoInterviewPreQuestion: FC<VideoInterviewPreQuestionProps> = ({
             <p className="text-sm text-muted-foreground">Answer Time</p>
             <p className="text-lg font-semibold">{timeToAnswer} seconds</p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-4 p-4 bg-secondary/10 rounded-lg">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <FaRedoAlt className="text-xl text-primary" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Maximum Attempts</p>
-              <p className="text-lg font-semibold">
-                {currentAttemptLeft}
-                <span>
-                  /{totalAttempt} {totalAttempt === 1 ? "attempt" : "attempts"}
-                </span>
-              </p>
-            </div>
+        <div className="flex items-center gap-4 p-4 bg-secondary/10 rounded-lg">
+          <div className="p-3 bg-primary/10 rounded-full">
+            <FaRedoAlt className="text-xl text-primary" />
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Maximum Attempts</p>
+            <p className="text-lg font-semibold">
+              {currentAttemptLeft}
+              <span>
+                /{totalAttempt} {totalAttempt === 1 ? "attempt" : "attempts"}
+              </span>
+            </p>
           </div>
         </div>
       </div>
