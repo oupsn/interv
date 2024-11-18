@@ -58,4 +58,4 @@ For more information about Interv, you can check with our [landing page](https:/
     ```
 4. Open [localhost:3000](http://localhost:5173)
 
-### Made with stress and anxiety ❤.
+### Made with stress and anxiety ❤
