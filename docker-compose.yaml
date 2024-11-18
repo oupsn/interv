@@ -82,15 +82,12 @@ services:
       ENV: "dev"
       MINIO_ENDPOINT: "minio:9000"
       MINIO_ACCESS_KEY: interv
-      MINIO_SECRET_KEY: interv
-      # MJ_APIKEY_PUBLIC: "62c6bffbde61fab41d47a4cd3187e2ad"
-      # MJ_APIKEY_PRIVATE: "f40e634957cee3feff39ac6440a250c5"
+      MINIO_SECRET_KEY: intervinterv
       COMPILER_ENDPOINT: "http://47.243.33.180:2358/"
       PYTHON_LINTER_ENDPOINT: "http://47.243.33.180:8080/api/analyze"
       JAVA_LINTER_ENDPOINT: "http://47.243.33.180:8081/api/analyze"
       C_LINTER_ENDPOINT: "http://47.243.33.180:8082/api/analyze"
       REDIS_URL: "redis://redis:6379"
-      # SENTRY_DSN: "https://8e3da29f84d328b2a5715ed41a13a15d@o4508076707872768.ingest.us.sentry.io/4508076809256960"
       TEMP_DIR: "/tmp/coding-interview-chunks"
     depends_on:
       - core-db
