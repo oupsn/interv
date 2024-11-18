@@ -1,15 +1,34 @@
 services:
-  db:
+  proxy:
+    image: traefik:latest
+    restart: unless-stopped
+    command:
+      - --entrypoints.web.address=:3000
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+      - --api
+
+    ports:
+    - 3000:3000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.proxy.service=api@internal
+
+  core-db:
     image: postgres:latest
     restart: always
     environment:
-      POSTGRES_USER: admindev
-      POSTGRES_PASSWORD: admindev
-      POSTGRES_DB: interv
+      POSTGRES_USER: interv-dev
+      POSTGRES_PASSWORD: interv-dev
+      POSTGRES_DB: interv-dev
     ports:
       - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+
   redis:
     image: redis:latest
     restart: always
@@ -21,37 +40,67 @@ services:
   minio:
     image: minio/minio:RELEASE.2024-07-31T05-46-26Z.fips
     restart: always
+    ports:
+      - 9000:9000
+      - 9001:9001
     environment:
       - MINIO_ROOT_USER=interv
-      - MINIO_ROOT_PASSWORD=interv
+      - MINIO_ROOT_PASSWORD=intervinterv
     volumes:
-      - minio:/data
+      - minio_data:/data
     command:
-      #- minio server /data --console-address ":9001"
       - server
       - /data
       - --console-address
       - ":9001"
 
-  backend:
-    build: ./backend
-    restart: always
-    ports:
-      - 5000:5000
-    env_file: backend/config.yaml
-    depends_on:
-      - db
-      - redis
-
   frontend:
-    build: ./frontend
+    image: oupsn/interv-clientside:latest
     restart: always
-    ports:
-      - 3000:3000
     depends_on:
       - backend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.entrypoints=web
+      - traefik.http.routers.frontend.rule=PathPrefix(`/`)
+
+  backend:
+    image: oupsn/interv-core:latest
+    restart: always
+    environment:
+      SERVER_HOST: "0.0.0.0"
+      SERVER_ORIGINS: "http://localhost:3000"
+      SERVER_PORT: 5000
+      DB_AUTOMIGRATE: true
+      DB_HEADLESS: false
+      DB_HOST: "core-db"
+      DB_NAME: "interv-dev"
+      DB_USERNAME: "interv-dev"
+      DB_PASSWORD: "interv-dev"
+      DB_PORT: 5432
+      JWT_SECRET: "korHaiProjectNeePanPaiDaiDeeee"
+      ENV: "dev"
+      MINIO_ENDPOINT: "minio:9000"
+      MINIO_ACCESS_KEY: interv
+      MINIO_SECRET_KEY: interv
+      # MJ_APIKEY_PUBLIC: "62c6bffbde61fab41d47a4cd3187e2ad"
+      # MJ_APIKEY_PRIVATE: "f40e634957cee3feff39ac6440a250c5"
+      COMPILER_ENDPOINT: "http://47.243.33.180:2358/"
+      PYTHON_LINTER_ENDPOINT: "http://47.243.33.180:8080/api/analyze"
+      JAVA_LINTER_ENDPOINT: "http://47.243.33.180:8081/api/analyze"
+      C_LINTER_ENDPOINT: "http://47.243.33.180:8082/api/analyze"
+      REDIS_URL: "redis://redis:6379"
+      # SENTRY_DSN: "https://8e3da29f84d328b2a5715ed41a13a15d@o4508076707872768.ingest.us.sentry.io/4508076809256960"
+      TEMP_DIR: "/tmp/coding-interview-chunks"
+    depends_on:
+      - core-db
+      - redis
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend.entrypoints=web
+      - traefik.http.routers.backend.rule=PathPrefix(`/api`)
 
 volumes:
   postgres_data:
   redis_data:
-  minio:
+  minio_data:

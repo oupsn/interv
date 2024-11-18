@@ -1,6 +1,7 @@
 package loaders
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/redis/go-redis/v9"
@@ -100,6 +101,26 @@ func SetupMinio() {
 	})
 	if err != nil {
 		panic(err)
+	}
+
+	bucketName := []string{"coding-interview", "video-interview"}
+
+	ctx := context.Background()
+	for _, name := range bucketName {
+		exists, err := minioClient.BucketExists(ctx, name)
+		if err != nil {
+			panic(err)
+		}
+
+		if !exists {
+			err = minioClient.MakeBucket(ctx, name, minio.MakeBucketOptions{})
+			if err != nil {
+				panic(err)
+			}
+			fmt.Printf("Bucket %s created successfully\n", name)
+		} else {
+			fmt.Printf("Bucket %s already exists\n", name)
+		}
 	}
 
 	MINIO = minioClient
