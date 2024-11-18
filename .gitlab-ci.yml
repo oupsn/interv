@@ -60,7 +60,6 @@ frontend_release-image:
   only:
     - staging
   script:
-    #- IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - IMAGE_TAG=${CI_COMMIT_SHORT_SHA}-$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - CONTAINER_TEST_IMAGE_CLIENTSIDE="$CI_REGISTRY_IMAGE_CLIENTSIDE:$IMAGE_TAG"
     - cd frontend
@@ -82,7 +81,6 @@ backend_release-image:
   only:
     - staging
   script:
-    #- IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - IMAGE_TAG=${CI_COMMIT_SHORT_SHA}-$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - CONTAINER_TEST_IMAGE_CORE="$CI_REGISTRY_IMAGE_CORE:$IMAGE_TAG"
     - cd backend
@@ -105,7 +103,6 @@ deploy-qa:
     - apk update
     - apk add --no-cache openssh
   script:
-    #- IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - IMAGE_TAG=${CI_COMMIT_SHORT_SHA}-$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - echo "Deploying to qa ..."
     - mkdir -p ~/.ssh
@@ -123,7 +120,6 @@ deploy-prod:
     - apk update
     - apk add --no-cache openssh
   script:
-    #- IMAGE_TAG=$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - IMAGE_TAG=${CI_COMMIT_SHORT_SHA}-$(echo "$CI_COMMIT_TIMESTAMP" | sed 's/:/-/g' | sed 's/+/-/g')
     - echo "Deploying to prod ..."
     - mkdir -p ~/.ssh
