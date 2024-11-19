@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/spf13/viper"
 	"strings"
 	"time"
 
@@ -256,6 +257,10 @@ func (w *workspaceService) InviteAllCandidate(workspaceId uint) (err error) {
 	mailPayload := MailListPayload{
 		Preset:   Invite,
 		MailList: mailList,
+	}
+
+	if viper.GetString("ENV") == "sit" {
+		return nil
 	}
 
 	if err := w.mailService.SendMail(mailPayload); err != nil {

@@ -22,7 +22,7 @@ For more information about Interv, you can check with our [landing page](https:/
     ```
 3. Start all containers from docker-compose.yaml:
     ```sh
-    docker compose up -d --remove-orphans
+    docker compose up -d
     ```
 4. Open [localhost:3000](http://localhost:3000)
 5. Enjoy!
