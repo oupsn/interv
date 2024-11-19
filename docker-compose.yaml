@@ -79,7 +79,7 @@ services:
       DB_PASSWORD: "interv-dev"
       DB_PORT: 5432
       JWT_SECRET: "korHaiProjectNeePanPaiDaiDeeee"
-      ENV: "dev"
+      ENV: "sit"
       MINIO_ENDPOINT: "minio:9000"
       MINIO_ACCESS_KEY: interv
       MINIO_SECRET_KEY: intervinterv

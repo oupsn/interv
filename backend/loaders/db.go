@@ -93,7 +93,7 @@ func SetupMinio() {
 	endpoint := viper.GetString(EnvMinioEndpoint)
 	accessKeyID := viper.GetString(EnvMinioAccessKey)
 	secretAccessKey := viper.GetString(EnvMinioSecretKey)
-	useSSL := false
+	useSSL := viper.GetString(EnvMode) != "sit"
 
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
