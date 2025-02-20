@@ -12,7 +12,7 @@ For more information about Interv, you can check with our [landing page](https:/
 - Docker
 - Just docker
 ### Steps
-1. Clone this rpository to your machine:
+1. Clone this repository to your machine:
     ```sh
     git clone https://github.com/oupsn/interv.git
     ```
